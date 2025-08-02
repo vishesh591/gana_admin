@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+
+        <?php echo view("partials/title-meta", array("title" => "Error 500")) ?>
+
+        <?= $this->include('partials/head-css') ?>
+
+    </head>
+
+    <body class="bg-white">
+
+        <!-- Begin page -->
+        <div class="maintenance-pages">
+            <div class="container">
+                <div class="row justify-content-center">
+                    <div class="col-lg-12">
+
+                        <div class="text-center">
+                            <div class="mb-4 text-center">
+                                <a href="/" class="auth-logo">
+                                    <img src="/images/logo-dark.png" alt="logo-dark" class="mx-auto" height="28" />
+                                </a>
+                            </div>
+    
+                            <div class="maintenance-img">
+                                <img src="/images/svg/500-error.svg" class="img-fluid" alt="coming-soon">
+                            </div>
+                            
+                            <div class="text-center">
+                                <h3 class="mt-4 fw-semibold text-black text-capitalize">Internal Server Error</h3>
+                                <p class="text-muted">Our internal server has gone on a uninformed vacation</p>
+                            </div>
+
+                            <a class="btn btn-primary mt-3 me-1" href="/">Back to Home</a>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- END wrapper -->
+
+        <?= $this->include('partials/vendor') ?>
+
+        <!-- App js-->
+        <script src="/js/app.js"></script>
+        
+    </body>
+</html>
