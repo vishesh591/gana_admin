@@ -37,30 +37,51 @@ $routes->setAutoRoute(true);
 // We get a performance increase by specifying the default
 // route since we don't have to scan directories.
 $routes->get('/login', 'Auth::index', ['filter' => 'noauth']);
+
 $routes->post('/loginCheck', 'Auth::loginCheck');
 
 // Filter on route group
 $routes->group('', ['filter'=>'auth'], function ($routes){
+
     $routes->get('/logout', 'Auth::logout');
+
     $routes->get('/', 'Home::index');
-    $routes->get('/add-release', 'ReleaseController::add');
-    $routes->get('/releases', 'Releases::index');
-    $routes->get('/artist', 'Artist::index');
-    $routes->get('/labels', 'Labels::index');
-    $routes->get('/sales-report', 'SalesReport::index');
-    $routes->get('/claiming-request', 'ClaimingRequest::index');
-    $routes->get('/relocation-request', 'RelocationRequest::index');
-    $routes->get('/account', 'Account::index');
-    $routes->get('/support', 'Support::index');
-    $routes->get('/youtube', 'Youtube::index');
-    $routes->get('/facebook', 'Facebook::index');
-    $routes->get('/merge-request', 'MergeRequest::index');
-    $routes->get('/approve-req', 'ApproveReq::index');
-    $routes->get('/claiming-data', 'ClaimingData::index');
-    $routes->get('/relocation-data', 'RelocationData::index');
-    $routes->get('/merge-data', 'MergeData::index');
-    $routes->get('/ownership-data', 'OwnershipData::index');
     $routes->get('/(:any)', 'Home::root/$1');
+
+    $routes->get('/releases', 'Releases::index');
+    $routes->get('/add-release', 'ReleaseController::add');
+    
+    $routes->get('/artist', 'Artist::index');
+
+    $routes->get('/labels', 'Labels::index');
+    $routes->post('/add-labels', 'Labels::add_lable');
+
+    $routes->get('/sales-report', 'SalesReport::index');
+
+    $routes->get('/claiming-request', 'ClaimingRequest::index');
+
+    $routes->get('/relocation-request', 'RelocationRequest::index');
+
+    $routes->get('/account', 'Account::index');
+
+    $routes->get('/support', 'Support::index');
+
+    $routes->get('/youtube', 'Youtube::index');
+
+    $routes->get('/facebook', 'Facebook::index');
+
+    $routes->get('/merge-request', 'MergeRequest::index');
+
+    $routes->get('/approve-req', 'ApproveReq::index');
+
+    $routes->get('/claiming-data', 'ClaimingData::index');
+
+    $routes->get('/relocation-data', 'RelocationData::index');
+
+    $routes->get('/merge-data', 'MergeData::index');
+
+    $routes->get('/ownership-data', 'OwnershipData::index');
+
 });
 
 /*

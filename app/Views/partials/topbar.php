@@ -171,7 +171,7 @@
                         <div class="dropdown-divider"></div>
         
                         <!-- item-->
-                        <a href="auth-logout" class="dropdown-item notify-item">
+                        <a href="logout" class="dropdown-item notify-item">
                             <i class="mdi mdi-location-exit fs-16 align-middle"></i>
                             <span>Logout</span>
                         </a>
