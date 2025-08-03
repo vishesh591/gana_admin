@@ -12,8 +12,7 @@ use CodeIgniter\Filters\InvalidChars;
 use CodeIgniter\Filters\PageCache;
 use CodeIgniter\Filters\PerformanceMetrics;
 use CodeIgniter\Filters\SecureHeaders;
-use App\Filters\Auth;
-use App\Filters\NoAuth;
+
 class Filters extends BaseFilters
 {
     /**
@@ -35,8 +34,6 @@ class Filters extends BaseFilters
         'forcehttps'    => ForceHTTPS::class,
         'pagecache'     => PageCache::class,
         'performance'   => PerformanceMetrics::class,
-        'auth'          => Auth::class,
-        'noauth'        => NoAuth::class,
     ];
 
     /**
@@ -68,7 +65,10 @@ class Filters extends BaseFilters
      * List of filter aliases that are always
      * applied before and after every request.
      *
-     * @var array<string, array<string, array<string, string>>>|array<string, list<string>>
+     * @var array{
+     *     before: array<string, array{except: list<string>|string}>|list<string>,
+     *     after: array<string, array{except: list<string>|string}>|list<string>
+     * }
      */
     public array $globals = [
         'before' => [
