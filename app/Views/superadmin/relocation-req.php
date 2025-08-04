@@ -1,0 +1,55 @@
+<div class="content-page">
+            <div class="content">
+                <div class="container-xxl">
+                    <div class="row align-items-center mb-5">
+                        <div class="col">
+                            <h1 class="page-title fs-2">Relocation Request</h1>
+                        </div>
+                        <div class="col-auto d-flex gap-2">
+                            <button type="button" class="btn btn-outline-secondary rounded-pill px-4" id="exportCsvBtn">
+                                <i class="bi bi-download me-1"></i> Export to CSV
+                            </button>
+                        <button type="button" class="btn btn-primary rounded-pill px-4" data-bs-toggle="modal" data-bs-target="#relocationRequestModal">
+                            <i class="bi bi-plus-lg me-1"></i> New Relocation Request
+                        </button>
+                     </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="card shadow-sm">
+                                <div class="card-body p-0">
+                                    <div class="table-responsive">
+                                        <table class="table table-hover mb-0" id="relocationTable">
+                                            <thead class="table-light">
+                                                <tr>
+                                                    <th width="60"></th>
+                                                    <th>Song / Artist</th>
+                                                    <th>ISRC</th>
+                                                    <th>Social Profiles</th>
+                                                    <th>Status</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="tableBody">
+                                                </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                                <div class="card-footer bg-white d-flex flex-column flex-md-row justify-content-between align-items-center py-3">
+                                    <div class="mb-2 mb-md-0">
+                                        Showing <strong>1</strong> to <strong>3</strong> of <strong>3</strong> entries
+                                    </div>
+                                    <nav>
+                                        <ul class="pagination mb-0">
+                                            <li class="page-item disabled"><a class="page-link" href="#">Previous</a></li>
+                                            <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                                            <li class="page-item"><a class="page-link" href="#">Next</a></li>
+                                        </ul>
+                                    </nav>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>

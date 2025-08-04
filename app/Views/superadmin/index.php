@@ -4,6 +4,7 @@
 <head>
     <?php echo view("partials/title-meta", array("title" => "Music Dashboard")) ?>
     <?= $this->include('partials/head-css') ?>
+
 </head>
 
 <?php echo view('partials/body', array("class" => false)) ?>
