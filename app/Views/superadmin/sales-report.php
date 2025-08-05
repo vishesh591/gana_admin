@@ -1,5 +1,5 @@
 <div class="content-page">
-      <div class="content">
+    <div class="content">
         <!-- 1. Page Header -->
         <div class="page-header">
             <div class="row align-items-center">
@@ -239,7 +239,7 @@
                                 </tr>
                             </tbody>
                         </table>
-                        
+
                         <!-- Empty State (hidden by default) -->
                         <div class="empty-state d-none">
                             <div class="empty-state-content">
@@ -277,5 +277,5 @@
                 </div>
             </div>
         </div>
-      </div>
     </div>
+</div>

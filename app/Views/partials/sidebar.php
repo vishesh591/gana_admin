@@ -6,7 +6,7 @@
         <div id="sidebar-menu">
 
             <div class="logo-box">
-                <a href="/" class="logo logo-light">
+                <a href="<?= base_url() ?>" class="logo logo-light">
                     <span class="logo-sm">
                         <img src="/images/logo-sm.png" alt="" height="22">
                     </span>
@@ -14,7 +14,7 @@
                         <img src="/images/logo-light.png" alt="" height="24">
                     </span>
                 </a>
-                <a href="/" class="logo logo-dark">
+                <a href="<?= base_url() ?>" class="logo logo-dark">
                     <span class="logo-sm">
                         <img src="/images/logo-sm.png" alt="" height="22">
                     </span>
@@ -29,7 +29,7 @@
                 <li class="menu-title">Menu</li>
 
                 <li>
-                    <a href="/" class="tp-link">
+                    <a href="<?= base_url() . getUserRoleSlug() ?>/dashboard" class="tp-link">
                         <i data-feather="home"></i>
                         <span> Dashboard </span>
                     </a>
@@ -37,25 +37,25 @@
                 <li class="menu-title">Submisson</li>
 
                 <li>
-                    <a href="/claiming-data" class="tp-link">
+                    <a href="<?= base_url() . getUserRoleSlug() ?>/claiming-data" class="tp-link">
                         <i data-feather="check-circle"></i>
                         <span>Claiming Data</span>
                     </a>
                 </li>
                 <li>
-                    <a href="/relocation-data" class="tp-link">
+                    <a href="<?= base_url() . getUserRoleSlug() ?>/relocation-data" class="tp-link">
                         <i data-feather="refresh-cw"></i>
                         <span>Relocation Data</span>
                     </a>
                 </li>
                 <li>
-                    <a href="/merge-data" class="tp-link">
+                    <a href="<?= base_url() . getUserRoleSlug() ?>/merge-data" class="tp-link">
                         <i data-feather="tag"></i>
                         <span> Claim/Reel Data </span>
                     </a>
                 </li>
                 <li>
-                    <a href="/ownership-data" class="tp-link">
+                    <a href="<?= base_url() . getUserRoleSlug() ?>/ownership-data" class="tp-link">
                         <i data-feather="user"></i>
                         <span> Ownership Data </span>
                     </a>
@@ -65,7 +65,7 @@
                 <li class="menu-title mt-2">Music Distribution</li>
 
                 <li>
-                    <a href="/releases">
+                    <a href="<?= base_url() . getUserRoleSlug() ?>/releases">
                         <i data-feather="music"></i>
                         <span class="menu-text"> Releases </span>
                     </a>
@@ -73,21 +73,21 @@
 
 
                 <li>
-                    <a href="/artists" class="tp-link">
+                    <a href="<?= base_url() . getUserRoleSlug() ?>/artists" class="tp-link">
                         <i data-feather="user"></i>
                         <span> Artists </span>
                     </a>
                 </li>
 
                 <li>
-                    <a href="/labels" class="tp-link">
+                    <a href="<?= base_url() . getUserRoleSlug() ?>/labels" class="tp-link">
                         <i data-feather="tag"></i>
                         <span> Labels </span>
                     </a>
                 </li>
 
                 <li>
-                    <a href="/sales-report">
+                    <a href="<?= base_url() . getUserRoleSlug() ?>/sales-report">
                         <i data-feather="bar-chart-2"></i>
                         <span> Sales Reports </span>
                     </a>
@@ -98,20 +98,20 @@
                 <li class="menu-title mt-2">Requests</li>
 
                 <li>
-                    <a href="/claiming-request" class="tp-link">
+                    <a href="<?= base_url() . getUserRoleSlug() ?>/claiming-request" class="tp-link">
                         <i data-feather="check-circle"></i>
                         <span> Claiming Requests </span>
                     </a>
                 </li>
 
                 <li>
-                    <a href="/relocation-request" class="tp-link">
+                    <a href="<?= base_url() . getUserRoleSlug() ?>/relocation-request" class="tp-link">
                         <i data-feather="refresh-cw"></i>
                         <span> Relocation Requests </span>
                     </a>
                 </li>
                 <li>
-                    <a href="/merge-request" class="tp-link">
+                    <a href="<?= base_url() . getUserRoleSlug() ?>/merge-request" class="tp-link">
                         <i data-feather="git-merge"></i>
                         <span>Claim/Reel Merge</span>
                     </a>
@@ -120,14 +120,14 @@
                 <li class="menu-title mt-2">Ownership Conflict</li>
 
                 <li>
-                    <a href="/youtube" class="tp-link">
+                    <a href="<?= base_url() . getUserRoleSlug() ?>/youtube" class="tp-link">
                         <i data-feather="youtube"></i>
                         <span> Youtube </span>
                     </a>
                 </li>
 
                 <li>
-                    <a href="/facebook" class="tp-link">
+                    <a href="<?= base_url() . getUserRoleSlug() ?>/facebook" class="tp-link">
                         <i data-feather="facebook"></i>
                         <span> Facebook </span>
                     </a>
@@ -143,7 +143,7 @@
                 </li>
 
                 <li>
-                    <a href="/support" class="tp-link">
+                    <a href="<?= base_url() . getUserRoleSlug() ?>/support" class="tp-link">
                         <i data-feather="help-circle"></i>
                         <span> Support </span>
                     </a>

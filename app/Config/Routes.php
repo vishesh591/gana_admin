@@ -22,7 +22,21 @@ $routes->group('', ['filter' => 'auth'], function ($routes) {
 // Routes only for super admins
 $routes->group('superadmin', ['filter' => 'role:superadmin'], function ($routes) {
     $routes->get('/', 'SuperAdmin::dashboard');
+    $routes->get('dashboard', 'SuperAdmin::dashboard');
     $routes->get('accounts', 'SuperAdmin::accounts');
+    $routes->get('claiming-data', 'SuperAdmin::claiming_data');
+    $routes->get('relocation-data', 'SuperAdmin::relocation_data');
+    $routes->get('merge-data', 'SuperAdmin::merge_data');
+    $routes->get('ownership-data', 'SuperAdmin::ownership_data');
+    $routes->get('releases', 'SuperAdmin::releases');
+    $routes->get('artists', 'SuperAdmin::artists');
+    $routes->get('labels', 'SuperAdmin::labels');
+    $routes->get('sales-report', 'SuperAdmin::sales_report');
+    $routes->get('claiming-request', 'SuperAdmin::claiming_request');
+    $routes->get('relocation-request', 'SuperAdmin::relocation_request');
+    $routes->get('merge-request', 'SuperAdmin::merge_request');
+    $routes->get('youtube', 'SuperAdmin::youtube');
+    $routes->get('facebook', 'SuperAdmin::facebook');
 });
 
 // Routes only for artists
