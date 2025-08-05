@@ -14775,6 +14775,7 @@ body.loading {
   margin-inline-end: 0.5rem;
 }
 
+/* admin-account-page css */
 
 .admin-account-page {
     background-color: #f9fafb;
@@ -14834,5 +14835,2744 @@ body.loading {
     color: var(--bs-primary);
 }
 .admin-account-page .sortable-header[data-sort-direction="desc"] .sort-icon .bi-arrow-down {
+    color: var(--bs-primary);
+}
+
+/* admin-releases-page css */
+
+.admin-releases-page {
+    background-color: #f8f9fa;
+    font-size: 15px;
+}
+
+.admin-releases-page .main-content {
+    padding: 2rem 1rem;
+}
+
+.admin-releases-page .card {
+    border-radius: 12px;
+    border: none !important;
+}
+
+.admin-releases-page .nav-pills .nav-link {
+    border-radius: 25px;
+    padding: 0.6rem 1.2rem;
+    font-weight: 500;
+    color: #6c757d;
+    transition: all 0.3s ease;
+}
+
+.admin-releases-page .nav-pills .nav-link.active {
+    background-color: #0d6efd;
+    color: white;
+    box-shadow: 0 2px 8px rgba(13, 110, 253, 0.3);
+}
+
+.admin-releases-page .nav-pills .nav-link:hover:not(.active) {
+    background-color: #e9ecef;
+    color: #495057;
+}
+
+.admin-releases-page .table th {
+    font-weight: 600;
+    font-size: 14px;
+    color: #495057;
+    border-bottom: 2px solid #e9ecef;
+    padding: 1rem 0.75rem;
+}
+
+.admin-releases-page .table td {
+    padding: 1rem 0.75rem;
+    font-size: 15px;
+    vertical-align: middle;
+}
+
+.admin-releases-page .table tbody tr:hover {
+    background-color: #f8f9fa;
+}
+
+.admin-releases-page .release-title {
+    font-weight: 600;
+    font-size: 16px;
+    color: #212529;
+    margin-bottom: 0.25rem;
+}
+
+.admin-releases-page .release-artist {
+    font-size: 14px;
+    color: #6c757d;
+}
+
+.admin-releases-page .status-badge {
+    font-weight: 500;
+    padding: 0.4rem 0.8rem;
+    border-radius: 20px;
+    font-size: 12px;
+}
+
+.admin-releases-page .status-delivered,
+.admin-releases-page .status-approved {
+    background-color: rgba(25, 135, 84, 0.1) !important;
+    color: #198754 !important;
+}
+
+.admin-releases-page .status-review {
+    background-color: rgba(255, 193, 7, 0.1) !important;
+    color: #f57c00 !important;
+}
+
+.admin-releases-page .status-rejected {
+    background-color: rgba(220, 53, 69, 0.1) !important;
+    color: #dc3545 !important;
+}
+
+.admin-releases-page .status-takedown-table {
+    background-color: rgba(108, 117, 125, 0.1) !important;
+    color: #6c757d !important;
+}
+
+.admin-releases-page .dropdown-toggle::after {
+    display: none;
+}
+
+.admin-releases-page .btn-link {
+    color: #6c757d;
+    text-decoration: none;
+}
+
+.admin-releases-page .btn-link:hover {
+    color: #495057;
+}
+
+.admin-releases-page .empty-state {
+    text-align: center;
+    padding: 3rem 1rem;
+    color: #6c757d;
+}
+
+.admin-releases-page .empty-state i {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    opacity: 0.5;
+}
+
+.admin-releases-page .search-container {
+    min-width: 280px;
+}
+
+@media (max-width: 768px) {
+    .admin-releases-page .search-container {
+        min-width: 100%;
+        margin-top: 1rem;
+    }
+
+    .admin-releases-page .nav-pills {
+        flex-wrap: wrap;
+    }
+
+    .admin-releases-page .nav-pills .nav-item {
+        margin-bottom: 0.5rem;
+    }
+}
+
+.admin-releases-page .avatar-lg {
+    width: 48px;
+    height: 48px;
+}
+
+.admin-releases-page .nav-pills .nav-link.active {
+    background-color: #727cf5;
+}
+
+.admin-releases-page .table-hover tbody tr:hover {
+    background-color: rgba(114, 124, 245, 0.05);
+}
+
+.admin-releases-page .card {
+    border-radius: 0.5rem;
+}
+
+.admin-releases-page .modal-header-custom {
+    background-color: #2c3e50;
+    position: relative;
+    padding: 2.5rem;
+    color: #fff;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    border-top-left-radius: 1rem;
+    border-top-right-radius: 1rem;
+}
+
+.admin-releases-page .bg-image-blurred {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-size: cover;
+    background-position: center;
+    filter: blur(8px);
+    opacity: 0.2;
+    transition: background-image 0.5s ease-in-out;
+    z-index: 0;
+}
+
+.admin-releases-page .modal-header-custom .d-flex {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    align-items: center;
+}
+
+.admin-releases-page #releaseAlbumArtwork {
+    width: 130px;
+    height: 130px;
+    object-fit: cover;
+    border-radius: 0.75rem;
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
+    border: 3px solid rgba(255, 255, 255, 0.4);
+}
+
+.admin-releases-page #releaseTitle {
+    font-size: 2.2rem;
+    font-weight: 700;
+    margin-bottom: 0.4rem;
+    text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.6);
+    line-height: 1.2;
+}
+
+.admin-releases-page #releaseArtistHeader {
+    font-size: 1.3rem;
+    color: rgba(255, 255, 255, 0.85);
+    margin-top: 0;
+    margin-bottom: 0.8rem;
+    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
+}
+
+.admin-releases-page #releaseStatusBadges .badge {
+    font-size: 0.85rem;
+    padding: 0.4em 0.8em;
+    border-radius: 1.2rem;
+    margin-right: 0.6rem;
+    font-weight: 600;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.admin-releases-page #releaseStatusBadges .bg-success {
+    background-color: #28a745 !important;
+}
+
+.admin-releases-page #releaseStatusBadges .bg-warning {
+    background-color: #ffc107 !important;
+    color: #343a40 !important;
+}
+
+.admin-releases-page #releaseStatusBadges .bg-danger {
+    background-color: #dc3545 !important;
+}
+
+.admin-releases-page #releaseStatusBadges .bg-secondary {
+    background-color: #6c757d !important;
+}
+
+.admin-releases-page .badge-takedown-glow {
+    animation: pulse-red 1.5s infinite;
+    background-color: #dc3545 !important;
+    color: white !important;
+}
+
+@keyframes pulse-red {
+    0% {
+        box-shadow: 0 0 0 0 rgba(220, 53, 69, 0.7);
+    }
+
+    70% {
+        box-shadow: 0 0 0 10px rgba(220, 53, 69, 0);
+    }
+
+    100% {
+        box-shadow: 0 0 0 0 rgba(220, 53, 69, 0);
+    }
+}
+
+.admin-releases-page .btn-close-white {
+    filter: invert(1) grayscale(100%) brightness(200%);
+    opacity: 0.8;
+    transition: opacity 0.2s ease;
+}
+
+.admin-releases-page .btn-close-white:hover {
+    opacity: 1;
+}
+
+.admin-releases-page .btn-takedown-header {
+    background-color: red;
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    font-weight: 500;
+    transition: background-color 0.2s ease, border-color 0.2s ease;
+    margin-right: 1rem;
+}
+
+.admin-releases-page .btn-takedown-header:hover {
+    background-color: rgba(255, 255, 255, 0.3);
+    border-color: rgba(255, 255, 255, 0.6);
+    color: white;
+}
+
+.admin-releases-page .modal-body-centered {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 2.5rem;
+    background-color: #eef2f7;
+}
+
+.admin-releases-page .modal-content-wrapper {
+    max-width: 900px;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.admin-releases-page .modal-content-card {
+    background-color: #ffffff;
+    border-radius: 1rem;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+    padding: 2.5rem;
+}
+
+.admin-releases-page .modal-content-card .card-title {
+    font-size: 1.75rem;
+    font-weight: 600;
+    color: #2c3e50;
+    border-bottom: 2px solid #e0e6ed;
+    padding-bottom: 1rem;
+    margin-bottom: 2rem;
+}
+
+.admin-releases-page .modal-content-card .form-label {
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: #7f8c8d;
+    margin-bottom: 0.4rem;
+}
+
+.admin-releases-page .modal-content-card .form-control-plaintext {
+    font-size: 1.1rem;
+    color: #34495e;
+    padding-left: 0;
+}
+
+.admin-releases-page .modal-content-card .form-control-plaintext.fw-bold {
+    font-weight: 700 !important;
+}
+
+.admin-releases-page .modal-content-card .badge-container .badge {
+    font-size: 0.9rem;
+    padding: 0.6em 1em;
+    border-radius: 0.5rem;
+    margin-right: 0.5rem;
+    margin-bottom: 0.5rem;
+    display: inline-flex;
+    align-items: center;
+}
+
+.admin-releases-page .modal-content-card .badge-primary {
+    background-color: #3498db;
+    color: white;
+}
+
+.admin-releases-page .modal-content-card .badge-info {
+    background-color: #9b59b6;
+    color: white;
+}
+
+.admin-releases-page .modal-content-card .table thead th {
+    background-color: #f5f7fa;
+    color: #555;
+    font-weight: 600;
+    border-bottom: 1px solid #e0e6ed;
+}
+
+.admin-releases-page .modal-content-card .table tbody tr:nth-child(even) {
+    background-color: #fcfcfc;
+}
+
+.admin-releases-page .modal-content-card .table td {
+    padding: 1rem 1.2rem;
+    font-size: 1rem;
+    color: #34495e;
+}
+
+.admin-releases-page .modal-content-card .track-tag-explicit,
+.admin-releases-page .modal-content-card .track-tag-clean {
+    padding: 0.3em 0.7em;
+    font-size: 0.8rem;
+    border-radius: 0.4rem;
+}
+
+.admin-releases-page .modal-content-card .track-tag-explicit {
+    background-color: #e74c3c;
+}
+
+.admin-releases-page .modal-content-card .track-tag-clean {
+    background-color: #27ae60;
+}
+
+/* admin-artists-page css */
+
+.admin-artists-page {
+    background-color: #f8f9fa;
+    font-size: 15px;
+}
+
+.admin-artists-page .main-content {
+    padding: 2rem 1rem;
+}
+
+.admin-artists-page .page-header {
+    margin-bottom: 2rem;
+}
+
+.admin-artists-page .page-title {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #212529;
+    margin: 0;
+}
+
+.admin-artists-page .page-subtitle {
+    color: #6c757d;
+    font-size: 15px;
+    margin-bottom: 0;
+    margin-top: 0.25rem;
+}
+
+.admin-artists-page .card {
+    border-radius: 12px;
+    border: none !important;
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075) !important;
+}
+
+.admin-artists-page .header-controls {
+    background: white;
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+}
+
+.admin-artists-page .search-input {
+    border: 1px solid #e9ecef;
+    border-radius: 8px;
+    padding: 0.75rem 1rem;
+    background-color: #f8f9fa;
+    transition: all 0.3s ease;
+    font-size: 15px;
+}
+
+.admin-artists-page .search-input:focus {
+    border-color: #0d6efd;
+    background-color: white;
+    box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.1);
+}
+
+.admin-artists-page .btn-create {
+    background-color: #0d6efd;
+    border-color: #0d6efd;
+    color: white;
+    border-radius: 8px;
+    padding: 0.75rem 1.25rem;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.admin-artists-page .btn-create:hover {
+    background-color: #0b5ed7;
+    border-color: #0a58ca;
+    color: white;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(13, 110, 253, 0.3);
+}
+
+.admin-artists-page .btn-delete {
+    border: 1px solid #dc3545;
+    color: #dc3545;
+    background: white;
+    border-radius: 8px;
+    padding: 0.75rem 1.25rem;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.admin-artists-page .btn-delete:hover {
+    background-color: #dc3545;
+    border-color: #dc3545;
+    color: white;
+}
+
+.admin-artists-page .btn-delete:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.admin-artists-page .artist-table {
+    background: white;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+}
+
+.admin-artists-page .table {
+    margin-bottom: 0;
+}
+
+.admin-artists-page .table th {
+    background-color: #f8f9fa;
+    border-bottom: 2px solid #e9ecef;
+    font-weight: 600;
+    font-size: 14px;
+    color: #495057;
+    padding: 1.25rem 1rem;
+    border-top: none;
+}
+
+.admin-artists-page .table td {
+    padding: 1.25rem 1rem;
+    vertical-align: middle;
+    border-bottom: 1px solid #f1f3f4;
+}
+
+.admin-artists-page .table tbody tr:hover {
+    background-color: #f8f9fa;
+    transition: background-color 0.2s ease;
+}
+
+.admin-artists-page .artist-profile {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.admin-artists-page .artist-image {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #f1f3f4;
+}
+
+.admin-artists-page .artist-name {
+    font-weight: 600;
+    font-size: 16px;
+    color: #212529;
+    margin: 0;
+}
+
+.admin-artists-page .releases-count {
+    font-size: 15px;
+    color: #6c757d;
+}
+
+.admin-artists-page .releases-badge {
+    background-color: #e3f2fd;
+    color: #1976d2;
+    padding: 0.35rem 0.75rem;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 500;
+}
+
+.admin-artists-page .empty-state {
+    text-align: center;
+    padding: 4rem 2rem;
+    color: #6c757d;
+}
+
+.admin-artists-page .empty-state i {
+    font-size: 4rem;
+    margin-bottom: 1.5rem;
+    opacity: 0.3;
+}
+
+.admin-artists-page .empty-state h4 {
+    color: #495057;
+    margin-bottom: 0.5rem;
+}
+
+.admin-artists-page .pagination-wrapper {
+    background: white;
+    border-radius: 0 0 12px 12px;
+    padding: 1rem;
+    border-top: 1px solid #f1f3f4;
+}
+
+.admin-artists-page .form-check-input:checked {
+    background-color: #0d6efd;
+    border-color: #0d6efd;
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 768px) {
+    .admin-artists-page .main-content {
+        padding: 1rem;
+    }
+
+    .admin-artists-page .page-title {
+        font-size: 1.5rem;
+    }
+
+    .admin-artists-page .header-controls {
+        padding: 1rem;
+    }
+
+    .admin-artists-page .controls-row {
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .admin-artists-page .search-container {
+        order: -1;
+    }
+
+    .admin-artists-page .button-group {
+        display: flex;
+        gap: 0.5rem;
+    }
+
+    .admin-artists-page .btn-create,
+    .admin-artists-page .btn-delete {
+        flex: 1;
+        padding: 0.6rem 1rem;
+        font-size: 14px;
+    }
+
+    .admin-artists-page .artist-table {
+        font-size: 14px;
+    }
+
+    .admin-artists-page .table th,
+    .admin-artists-page .table td {
+        padding: 1rem 0.75rem;
+    }
+
+    .admin-artists-page .artist-name {
+        font-size: 15px;
+    }
+
+    .admin-artists-page .artist-image {
+        width: 50px;
+        height: 50px;
+    }
+}
+
+@media (max-width: 576px) {
+    .admin-artists-page .table-responsive {
+        font-size: 13px;
+    }
+
+    .admin-artists-page .artist-profile {
+        gap: 0.5rem;
+    }
+
+    .admin-artists-page .artist-image {
+        width: 45px;
+        height: 45px;
+    }
+}
+
+/* Modal Styles */
+.admin-artists-page .modal-content {
+    border-radius: 12px;
+    border: none;
+}
+
+.admin-artists-page .modal-header {
+    border-bottom: 1px solid #f1f3f4;
+    padding: 1.5rem 1.5rem 1rem;
+}
+
+.admin-artists-page .modal-body {
+    padding: 1.5rem;
+}
+
+.admin-artists-page .form-label {
+    font-weight: 500;
+    color: #495057;
+    margin-bottom: 0.5rem;
+}
+
+.admin-artists-page .form-control {
+    border: 1px solid #e9ecef;
+    border-radius: 8px;
+    padding: 0.75rem;
+    transition: all 0.3s ease;
+}
+
+.admin-artists-page .form-control:focus {
+    border-color: #0d6efd;
+    box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.1);
+}
+
+.admin-artists-page .image-upload-area {
+    border: 2px dashed #e9ecef;
+    border-radius: 8px;
+    padding: 2rem;
+    text-align: center;
+    background-color: #f8f9fa;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.admin-artists-page .image-upload-area:hover {
+    border-color: #0d6efd;
+    background-color: #f0f8ff;
+}
+
+.admin-artists-page .image-preview {
+    max-width: 100px;
+    max-height: 100px;
+    border-radius: 50%;
+    margin-top: 1rem;
+}
+
+/* admin-labels-page css */
+
+.admin-labels-page body {
+    background-color: #f8f9fa;
+    font-size: 15px;
+}
+
+.admin-labels-page .main-content {
+    padding: 2rem 1rem;
+}
+
+.admin-labels-page .page-header {
+    margin-bottom: 2rem;
+}
+
+.admin-labels-page .page-title {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #212529;
+    margin: 0;
+}
+
+.admin-labels-page .page-subtitle {
+    color: #6c757d;
+    font-size: 15px;
+    margin-bottom: 0;
+    margin-top: 0.25rem;
+}
+
+.admin-labels-page .card {
+    border-radius: 12px;
+    border: none !important;
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075) !important;
+}
+
+.admin-labels-page .header-controls {
+    background: white;
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+}
+
+.admin-labels-page .search-input {
+    border: 1px solid #e9ecef;
+    border-radius: 8px;
+    padding: 0.75rem 1rem;
+    background-color: #f8f9fa;
+    transition: all 0.3s ease;
+    font-size: 15px;
+}
+
+.admin-labels-page .search-input:focus {
+    border-color: #0d6efd;
+    background-color: white;
+    box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.1);
+}
+
+.admin-labels-page .btn-create {
+    background-color: #0d6efd;
+    border-color: #0d6efd;
+    color: white;
+    border-radius: 8px;
+    padding: 0.75rem 1.25rem;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.admin-labels-page .btn-create:hover {
+    background-color: #0b5ed7;
+    border-color: #0a58ca;
+    color: white;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(13, 110, 253, 0.3);
+}
+
+.admin-labels-page .btn-delete {
+    border: 1px solid #dc3545;
+    color: #dc3545;
+    background: white;
+    border-radius: 8px;
+    padding: 0.75rem 1.25rem;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.admin-labels-page .btn-delete:hover {
+    background-color: #dc3545;
+    border-color: #dc3545;
+    color: white;
+}
+
+.admin-labels-page .btn-delete:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.admin-labels-page .label-table {
+    background: white;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+}
+
+.admin-labels-page .table {
+    margin-bottom: 0;
+}
+
+.admin-labels-page .table th {
+    background-color: #f8f9fa;
+    border-bottom: 2px solid #e9ecef;
+    font-weight: 600;
+    font-size: 14px;
+    color: #495057;
+    padding: 1.25rem 1rem;
+    border-top: none;
+}
+
+.admin-labels-page .table td {
+    padding: 1.25rem 1rem;
+    vertical-align: middle;
+    border-bottom: 1px solid #f1f3f4;
+}
+
+.admin-labels-page .table tbody tr:hover {
+    background-color: #f8f9fa;
+    transition: background-color 0.2s ease;
+}
+
+.admin-labels-page .label-profile {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.admin-labels-page .label-image {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #f1f3f4;
+}
+
+.admin-labels-page .label-name {
+    font-weight: 600;
+    font-size: 16px;
+    color: #212529;
+    margin: 0;
+}
+
+.admin-labels-page .releases-count {
+    font-size: 15px;
+    color: #6c757d;
+}
+
+.admin-labels-page .releases-badge {
+    background-color: #e3f2fd;
+    color: #1976d2;
+    padding: 0.35rem 0.75rem;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 500;
+}
+
+.admin-labels-page .empty-state {
+    text-align: center;
+    padding: 4rem 2rem;
+    color: #6c757d;
+}
+
+.admin-labels-page .empty-state i {
+    font-size: 4rem;
+    margin-bottom: 1.5rem;
+    opacity: 0.3;
+}
+
+.admin-labels-page .empty-state h4 {
+    color: #495057;
+    margin-bottom: 0.5rem;
+}
+
+.admin-labels-page .pagination-wrapper {
+    background: white;
+    border-radius: 0 0 12px 12px;
+    padding: 1rem;
+    border-top: 1px solid #f1f3f4;
+}
+
+.admin-labels-page .form-check-input:checked {
+    background-color: #0d6efd;
+    border-color: #0d6efd;
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 768px) {
+    .admin-labels-page .main-content {
+        padding: 1rem;
+    }
+    
+    .admin-labels-page .page-title {
+        font-size: 1.5rem;
+    }
+    
+    .admin-labels-page .header-controls {
+        padding: 1rem;
+    }
+    
+    .admin-labels-page .controls-row {
+        flex-direction: column;
+        gap: 1rem;
+    }
+    
+    .admin-labels-page .search-container {
+        order: -1;
+    }
+    
+    .admin-labels-page .button-group {
+        display: flex;
+        gap: 0.5rem;
+    }
+    
+    .admin-labels-page .btn-create, .admin-labels-page .btn-delete {
+        flex: 1;
+        padding: 0.6rem 1rem;
+        font-size: 14px;
+    }
+    
+    .admin-labels-page .label-table {
+        font-size: 14px;
+    }
+    
+    .admin-labels-page .table th, .admin-labels-page .table td {
+        padding: 1rem 0.75rem;
+    }
+    
+    .admin-labels-page .label-name {
+        font-size: 15px;
+    }
+    
+    .admin-labels-page .label-image {
+        width: 50px;
+        height: 50px;
+    }
+}
+
+@media (max-width: 576px) {
+    .admin-labels-page .table-responsive {
+        font-size: 13px;
+    }
+    
+    .admin-labels-page .label-profile {
+        gap: 0.5rem;
+    }
+    
+    .admin-labels-page .label-image {
+        width: 45px;
+        height: 45px;
+    }
+}
+
+/* Modal Styles */
+.admin-labels-page .modal-content {
+    border-radius: 12px;
+    border: none;
+}
+
+.admin-labels-page .modal-header {
+    border-bottom: 1px solid #f1f3f4;
+    padding: 1.5rem 1.5rem 1rem;
+}
+
+.admin-labels-page .modal-body {
+    padding: 1.5rem;
+}
+
+.admin-labels-page .form-label {
+    font-weight: 500;
+    color: #495057;
+    margin-bottom: 0.5rem;
+}
+
+.admin-labels-page .form-control {
+    border: 1px solid #e9ecef;
+    border-radius: 8px;
+    padding: 0.75rem;
+    transition: all 0.3s ease;
+}
+
+.admin-labels-page .form-control:focus {
+    border-color: #0d6efd;
+    box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.1);
+}
+
+.admin-labels-page .image-upload-area {
+    border: 2px dashed #e9ecef;
+    border-radius: 8px;
+    padding: 2rem;
+    text-align: center;
+    background-color: #f8f9fa;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.admin-labels-page .image-upload-area:hover {
+    border-color: #0d6efd;
+    background-color: #f0f8ff;
+}
+
+.admin-labels-page .image-preview {
+    max-width: 100px;
+    max-height: 100px;
+    border-radius: 50%;
+    margin-top: 1rem;
+}
+
+admin-claim-req-page
+.admin-claim-req-page {
+    overflow-x: hidden;
+}
+
+.admin-claim-req-page .content-page {
+    margin-left: 0;
+    transition: margin-left 0.3s ease;
+    padding-top: 70px;
+}
+
+@media (min-width: 992px) {
+    .admin-claim-req-page .content-page {
+        margin-left: 250px;
+    }
+}
+
+.admin-claim-req-page .badge.bg-danger {
+    font-size: 0.7em;
+    vertical-align: middle;
+    padding: 0.3em 0.5em;
+    border-radius: 0.25rem;
+}
+
+.admin-claim-req-page .fixed-top-custom {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 1030;
+    background-color: #f8f9fa;
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+    transition: left 0.3s ease, width 0.3s ease;
+}
+
+.admin-claim-req-page .table th {
+    font-weight: 600;
+    font-size: 14px;
+    color: #495057;
+    border-bottom: 2px solid #e9ecef;
+    padding: 1rem 0.75rem;
+}
+
+.admin-claim-req-page .table td {
+    padding: 1rem 0.75rem;
+    font-size: 15px;
+    vertical-align: middle;
+}
+
+.admin-claim-req-page .table tbody tr:hover {
+    background-color: #f8f9fa;
+}
+
+@media (min-width: 992px) {
+    .admin-claim-req-page .fixed-top-custom {
+        left: 250px;
+        width: calc(100% - 250px);
+    }
+}
+
+.admin-claim-req-page .empty-state {
+    text-align: center;
+    padding: 4rem;
+    color: #6c757d;
+}
+
+.admin-claim-req-page .empty-state i {
+    width: 48px;
+    height: 48px;
+    margin-bottom: 1rem;
+    display: inline-block;
+}
+
+.admin-claim-req-page .release-title a {
+    font-weight: 500;
+    color: var(--bs-primary);
+    text-decoration: none;
+}
+
+.admin-claim-req-page .release-title a:hover {
+    text-decoration: underline;
+}
+
+.admin-claim-req-page .release-artist {
+    font-size: 0.85rem;
+    color: #6c757d;
+}
+
+.admin-claim-req-page .social-link {
+    font-size: 1.2rem;
+    color: #6c757d;
+    text-decoration: none;
+}
+
+.admin-claim-req-page .social-link:hover {
+    color: var(--bs-primary);
+}
+
+/* admin-reloc-req-page */
+
+.admin-reloc-req-page body {
+    overflow-x: hidden;
+}
+
+.admin-reloc-req-page .content-page {
+    margin-left: 0;
+    transition: margin-left 0.3s ease;
+    padding-top: 70px;
+}
+
+@media (min-width: 992px) {
+    .admin-reloc-req-page .content-page {
+        margin-left: 250px;
+    }
+}
+
+.admin-reloc-req-page .badge.bg-danger {
+    font-size: 0.7em;
+    vertical-align: middle;
+    padding: 0.3em 0.5em;
+    border-radius: 0.25rem;
+}
+
+.admin-reloc-req-page .fixed-top-custom {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 1030;
+    background-color: #f8f9fa;
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+    transition: left 0.3s ease, width 0.3s ease;
+}
+
+.admin-reloc-req-page .table th {
+    font-weight: 600;
+    font-size: 14px;
+    color: #495057;
+    border-bottom: 2px solid #e9ecef;
+    padding: 1rem 0.75rem;
+}
+
+.admin-reloc-req-page .table td {
+    padding: 1rem 0.75rem;
+    font-size: 15px;
+    vertical-align: middle;
+}
+
+.admin-reloc-req-page .table tbody tr:hover {
+    background-color: #f8f9fa;
+}
+
+@media (min-width: 992px) {
+    .admin-reloc-req-page .fixed-top-custom {
+        left: 250px;
+        width: calc(100% - 250px);
+    }
+}
+
+.admin-reloc-req-page .empty-state {
+    text-align: center;
+    padding: 4rem;
+    color: #6c757d;
+}
+
+.admin-reloc-req-page .empty-state i {
+    width: 48px;
+    height: 48px;
+    margin-bottom: 1rem;
+    display: inline-block;
+}
+
+.admin-reloc-req-page .release-title a {
+    font-weight: 500;
+    color: var(--bs-primary);
+    text-decoration: none;
+}
+
+.admin-reloc-req-page .release-title a:hover {
+    text-decoration: underline;
+}
+
+.admin-reloc-req-page .release-artist {
+    font-size: 0.85rem;
+    color: #6c757d;
+}
+
+.admin-reloc-req-page .social-link {
+    font-size: 1.2rem;
+    color: #6c757d;
+    text-decoration: none;
+}
+
+.admin-reloc-req-page .social-link:hover {
+    color: var(--bs-primary);
+}
+
+/* admin-claim-merge-req-page css */
+
+.admin-claim-merge-req-page body {
+    overflow-x: hidden;
+}
+
+.admin-claim-merge-req-page .content-page {
+    margin-left: 0;
+    transition: margin-left 0.3s ease;
+    padding-top: 70px;
+}
+
+@media (min-width: 992px) {
+    .admin-claim-merge-req-page .content-page {
+        margin-left: 250px;
+    }
+}
+
+.admin-claim-merge-req-page .table th {
+    font-weight: 600;
+    font-size: 12px;
+    color: #495057;
+    text-transform: uppercase;
+    border-bottom: 2px solid #e9ecef;
+    padding: 1rem 0.75rem;
+    vertical-align: middle;
+}
+
+.admin-claim-merge-req-page .table td {
+    padding: 1rem 0.75rem;
+    font-size: 15px;
+    vertical-align: middle;
+}
+
+.admin-claim-merge-req-page .table tbody tr:hover {
+    background-color: #f8f9fa;
+}
+
+.admin-claim-merge-req-page .empty-state {
+    text-align: center;
+    padding: 4rem;
+    color: #6c757d;
+}
+
+.admin-claim-merge-req-page .empty-state i {
+    width: 48px;
+    height: 48px;
+    margin-bottom: 1rem;
+    display: inline-block;
+}
+
+.admin-claim-merge-req-page .release-title a {
+    font-weight: 500;
+    color: var(--bs-primary);
+    text-decoration: none;
+}
+
+.admin-claim-merge-req-page .release-title a:hover {
+    text-decoration: underline;
+}
+
+.admin-claim-merge-req-page .link-icon {
+    font-size: 1.3rem;
+    color: #6c757d;
+    text-decoration: none;
+}
+
+.admin-claim-merge-req-page .link-icon:hover {
+    color: var(--bs-primary);
+}
+
+/* admin-youtube-page css */
+
+.admin-youtube-page body {
+    background-color: #f9fafb;
+    overflow-x: hidden;
+}
+.admin-youtube-page .content-page {
+    margin-left: 0;
+    transition: margin-left 0.3s ease;
+    padding-top: 70px;
+}
+@media (min-width: 992px) {
+    .admin-youtube-page .content-page {
+        margin-left: 250px;
+    }
+}
+.admin-youtube-page .page-title-box {
+    border-bottom: 1px solid #e9ecef;
+    padding-bottom: 1rem;
+}
+.admin-youtube-page .nav-tabs {
+    border-bottom: none;
+}
+.admin-youtube-page .nav-tabs .nav-link {
+    border: none;
+    color: #6c757d;
+}
+.admin-youtube-page .nav-tabs .nav-link.active {
+    color: var(--bs-primary);
+    background-color: transparent;
+    border-bottom: 2px solid var(--bs-primary);
+}
+.admin-youtube-page .table th {
+    font-weight: 600;
+    font-size: 12px;
+    color: #6c757d;
+    text-transform: uppercase;
+    border: none;
+    padding: 1rem 1.25rem;
+    white-space: nowrap;
+    vertical-align: middle;
+}
+.admin-youtube-page .table td {
+    padding: 1rem 1.25rem;
+    vertical-align: middle;
+    border-top: 1px solid #e9ecef;
+}
+.admin-youtube-page .table tbody tr:hover {
+    background-color: #f0f8ff;
+    cursor: pointer;
+}
+.admin-youtube-page .table .asset-title {
+    font-weight: 500;
+}
+.admin-youtube-page .table .asset-subtitle {
+    font-size: 0.8rem;
+    color: #6c757d;
+}
+
+/* --- CSS FOR SORTABLE HEADERS --- */
+.admin-youtube-page .sortable-header {
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+.admin-youtube-page .sortable-header:hover {
+    background-color: #f8f9fa;
+}
+.admin-youtube-page .sort-icon {
+    margin-left: 5px;
+    color: #adb5bd;
+    transition: color 0.2s ease;
+}
+.admin-youtube-page .sort-icon.active {
+    color: var(--bs-primary);
+}
+.admin-youtube-page .sort-icon .bi-arrow-up,
+.admin-youtube-page .sort-icon .bi-arrow-down {
+    display: inline-block;
+}
+.admin-youtube-page .sort-icon.active .bi-arrow-up,
+.admin-youtube-page .sort-icon.active .bi-arrow-down {
+    color: var(--bs-primary);
+}
+.admin-youtube-page .sort-icon:not(.active) .bi-arrow-up,
+.admin-youtube-page .sort-icon:not(.active) .bi-arrow-down {
+    color: #adb5bd;
+}
+
+/* Styles for the Offcanvas Modal */
+.admin-youtube-page #conflictResolutionOffcanvas {
+    max-width: 600px;
+    width: 90%;
+}
+.admin-youtube-page .notice-box {
+    background-color: #f6f3ff;
+    border-left: 4px solid #8064ff;
+    padding: 1rem;
+    display: flex;
+    align-items: center;
+}
+.admin-youtube-page .notice-box i {
+    color: #8064ff;
+}
+.admin-youtube-page .radio-card-group .radio-card {
+    border: 1px solid #dee2e6;
+    border-radius: 6px;
+    padding: 0.75rem 1rem;
+    cursor: pointer;
+    transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+.admin-youtube-page .radio-card-group .radio-card:hover {
+    background-color: #f8f9fa;
+}
+.admin-youtube-page .radio-card-group .radio-card input[type="radio"] {
+    display: none;
+}
+.admin-youtube-page .radio-card-group .radio-card.selected {
+    border-color: var(--bs-primary);
+    background-color: #eef2ff;
+}
+.admin-youtube-page .album-section-card {
+    background-color: #f8f9fa;
+}
+.admin-youtube-page .album-section-card .album-cover {
+    width: 70px;
+    height: 70px;
+    object-fit: cover;
+    border-radius: 4px;
+}
+.admin-youtube-page .offcanvas-footer {
+    padding: 1rem 1.5rem;
+    border-top: 1px solid #e9ecef;
+    background-color: #fff;
+}
+.admin-youtube-page .form-step {
+    animation: fadeIn 0.3s ease;
+}
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+/* Updated Territory Accordion Styles */
+.admin-youtube-page .accordion-item {
+    border-radius: 6px !important;
+    border: 1px solid #e9ecef;
+    overflow: hidden;
+}
+.admin-youtube-page .accordion-item:not(:last-child) {
+    margin-bottom: 0.5rem;
+}
+.admin-youtube-page .accordion-header {
+    font-size: 1rem;
+}
+.admin-youtube-page .accordion-button {
+    padding: 0.75rem 1rem;
+}
+.admin-youtube-page .accordion-button:not(.collapsed) {
+    color: var(--bs-body-color);
+    background-color: #f8f9fa;
+    box-shadow: none;
+}
+.admin-youtube-page .accordion-button:focus {
+    box-shadow: none;
+}
+.admin-youtube-page .accordion-button::after {
+    display: none;
+}
+.admin-youtube-page .accordion-button .form-check {
+    margin-bottom: 0;
+}
+.admin-youtube-page .accordion-button .form-check-label {
+    cursor: pointer;
+}
+.admin-youtube-page .accordion-body {
+    padding: 0;
+}
+.admin-youtube-page .territory-list-inner {
+    max-height: 220px;
+    overflow-y: auto;
+    padding: 0.5rem 1rem 1rem 1rem;
+    border-top: 1px solid #e9ecef;
+}
+.admin-youtube-page .territory-list-inner .form-check {
+    padding-left: 2.25rem;
+}
+
+.admin-youtube-page .file-upload-container {
+    border: 2px dashed #dee2e6;
+    padding: 25px;
+    cursor: pointer;
+}
+.admin-youtube-page .file-upload-container:hover {
+    border-color: var(--bs-primary);
+}
+.admin-youtube-page .file-input-hidden {
+    display: none;
+}
+.admin-youtube-page .selected-file-name {
+    color: #28a745;
+    font-weight: 500;
+}
+
+/* admin-facebook-page css */
+
+.admin-facebook-page body {
+    background-color: #f9fafb;
+    overflow-x: hidden;
+}
+.admin-facebook-page .content-page {
+    margin-left: 0;
+    transition: margin-left 0.3s ease;
+    padding-top: 70px;
+}
+@media (min-width: 992px) {
+    .admin-facebook-page .content-page {
+        margin-left: 250px;
+    }
+}
+.admin-facebook-page .page-title-box {
+    border-bottom: 1px solid #e9ecef;
+    padding-bottom: 1rem;
+}
+.admin-facebook-page .nav-tabs {
+    border-bottom: none;
+}
+.admin-facebook-page .nav-tabs .nav-link {
+    border: none;
+    color: #6c757d;
+}
+.admin-facebook-page .nav-tabs .nav-link.active {
+    color: var(--bs-primary);
+    background-color: transparent;
+    border-bottom: 2px solid var(--bs-primary);
+}
+.admin-facebook-page .table th {
+    font-weight: 600;
+    font-size: 12px;
+    color: #6c757d;
+    text-transform: uppercase;
+    border: none;
+    padding: 1rem 1.25rem;
+    white-space: nowrap;
+    vertical-align: middle;
+}
+.admin-facebook-page .table td {
+    padding: 1rem 1.25rem;
+    vertical-align: middle;
+    border-top: 1px solid #e9ecef;
+}
+.admin-facebook-page .table tbody tr:hover {
+    background-color: #f0f8ff;
+    cursor: pointer;
+}
+.admin-facebook-page .table .asset-title {
+    font-weight: 500;
+}
+.admin-facebook-page .table .asset-subtitle {
+    font-size: 0.8rem;
+    color: #6c757d;
+}
+
+/* --- CSS FOR SORTABLE HEADERS --- */
+.admin-facebook-page .sortable-header {
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+.admin-facebook-page .sortable-header:hover {
+    background-color: #f8f9fa;
+}
+.admin-facebook-page .sort-icon {
+    margin-left: 5px;
+    color: #adb5bd;
+    transition: color 0.2s ease;
+}
+.admin-facebook-page .sort-icon.active {
+    color: var(--bs-primary);
+}
+.admin-facebook-page .sort-icon .bi-arrow-up,
+.admin-facebook-page .sort-icon .bi-arrow-down {
+    display: inline-block;
+}
+.admin-facebook-page .sort-icon.active .bi-arrow-up,
+.admin-facebook-page .sort-icon.active .bi-arrow-down {
+    color: var(--bs-primary);
+}
+.admin-facebook-page .sort-icon:not(.active) .bi-arrow-up,
+.admin-facebook-page .sort-icon:not(.active) .bi-arrow-down {
+    color: #adb5bd;
+}
+
+/* Styles for the Offcanvas Modal */
+.admin-facebook-page #conflictResolutionOffcanvas {
+    max-width: 600px;
+    width: 90%;
+}
+.admin-facebook-page .notice-box {
+    background-color: #f6f3ff;
+    border-left: 4px solid #8064ff;
+    padding: 1rem;
+    display: flex;
+    align-items: center;
+}
+.admin-facebook-page .notice-box i {
+    color: #8064ff;
+}
+.admin-facebook-page .radio-card-group .radio-card {
+    border: 1px solid #dee2e6;
+    border-radius: 6px;
+    padding: 0.75rem 1rem;
+    cursor: pointer;
+    transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+.admin-facebook-page .radio-card-group .radio-card:hover {
+    background-color: #f8f9fa;
+}
+.admin-facebook-page .radio-card-group .radio-card input[type="radio"] {
+    display: none;
+}
+.admin-facebook-page .radio-card-group .radio-card.selected {
+    border-color: var(--bs-primary);
+    background-color: #eef2ff;
+}
+.admin-facebook-page .album-section-card {
+    background-color: #f8f9fa;
+}
+.admin-facebook-page .album-section-card .album-cover {
+    width: 70px;
+    height: 70px;
+    object-fit: cover;
+    border-radius: 4px;
+}
+.admin-facebook-page .offcanvas-footer {
+    padding: 1rem 1.5rem;
+    border-top: 1px solid #e9ecef;
+    background-color: #fff;
+}
+.admin-facebook-page .form-step {
+    animation: fadeIn 0.3s ease;
+}
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+/* Updated Territory Accordion Styles */
+.admin-facebook-page .accordion-item {
+    border-radius: 6px !important;
+    border: 1px solid #e9ecef;
+    overflow: hidden;
+}
+.admin-facebook-page .accordion-item:not(:last-child) {
+    margin-bottom: 0.5rem;
+}
+.admin-facebook-page .accordion-header {
+    font-size: 1rem;
+}
+.admin-facebook-page .accordion-button {
+    padding: 0.75rem 1rem;
+}
+.admin-facebook-page .accordion-button:not(.collapsed) {
+    color: var(--bs-body-color);
+    background-color: #f8f9fa;
+    box-shadow: none;
+}
+.admin-facebook-page .accordion-button:focus {
+    box-shadow: none;
+}
+.admin-facebook-page .accordion-button::after {
+    display: none;
+}
+.admin-facebook-page .accordion-button .form-check {
+    margin-bottom: 0;
+}
+.admin-facebook-page .accordion-button .form-check-label {
+    cursor: pointer;
+}
+.admin-facebook-page .accordion-body {
+    padding: 0;
+}
+.admin-facebook-page .territory-list-inner {
+    max-height: 220px;
+    overflow-y: auto;
+    padding: 0.5rem 1rem 1rem 1rem;
+    border-top: 1px solid #e9ecef;
+}
+.admin-facebook-page .territory-list-inner .form-check {
+    padding-left: 2.25rem;
+}
+
+.admin-facebook-page .file-upload-container {
+    border: 2px dashed #dee2e6;
+    padding: 25px;
+    cursor: pointer;
+}
+.admin-facebook-page .file-upload-container:hover {
+    border-color: var(--bs-primary);
+}
+.admin-facebook-page .file-input-hidden {
+    display: none;
+}
+.admin-facebook-page .selected-file-name {
+    color: #28a745;
+    font-weight: 500;
+}
+
+/* admin-account-page css */
+
+.admin-account-page body {
+    background-color: #f9fafb;
+    overflow-x: hidden;
+}
+.admin-account-page .content-page {
+    margin-left: 0;
+    transition: margin-left 0.3s ease;
+    padding-top: 70px;
+}
+@media (min-width: 992px) {
+    .admin-account-page .content-page {
+        margin-left: 250px;
+    }
+}
+.admin-account-page .page-title-box {
+    border-bottom: 1px solid #e9ecef;
+    padding-bottom: 1rem;
+}
+.admin-account-page .table th {
+    font-weight: 600;
+    font-size: 12px;
+    color: #6c757d;
+    text-transform: uppercase;
+    border: none;
+    padding: 1rem 1.25rem;
+    white-space: nowrap;
+    vertical-align: middle;
+}
+.admin-account-page .table td {
+    padding: 1rem 1.25rem;
+    vertical-align: middle;
+    border-top: 1px solid #e9ecef;
+}
+.admin-account-page .table tbody tr:hover {
+    background-color: #f0f8ff;
+}
+.admin-account-page .sortable-header {
+    transition: background-color 0.2s ease;
+    cursor: default; 
+}
+.admin-account-page .sortable-header:hover {
+    background-color: #f8f9fa;
+}
+.admin-account-page .sort-icon {
+    margin-left: 5px;
+}
+.admin-account-page .sort-icon i {
+    cursor: pointer;
+    color: #adb5bd;
+    transition: color 0.2s ease;
+}
+.admin-account-page .sort-icon i:hover {
+    color: #6c757d;
+}
+.admin-account-page .sortable-header[data-sort-direction="asc"] .sort-icon .bi-arrow-up {
+    color: var(--bs-primary);
+}
+.admin-account-page .sortable-header[data-sort-direction="desc"] .sort-icon .bi-arrow-down {
+    color: var(--bs-primary);
+}
+
+/* admin-support-page css */
+
+.admin-support-page body {
+    background-color: #f8f9fa;
+    font-size: 15px;
+}
+.admin-support-page .main-content {
+    padding: 2rem 1rem;
+}
+.admin-support-page .card {
+    border-radius: 12px;
+    border: none !important;
+}
+.admin-support-page .nav-pills .nav-link {
+    border-radius: 25px;
+    padding: 0.6rem 1.2rem;
+    font-weight: 500;
+    color: #6c757d;
+    transition: all 0.3s ease;
+}
+.admin-support-page .nav-pills .nav-link.active {
+    background-color: #0d6efd;
+    color: white;
+    box-shadow: 0 2px 8px rgba(13, 110, 253, 0.3);
+}
+.admin-support-page .nav-pills .nav-link:hover:not(.active) {
+    background-color: #e9ecef;
+    color: #495057;
+}
+.admin-support-page .table th {
+    font-weight: 600;
+    font-size: 14px;
+    color: #495057;
+    border-bottom: 2px solid #e9ecef;
+    padding: 1rem 0.75rem;
+}
+.admin-support-page .table td {
+    padding: 1rem 0.75rem;
+    font-size: 15px;
+    vertical-align: middle;
+}
+.admin-support-page .table tbody tr:hover {
+    background-color: #f8f9fa;
+}
+.admin-support-page .release-title {
+    font-weight: 600;
+    font-size: 16px;
+    color: #212529;
+    margin-bottom: 0.25rem;
+}
+.admin-support-page .release-artist {
+    font-size: 14px;
+    color: #6c757d;
+}
+.admin-support-page .status-badge {
+    font-weight: 500;
+    padding: 0.4rem 0.8rem;
+    border-radius: 20px;
+    font-size: 12px;
+}
+.admin-support-page .status-delivered {
+    background-color: rgba(25, 135, 84, 0.1) !important;
+    color: #198754 !important;
+}
+.admin-support-page .status-review {
+    background-color: rgba(255, 193, 7, 0.1) !important;
+    color: #f57c00 !important;
+}
+.admin-support-page .status-rejected {
+    background-color: rgba(220, 53, 69, 0.1) !important;
+    color: #dc3545 !important;
+}
+.admin-support-page .status-takedown-table {
+    background-color: rgba(108, 117, 125, 0.1) !important;
+    color: #6c757d !important;
+}
+.admin-support-page .dropdown-toggle::after {
+    display: none;
+}
+.admin-support-page .btn-link {
+    color: #6c757d;
+    text-decoration: none;
+}
+.admin-support-page .btn-link:hover {
+    color: #495057;
+}
+.admin-support-page .empty-state {
+    text-align: center;
+    padding: 3rem 1rem;
+    color: #6c757d;
+}
+.admin-support-page .empty-state i {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    opacity: 0.5;
+}
+.admin-support-page .search-container {
+    min-width: 280px;
+}
+@media (max-width: 768px) {
+    .admin-support-page .search-container {
+        min-width: 100%;
+        margin-top: 1rem;
+    }
+    .admin-support-page .nav-pills {
+        flex-wrap: wrap;
+    }
+    .admin-support-page .nav-pills .nav-item {
+        margin-bottom: 0.5rem;
+    }
+}
+.admin-support-page .avatar-lg {
+    width: 48px;
+    height: 48px;
+}
+.admin-support-page .nav-pills .nav-link.active {
+    background-color: #727cf5;
+}
+.admin-support-page .table-hover tbody tr:hover {
+    background-color: rgba(114, 124, 245, 0.05);
+}
+.admin-support-page .card {
+    border-radius: 0.5rem; /* Consistent with dashboard cards */
+}
+
+/* --- Modal Specific Styles (copied for completeness, not directly used on support page) --- */
+.admin-support-page .modal-header-custom {
+    background-color: #2c3e50;
+    position: relative;
+    padding: 2.5rem;
+    color: #fff;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    border-top-left-radius: 1rem;
+    border-top-right-radius: 1rem;
+}
+.admin-support-page .bg-image-blurred {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-size: cover;
+    background-position: center;
+    filter: blur(8px);
+    opacity: 0.2;
+    transition: background-image 0.5s ease-in-out;
+    z-index: 0;
+}
+.admin-support-page .modal-header-custom .d-flex {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    align-items: center;
+}
+.admin-support-page #releaseAlbumArtwork {
+    width: 130px;
+    height: 130px;
+    object-fit: cover;
+    border-radius: 0.75rem;
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
+    border: 3px solid rgba(255, 255, 255, 0.4);
+}
+.admin-support-page #releaseTitle {
+    font-size: 2.2rem;
+    font-weight: 700;
+    margin-bottom: 0.4rem;
+    text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.6);
+    line-height: 1.2;
+}
+.admin-support-page #releaseArtistHeader {
+    font-size: 1.3rem;
+    color: rgba(255, 255, 255, 0.85);
+    margin-top: 0;
+    margin-bottom: 0.8rem;
+    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
+}
+.admin-support-page #releaseStatusBadges .badge {
+    font-size: 0.85rem;
+    padding: 0.4em 0.8em;
+    border-radius: 1.2rem;
+    margin-right: 0.6rem;
+    font-weight: 600;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+.admin-support-page #releaseStatusBadges .bg-success {
+    background-color: #28a745 !important;
+}
+.admin-support-page #releaseStatusBadges .bg-warning {
+    background-color: #ffc107 !important;
+    color: #343a40 !important;
+}
+.admin-support-page #releaseStatusBadges .bg-danger {
+    background-color: #dc3545 !important;
+}
+.admin-support-page #releaseStatusBadges .bg-secondary {
+    background-color: #6c757d !important;
+}
+.admin-support-page .badge-takedown-glow {
+    animation: pulse-red 1.5s infinite;
+    background-color: #dc3545 !important;
+    color: white !important;
+}
+@keyframes pulse-red {
+    0% {
+        box-shadow: 0 0 0 0 rgba(220, 53, 69, 0.7);
+    }
+    70% {
+        box-shadow: 0 0 0 10px rgba(220, 53, 69, 0);
+    }
+    100% {
+        box-shadow: 0 0 0 0 rgba(220, 53, 69, 0);
+    }
+}
+.admin-support-page .btn-close-white {
+    filter: invert(1) grayscale(100%) brightness(200%);
+    opacity: 0.8;
+    transition: opacity 0.2s ease;
+}
+.admin-support-page .btn-close-white:hover {
+    opacity: 1;
+}
+.admin-support-page .btn-takedown-header {
+    background-color: rgba(255, 255, 255, 0.2);
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    font-weight: 500;
+    transition: background-color 0.2s ease, border-color 0.2s ease;
+    margin-right: 1rem;
+}
+.admin-support-page .btn-takedown-header:hover {
+    background-color: rgba(255, 255, 255, 0.3);
+    border-color: rgba(255, 255, 255, 0.6);
+    color: white;
+}
+.admin-support-page .modal-body-centered {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 2.5rem;
+    background-color: #eef2f7;
+}
+.admin-support-page .modal-content-wrapper {
+    max-width: 900px;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+.admin-support-page .modal-content-card {
+    background-color: #ffffff;
+    border-radius: 1rem;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+    padding: 2.5rem;
+}
+.admin-support-page .modal-content-card .card-title {
+    font-size: 1.75rem;
+    font-weight: 600;
+    color: #2c3e50;
+    border-bottom: 2px solid #e0e6ed;
+    padding-bottom: 1rem;
+    margin-bottom: 2rem;
+}
+.admin-support-page .modal-content-card .form-label {
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: #7f8c8d;
+    margin-bottom: 0.4rem;
+}
+.admin-support-page .modal-content-card .form-control-plaintext {
+    font-size: 1.1rem;
+    color: #34495e;
+    padding-left: 0;
+}
+.admin-support-page .modal-content-card .form-control-plaintext.fw-bold {
+    font-weight: 700 !important;
+}
+.admin-support-page .modal-content-card .badge-container .badge {
+    font-size: 0.9rem;
+    padding: 0.6em 1em;
+    border-radius: 0.5rem;
+    margin-right: 0.5rem;
+    margin-bottom: 0.5rem;
+    display: inline-flex;
+    align-items: center;
+}
+.admin-support-page .modal-content-card .badge-primary {
+    background-color: #3498db;
+    color: white;
+}
+.admin-support-page .modal-content-card .badge-info {
+    background-color: #9b59b6;
+    color: white;
+}
+.admin-support-page .modal-content-card .table thead th {
+    background-color: #f5f7fa;
+    color: #555;
+    font-weight: 600;
+    border-bottom: 1px solid #e0e6ed;
+}
+.admin-support-page .modal-content-card .table tbody tr:nth-child(even) {
+    background-color: #fcfcfc;
+}
+.admin-support-page .modal-content-card .table td {
+    padding: 1rem 1.2rem;
+    font-size: 1rem;
+    color: #34495e;
+}
+.admin-support-page .modal-content-card .track-tag-explicit,
+.admin-support-page .modal-content-card .track-tag-clean {
+    padding: 0.3em 0.7em;
+    font-size: 0.8rem;
+    border-radius: 0.4rem;
+}
+.admin-support-page .modal-content-card .track-tag-explicit {
+    background-color: #e74c3c;
+}
+.admin-support-page .modal-content-card .track-tag-clean {
+    background-color: #27ae60;
+}
+
+/* Styles specific to the Support Form */
+.admin-support-page .support-form-card {
+    max-width: 800px;
+    margin: 2rem auto;
+    padding: 2.5rem;
+    border-radius: 1rem;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+}
+.admin-support-page .support-form-card .card-title {
+    font-size: 1.75rem;
+    font-weight: 600;
+    color: #2c3e50;
+    border-bottom: 2px solid #e0e6ed;
+    padding-bottom: 1rem;
+    margin-bottom: 2rem;
+}
+.admin-support-page .form-label {
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: #495057;
+    margin-bottom: 0.5rem;
+}
+.admin-support-page .form-control {
+    border-radius: 0.5rem;
+    padding: 0.75rem 1rem;
+    font-size: 1rem;
+    border: 1px solid #ced4da;
+    box-shadow: none;
+    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+.admin-support-page .form-control:focus {
+    border-color: #727cf5;
+    box-shadow: 0 0 0 0.25rem rgba(114, 124, 245, 0.25);
+}
+.admin-support-page .btn-submit {
+    background-color: #727cf5;
+    border-color: #727cf5;
+    color: white;
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.5rem;
+    font-size: 1.1rem;
+    font-weight: 600;
+    transition: background-color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+}
+.admin-support-page .btn-submit:hover {
+    background-color: #5c67d1;
+    border-color: #5c67d1;
+    box-shadow: 0 4px 10px rgba(114, 124, 245, 0.3);
+}
+.admin-support-page .alert-success {
+    background-color: #d4edda;
+    color: #155724;
+    border-color: #c3e6cb;
+    border-radius: 0.5rem;
+}
+@media (max-width: 768px) {
+    .admin-support-page .support-form-card {
+        margin: 1rem auto;
+        padding: 1.5rem;
+    }
+    .admin-support-page .support-form-card .card-title {
+        font-size: 1.5rem;
+        margin-bottom: 1.5rem;
+    }
+}
+
+/* admin-claim-data-page css */
+
+.admin-claim-data-page body {
+    background-color: #f8f9fa;
+    font-size: 15px;
+    overflow-x: hidden;
+}
+.admin-claim-data-page .content-page {
+    margin-left: 0;
+    transition: margin-left 0.3s ease;
+    padding-top: 70px;
+}
+@media (min-width: 992px) {
+    .admin-claim-data-page .content-page {
+        margin-left: 250px;
+    }
+}
+.admin-claim-data-page .card {
+    border-radius: 12px;
+    border: none !important;
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, .075);
+}
+
+/* Filter Tabs (Nav Pills) */
+.admin-claim-data-page .nav-pills .nav-link {
+    border-radius: 25px;
+    padding: 0.6rem 1.2rem;
+    font-weight: 500;
+    color: #6c757d;
+    transition: all 0.3s ease;
+}
+.admin-claim-data-page .nav-pills .nav-link.active {
+    background-color: #727cf5;
+    color: white;
+    box-shadow: 0 2px 8px rgba(114, 124, 245, 0.3);
+}
+.admin-claim-data-page .nav-pills .nav-link:hover:not(.active) {
+    background-color: #e9ecef;
+    color: #495057;
+}
+
+/* Table Styles */
+.admin-claim-data-page .table th {
+    font-weight: 600;
+    font-size: 12px;
+    color: #495057;
+    text-transform: uppercase;
+    border-bottom: 2px solid #e9ecef;
+    padding: 1rem 0.75rem;
+    vertical-align: middle;
+}
+.admin-claim-data-page .table td {
+    padding: 1rem 0.75rem;
+    font-size: 15px;
+    vertical-align: middle;
+}
+.admin-claim-data-page .table-hover tbody tr:hover {
+    background-color: rgba(114, 124, 245, 0.05);
+}
+.admin-claim-data-page .release-title a {
+    font-weight: 500;
+    color: #727cf5;
+    text-decoration: none;
+    cursor: pointer;
+}
+.admin-claim-data-page .release-title a:hover {
+    text-decoration: underline;
+}
+.admin-claim-data-page .link-icon {
+    font-size: 1.3rem;
+    color: #6c757d;
+    text-decoration: none;
+}
+.admin-claim-data-page .link-icon:hover {
+    color: #727cf5;
+}
+
+/* Status Badges */
+.admin-claim-data-page .status-badge {
+    font-weight: 500;
+    padding: 0.4rem 0.8rem;
+    border-radius: 20px;
+    font-size: 12px;
+    text-transform: uppercase;
+}
+.admin-claim-data-page .status-approved {
+    background-color: rgba(25, 135, 84, 0.1) !important;
+    color: #198754 !important;
+}
+.admin-claim-data-page .status-pending {
+    background-color: rgba(255, 193, 7, 0.1) !important;
+    color: #f57c00 !important;
+}
+.admin-claim-data-page .status-rejected {
+    background-color: rgba(220, 53, 69, 0.1) !important;
+    color: #dc3545 !important;
+}
+
+/* Empty State */
+.admin-claim-data-page .empty-state {
+    text-align: center;
+    padding: 3rem 1rem;
+    color: #6c757d;
+}
+.admin-claim-data-page .empty-state i {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    opacity: 0.5;
+}
+
+/* Details Modal Styles */
+.admin-claim-data-page .modal-header-custom {
+    background-color: #2c3e50;
+    position: relative;
+    padding: 2.5rem;
+    color: #fff;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    border-top-left-radius: .5rem;
+    border-top-right-radius: .5rem;
+}
+.admin-claim-data-page .bg-image-blurred {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-size: cover;
+    background-position: center;
+    filter: blur(8px);
+    opacity: 0.2;
+    z-index: 0;
+}
+.admin-claim-data-page .modal-header-custom .d-flex {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+}
+.admin-claim-data-page #releaseAlbumArtwork {
+    width: 130px;
+    height: 130px;
+    object-fit: cover;
+    border-radius: 0.75rem;
+    box-shadow: 0 6px 15px rgba(0, 0, 0, .3);
+    border: 3px solid rgba(255, 255, 255, .4);
+}
+.admin-claim-data-page #releaseTitle {
+    font-size: 2.2rem;
+    font-weight: 700;
+    text-shadow: 1px 1px 4px rgba(0, 0, 0, .6);
+}
+.admin-claim-data-page #releaseArtistHeader {
+    font-size: 1.3rem;
+    color: rgba(255, 255, 255, .85);
+    text-shadow: 1px 1px 3px rgba(0, 0, 0, .5);
+}
+.admin-claim-data-page .detail-label {
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: #7f8c8d;
+    margin-bottom: 0.4rem;
+}
+.admin-claim-data-page .detail-value {
+    font-size: 1.1rem;
+    color: #34495e;
+}
+
+/* admin-reloc-data-page css */
+/* General Body and Layout */
+.admin-reloc-data-page body {
+    background-color: #f8f9fa;
+    font-size: 15px;
+    overflow-x: hidden;
+}
+.admin-reloc-data-page .content-page {
+    margin-left: 0;
+    transition: margin-left 0.3s ease;
+    padding-top: 70px;
+}
+@media (min-width: 992px) {
+    .admin-reloc-data-page .content-page {
+        margin-left: 250px;
+    }
+}
+.admin-reloc-data-page .card {
+    border-radius: 12px;
+    border: none !important;
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, .075);
+}
+
+/* Filter Tabs (Nav Pills) */
+.admin-reloc-data-page .nav-pills .nav-link {
+    border-radius: 25px;
+    padding: 0.6rem 1.2rem;
+    font-weight: 500;
+    color: #6c757d;
+    transition: all 0.3s ease;
+}
+.admin-reloc-data-page .nav-pills .nav-link.active {
+    background-color: #727cf5;
+    color: white;
+    box-shadow: 0 2px 8px rgba(114, 124, 245, 0.3);
+}
+.admin-reloc-data-page .nav-pills .nav-link:hover:not(.active) {
+    background-color: #e9ecef;
+    color: #495057;
+}
+
+/* Table Styles */
+.admin-reloc-data-page .table th {
+    font-weight: 600;
+    font-size: 12px;
+    color: #495057;
+    text-transform: uppercase;
+    border-bottom: 2px solid #e9ecef;
+    padding: 1rem 0.75rem;
+    vertical-align: middle;
+}
+.admin-reloc-data-page .table td {
+    padding: 1rem 0.75rem;
+    font-size: 15px;
+    vertical-align: middle;
+}
+.admin-reloc-data-page .table-hover tbody tr:hover {
+    background-color: rgba(114, 124, 245, 0.05);
+}
+.admin-reloc-data-page .release-title a {
+    font-weight: 500;
+    color: #727cf5;
+    text-decoration: none;
+    cursor: pointer;
+}
+.admin-reloc-data-page .release-title a:hover {
+    text-decoration: underline;
+}
+.admin-reloc-data-page .link-icon {
+    font-size: 1.3rem;
+    color: #6c757d;
+    text-decoration: none;
+}
+.admin-reloc-data-page .link-icon:hover {
+    color: #727cf5;
+}
+
+/* Status Badges */
+.admin-reloc-data-page .status-badge {
+    font-weight: 500;
+    padding: 0.4rem 0.8rem;
+    border-radius: 20px;
+    font-size: 12px;
+    text-transform: uppercase;
+}
+.admin-reloc-data-page .status-approved {
+    background-color: rgba(25, 135, 84, 0.1) !important;
+    color: #198754 !important;
+}
+.admin-reloc-data-page .status-pending {
+    background-color: rgba(255, 193, 7, 0.1) !important;
+    color: #f57c00 !important;
+}
+.admin-reloc-data-page .status-rejected {
+    background-color: rgba(220, 53, 69, 0.1) !important;
+    color: #dc3545 !important;
+}
+
+/* Empty State */
+.admin-reloc-data-page .empty-state {
+    text-align: center;
+    padding: 3rem 1rem;
+    color: #6c757d;
+}
+.admin-reloc-data-page .empty-state i {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    opacity: 0.5;
+}
+
+/* Details Modal Styles */
+.admin-reloc-data-page .modal-header-custom {
+    background-color: #2c3e50;
+    position: relative;
+    padding: 2.5rem;
+    color: #fff;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    border-top-left-radius: .5rem;
+    border-top-right-radius: .5rem;
+}
+.admin-reloc-data-page .bg-image-blurred {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-size: cover;
+    background-position: center;
+    filter: blur(8px);
+    opacity: 0.2;
+    z-index: 0;
+}
+.admin-reloc-data-page .modal-header-custom .d-flex {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+}
+.admin-reloc-data-page #releaseAlbumArtwork {
+    width: 130px;
+    height: 130px;
+    object-fit: cover;
+    border-radius: 0.75rem;
+    box-shadow: 0 6px 15px rgba(0, 0, 0, .3);
+    border: 3px solid rgba(255, 255, 255, .4);
+}
+.admin-reloc-data-page #releaseTitle {
+    font-size: 2.2rem;
+    font-weight: 700;
+    text-shadow: 1px 1px 4px rgba(0, 0, 0, .6);
+}
+.admin-reloc-data-page #releaseArtistHeader {
+    font-size: 1.3rem;
+    color: rgba(255, 255, 255, .85);
+    text-shadow: 1px 1px 3px rgba(0, 0, 0, .5);
+}
+.admin-reloc-data-page .detail-label {
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: #7f8c8d;
+    margin-bottom: 0.4rem;
+}
+.admin-reloc-data-page .detail-value {
+    font-size: 1.1rem;
+    color: #34495e;
+}
+
+
+/* admin-merge-data-page css */
+/* General Body and Layout */
+.admin-merge-data-page body {
+    background-color: #f8f9fa;
+    font-size: 15px;
+    overflow-x: hidden;
+}
+.admin-merge-data-page .content-page {
+    margin-left: 0;
+    transition: margin-left 0.3s ease;
+    padding-top: 70px;
+}
+@media (min-width: 992px) {
+    .admin-merge-data-page .content-page {
+        margin-left: 250px;
+    }
+}
+.admin-merge-data-page .card {
+    border-radius: 12px;
+    border: none !important;
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, .075);
+}
+
+/* Filter Tabs (Nav Pills) */
+.admin-merge-data-page .nav-pills .nav-link {
+    border-radius: 25px;
+    padding: 0.6rem 1.2rem;
+    font-weight: 500;
+    color: #6c757d;
+    transition: all 0.3s ease;
+}
+.admin-merge-data-page .nav-pills .nav-link.active {
+    background-color: #727cf5;
+    color: white;
+    box-shadow: 0 2px 8px rgba(114, 124, 245, 0.3);
+}
+.admin-merge-data-page .nav-pills .nav-link:hover:not(.active) {
+    background-color: #e9ecef;
+    color: #495057;
+}
+
+/* Table Styles */
+.admin-merge-data-page .table th {
+    font-weight: 600;
+    font-size: 12px;
+    color: #495057;
+    text-transform: uppercase;
+    border-bottom: 2px solid #e9ecef;
+    padding: 1rem 0.75rem;
+    vertical-align: middle;
+}
+.admin-merge-data-page .table td {
+    padding: 1rem 0.75rem;
+    font-size: 15px;
+    vertical-align: middle;
+}
+.admin-merge-data-page .table-hover tbody tr:hover {
+    background-color: rgba(114, 124, 245, 0.05);
+}
+.admin-merge-data-page .release-title a {
+    font-weight: 500;
+    color: #727cf5;
+    text-decoration: none;
+    cursor: pointer;
+}
+.admin-merge-data-page .release-title a:hover {
+    text-decoration: underline;
+}
+.admin-merge-data-page .link-icon {
+    font-size: 1.3rem;
+    color: #6c757d;
+    text-decoration: none;
+}
+.admin-merge-data-page .link-icon:hover {
+    color: #727cf5;
+}
+
+/* Status Badges */
+.admin-merge-data-page .status-badge {
+    font-weight: 500;
+    padding: 0.4rem 0.8rem;
+    border-radius: 20px;
+    font-size: 12px;
+    text-transform: uppercase;
+}
+.admin-merge-data-page .status-pending {
+    background-color: rgba(255, 193, 7, 0.1) !important;
+    color: #f57c00 !important;
+}
+.admin-merge-data-page .status-rejected {
+    background-color: rgba(220, 53, 69, 0.1) !important;
+    color: #dc3545 !important;
+}
+
+/* Empty State */
+.admin-merge-data-page .empty-state {
+    text-align: center;
+    padding: 3rem 1rem;
+    color: #6c757d;
+}
+.admin-merge-data-page .empty-state i {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    opacity: 0.5;
+}
+
+/* Details Modal Styles */
+.admin-merge-data-page .modal-header-custom {
+    background-color: #2c3e50;
+    position: relative;
+    padding: 2.5rem;
+    color: #fff;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    border-top-left-radius: .5rem;
+    border-top-right-radius: .5rem;
+}
+.admin-merge-data-page .bg-image-blurred {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-size: cover;
+    background-position: center;
+    filter: blur(8px);
+    opacity: 0.2;
+    z-index: 0;
+}
+.admin-merge-data-page .modal-header-custom .d-flex {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+}
+.admin-merge-data-page #releaseAlbumArtwork {
+    width: 130px;
+    height: 130px;
+    object-fit: cover;
+    border-radius: 0.75rem;
+    box-shadow: 0 6px 15px rgba(0, 0, 0, .3);
+    border: 3px solid rgba(255, 255, 255, .4);
+}
+.admin-merge-data-page #releaseTitle {
+    font-size: 2.2rem;
+    font-weight: 700;
+    text-shadow: 1px 1px 4px rgba(0, 0, 0, .6);
+}
+.admin-merge-data-page #releaseArtistHeader {
+    font-size: 1.3rem;
+    color: rgba(255, 255, 255, .85);
+    text-shadow: 1px 1px 3px rgba(0, 0, 0, .5);
+}
+.admin-merge-data-page .detail-label {
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: #7f8c8d;
+    margin-bottom: 0.4rem;
+}
+.admin-merge-data-page .detail-value {
+    font-size: 1.1rem;
+    color: #34495e;
+}
+
+/* admin-owner-data-page css */
+.admin-ownership-data-page body {
+    background-color: #f9fafb;
+    overflow-x: hidden;
+}
+.admin-ownership-data-page .content-page {
+    margin-left: 0;
+    transition: margin-left 0.3s ease;
+    padding-top: 70px;
+}
+@media (min-width: 992px) {
+    .admin-ownership-data-page .content-page {
+        margin-left: 250px;
+    }
+}
+.admin-ownership-data-page .page-title-box {
+    border-bottom: 1px solid #e9ecef;
+    padding-bottom: 1rem;
+}
+.admin-ownership-data-page .nav-tabs {
+    border-bottom: none;
+}
+.admin-ownership-data-page .nav-tabs .nav-link {
+    border: none;
+    color: #6c757d;
+}
+.admin-ownership-data-page .nav-tabs .nav-link.active {
+    color: var(--bs-primary);
+    background-color: transparent;
+    border-bottom: 2px solid var(--bs-primary);
+}
+.admin-ownership-data-page .table th {
+    font-weight: 600;
+    font-size: 12px;
+    color: #6c757d;
+    text-transform: uppercase;
+    border: none;
+    padding: 1rem 1.25rem;
+    white-space: nowrap;
+    vertical-align: middle;
+}
+.admin-ownership-data-page .table td {
+    padding: 1rem 1.25rem;
+    vertical-align: middle;
+    border-top: 1px solid #e9ecef;
+}
+.admin-ownership-data-page .table tbody tr:hover {
+    background-color: #f0f8ff;
+    cursor: pointer;
+}
+.admin-ownership-data-page .table .asset-title {
+    font-weight: 500;
+}
+.admin-ownership-data-page .table .asset-subtitle {
+    font-size: 0.8rem;
+    color: #6c757d;
+}
+
+/* --- CSS FOR SORTABLE HEADERS --- */
+.admin-ownership-data-page .sortable-header {
+    transition: background-color 0.2s ease;
+    /* The header text itself is no longer the main button */
+    cursor: default;
+}
+.admin-ownership-data-page .sortable-header:hover {
+    background-color: #f8f9fa;
+}
+.admin-ownership-data-page .sort-icon {
+    margin-left: 5px;
+}
+
+/* Make individual arrows clickable */
+.admin-ownership-data-page .sort-icon i {
+    cursor: pointer;
+    color: #adb5bd; /* Default grey color */
+    transition: color 0.2s ease;
+}
+/* Darken arrows slightly on hover for better feedback */
+.admin-ownership-data-page .sort-icon i:hover {
+    color: #6c757d;
+}
+
+/* Color the active UP arrow blue when sorting ascending */
+.admin-ownership-data-page .sortable-header[data-sort-direction="asc"] .sort-icon .bi-arrow-up {
+    color: var(--bs-primary);
+}
+/* Color the active DOWN arrow blue when sorting descending */
+.admin-ownership-data-page .sortable-header[data-sort-direction="desc"] .sort-icon .bi-arrow-down {
     color: var(--bs-primary);
 }

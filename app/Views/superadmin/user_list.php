@@ -1,161 +1,201 @@
 <div class="admin-account-page content-page">
-            <div class="content">
-                <div class="container-xxl">
-                    <div class="row">
-                        <div class="col-12">
-                            <div class="page-title-box d-sm-flex align-items-center justify-content-between mb-4">
-                                <div>
-                                    <h2 class="mb-2 fw-bold">Account</h2>
-                                </div>
-                                <div class="col-auto d-flex gap-2">
-                                     <button type="button" class="btn btn-outline-secondary rounded-pill px-4" id="exportCsvBtn">
-                                         <i class="bi bi-download me-1"></i> Export to CSV
-                                     </button>
-                                     <button type="button" class="btn btn-primary rounded-pill px-4" data-bs-toggle="modal" data-bs-target="#claimingRequestModal">
-                                         <i class="bi bi-plus-lg me-1"></i>Create New Account
-                                     </button>
-                                </div>
-                            </div>
+    <div class="content">
+        <div class="container-xxl">
+            <div class="row">
+                <div class="col-12">
+                    <div class="page-title-box d-sm-flex align-items-center justify-content-between mb-4">
+                        <div>
+                            <h2 class="mb-2 fw-bold">Account</h2>
                         </div>
-                    </div>
-
-                    <div class="card shadow-sm">
-                        <div class="card-body p-0">
-                            <div class="table-responsive">
-                                <table class="table table-hover mb-0" id="claimingTable">
-                                    <thead>
-                                        <!-- UPDATED: Table headers -->
-                                        <tr>
-                                            <th width="50"></th>
-                                            <th class="sortable-header" data-sort="primaryLabelName">Primary Label Name <span class="sort-icon"><i class="bi bi-arrow-up"></i><i class="bi bi-arrow-down"></i></span></th>
-                                            <th class="sortable-header" data-sort="labelName">Label Name <span class="sort-icon"><i class="bi bi-arrow-up"></i><i class="bi bi-arrow-down"></i></span></th>
-                                            <th class="sortable-header" data-sort="startDate">Start Date <span class="sort-icon"><i class="bi bi-arrow-up"></i><i class="bi bi-arrow-down"></i></span></th>
-                                            <th class="sortable-header" data-sort="endDate">End Date <span class="sort-icon"><i class="bi bi-arrow-up"></i><i class="bi bi-arrow-down"></i></span></th>
-                                            <th class="sortable-header" data-sort="status">Status <span class="sort-icon"><i class="bi bi-arrow-up"></i><i class="bi bi-arrow-down"></i></span></th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="tableBody"></tbody>
-                                </table>
-                            </div>
+                        <div class="col-auto d-flex gap-2">
+                            <button type="button" class="btn btn-outline-secondary rounded-pill px-4" id="exportCsvBtn">
+                                <i class="bi bi-download me-1"></i> Export to CSV
+                            </button>
+                            <button type="button" class="btn btn-primary rounded-pill px-4" data-bs-toggle="modal" data-bs-target="#claimingRequestModal">
+                                <i class="bi bi-plus-lg me-1"></i>Create New Account
+                            </button>
                         </div>
-                        <div class="card-footer bg-white d-flex flex-column flex-md-row justify-content-between align-items-center py-3">
-                           <div class="mb-2 mb-md-0" id="pagination-text">
-                               <!-- This will be populated by JS -->
-                           </div>
-                           <nav>
-                               <ul class="pagination mb-0">
-                                   <li class="page-item disabled"><a class="page-link" href="#">Previous</a></li>
-                                   <li class="page-item active"><a class="page-link" href="#">1</a></li>
-                                   <li class="page-item"><a class="page-link" href="#">Next</a></li>
-                               </ul>
-                           </nav>
-                       </div>
                     </div>
                 </div>
             </div>
-        </div>
 
-         <div class="modal fade" id="claimingRequestModal" tabindex="-1" aria-labelledby="claimingRequestModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg modal-dialog-centered">
-            <div class="modal-content rounded-4">
-                <form action="#" method="POST" id="claimingRequestForm">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="claimingRequestModalLabel">New Account Request</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            <div class="card shadow-sm">
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0" id="claimingTable">
+                            <thead>
+                                <tr>
+                                    <th width="50"></th>
+                                    <th class="sortable-header" data-sort="primaryLabelName">Primary Label Name <span class="sort-icon"><i class="bi bi-arrow-up"></i><i class="bi bi-arrow-down"></i></span></th>
+                                    <th class="sortable-header" data-sort="labelName">Label Name <span class="sort-icon"><i class="bi bi-arrow-up"></i><i class="bi bi-arrow-down"></i></span></th>
+                                    <th class="sortable-header" data-sort="startDate">Start Date <span class="sort-icon"><i class="bi bi-arrow-up"></i><i class="bi bi-arrow-down"></i></span></th>
+                                    <th class="sortable-header" data-sort="endDate">End Date <span class="sort-icon"><i class="bi bi-arrow-up"></i><i class="bi bi-arrow-down"></i></span></th>
+                                    <th class="sortable-header" data-sort="status">Status <span class="sort-icon"><i class="bi bi-arrow-up"></i><i class="bi bi-arrow-down"></i></span></th>
+                                </tr>
+                            </thead>
+                            <tbody id="tableBody">
+                                <tr>
+                                    <td class="text-center"><i data-feather="check-circle" class="text-success"></i></td>
+                                    <td>T-Series</td>
+                                    <td>T-Series</td>
+                                    <td>2024-01-15</td>
+                                    <td>2026-01-14</td>
+                                    <td><span class="badge bg-success">Active</span></td>
+                                </tr>
+                                <tr>
+                                    <td class="text-center"><i data-feather="check-circle" class="text-success"></i></td>
+                                    <td>Sony Music</td>
+                                    <td>Sony Music India</td>
+                                    <td>2025-03-01</td>
+                                    <td>2027-02-28</td>
+                                    <td><span class="badge bg-success">Active</span></td>
+                                </tr>
+                                <tr>
+                                    <td class="text-center"><i data-feather="x-circle" class="text-danger"></i></td>
+                                    <td>Universal</td>
+                                    <td>Universal Music</td>
+                                    <td>2023-06-20</td>
+                                    <td>2025-06-19</td>
+                                    <td><span class="badge bg-danger">Inactive</span></td>
+                                </tr>
+                                <tr>
+                                    <td class="text-center"><i data-feather="check-circle" class="text-success"></i></td>
+                                    <td>Zee Music</td>
+                                    <td>Zee Music Company</td>
+                                    <td>2022-11-10</td>
+                                    <td>2025-11-09</td>
+                                    <td><span class="badge bg-success">Active</span></td>
+                                </tr>
+                                <tr>
+                                    <td class="text-center"><i data-feather="x-circle" class="text-danger"></i></td>
+                                    <td>Saregama</td>
+                                    <td>Saregama India Ltd</td>
+                                    <td>2024-08-01</td>
+                                    <td>2026-07-31</td>
+                                    <td><span class="badge bg-danger">Inactive</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </div>
-                    <div class="modal-body p-4">
-                        <h6 class="text-primary fw-bold mb-3">Basic Information</h6>
-                        <div class="row">
-                            <div class="col-md-12 mb-3">
-                                <label for="basicName" class="form-label">Name</label>
-                                <input type="text" class="form-control rounded-pill p-3" id="basicName" placeholder="Enter full name" required>
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label for="companyName" class="form-label">Company Name</label>
-                                <input type="text" class="form-control rounded-pill p-3" id="companyName" placeholder="Enter company name">
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label for="labelName" class="form-label">Label Name</label>
-                                <input type="text" class="form-control rounded-pill p-3" id="labelName" placeholder="Enter label name">
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label for="emailId" class="form-label">Email Id</label>
-                                <input type="email" class="form-control rounded-pill p-3" id="emailId" placeholder="example@email.com" required>
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label for="phoneNumber" class="form-label">Phone Number</label>
-                                <input type="tel" class="form-control rounded-pill p-3" id="phoneNumber" placeholder="Enter phone number" required>
-                            </div>
-                            <div class="col-12 mb-4">
-                                 <label class="form-label mb-2">Which describes you best?</label>
-                                 <div>
-                                    <div class="form-check form-check-inline">
-                                        <input class="form-check-input" type="radio" name="userType" id="typeArtist" value="Artist" checked>
-                                        <label class="form-check-label" for="typeArtist">Artist</label>
-                                    </div>
-                                    <div class="form-check form-check-inline">
-                                        <input class="form-check-input" type="radio" name="userType" id="typeLabel" value="Label">
-                                        <label class="form-check-label" for="typeLabel">Label</label>
-                                    </div>
-                                    <div class="form-check form-check-inline">
-                                        <input class="form-check-input" type="radio" name="userType" id="typeDistributor" value="Distributor">
-                                        <label class="form-check-label" for="typeDistributor">Distributor</label>
-                                    </div>
-                                 </div>
-                            </div>
-                        </div>
-                        <h6 class="text-primary fw-bold mb-3">Login Credentials</h6>
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label for="username" class="form-label">Username</label>
-                                <input type="text" class="form-control rounded-pill p-3" id="username" placeholder="Create a username" required>
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                 <label for="password" class="form-label">Password</label>
-                                <div class="input-group">
-                                    <input type="password" class="form-control rounded-start-pill p-3" id="password" placeholder="Create a password" required style="border-right: none;">
-                                    <button class="btn btn-outline-secondary rounded-end-pill" type="button" id="togglePassword" style="border-left: none;">
-                                        <i class="bi bi-eye-slash"></i>
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                        <h6 class="text-primary fw-bold mb-3 pt-2">Bank Details</h6>
-                         <div class="row">
-                            <div class="col-12 mb-3">
-                                <label for="accountHolderName" class="form-label">Account Holder Name</label>
-                                <input type="text" class="form-control rounded-pill p-3" id="accountHolderName" placeholder="Enter name as per bank records" required>
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label for="accountNumber" class="form-label">Account Number</label>
-                                <input type="text" class="form-control rounded-pill p-3" id="accountNumber" placeholder="Enter bank account number" required>
-                            </div>
-                             <div class="col-md-6 mb-3">
-                                <label for="ifscCode" class="form-label">IFSC Code</label>
-                                <input type="text" class="form-control rounded-pill p-3" id="ifscCode" placeholder="Enter IFSC code" required>
-                            </div>
-                             <div class="col-12 mb-3">
-                                <label for="branchName" class="form-label">Branch Name</label>
-                                <input type="text" class="form-control rounded-pill p-3" id="branchName" placeholder="Enter bank branch name" required>
-                            </div>
-                        </div>
-                         <h6 class="text-primary fw-bold mb-3 pt-2">Agreement Period</h6>
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label for="startDate" class="form-label">Agreement Start Date</label>
-                                <input type="date" class="form-control rounded-pill p-3" id="startDate" required>
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label for="endDate" class="form-label">Agreement End Date</label>
-                                <input type="date" class="form-control rounded-pill p-3" id="endDate" required>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary rounded-pill" data-bs-dismiss="modal">Close</button>
-                        <button type="submit" class="btn btn-primary rounded-pill">Submit Request</button>
-                    </div>
-                </form>
+                </div>
+                <div class="card-footer bg-white d-flex flex-column flex-md-row justify-content-between align-items-center py-3">
+                   <div class="mb-2 mb-md-0" id="pagination-text">
+                        Showing <strong>1</strong> to <strong>5</strong> of <strong>5</strong> entries
+                   </div>
+                   <nav>
+                       <ul class="pagination mb-0">
+                           <li class="page-item disabled"><a class="page-link" href="#">Previous</a></li>
+                           <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                           <li class="page-item"><a class="page-link" href="#">Next</a></li>
+                       </ul>
+                   </nav>
+               </div>
             </div>
         </div>
     </div>
+</div>
+
+<div class="modal fade" id="claimingRequestModal" tabindex="-1" aria-labelledby="claimingRequestModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content rounded-4">
+            <form action="#" method="POST" id="claimingRequestForm">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="claimingRequestModalLabel">New Account Request</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <h6 class="text-primary fw-bold mb-3">Basic Information</h6>
+                    <div class="row">
+                        <div class="col-md-12 mb-3">
+                            <label for="basicName" class="form-label">Name</label>
+                            <input type="text" class="form-control rounded-pill p-3" id="basicName" placeholder="Enter full name" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="companyName" class="form-label">Company Name</label>
+                            <input type="text" class="form-control rounded-pill p-3" id="companyName" placeholder="Enter company name">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="labelName" class="form-label">Label Name</label>
+                            <input type="text" class="form-control rounded-pill p-3" id="labelName" placeholder="Enter label name">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="emailId" class="form-label">Email Id</label>
+                            <input type="email" class="form-control rounded-pill p-3" id="emailId" placeholder="example@email.com" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="phoneNumber" class="form-label">Phone Number</label>
+                            <input type="tel" class="form-control rounded-pill p-3" id="phoneNumber" placeholder="Enter phone number" required>
+                        </div>
+                        <div class="col-12 mb-4">
+                            <label class="form-label mb-2">Which describes you best?</label>
+                            <div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="userType" id="typeArtist" value="Artist" checked>
+                                    <label class="form-check-label" for="typeArtist">Artist</label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="userType" id="typeLabel" value="Label">
+                                    <label class="form-check-label" for="typeLabel">Label</label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="userType" id="typeDistributor" value="Distributor">
+                                    <label class="form-check-label" for="typeDistributor">Distributor</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <h6 class="text-primary fw-bold mb-3">Login Credentials</h6>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="username" class="form-label">Username</label>
+                            <input type="text" class="form-control rounded-pill p-3" id="username" placeholder="Create a username" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="password" class="form-label">Password</label>
+                            <div class="input-group">
+                                <input type="password" class="form-control rounded-start-pill p-3" id="password" placeholder="Create a password" required style="border-right: none;">
+                                <button class="btn btn-outline-secondary rounded-end-pill" type="button" id="togglePassword" style="border-left: none;">
+                                    <i class="bi bi-eye-slash"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <h6 class="text-primary fw-bold mb-3 pt-2">Bank Details</h6>
+                    <div class="row">
+                        <div class="col-12 mb-3">
+                            <label for="accountHolderName" class="form-label">Account Holder Name</label>
+                            <input type="text" class="form-control rounded-pill p-3" id="accountHolderName" placeholder="Enter name as per bank records" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="accountNumber" class="form-label">Account Number</label>
+                            <input type="text" class="form-control rounded-pill p-3" id="accountNumber" placeholder="Enter bank account number" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="ifscCode" class="form-label">IFSC Code</label>
+                            <input type="text" class="form-control rounded-pill p-3" id="ifscCode" placeholder="Enter IFSC code" required>
+                        </div>
+                        <div class="col-12 mb-3">
+                            <label for="branchName" class="form-label">Branch Name</label>
+                            <input type="text" class="form-control rounded-pill p-3" id="branchName" placeholder="Enter bank branch name" required>
+                        </div>
+                    </div>
+                    <h6 class="text-primary fw-bold mb-3 pt-2">Agreement Period</h6>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="startDate" class="form-label">Agreement Start Date</label>
+                            <input type="date" class="form-control rounded-pill p-3" id="startDate" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="endDate" class="form-label">Agreement End Date</label>
+                            <input type="date" class="form-control rounded-pill p-3" id="endDate" required>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary rounded-pill" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary rounded-pill">Submit Request</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

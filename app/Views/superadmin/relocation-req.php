@@ -1,4 +1,4 @@
-<div class="content-page">
+<div class="admin-reloc-req-page content-page">
     <div class="content">
         <div class="container-xxl">
             <div class="row align-items-center mb-5">
@@ -31,6 +31,67 @@
                                         </tr>
                                     </thead>
                                     <tbody id="tableBody">
+                                        <tr>
+                                            <td class="text-center align-middle">
+                                                <i data-feather="check-circle" class="text-success"></i>
+                                            </td>
+                                            <td class="align-middle">
+                                                <div>
+                                                    <div class="release-title">
+                                                        <a href="#">Cosmic Drift</a>
+                                                    </div>
+                                                    <div class="release-artist">Orion Sun</div>
+                                                </div>
+                                            </td>
+                                            <td class="align-middle">US1232500004</td>
+                                            <td class="align-middle">
+                                                <a href="https://instagram.com/orionsun" target="_blank" class="social-link me-2"><i class="bi bi-instagram"></i></a>
+                                                <a href="https://facebook.com/orionsun" target="_blank" class="social-link"><i class="bi bi-facebook"></i></a>
+                                            </td>
+                                            <td class="align-middle">
+                                                <span class="badge bg-success">Done</span>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td class="text-center align-middle">
+                                                <i data-feather="clock" class="text-warning"></i>
+                                            </td>
+                                            <td class="align-middle">
+                                                <div>
+                                                    <div class="release-title">
+                                                        <a href="#">Neon Tides</a>
+                                                    </div>
+                                                    <div class="release-artist">Cyber Lazer</div>
+                                                </div>
+                                            </td>
+                                            <td class="align-middle">US1232500005</td>
+                                            <td class="align-middle">
+                                                <a href="https://instagram.com/cyberlazer" target="_blank" class="social-link me-2"><i class="bi bi-instagram"></i></a>
+                                            </td>
+                                            <td class="align-middle">
+                                                <span class="badge bg-warning">Pending</span>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td class="text-center align-middle">
+                                                <i data-feather="x-circle" class="text-danger"></i>
+                                            </td>
+                                            <td class="align-middle">
+                                                <div>
+                                                    <div class="release-title">
+                                                        <a href="#">Lost Signal</a>
+                                                    </div>
+                                                    <div class="release-artist">Ghost FM</div>
+                                                </div>
+                                            </td>
+                                            <td class="align-middle">US1232500006</td>
+                                            <td class="align-middle">
+                                                <a href="https://facebook.com/ghostfm" target="_blank" class="social-link"><i class="bi bi-facebook"></i></a>
+                                            </td>
+                                            <td class="align-middle">
+                                                <span class="badge bg-danger">Rejected</span>
+                                            </td>
+                                        </tr>
                                     </tbody>
                                 </table>
                             </div>
@@ -50,6 +111,56 @@
                     </div>
                 </div>
             </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="relocationRequestModal" tabindex="-1" aria-labelledby="relocationRequestModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content rounded-4">
+            <form action="#" method="POST">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="relocationRequestModalLabel">Relocation Request Form</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <div class="mb-4">
+                        <label for="artistName" class="form-label d-flex align-items-center">
+                            Artist Name <span class="badge bg-danger ms-2">RE</span>
+                        </label>
+                        <input type="text" class="form-control rounded-pill p-3" id="artistName" name="artistName" placeholder="Enter artist name" required>
+                    </div>
+                    <div class="mb-4">
+                        <label for="songName" class="form-label d-flex align-items-center">
+                            Song Name <span class="badge bg-danger ms-2">RE</span>
+                        </label>
+                        <input type="text" class="form-control rounded-pill p-3" id="songName" name="songName" placeholder="Enter song name" required>
+                    </div>
+                    <div class="mb-4">
+                        <label for="ISRC" class="form-label d-flex align-items-center">
+                            ISRC
+                            <span class="badge bg-danger ms-2">RE</span>
+                        </label>
+                        <input type="text" class="form-control rounded-pill p-3" id="ISRC" name="isrc" placeholder="Enter ISRC" required>
+                    </div>
+                    <div class="mb-4">
+                        <label for="instagramLink" class="form-label">Instagram Profile Link</label>
+                        <input type="url" class="form-control rounded-pill p-3" id="instagramLink" name="instagramLink" placeholder="https://instagram.com/username">
+                    </div>
+                    <div class="mb-4">
+                        <label for="instagramAudio" class="form-label">Instagram Audio Link</label>
+                        <input type="url" class="form-control rounded-pill p-3" id="instagramAudio" name="instagramAudio" placeholder="https://www.instagram.com/reels/audio/...">
+                    </div>
+                    <div class="mb-4">
+                        <label for="facebookLink" class="form-label">Facebook Profile Link</label>
+                        <input type="url" class="form-control rounded-pill p-3" id="facebookLink" name="facebookLink" placeholder="https://facebook.com/username">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary rounded-pill" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary rounded-pill">Submit Request</button>
+                </div>
+            </form>
         </div>
     </div>
 </div>
