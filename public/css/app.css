@@ -15544,8 +15544,9 @@ body.loading {
 
 /* admin-labels-page css */
 
-.admin-labels-page body {
+.admin-labels-page {
     background-color: #f8f9fa;
+    font-size: 15px;
     font-size: 15px;
 }
 
@@ -15857,8 +15858,10 @@ body.loading {
     margin-top: 1rem;
 }
 
-admin-claim-req-page
+/* admin-claim-req-page css */
 .admin-claim-req-page {
+  background-color: #f8f9fa;
+    font-size: 15px;
     overflow-x: hidden;
 }
 
@@ -15957,7 +15960,9 @@ admin-claim-req-page
 
 /* admin-reloc-req-page */
 
-.admin-reloc-req-page body {
+.admin-reloc-req-page {
+  background-color: #f8f9fa;
+    font-size: 15px;
     overflow-x: hidden;
 }
 
@@ -16056,7 +16061,9 @@ admin-claim-req-page
 
 /* admin-claim-merge-req-page css */
 
-.admin-claim-merge-req-page body {
+.admin-claim-merge-req-page  {
+  background-color: #f8f9fa;
+    font-size: 15px;
     overflow-x: hidden;
 }
 
@@ -16127,8 +16134,9 @@ admin-claim-req-page
 
 /* admin-youtube-page css */
 
-.admin-youtube-page body {
-    background-color: #f9fafb;
+.admin-youtube-page {
+    background-color: #f8f9fa;
+    font-size: 15px;
     overflow-x: hidden;
 }
 .admin-youtube-page .content-page {
@@ -16330,8 +16338,9 @@ admin-claim-req-page
 
 /* admin-facebook-page css */
 
-.admin-facebook-page body {
-    background-color: #f9fafb;
+.admin-facebook-page {
+    background-color: #f8f9fa;
+    font-size: 15px;
     overflow-x: hidden;
 }
 .admin-facebook-page .content-page {
@@ -16987,7 +16996,7 @@ admin-claim-req-page
 
 /* admin-claim-data-page css */
 
-.admin-claim-data-page body {
+.admin-claim-data-page {
     background-color: #f8f9fa;
     font-size: 15px;
     overflow-x: hidden;
@@ -17155,7 +17164,7 @@ admin-claim-req-page
 
 /* admin-reloc-data-page css */
 /* General Body and Layout */
-.admin-reloc-data-page body {
+.admin-reloc-data-page {
     background-color: #f8f9fa;
     font-size: 15px;
     overflow-x: hidden;
@@ -17322,9 +17331,7 @@ admin-claim-req-page
 }
 
 
-/* admin-merge-data-page css */
-/* General Body and Layout */
-.admin-merge-data-page body {
+.admin-merge-data-page  {
     background-color: #f8f9fa;
     font-size: 15px;
     overflow-x: hidden;
@@ -17487,8 +17494,9 @@ admin-claim-req-page
 }
 
 /* admin-owner-data-page css */
-.admin-ownership-data-page body {
-    background-color: #f9fafb;
+.admin-ownership-data-page  {
+    background-color: #f8f9fa;
+    font-size: 15px;
     overflow-x: hidden;
 }
 .admin-ownership-data-page .content-page {
