@@ -56,7 +56,7 @@
     </div>
 
     <div class="offcanvas-body">
-        <form id="conflictForm" novalidate>
+        <form id="youtubeConflictForm" novalidate>
             <div id="formStep1" class="form-step">
                 <div class="p-3 rounded mb-4 album-section-card d-flex align-items-center">
                     <img src="" class="album-cover" id="modalAlbumCover" alt="Album Art">
@@ -124,6 +124,6 @@
     <div class="offcanvas-footer d-flex justify-content-end">
         <button type="button" class="btn btn-outline-secondary me-2 d-none" id="backBtn">Back</button>
         <button type="button" class="btn btn-primary" id="nextBtn">Next <i class="bi bi-arrow-right"></i></button>
-        <button type="submit" form="conflictForm" class="btn btn-success d-none" id="submitBtn">Submit Resolution</button>
+        <button type="submit" form="youtubeConflictForm" class="btn btn-success d-none" id="submitBtn">Submit Resolution</button>
     </div>
 </div>

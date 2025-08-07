@@ -14,7 +14,7 @@
             <div class="card shadow-sm">
                 <div class="card-body p-0">
                     <div class="table-responsive">
-                        <table class="table table-hover mb-0" id="releasesTable">
+                        <table class="table table-hover mb-0" id="facebookConflictTable">
                             <thead>
                                 <tr>
                                     <th width="50">Store</th>
@@ -29,55 +29,7 @@
                                     <th width="50"></th>
                                 </tr>
                             </thead>
-                            <tbody id="tableBody">
-                                <tr data-bs-toggle="offcanvas" data-bs-target="#conflictResolutionOffcanvas" data-song-name="Cosmic Drift" data-artist-name="Astro Beats" data-isrc="USAT22312345" data-cover-url="https://placehold.co/80x80/3498db/ffffff?text=C" data-category="Ownership conflict" data-other-party="The Orchard">
-                                    <td class="text-center"><i class="bi bi-facebook text-danger fs-5"></i></td>
-                                    <td>Ownership conflict</td>
-                                    <td>Cosmic Drift</td>
-                                    <td><div class="fw-bold">Astro Beats</div><small class="text-muted">Asset ID: 90736897913</small></td>
-                                    <td>198009123456</td>
-                                    <td>The Orchard</td>
-                                    <td>79K</td>
-                                    <td>2 days</td>
-                                    <td><span class="badge rounded-pill border bg-danger-subtle text-danger-emphasis">Action Required</span></td>
-                                    <td><i class="bi bi-chevron-right text-muted"></i></td>
-                                </tr>
-                                <tr data-bs-toggle="offcanvas" data-bs-target="#conflictResolutionOffcanvas" data-song-name="Ocean Tides" data-artist-name="Deep Wave" data-isrc="USAT22354321" data-cover-url="https://placehold.co/80x80/1abc9c/ffffff?text=O" data-category="Policy" data-other-party="Believe">
-                                    <td class="text-center"><i class="bi bi-facebook text-danger fs-5"></i></td>
-                                    <td>Policy</td>
-                                    <td>Ocean Tides</td>
-                                    <td><div class="fw-bold">Deep Wave</div><small class="text-muted">Asset ID: 3478239381</small></td>
-                                    <td>198009654321</td>
-                                    <td>Believe</td>
-                                    <td>3K</td>
-                                    <td>-</td>
-                                    <td><span class="badge rounded-pill border bg-success-subtle text-success-emphasis">Resolved</span></td>
-                                    <td><i class="bi bi-chevron-right text-muted"></i></td>
-                                </tr>
-                                <tr data-bs-toggle="offcanvas" data-bs-target="#conflictResolutionOffcanvas" data-song-name="City Lights" data-artist-name="Urban Glow" data-isrc="USAT22398765" data-cover-url="https://placehold.co/80x80/9b59b6/ffffff?text=C" data-category="Ownership conflict" data-other-party="CD Baby">
-                                    <td class="text-center"><i class="bi bi-facebook text-danger fs-5"></i></td>
-                                    <td>Ownership conflict</td>
-                                    <td>City Lights</td>
-                                    <td><div class="fw-bold">Urban Glow</div><small class="text-muted">Asset ID: 3478239381</small></td>
-                                    <td>198009789012</td>
-                                    <td>CD Baby</td>
-                                    <td>1.2K</td>
-                                    <td>15 days</td>
-                                    <td><span class="badge rounded-pill border bg-warning-subtle text-warning-emphasis">In Review</span></td>
-                                    <td><i class="bi bi-chevron-right text-muted"></i></td>
-                                </tr>
-                                <tr data-bs-toggle="offcanvas" data-bs-target="#conflictResolutionOffcanvas" data-song-name="Desert Mirage" data-artist-name="Sahara Echo" data-isrc="USAT22445566" data-cover-url="https://placehold.co/80x80/e67e22/ffffff?text=D" data-category="Metadata Error" data-other-party="TuneCore">
-                                    <td class="text-center"><i class="bi bi-facebook text-danger fs-5"></i></td>
-                                    <td>Metadata Error</td>
-                                    <td>Desert Mirage</td>
-                                    <td><div class="fw-bold">Sahara Echo</div><small class="text-muted">Asset ID: 89321756430</small></td>
-                                    <td>198001112233</td>
-                                    <td>TuneCore</td>
-                                    <td>58K</td>
-                                    <td>5 days</td>
-                                    <td><span class="badge rounded-pill border bg-danger-subtle text-danger-emphasis">Action Required</span></td>
-                                    <td><i class="bi bi-chevron-right text-muted"></i></td>
-                                </tr>
+                            <tbody id="facebookTableBody">
                             </tbody>
                         </table>
                     </div>
@@ -95,7 +47,7 @@
     </div>
 </div>
 
-<div class="offcanvas offcanvas-end" tabindex="-1" id="conflictResolutionOffcanvas" aria-labelledby="conflictResolutionOffcanvasLabel">
+<div class="offcanvas offcanvas-end" tabindex="-1" id="facebookConflictOffcanvas" aria-labelledby="facebookConflictOffcanvas">
     <div class="offcanvas-header">
         <div>
             <h5 class="offcanvas-title mb-0" id="offcanvasTitle">Ownership conflict</h5>
@@ -105,7 +57,7 @@
     </div>
 
     <div class="offcanvas-body">
-        <form id="conflictForm" novalidate>
+        <form id="facebookConflictForm" novalidate>
             <div id="formStep1" class="form-step">
                 <div class="p-3 rounded mb-4 album-section-card d-flex align-items-center">
                     <img src="https://placehold.co/80x80/3498db/ffffff?text=C" class="album-cover" id="modalAlbumCover" alt="Album Art">
@@ -215,6 +167,6 @@
     <div class="offcanvas-footer d-flex justify-content-end">
         <button type="button" class="btn btn-outline-secondary me-2 d-none" id="backBtn">Back</button>
         <button type="button" class="btn btn-primary" id="nextBtn">Next <i class="bi bi-arrow-right"></i></button>
-        <button type="submit" form="conflictForm" class="btn btn-success d-none" id="submitBtn">Submit Resolution</button>
+        <button type="submit" form="facebookConflictForm" class="btn btn-success d-none" id="submitBtn">Submit Resolution</button>
     </div>
 </div>
