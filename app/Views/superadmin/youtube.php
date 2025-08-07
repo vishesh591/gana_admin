@@ -29,7 +29,7 @@
                                     <th width="50"></th>
                                 </tr>
                             </thead>
-                            <tbody id="tableBody">
+                            <tbody id="youtubeTableBody">
                                 </tbody>
                         </table>
                     </div>
