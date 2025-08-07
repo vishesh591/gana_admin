@@ -34,7 +34,6 @@
                                         </th>
                                         <th>Artist</th>
                                         <th class="text-center">Releases</th>
-                                        <th width="100">Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody id="artistTableBody">

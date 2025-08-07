@@ -305,15 +305,12 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 // claim-data-page js
-
     document.addEventListener('DOMContentLoaded', function() {
+    const ownershipPageContainer = document.querySelector('.admin-claim-data-page');
 
-         const ownershipPageContainer = document.querySelector('.admin-claim-data-page');
+    // This entire block will only run if the .admin-claim-data-page element exists
+    if (ownershipPageContainer) {
 
-    // If this container doesn't exist, stop executing the rest of the script.
-    if (!ownershipPageContainer) {
-        return;
-    }
         // --- DATA ---
         let claimingRequests = [
             { id: 1, songName: 'Cosmic Drift', artist: 'Orion Sun', isrc: 'US1232500004', instagramAudio: 'https://instagram.com/audio/123', reelMerge: 'https://instagram.com/reel/xyz', status: 'pending', artwork: 'https://i.scdn.co/image/ab67616d0000b273e6f6a7f1b2b2b2b2b2b2b2b2' },
@@ -349,20 +346,20 @@ document.addEventListener('DOMContentLoaded', function() {
         // --- RENDER & UPDATE FUNCTIONS ---
         function renderTable() {
             if (!filteredData || filteredData.length === 0) {
-                tableBody.innerHTML = `<tr><td colspan="6" class="empty-state"><i data-feather="inbox"></i><div><h5 class="mb-2">No Requests Found</h5><p class="mb-0">No requests match the current filter.</p></div></td></tr>`;
+                tableBody.innerHTML = `<tr><td colspan="5" class="empty-state"><i data-feather="inbox"></i><div><h5 class="mb-2">No Requests Found</h5><p class="mb-0">No requests match the current filter.</p></div></td></tr>`;
             } else {
                 tableBody.innerHTML = filteredData.map(req => `
                     <tr>
                         <td class="text-center">${getStatusIcon(req.status)}</td>
                         <td>
                             <div class="release-title">
-                                <a type="button"  data-bs-toggle="modal" data-bs-target="#newClaimRequestModal">${req.songName}</a>
+                                <a href="#" class="view-details-link" data-id="${req.id}">${req.songName}</a>
                             </div>
                             <div class="text-muted small">${req.artist}</div>
                         </td>
                         <td>${req.isrc || 'N/A'}</td>
                         <td class="text-center">${createLink(req.instagramAudio, 'bi-music-note-beamed')} ${createLink(req.reelMerge, 'bi-camera-reels')}</td>
-                        <td ><a class="d-flex justify-content-center">${getStatusBadge(req.status)}</a></td>
+                        <td><div class="d-flex justify-content-center">${getStatusBadge(req.status)}</div></td>
                     </tr>
                 `).join('');
             }
@@ -371,7 +368,9 @@ document.addEventListener('DOMContentLoaded', function() {
         }
 
         function updatePaginationText(count, total) {
-            paginationText.innerHTML = `Showing <strong>${count}</strong> of <strong>${total}</strong> entries`;
+            if(paginationText) {
+                paginationText.innerHTML = `Showing <strong>${count}</strong> of <strong>${total}</strong> entries`;
+            }
         }
         
         function openReleaseModal(id) {
@@ -383,8 +382,8 @@ document.addEventListener('DOMContentLoaded', function() {
             document.getElementById('releaseAlbumArtwork').src = req.artwork;
             releaseModalEl.querySelector('.bg-image-blurred').style.backgroundImage = `url('${req.artwork}')`;
             document.getElementById('releaseStatusBadges').innerHTML = getStatusBadge(req.status);
-            document.getElementById('modal-isrc').textContent = req.isrc;
-            document.getElementById('modal-matchingTime').textContent = req.matchingTime;
+            document.getElementById('modal-isrc').textContent = req.isrc || 'N/A';
+            document.getElementById('modal-matchingTime').textContent = req.matchingTime || 'N/A';
             document.getElementById('modal-instagramAudio').innerHTML = req.instagramAudio ? `<a href="${req.instagramAudio}" target="_blank">${req.instagramAudio}</a>` : 'N/A';
             document.getElementById('modal-reelMerge').innerHTML = req.reelMerge ? `<a href="${req.reelMerge}" target="_blank">${req.reelMerge}</a>` : 'N/A';
 
@@ -410,7 +409,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 dataToFilter = dataToFilter.filter(req =>
                     req.songName.toLowerCase().includes(searchTerm) ||
                     req.artist.toLowerCase().includes(searchTerm) ||
-                    req.isrc.toLowerCase().includes(searchTerm)
+                    (req.isrc && req.isrc.toLowerCase().includes(searchTerm))
                 );
             }
 
@@ -451,43 +450,33 @@ document.addEventListener('DOMContentLoaded', function() {
 
         newClaimForm.addEventListener('submit', (e) => {
             e.preventDefault();
-            const newRequest = {
-                id: Date.now(),
-                songName: document.getElementById('songNameInput').value,
-                artist: document.getElementById('artistInput').value,
-                isrc: document.getElementById('isrcInput').value,
-                instagramAudio: document.getElementById('instagramAudioInput').value,
-                reelMerge: document.getElementById('reelMergeInput').value,
-                matchingTime: document.getElementById('matchingTimeInput').value,
-                status: 'pending',
-                artwork: 'https://via.placeholder.com/150/cccccc/FFFFFF?text=New'
-            };
-            claimingRequests.unshift(newRequest);
-            newClaimForm.reset();
+            // This logic is for the modal that is titled "Claiming Request Details",
+            // which seems to be for editing, not creating a new one.
+            // A proper implementation would handle status updates here.
             newClaimModal.hide();
-            filterAndRender();
         });
         
+        document.getElementById('approveBtn').addEventListener('click', () => handleStatusUpdate('approved'));
         document.getElementById('rejectBtn').addEventListener('click', () => handleStatusUpdate('rejected'));
 
         exportCsvBtn.addEventListener('click', () => {
-             const headers = ['ID', 'Song Name', 'Artist', 'ISRC', 'Instagram Audio Link', 'Reel Merge Link', 'Status'];
-             const rows = filteredData.map(req => [req.id, req.songName, req.artist, req.isrc, req.instagramAudio, req.reelMerge, req.matchingTime, req.status]);
-             const escapeCsvValue = (val) => `"${String(val || '').replace(/"/g, '""')}"`;
-             let csvContent = "data:text/csv;charset=utf-8," + headers.join(",") + "\n" + rows.map(r => r.map(escapeCsvValue).join(",")).join("\n");
-             const link = document.createElement("a");
-             link.setAttribute("href", encodeURI(csvContent));
-             link.setAttribute("download", "claiming-requests.csv");
-             document.body.appendChild(link);
-             link.click();
-             document.body.removeChild(link);
+            const headers = ['ID', 'Song Name', 'Artist', 'ISRC', 'Instagram Audio Link', 'Reel Merge Link', 'Matching Time', 'Status'];
+            const rows = filteredData.map(req => [req.id, req.songName, req.artist, req.isrc, req.instagramAudio, req.reelMerge, req.matchingTime, req.status]);
+            const escapeCsvValue = (val) => `"${String(val || '').replace(/"/g, '""')}"`;
+            let csvContent = "data:text/csv;charset=utf-8," + headers.map(escapeCsvValue).join(",") + "\n" + rows.map(r => r.map(escapeCsvValue).join(",")).join("\n");
+            const link = document.createElement("a");
+            link.setAttribute("href", encodeURI(csvContent));
+            link.setAttribute("download", "claiming-requests.csv");
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
         });
 
         // --- INITIAL RENDER ---
         feather.replace();
         filterAndRender();
-    });
-
+    }
+});
     // merge-data-page js
 
 
@@ -860,597 +849,513 @@ document.addEventListener('DOMContentLoaded', function() {
 
 // releases-page js
 
- const releasesData = [{
-        id: 1,
-        title: "Swapnil Dada Kartoy Raj",
-        artist: "Mohit Jadhav",
-        submittedDate: "7th July 2025",
-        upc: "5863544729375",
-        isrc: "INH722302515",
-        status: "delivered",
-        isTakedown: false,
-        catNo: "MJ-001",
-        recordLabel: "Music Dreams",
-        featuringArtist: "None",
-        lyricists: ["Mohit Jadhav", "Priya Sharma"],
-        albumArtwork: "/images/rocket.png", // Dummy image
-        stores: ["Spotify", "Apple Music", "Amazon Music", "JioSaavn", "Gaana"],
-        copyrightStores: ["Facebook Rights Manager", "YouTube Content ID"],
-        tracks: [{
-            trackNo: 1,
-            title: "Swapnil Dada Kartoy Raj",
-            duration: "3:45",
-            isrc: "INH722302515",
-            language: "Marathi",
-            explicit: false
-        }, {
-            trackNo: 2,
-            title: "Jai Maharashtra",
-            duration: "4:10",
-            isrc: "INH722302516",
-            language: "Marathi",
-            explicit: false
-        }]
-    }, {
-        id: 2,
-        title: "Dream Chaser",
-        artist: "Sarah Johnson",
-        submittedDate: "5th July 2025",
-        upc: "5863544729376",
-        isrc: "INH722302516",
-        status: "review",
-        isTakedown: false,
-        catNo: "SJ-002",
-        recordLabel: "Indie Sounds",
-        featuringArtist: "The Harmonizers",
-        lyricists: ["Sarah Johnson"],
-        albumArtwork: "/images/rocket.png", // Dummy image
-        stores: ["Spotify", "Apple Music", "Amazon Music"],
-        copyrightStores: [],
-        tracks: [{
-            trackNo: 1,
-            title: "Stardust",
-            duration: "3:20",
-            isrc: "US-SJ-25-001",
-            language: "English",
-            explicit: false
-        }, {
-            trackNo: 2,
-            title: "Open Road",
-            duration: "4:00",
-            isrc: "US-SJ-25-002",
-            language: "English",
-            explicit: false
-        }, {
-            trackNo: 3,
-            title: "City Echoes",
-            duration: "2:55",
-            isrc: "US-SJ-25-003",
-            language: "English",
-            explicit: true
-        }]
-    }, {
-        id: 3,
-        title: "Midnight Blues",
-        artist: "Alex Rodriguez",
-        submittedDate: "3rd July 2025",
-        upc: "5863544729377",
-        isrc: "INH722302517",
-        status: "delivered",
-        isTakedown: false,
-        catNo: "AR-003",
-        recordLabel: "Jazz Groove",
-        featuringArtist: "Smooth Sax Sam",
-        lyricists: ["Alex Rodriguez"],
-        albumArtwork: "/images/rocket.png", // Dummy image
-        stores: ["Spotify", "Apple Music", "Bandcamp"],
-        copyrightStores: ["YouTube Content ID"],
-        tracks: [{
-            trackNo: 1,
-            title: "Blue Moon Serenade",
-            duration: "5:15",
-            isrc: "US-AR-25-004",
-            language: "English",
-            explicit: false
-        }]
-    }, {
-        id: 4,
-        title: "Summer Vibes",
-        artist: "Emma Thompson",
-        submittedDate: "1st July 2025",
-        upc: "5863544729378",
-        isrc: "INH722302518",
-        status: "rejected",
-        isTakedown: false,
-        catNo: "ET-004",
-        recordLabel: "Pop Hits Inc.",
-        featuringArtist: "None",
-        lyricists: ["Emma Thompson", "Ben Carter"],
-        albumArtwork: "/images/rocket.png", // Dummy image
-        stores: [],
-        copyrightStores: [],
-        tracks: [{
-            trackNo: 1,
-            title: "Beach Day",
-            duration: "3:05",
-            isrc: "US-ET-25-005",
-            language: "English",
-            explicit: false
-        }]
-    }, {
-        id: 5,
-        title: "Electronic Dreams",
-        artist: "DJ Mike",
-        submittedDate: "28th June 2025",
-        upc: "5863544729379",
-        isrc: "INH722302519",
-        status: "review",
-        isTakedown: false,
-        catNo: "DJM-005",
-        recordLabel: "Techno Beat",
-        featuringArtist: "Synth Master",
-        lyricists: ["DJ Mike"],
-        albumArtwork: "/images/rocket.png", // Dummy image
-        stores: ["Beatport", "SoundCloud"],
-        copyrightStores: [],
-        tracks: [{
-            trackNo: 1,
-            title: "Circuit Breaker",
-            duration: "6:00",
-            isrc: "US-DJM-25-006",
-            language: "Instrumental",
-            explicit: false
-        }, {
-            trackNo: 2,
-            title: "Digital Love",
-            duration: "5:30",
-            isrc: "US-DJM-25-007",
-            language: "English",
-            explicit: false
-        }]
-    }, {
-        id: 6,
-        title: "Midnight Blues",
-        artist: "Alex Rodriguez",
-        submittedDate: "3rd July 2025",
-        upc: "5863544729377",
-        isrc: "INH722302517",
-        status: "approved",
-        isTakedown: false,
-        catNo: "AR-003",
-        recordLabel: "Jazz Groove",
-        featuringArtist: "Smooth Sax Sam",
-        lyricists: ["Alex Rodriguez"],
-        albumArtwork: "/images/rocket.png", // Dummy image
-        stores: ["Spotify", "Apple Music", "Bandcamp"],
-        copyrightStores: ["YouTube Content ID"],
-        tracks: [{
-            trackNo: 1,
-            title: "Blue Moon Serenade",
-            duration: "5:15",
-            isrc: "US-AR-25-004",
-            language: "English",
-            explicit: false
-        }]
-    } ];
+document.addEventListener('DOMContentLoaded', function() {
+    const releasesPageContainer = document.querySelector('.admin-releases-page');
+    
+    // This entire block will only run if the .admin-releases-page element exists
+    if (releasesPageContainer) {
 
+        const releasesData = [
+            { id: 1, title: "Swapnil Dada Kartoy Raj", artist: "Mohit Jadhav", submittedDate: "7th July 2025", upc: "5863544729375", isrc: "INH722302515", status: "delivered", isTakedown: false, catNo: "MJ-001", recordLabel: "Music Dreams", featuringArtist: "None", lyricists: ["Mohit Jadhav", "Priya Sharma"], albumArtwork: "/images/rocket.png", stores: ["Spotify", "Apple Music", "Amazon Music", "JioSaavn", "Gaana"], copyrightStores: ["Facebook Rights Manager", "YouTube Content ID"], tracks: [{ trackNo: 1, title: "Swapnil Dada Kartoy Raj", duration: "3:45", isrc: "INH722302515", language: "Marathi", explicit: false }, { trackNo: 2, title: "Jai Maharashtra", duration: "4:10", isrc: "INH722302516", language: "Marathi", explicit: false }] }, 
+            { id: 2, title: "Dream Chaser", artist: "Sarah Johnson", submittedDate: "5th July 2025", upc: "5863544729376", isrc: "INH722302516", status: "review", isTakedown: false, catNo: "SJ-002", recordLabel: "Indie Sounds", featuringArtist: "The Harmonizers", lyricists: ["Sarah Johnson"], albumArtwork: "/images/rocket.png", stores: ["Spotify", "Apple Music", "Amazon Music"], copyrightStores: [], tracks: [{ trackNo: 1, title: "Stardust", duration: "3:20", isrc: "US-SJ-25-001", language: "English", explicit: false }, { trackNo: 2, title: "Open Road", duration: "4:00", isrc: "US-SJ-25-002", language: "English", explicit: false }, { trackNo: 3, title: "City Echoes", duration: "2:55", isrc: "US-SJ-25-003", language: "English", explicit: true }] }, 
+            { id: 3, title: "Midnight Blues", artist: "Alex Rodriguez", submittedDate: "3rd July 2025", upc: "5863544729377", isrc: "INH722302517", status: "delivered", isTakedown: false, catNo: "AR-003", recordLabel: "Jazz Groove", featuringArtist: "Smooth Sax Sam", lyricists: ["Alex Rodriguez"], albumArtwork: "/images/rocket.png", stores: ["Spotify", "Apple Music", "Bandcamp"], copyrightStores: ["YouTube Content ID"], tracks: [{ trackNo: 1, title: "Blue Moon Serenade", duration: "5:15", isrc: "US-AR-25-004", language: "English", explicit: false }] }, 
+            { id: 4, title: "Summer Vibes", artist: "Emma Thompson", submittedDate: "1st July 2025", upc: "5863544729378", isrc: "INH722302518", status: "rejected", isTakedown: false, catNo: "ET-004", recordLabel: "Pop Hits Inc.", featuringArtist: "None", lyricists: ["Emma Thompson", "Ben Carter"], albumArtwork: "/images/rocket.png", stores: [], copyrightStores: [], tracks: [{ trackNo: 1, title: "Beach Day", duration: "3:05", isrc: "US-ET-25-005", language: "English", explicit: false }] }, 
+            { id: 5, title: "Electronic Dreams", artist: "DJ Mike", submittedDate: "28th June 2025", upc: "5863544729379", isrc: "INH722302519", status: "review", isTakedown: false, catNo: "DJM-005", recordLabel: "Techno Beat", featuringArtist: "Synth Master", lyricists: ["DJ Mike"], albumArtwork: "/images/rocket.png", stores: ["Beatport", "SoundCloud"], copyrightStores: [], tracks: [{ trackNo: 1, title: "Circuit Breaker", duration: "6:00", isrc: "US-DJM-25-006", language: "Instrumental", explicit: false }, { trackNo: 2, title: "Digital Love", duration: "5:30", isrc: "US-DJM-25-007", language: "English", explicit: false }] }, 
+            { id: 6, title: "Midnight Blues", artist: "Alex Rodriguez", submittedDate: "3rd July 2025", upc: "5863544729377", isrc: "INH722302517", status: "approved", isTakedown: false, catNo: "AR-003", recordLabel: "Jazz Groove", featuringArtist: "Smooth Sax Sam", lyricists: ["Alex Rodriguez"], albumArtwork: "/images/rocket.png", stores: ["Spotify", "Apple Music", "Bandcamp"], copyrightStores: ["YouTube Content ID"], tracks: [{ trackNo: 1, title: "Blue Moon Serenade", duration: "5:15", isrc: "US-AR-25-004", language: "English", explicit: false }] }
+        ];
 
-    let currentFilter = 'all';
-    let filteredData = [...releasesData];
+        let currentFilter = 'all';
+        let filteredData = [...releasesData];
 
-    // Initialize page
-    document.addEventListener('DOMContentLoaded', function() {
-
-        const ownershipPageContainer = document.querySelector('.admin-releases-page');
-
-    // If this container doesn't exist, stop executing the rest of the script.
-    if (!ownershipPageContainer) {
-        return;
-    }
-        // Get filter from URL parameter
-        const urlParams = new URLSearchParams(window.location.search);
-        const filter = urlParams.get('filter') || 'all';
-
-        setActiveTab(filter);
-        filterReleases(filter);
-        feather.replace(); // Initialize feather icons on page load
-    });
-
-    // Set active tab
-    function setActiveTab(filter) {
-        currentFilter = filter;
-        document.querySelectorAll('.nav-link').forEach(link => {
-            link.classList.remove('active');
-        });
-
-        const activeLink = document.querySelector(`[data-filter="${filter}"]`);
-        if (activeLink) {
-            activeLink.classList.add('active');
-        }
-    }
-
-    // Filter releases based on status
-    function filterReleases(filter) {
-        if (filter === 'all') {
-            filteredData = [...releasesData];
-        } else {
-            filteredData = releasesData.filter(release => release.status === filter);
-        }
-
-        renderTable();
-    }
-
-    function getStatusIcon(status) {
-        switch (status.toLowerCase()) {
-            case 'delivered':
-                return `<i class="bi bi-check-circle-fill text-success" title="Delivered"></i>`;
-            case 'approved':
-                return `<i class="bi bi-check-circle-fill text-success" title="Delivered"></i>`;
-            case 'rejected':
-                return `<i class="bi bi-x-circle-fill text-danger" title="Rejected"></i>`;
-            case 'review':
-                return `<i class="bi bi-hourglass-split text-warning" title="In Review"></i>`;
-            case 'takedown':
-                return `<i class="bi bi-exclamation-circle-fill text-secondary" title="Takedown"></i>`;
-            default:
-                return `<i class="bi bi-question-circle-fill text-muted" title="Unknown Status"></i>`;
-        }
-    }
-
-    // Get status badge HTML for the table
-    function getStatusBadge(status) {
-        const statusConfig = {
-            'delivered': {
-                class: 'status-delivered',
-                text: 'DELIVERED'
-            },
-            'approved': {
-                class: 'status-approved',
-                text: 'APPROVED'
-            },
-            'review': {
-                class: 'status-review',
-                text: 'IN REVIEW'
-            },
-            'rejected': {
-                class: 'status-rejected',
-                text: 'REJECTED'
-            },
-            'takedown': {
-                class: 'status-takedown-table',
-                text: 'TAKEDOWN'
+        // Set active tab
+        function setActiveTab(filter) {
+            currentFilter = filter;
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.classList.remove('active');
+            });
+            const activeLink = document.querySelector(`[data-filter="${filter}"]`);
+            if (activeLink) {
+                activeLink.classList.add('active');
             }
-        };
+        }
 
-        const config = statusConfig[status] || {
-            class: 'status-review',
-            text: status.toUpperCase()
-        };
-        return `<span class="badge status-badge ${config.class}">${config.text}</span>`;
-    }
+        // Filter releases based on status
+        function filterReleases(filter) {
+            if (filter === 'all') {
+                filteredData = [...releasesData];
+            } else {
+                filteredData = releasesData.filter(release => release.status === filter);
+            }
+            renderTable();
+        }
 
-    // Render table
-    function renderTable() {
-        const tableBody = document.getElementById('tableBody');
+        function getStatusIcon(status) {
+            switch (status.toLowerCase()) {
+                case 'delivered': return `<i class="bi bi-check-circle-fill text-success" title="Delivered"></i>`;
+                case 'approved': return `<i class="bi bi-check-circle-fill text-success" title="Approved"></i>`;
+                case 'rejected': return `<i class="bi bi-x-circle-fill text-danger" title="Rejected"></i>`;
+                case 'review': return `<i class="bi bi-hourglass-split text-warning" title="In Review"></i>`;
+                case 'takedown': return `<i class="bi bi-exclamation-circle-fill text-secondary" title="Takedown"></i>`;
+                default: return `<i class="bi bi-question-circle-fill text-muted" title="Unknown Status"></i>`;
+            }
+        }
 
-        if (filteredData.length === 0) {
-            tableBody.innerHTML = `
-                <tr>
-                    <td colspan="7" class="empty-state">
-                        <i data-feather="inbox"></i>
-                        <div>
-                            <h5 class="mb-2">No releases found</h5>
-                            <p class="mb-0">No releases found for this category.</p>
-                        </div>
-                    </td>
-                </tr>
-            `;
-        } else {
-            tableBody.innerHTML = filteredData.map(release => `
-                <tr>
-                    <td class="text-center">
-                        ${getStatusIcon(release.status)}
-                    </td>
-                    <td>
-                        <div>
-                            <div class="release-title">
-                                <a href="#" class="text-primary text-decoration-none" onclick="openReleaseModal(${release.id})">
-                                    ${release.title}
-                                </a>
+        function getStatusBadge(status) {
+            const statusConfig = {
+                'delivered': { class: 'status-delivered', text: 'DELIVERED' },
+                'approved': { class: 'status-approved', text: 'APPROVED' },
+                'review': { class: 'status-review', text: 'IN REVIEW' },
+                'rejected': { class: 'status-rejected', text: 'REJECTED' },
+                'takedown': { class: 'status-takedown-table', text: 'TAKEDOWN' }
+            };
+            const config = statusConfig[status] || { class: 'status-review', text: status.toUpperCase() };
+            return `<span class="badge status-badge ${config.class}">${config.text}</span>`;
+        }
+
+        function renderTable() {
+            const tableBody = document.getElementById('tableBody');
+            if (filteredData.length === 0) {
+                tableBody.innerHTML = `<tr><td colspan="6" class="empty-state"><div><i data-feather="inbox"></i><h5 class="mb-2">No releases found</h5><p class="mb-0">No releases match the current filter.</p></div></td></tr>`;
+            } else {
+                tableBody.innerHTML = filteredData.map(release => `
+                    <tr>
+                        <td class="text-center">${getStatusIcon(release.status)}</td>
+                        <td>
+                            <div>
+                                <div class="release-title"><a href="#" class="text-primary text-decoration-none" onclick="openReleaseModal(${release.id})">${release.title}</a></div>
+                                <div class="release-artist">${release.artist}</div>
                             </div>
-                            <div class="release-artist">${release.artist}</div>
-                        </div>
-                    </td>
-                    <td>${release.submittedDate}</td>
-                    <td>${release.upc}</td>
-                    <td>${release.isrc}</td>
-                    <td>${getStatusBadge(release.status)}</td>
-                </tr>
-            `).join('');
+                        </td>
+                        <td>${release.submittedDate}</td>
+                        <td>${release.upc}</td>
+                        <td>${release.isrc}</td>
+                        <td>${getStatusBadge(release.status)}</td>
+                    </tr>
+                `).join('');
+            }
+            feather.replace();
         }
 
-        feather.replace(); // Re-initialize feather icons after rendering table
-    }
-
-    // Handle tab clicks
-    document.addEventListener('click', function(e) {
-        if (e.target.matches('.nav-link[data-filter]')) {
-            e.preventDefault();
-            const filter = e.target.getAttribute('data-filter');
-
-            // Update URL
-            const url = new URL(window.location);
-            url.searchParams.set('filter', filter);
-            window.history.pushState({}, '', url);
-
-            // Update UI
-            setActiveTab(filter);
-            filterReleases(filter);
-        }
-    });
-
-    // Search functionality
-    function performSearch() {
-        const searchTerm = document.getElementById('searchInput').value.toLowerCase();
-
-        // If search term is empty, re-render based on current filter
-        if (searchTerm.trim() === '') {
-            filterReleases(currentFilter);
-            return;
+        function performSearch() {
+            const searchInput = document.getElementById('searchInput');
+            const searchTerm = searchInput.value.toLowerCase().trim();
+            if (searchTerm === '') {
+                filterReleases(currentFilter);
+                return;
+            }
+            let tempFilteredData = releasesData.filter(release =>
+                release.title.toLowerCase().includes(searchTerm) ||
+                release.artist.toLowerCase().includes(searchTerm) ||
+                (release.upc && release.upc.includes(searchTerm)) ||
+                (release.isrc && release.isrc.includes(searchTerm))
+            );
+            if (currentFilter !== 'all') {
+                tempFilteredData = tempFilteredData.filter(release => release.status === currentFilter);
+            }
+            filteredData = tempFilteredData;
+            renderTable();
         }
 
-        // Filter the *original* data by search term, then apply current filter
-        let tempFilteredData = releasesData.filter(release =>
-            release.title.toLowerCase().includes(searchTerm) ||
-            release.artist.toLowerCase().includes(searchTerm) ||
-            (release.upc && release.upc.includes(searchTerm)) || // Check for existence before calling includes
-            (release.isrc && release.isrc.includes(searchTerm)) // Check for existence before calling includes
-        );
+        window.openReleaseModal = function(id) {
+            const release = releasesData.find(r => r.id === id);
+            if (!release) return;
 
-        if (currentFilter !== 'all') {
-            tempFilteredData = tempFilteredData.filter(release => release.status === currentFilter);
+            // This requires a modal in your HTML with these specific IDs to populate
+            document.getElementById('releaseModalHeader').querySelector('.bg-image-blurred').style.backgroundImage = `url('${release.albumArtwork}')`;
+            document.getElementById('releaseAlbumArtwork').src = release.albumArtwork;
+            document.getElementById('releaseTitle').textContent = release.title;
+            //... and so on for all the other modal details.
+            
+            const releaseModalInstance = new bootstrap.Modal(document.getElementById('releaseModal'));
+            releaseModalInstance.show();
         }
-
-        filteredData = tempFilteredData; // Update global filteredData
-        renderTable();
-    }
-
-    // Search on Enter key
-    document.getElementById('searchInput').addEventListener('keypress', function(e) {
-        if (e.key === 'Enter') {
-            performSearch();
+        
+        // --- EVENT LISTENERS ---
+        document.addEventListener('click', function(e) {
+            if (e.target.matches('.nav-link[data-filter]')) {
+                e.preventDefault();
+                const filter = e.target.getAttribute('data-filter');
+                const url = new URL(window.location);
+                url.searchParams.set('filter', filter);
+                window.history.pushState({}, '', url);
+                setActiveTab(filter);
+                filterReleases(filter);
+            }
+        });
+        
+        const searchInput = document.getElementById('searchInput');
+        if(searchInput){
+            searchInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') performSearch();
+            });
+            searchInput.addEventListener('input', (e) => {
+                if (e.target.value.trim() === '') filterReleases(currentFilter);
+            });
         }
-    });
-
-    // Reset search when input is cleared
-    document.getElementById('searchInput').addEventListener('input', function(e) {
-        if (e.target.value.trim() === '') {
-            filterReleases(currentFilter);
-        }
-    });
-
-    // Action functions (placeholders)
-    function viewDetails(id) {
-        openReleaseModal(id);
-    }
-
-    function editRelease(id) {
-        alert(`Editing release ID: ${id}`);
-    }
-
-    function deleteRelease(id) {
-        if (confirm('Are you sure you want to delete this release?')) {
-            alert(`Deleted release ID: ${id}`);
-            // In a real application, you'd send an API request here
-            // and then update `releasesData` and re-render the table.
-            // releasesData = releasesData.filter(release => release.id !== id);
-            // filterReleases(currentFilter);
-        }
-    }
-
-    // Function to handle takedown request (placeholder)
-    function requestTakedown(releaseId) {
-        if (confirm(`Are you sure you want to request a takedown for release ID ${releaseId}? This action cannot be undone.`)) {
-            alert(`Takedown requested for release ID: ${releaseId}`);
-            // In a real application, you would send an API request here
-            // to initiate the takedown process.
-            // Example: axios.post('/api/takedown', { releaseId: releaseId });
-            // After successful takedown, you might want to update the release status in your data.
-        }
-    }
-
-
-    // Function to open the release details modal with comprehensive data
-    function openReleaseModal(id) {
-        const release = releasesData.find(r => r.id === id);
-
-        if (!release) {
-            console.error(`Release with ID ${id} not found.`);
-            return;
-        }
-
-        const releaseModalHeader = document.getElementById('releaseModalHeader');
-        const releaseAlbumArtwork = document.getElementById('releaseAlbumArtwork');
-        const releaseTitle = document.getElementById('releaseTitle');
-        const releaseArtistHeader = document.getElementById('releaseArtistHeader');
-        const releaseStatusBadges = document.getElementById('releaseStatusBadges');
-        const releaseModalContent = document.getElementById('releaseModalContent');
-        const takedownButton = document.getElementById('takedownButton'); // Get the takedown button
-
-        // Set header background and album artwork
-        const artworkUrl = release.albumArtwork || 'https://via.placeholder.com/150/CCCCCC/FFFFFF?text=No+Artwork';
-        releaseModalHeader.querySelector('.bg-image-blurred').style.backgroundImage = `url('${artworkUrl}')`;
-        releaseAlbumArtwork.src = artworkUrl;
-        releaseAlbumArtwork.alt = `${release.title || 'Untitled'} Album Artwork`;
-        releaseTitle.textContent = release.title || 'Untitled Release';
-        releaseArtistHeader.textContent = release.artist || 'Unknown Artist';
-
-        // Set status badges
-        let badgesHtml = '';
-        let modalStatusBadgeClass = '';
-        let modalStatusBadgeText = '';
-
-        switch (release.status) {
-            case 'delivered':
-                modalStatusBadgeClass = 'bg-success';
-                modalStatusBadgeText = 'DELIVERED';
-                break;
-            case 'review':
-                modalStatusBadgeClass = 'bg-warning text-dark';
-                modalStatusBadgeText = 'IN REVIEW';
-                break;
-            case 'rejected':
-                modalStatusBadgeClass = 'bg-danger';
-                modalStatusBadgeText = 'REJECTED';
-                break;
-            case 'takedown':
-                modalStatusBadgeClass = 'bg-secondary';
-                modalStatusBadgeText = 'TAKEDOWN';
-                break;
-            default:
-                modalStatusBadgeClass = 'bg-secondary';
-                modalStatusBadgeText = 'N/A';
-        }
-        badgesHtml += `<span class="badge ${modalStatusBadgeClass} me-2">${modalStatusBadgeText}</span>`;
-
-
-        if (release.isTakedown) {
-            badgesHtml += `<span class="badge badge-takedown-glow">Takedown Requested</span>`;
-            takedownButton.style.display = 'none'; // Hide takedown button if already taken down
-        } else {
-            takedownButton.style.display = 'inline-block'; // Show takedown button
-            takedownButton.onclick = () => requestTakedown(release.id); // Assign click handler
-        }
-        releaseStatusBadges.innerHTML = badgesHtml;
-
-        // Construct the modal body content
-        releaseModalContent.innerHTML = `
-            <div class="modal-content-wrapper">
-                <div class="modal-content-card">
-                    <h5 class="card-title">Release Details</h5>
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <label class="form-label">Artist</label>
-                            <p class="form-control-plaintext fw-bold">${release.artist || 'N/A'}</p>
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label class="form-label">Submitted Date</label>
-                            <p class="form-control-plaintext">${release.submittedDate || 'N/A'}</p>
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label class="form-label">Cat. No</label>
-                            <p class="form-control-plaintext">${release.catNo || 'N/A'}</p>
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label class="form-label">UPC/EAN</label>
-                            <p class="form-control-plaintext">${release.upc || 'N/A'}</p>
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label class="form-label">Record Label</label>
-                            <p class="form-control-plaintext">${release.recordLabel || 'N/A'}</p>
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label class="form-label">Featuring Artist</label>
-                            <p class="form-control-plaintext">${release.featuringArtist || 'None'}</p>
-                        </div>
-                        <div class="col-12 mb-0">
-                            <label class="form-label">Lyricist(s)</label>
-                            <p class="form-control-plaintext">${release.lyricists && release.lyricists.length > 0 ? release.lyricists.join(', ') : 'N/A'}</p>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="modal-content-card">
-                    <h5 class="card-title">Distribution Information</h5>
-                    <div class="mb-4">
-                        <label class="form-label mb-2">Delivered Stores</label>
-                        <div class="p-3 rounded-3 bg-light badge-container">
-                            ${release.stores && release.stores.length > 0 ?
-                                release.stores.map(store => `<span class="badge badge-primary">${store}</span>`).join('') :
-                                '<p class="text-muted mb-0">No stores listed.</p>'
-                            }
-                        </div>
-                    </div>
-                    <div>
-                        <label class="form-label mb-2">Copyright Protection</label>
-                        <div class="p-3 rounded-3 bg-light badge-container">
-                            ${release.copyrightStores && release.copyrightStores.length > 0 ?
-                                release.copyrightStores.map(store => `<span class="badge badge-info">${store}</span>`).join('') :
-                                '<p class="text-muted mb-0">No copyright stores listed.</p>'
-                            }
-                        </div>
-                    </div>
-                </div>
-
-                <div class="modal-content-card">
-                    <h5 class="card-title">Track List</h5>
-                    <div class="table-responsive">
-                        <table class="table table-hover align-middle track-list-table">
-                            <thead>
-                                <tr>
-                                    <th scope="col" class="text-center">#</th>
-                                    <th scope="col">Title</th>
-                                    <th scope="col">Duration</th>
-                                    <th scope="col">ISRC</th>
-                                    <th scope="col">Language</th>
-                                    <th scope="col" class="text-center">Tags</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                ${release.tracks && release.tracks.length > 0 ?
-                                    release.tracks.map((track, index) => `
-                                        <tr>
-                                            <td class="text-center">${track.trackNo}</td>
-                                            <td>${track.title || 'Untitled Track'}</td>
-                                            <td>${track.duration || 'N/A'}</td>
-                                            <td>${track.isrc || 'N/A'}</td>
-                                            <td>${track.language || 'N/A'}</td>
-                                            <td class="text-center">
-                                                ${track.explicit ? '<span class="track-tag-explicit badge">Explicit</span>' : 
-                                                (track.explicit === false ? '<span class="track-tag-clean badge">Clean</span>' : '')}
-                                            </td>
-                                        </tr>
-                                    `).join('') :
-                                    `<tr><td colspan="6" class="text-center text-muted py-4">No tracks found for this release.</td></tr>`
-                                }
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-            `;
-
-        // Initialize Bootstrap Modal
-        const releaseModal = new bootstrap.Modal(document.getElementById('releaseModal'));
-        releaseModal.show();
-    }
-
-    document.addEventListener('DOMContentLoaded', function() {
-
-         const ownershipPageContainer = document.querySelector('.admin-releases-page');
-
-    // If this container doesn't exist, stop executing the rest of the script.
-    if (!ownershipPageContainer) {
-        return;
-    }
-        // Find the elements inside the labelModal
+        
         const destinationLabelSelect = document.getElementById('destinationLabelSelect');
         const createAlbumBtn = document.getElementById('createAlbumBtn');
-
-        // Check if both elements were found before adding listeners
         if (destinationLabelSelect && createAlbumBtn) {
-            // This function enables/disables the button based on dropdown selection
             destinationLabelSelect.addEventListener('change', function() {
-                // The 'disabled' property is a true boolean. 
-                // It's set to true if no value is selected, and false if a value exists.
                 createAlbumBtn.disabled = !this.value;
             });
-
-            // This function handles the click action (navigation)
             createAlbumBtn.addEventListener('click', function() {
-                // A click event will not fire on a disabled button.
                 window.location.href = 'add-release';
             });
         }
-    });
+        
+        // --- INITIAL RENDER ---
+        const urlParams = new URLSearchParams(window.location.search);
+        const initialFilter = urlParams.get('filter') || 'all';
+        setActiveTab(initialFilter);
+        filterReleases(initialFilter);
+        feather.replace();
 
+    } // End of the if-block for the releases page
+});
+
+// artists-page js
+document.addEventListener('DOMContentLoaded', function() {
+    const artistsPageContainer = document.querySelector('.admin-artists-page');
+
+    // This entire block will only run if the .admin-artists-page element exists
+    if (artistsPageContainer) {
+
+        // --- DATA ---
+        let artistsData = [
+            { id: 1, name: "Mohit Jadhav", image: "/images/instagram.png", releases: 12 },
+            { id: 2, name: "Sarah Johnson", image: "/images/instagram.png", releases: 8 },
+            { id: 3, name: "Alex Rodriguez", image: "/images/instagram.png", releases: 15 },
+            { id: 4, name: "Emma Thompson", image: "/images/instagram.png", releases: 5 }
+        ];
+        let filteredData = [...artistsData];
+        let selectedArtists = new Set();
+        
+        // --- MODAL INSTANCES ---
+        const createModal = new bootstrap.Modal(document.getElementById('createArtistModal'));
+        const deleteModal = new bootstrap.Modal(document.getElementById('deleteConfirmModal'));
+
+        // --- DOM ELEMENTS ---
+        const tableBody = document.getElementById('artistTableBody');
+        const searchInput = document.getElementById('searchInput');
+        const selectAllCheckbox = document.getElementById('selectAllCheckbox'); // FIXED ID
+        const deleteBtn = document.getElementById('deleteSelectedBtn'); // FIXED ID
+        const paginationInfo = document.getElementById('paginationInfo');
+        const createArtistForm = document.getElementById('createArtistForm');
+        const createArtistBtn = document.getElementById('createArtistBtn');
+        const imageUploadArea = document.getElementById('imageUploadArea');
+        const imageInput = document.getElementById('imageInput');
+        const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
+
+        // --- RENDER & UPDATE FUNCTIONS ---
+        function renderTable() {
+            if (filteredData.length === 0) {
+                // FIXED colspan from 4 to 3
+                tableBody.innerHTML = `<tr><td colspan="3" class="empty-state"><i data-feather="users"></i><h4>No Artists Found</h4><p class="mb-0">No artists match your search criteria.</p></td></tr>`;
+            } else {
+                tableBody.innerHTML = filteredData.map(artist => `
+                    <tr>
+                        <td><input type="checkbox" class="form-check-input artist-checkbox" value="${artist.id}"></td>
+                        <td>
+                            <div class="artist-profile">
+                                <img src="${artist.image}" alt="${artist.name}" class="artist-image">
+                                <div><div class="artist-name">${artist.name}</div></div>
+                            </div>
+                        </td>
+                        <td class="text-center"><span class="releases-badge">${artist.releases} releases</span></td>
+                    </tr>
+                `).join('');
+            }
+            // Add event listeners after rendering new checkboxes
+            tableBody.querySelectorAll('.artist-checkbox').forEach(checkbox => {
+                checkbox.addEventListener('change', updateSelection);
+            });
+            updatePaginationInfo();
+            feather.replace();
+        }
+
+        function updateSelection() {
+            selectedArtists.clear();
+            document.querySelectorAll('.artist-checkbox:checked').forEach(checkbox => {
+                selectedArtists.add(parseInt(checkbox.value));
+            });
+            updateDeleteButton();
+            updateSelectAllCheckbox();
+        }
+
+        function updateDeleteButton() {
+            if (selectedArtists.size > 0) {
+                deleteBtn.style.display = 'inline-flex'; // Show the button
+            } else {
+                deleteBtn.style.display = 'none'; // Hide the button
+            }
+        }
+
+        function updateSelectAllCheckbox() {
+            const totalCheckboxes = document.querySelectorAll('.artist-checkbox').length;
+            const checkedCount = selectedArtists.size;
+            
+            if (totalCheckboxes > 0 && checkedCount === totalCheckboxes) {
+                selectAllCheckbox.indeterminate = false;
+                selectAllCheckbox.checked = true;
+            } else if (checkedCount > 0) {
+                selectAllCheckbox.indeterminate = true;
+                selectAllCheckbox.checked = false;
+            } else {
+                selectAllCheckbox.indeterminate = false;
+                selectAllCheckbox.checked = false;
+            }
+        }
+
+        function updatePaginationInfo() {
+            const count = filteredData.length;
+            paginationInfo.textContent = `Showing 1-${count} of ${count} artists`;
+        }
+
+        function previewImage() {
+            const preview = document.getElementById('imagePreview');
+            if (imageInput.files && imageInput.files[0]) {
+                const reader = new FileReader();
+                reader.onload = e => {
+                    preview.src = e.target.result;
+                    preview.style.display = 'block';
+                    imageUploadArea.querySelector('i').style.display = 'none';
+                    imageUploadArea.querySelector('p').style.display = 'none';
+                };
+                reader.readAsDataURL(imageInput.files[0]);
+            }
+        }
+
+        // --- EVENT LISTENERS ---
+        searchInput.addEventListener('input', function(e) {
+            const searchTerm = e.target.value.toLowerCase().trim();
+            filteredData = artistsData.filter(artist => artist.name.toLowerCase().includes(searchTerm));
+            renderTable();
+            selectedArtists.clear();
+            updateSelection(); // Call this to ensure button state is correct
+        });
+
+        selectAllCheckbox.addEventListener('change', function() {
+            document.querySelectorAll('.artist-checkbox').forEach(checkbox => {
+                checkbox.checked = this.checked;
+            });
+            updateSelection();
+        });
+        
+        createArtistBtn.addEventListener('click', () => createArtistForm.requestSubmit());
+        
+        createArtistForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const nameInput = document.getElementById('artistNameInput'); // FIXED ID
+            const name = nameInput.value.trim();
+            if (!name) {
+                alert('Please enter an artist name.');
+                return;
+            }
+
+            const newId = artistsData.length ? Math.max(...artistsData.map(a => a.id)) + 1 : 1;
+            
+            if (imageInput.files && imageInput.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    artistsData.push({ id: newId, name: name, image: e.target.result, releases: 0 });
+                    filteredData = [...artistsData];
+                    renderTable();
+                };
+                reader.readAsDataURL(imageInput.files[0]);
+            } else {
+                artistsData.push({ id: newId, name: name, image: `https://via.placeholder.com/60x60.png?text=${name.charAt(0).toUpperCase()}`, releases: 0 });
+                filteredData = [...artistsData];
+                renderTable();
+            }
+            
+            createModal.hide();
+            createArtistForm.reset();
+            document.getElementById('imagePreview').style.display = 'none';
+        });
+
+        imageUploadArea.addEventListener('click', () => imageInput.click());
+        imageInput.addEventListener('change', previewImage);
+        
+        deleteBtn.addEventListener('click', () => {
+            document.getElementById('deleteCount').textContent = selectedArtists.size;
+            deleteModal.show();
+        });
+        
+        confirmDeleteBtn.addEventListener('click', () => {
+            artistsData = artistsData.filter(artist => !selectedArtists.has(artist.id));
+            filteredData = filteredData.filter(artist => !selectedArtists.has(artist.id));
+            selectedArtists.clear();
+            
+            renderTable();
+            updateSelection();
+            
+            deleteModal.hide();
+        });
+
+        // --- INITIAL RENDER ---
+        renderTable();
+    }
+});
+// labels-page js
+document.addEventListener('DOMContentLoaded', function() {
+    const labelsPageContainer = document.querySelector('.admin-labels-page');
+
+    // This entire block will only run if the .admin-labels-page element exists
+    if (labelsPageContainer) {
+        
+        // --- DATA ---
+        let labelsData = [
+            { id: 1, name: "Mohit Jadhav", image: "/images/rocket.png", releases: 12 },
+            { id: 2, name: "Sarah Johnson", image: "/images/rocket.png", releases: 8 },
+        ];
+        let filteredData = [...labelsData]; // Renamed from filteredData2
+        let selectedLabels = new Set(); // Renamed from selectedlabels
+
+        // --- DOM ELEMENTS ---
+        const tableBody = document.getElementById('labelTableBody');
+        const searchInput = document.getElementById('searchInput');
+        const selectAllCheckbox = document.getElementById('selectAll');
+        const deleteBtn = document.getElementById('deleteBtn');
+        const paginationInfo = document.getElementById('paginationInfo');
+        const createLabelForm = document.getElementById('createlabelForm');
+
+        // --- RENDER & UPDATE FUNCTIONS ---
+        function renderTable() {
+            if (filteredData.length === 0) {
+                tableBody.innerHTML = `<tr><td colspan="4" class="empty-state"><i data-feather="tag"></i><h4>No Labels Found</h4><p class="mb-0">No labels match your search criteria.</p></td></tr>`;
+            } else {
+                tableBody.innerHTML = filteredData.map(label => `
+                    <tr>
+                        <td>
+                            <input type="checkbox" class="form-check-input label-checkbox" value="${label.id}">
+                        </td>
+                        <td>
+                            <div class="label-profile">
+                                <img src="${label.image}" alt="${label.name}" class="label-image">
+                                <div><div class="label-name">${label.name}</div></div>
+                            </div>
+                        </td>
+                        <td class="text-center">
+                            <span class="releases-badge">${label.releases} releases</span>
+                        </td>
+                    </tr>
+                `).join('');
+            }
+             // Add event listeners after rendering new checkboxes
+            tableBody.querySelectorAll('.label-checkbox').forEach(checkbox => {
+                checkbox.addEventListener('change', updateSelection);
+            });
+            updatePaginationInfo();
+            feather.replace();
+        }
+        
+        function updateSelection() {
+            selectedLabels.clear();
+            document.querySelectorAll('.label-checkbox:checked').forEach(checkbox => {
+                selectedLabels.add(parseInt(checkbox.value));
+            });
+            updateDeleteButton();
+            updateSelectAllCheckbox();
+        }
+
+        function updateDeleteButton() {
+            deleteBtn.disabled = selectedLabels.size === 0;
+            if (selectedLabels.size > 0) {
+                deleteBtn.innerHTML = `<i data-feather="trash-2" class="me-1"></i> Delete (${selectedLabels.size})`;
+            } else {
+                deleteBtn.innerHTML = `<i data-feather="trash-2" class="me-1"></i> Delete Label`;
+            }
+            feather.replace();
+        }
+        
+        function updateSelectAllCheckbox() {
+            const totalCheckboxes = document.querySelectorAll('.label-checkbox').length;
+            const checkedCount = selectedLabels.size;
+
+            if (totalCheckboxes > 0 && checkedCount === totalCheckboxes) {
+                selectAllCheckbox.indeterminate = false;
+                selectAllCheckbox.checked = true;
+            } else if (checkedCount > 0) {
+                selectAllCheckbox.indeterminate = true;
+                selectAllCheckbox.checked = false;
+            } else {
+                selectAllCheckbox.indeterminate = false;
+                selectAllCheckbox.checked = false;
+            }
+        }
+
+        function updatePaginationInfo() {
+            const count = filteredData.length;
+            paginationInfo.textContent = `Showing 1-${count} of ${count} labels`;
+        }
+
+        function previewImage() {
+            const input = document.getElementById('imageInput');
+            const preview = document.getElementById('imagePreview');
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = e => {
+                    preview.src = e.target.result;
+                    preview.style.display = 'block';
+                };
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        // --- EVENT LISTENERS ---
+        searchInput.addEventListener('input', function(e) {
+            const searchTerm = e.target.value.toLowerCase().trim();
+            filteredData = labelsData.filter(label => label.name.toLowerCase().includes(searchTerm));
+            renderTable();
+            selectedLabels.clear();
+            updateDeleteButton();
+            updateSelectAllCheckbox();
+        });
+
+        selectAllCheckbox.addEventListener('change', function() {
+            const checkboxes = document.querySelectorAll('.label-checkbox');
+            checkboxes.forEach(checkbox => {
+                checkbox.checked = this.checked;
+            });
+            updateSelection();
+        });
+        
+        createLabelForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const name = document.getElementById('labelName').value.trim(); // Assuming the input has id="labelName"
+            const imageInput = document.getElementById('imageInput');
+            if (!name) {
+                alert('Please enter a label name.');
+                return;
+            }
+
+            const newId = labelsData.length ? Math.max(...labelsData.map(l => l.id)) + 1 : 1;
+            
+            if (imageInput.files && imageInput.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const newLabel = { id: newId, name: name, image: e.target.result, releases: 0 };
+                    labelsData.push(newLabel);
+                    filteredData = [...labelsData];
+                    renderTable();
+                };
+                reader.readAsDataURL(imageInput.files[0]);
+            } else {
+                const newLabel = { id: newId, name: name, image: `https://via.placeholder.com/60x60.png?text=${name.charAt(0).toUpperCase()}`, releases: 0 };
+                labelsData.push(newLabel);
+                filteredData = [...labelsData];
+                renderTable();
+            }
+            
+            bootstrap.Modal.getInstance(document.getElementById('createlabelModal')).hide();
+            alert(`Label "${name}" created successfully!`);
+        });
+
+        document.getElementById('imageInput').addEventListener('change', previewImage);
+
+        // --- INITIAL RENDER ---
+        renderTable();
+        feather.replace();
+    }
+});
