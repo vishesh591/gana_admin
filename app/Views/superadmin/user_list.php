@@ -33,47 +33,7 @@
                                     <th class="sortable-header" data-sort="status">Status <span class="sort-icon"><i class="bi bi-arrow-up"></i><i class="bi bi-arrow-down"></i></span></th>
                                 </tr>
                             </thead>
-                            <tbody id="tableBody">
-                                <tr>
-                                    <td class="text-center"><i data-feather="check-circle" class="text-success"></i></td>
-                                    <td>T-Series</td>
-                                    <td>T-Series</td>
-                                    <td>2024-01-15</td>
-                                    <td>2026-01-14</td>
-                                    <td><span class="badge bg-success">Active</span></td>
-                                </tr>
-                                <tr>
-                                    <td class="text-center"><i data-feather="check-circle" class="text-success"></i></td>
-                                    <td>Sony Music</td>
-                                    <td>Sony Music India</td>
-                                    <td>2025-03-01</td>
-                                    <td>2027-02-28</td>
-                                    <td><span class="badge bg-success">Active</span></td>
-                                </tr>
-                                <tr>
-                                    <td class="text-center"><i data-feather="x-circle" class="text-danger"></i></td>
-                                    <td>Universal</td>
-                                    <td>Universal Music</td>
-                                    <td>2023-06-20</td>
-                                    <td>2025-06-19</td>
-                                    <td><span class="badge bg-danger">Inactive</span></td>
-                                </tr>
-                                <tr>
-                                    <td class="text-center"><i data-feather="check-circle" class="text-success"></i></td>
-                                    <td>Zee Music</td>
-                                    <td>Zee Music Company</td>
-                                    <td>2022-11-10</td>
-                                    <td>2025-11-09</td>
-                                    <td><span class="badge bg-success">Active</span></td>
-                                </tr>
-                                <tr>
-                                    <td class="text-center"><i data-feather="x-circle" class="text-danger"></i></td>
-                                    <td>Saregama</td>
-                                    <td>Saregama India Ltd</td>
-                                    <td>2024-08-01</td>
-                                    <td>2026-07-31</td>
-                                    <td><span class="badge bg-danger">Inactive</span></td>
-                                </tr>
+                            <tbody id="accountsTableBody">
                             </tbody>
                         </table>
                     </div>

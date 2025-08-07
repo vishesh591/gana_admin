@@ -2129,3 +2129,156 @@ document.addEventListener('DOMContentLoaded', function() {
         updateSortIcons();
     }
 });
+
+// accounts-page js
+
+document.addEventListener('DOMContentLoaded', function() {
+    // This is the unique container for your Account page
+    const accountPageContainer = document.querySelector('.admin-account-page');
+
+    // This ensures the code ONLY runs on the Account page
+    if (accountPageContainer) {
+
+        // --- DATA ---
+        let accountsData = [
+            { id: 1, primaryLabelName: 'T-Series', labelName: 'T-Series', startDate: '2024-01-15', endDate: '2026-01-14', status: 'Active' },
+            { id: 2, primaryLabelName: 'Sony Music', labelName: 'Sony Music India', startDate: '2025-03-01', endDate: '2027-02-28', status: 'Active' },
+            { id: 3, primaryLabelName: 'Universal', labelName: 'Universal Music', startDate: '2023-06-20', endDate: '2025-06-19', status: 'Inactive' },
+            { id: 4, primaryLabelName: 'Zee Music', labelName: 'Zee Music Company', startDate: '2022-11-10', endDate: '2025-11-09', status: 'Active' },
+            { id: 5, primaryLabelName: 'Saregama', labelName: 'Saregama India Ltd', startDate: '2024-08-01', endDate: '2026-07-31', status: 'Inactive' }
+        ];
+
+        let sortState = { key: 'primaryLabelName', direction: 'asc' };
+
+        // --- DOM ELEMENTS ---
+        const tableBody = document.getElementById('accountsTableBody'); // FIXED: Using unique ID
+        const paginationText = document.getElementById('pagination-text');
+        const newAccountForm = document.getElementById('claimingRequestForm');
+        const newAccountModal = new bootstrap.Modal(document.getElementById('claimingRequestModal'));
+        const exportCsvBtn = document.getElementById('exportCsvBtn');
+        const togglePasswordBtn = document.getElementById('togglePassword');
+
+        // --- HELPER FUNCTIONS ---
+        function getStatusIcon(status) {
+            const icons = { 'Active': 'check-circle', 'Inactive': 'x-circle' };
+            const colors = { 'Active': 'text-success', 'Inactive': 'text-danger' };
+            return `<i data-feather="${icons[status] || 'help-circle'}" class="${colors[status] || 'text-muted'}"></i>`;
+        }
+
+        function getStatusBadge(status) {
+            const badgeClasses = { 'Active': 'bg-success', 'Inactive': 'bg-danger' };
+            return `<span class="badge ${badgeClasses[status] || 'bg-secondary'}">${status}</span>`;
+        }
+
+        // --- RENDER & UPDATE FUNCTIONS ---
+        function renderTable(data) {
+            if (!data || data.length === 0) {
+                tableBody.innerHTML = `
+                    <tr>
+                        <td colspan="6" class="text-center p-5">
+                            <i data-feather="inbox" style="width:48px; height:48px; color: #6c757d;"></i>
+                            <h5 class="mt-3">No Accounts Found</h5>
+                            <p class="text-muted">Click 'Create New Account' to get started.</p>
+                        </td>
+                    </tr>`;
+                paginationText.innerHTML = "Showing <strong>0</strong> of <strong>0</strong> entries";
+            } else {
+                tableBody.innerHTML = data.map(account => `
+                    <tr>
+                        <td class="text-center">${getStatusIcon(account.status)}</td>
+                        <td>${account.primaryLabelName}</td>
+                        <td>${account.labelName}</td>
+                        <td>${account.startDate}</td>
+                        <td>${account.endDate}</td>
+                        <td>${getStatusBadge(account.status)}</td>
+                    </tr>
+                `).join('');
+                paginationText.innerHTML = `Showing <strong>1</strong> to <strong>${data.length}</strong> of <strong>${data.length}</strong> entries`;
+            }
+            feather.replace();
+        }
+
+        function sortData() {
+            accountsData.sort((a, b) => {
+                const valA = a[sortState.key];
+                const valB = b[sortState.key];
+                const comparison = valA.localeCompare(valB, undefined, { numeric: true });
+                return sortState.direction === 'desc' ? -comparison : comparison;
+            });
+            renderTable(accountsData);
+            updateSortIcons();
+        }
+
+        function updateSortIcons() {
+            document.querySelectorAll('.sortable-header .sort-icon').forEach(icon => {
+                icon.style.opacity = '0.3';
+            });
+            const activeHeader = document.querySelector(`.sortable-header[data-sort="${sortState.key}"]`);
+            if (activeHeader) {
+                const activeIcon = activeHeader.querySelector(sortState.direction === 'asc' ? '.bi-arrow-up' : '.bi-arrow-down');
+                if(activeIcon) activeIcon.parentElement.style.opacity = '1';
+            }
+        }
+        
+        // --- EVENT LISTENERS ---
+
+        // ADDED: New, simplified sorting logic
+        document.querySelectorAll('.sortable-header').forEach(header => {
+            header.addEventListener('click', () => {
+                const sortKey = header.dataset.sort;
+                if (sortState.key === sortKey) {
+                    sortState.direction = sortState.direction === 'asc' ? 'desc' : 'asc';
+                } else {
+                    sortState.key = sortKey;
+                    sortState.direction = 'asc';
+                }
+                sortData();
+            });
+        });
+
+        // ADDED: Form submission logic
+        newAccountForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const newAccount = {
+                id: Date.now(),
+                primaryLabelName: document.getElementById('labelName').value,
+                labelName: document.getElementById('labelName').value,
+                startDate: document.getElementById('startDate').value,
+                endDate: document.getElementById('endDate').value,
+                status: 'Active' // New accounts are active by default
+            };
+            accountsData.unshift(newAccount);
+            sortData(); // Re-sort and render
+            newAccountForm.reset();
+            newAccountModal.hide();
+        });
+
+        // ADDED: CSV export logic
+        exportCsvBtn.addEventListener('click', function() {
+            const headers = ['ID', 'Primary Label Name', 'Label Name', 'Start Date', 'End Date', 'Status'];
+            const rows = accountsData.map(acc => [acc.id, acc.primaryLabelName, acc.labelName, acc.startDate, acc.endDate, acc.status]);
+            let csvContent = "data:text/csv;charset=utf-8," + headers.join(",") + "\n" + rows.map(e => e.join(",")).join("\n");
+            
+            const link = document.createElement("a");
+            link.setAttribute("href", encodeURI(csvContent));
+            link.setAttribute("download", "accounts.csv");
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        });
+
+        // ADDED: Password toggle logic
+        if (togglePasswordBtn) {
+            togglePasswordBtn.addEventListener('click', function () {
+                const passwordInput = document.getElementById('password');
+                const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+                passwordInput.setAttribute('type', type);
+                this.querySelector('i').classList.toggle('bi-eye');
+                this.querySelector('i').classList.toggle('bi-eye-slash');
+            });
+        }
+        
+        // --- INITIAL RENDER ---
+        sortData(); // Sort and render the table initially
+    }
+});
