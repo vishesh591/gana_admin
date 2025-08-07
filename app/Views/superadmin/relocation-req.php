@@ -30,7 +30,7 @@
                                             <th>Status</th>
                                         </tr>
                                     </thead>
-                                    <tbody id="tableBody">
+                                    <tbody id="relocationTableBody">
                                         <tr>
                                             <td class="text-center align-middle">
                                                 <i data-feather="check-circle" class="text-success"></i>

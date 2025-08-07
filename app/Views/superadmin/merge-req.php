@@ -32,7 +32,7 @@
                                             <th>Status</th>
                                         </tr>
                                     </thead>
-                                    <tbody id="tableBody">
+                                    <tbody id="claimMergeTableBody">
                                         <tr>
                                             <td class="text-center">
                                                 <i data-feather="check-circle" class="text-success"></i>

@@ -1359,3 +1359,369 @@ document.addEventListener('DOMContentLoaded', function() {
         feather.replace();
     }
 });
+
+// claiming-req js 
+document.addEventListener('DOMContentLoaded', function() {
+    // This is the unique container for your page
+    const claimReqPageContainer = document.querySelector('.admin-claim-req-page');
+
+    // By wrapping all the code in this 'if' block, it will ONLY run on the claiming request page.
+    if (claimReqPageContainer) {
+
+        // --- DATA ---
+        let claimingRequests = [
+            { id: 1, songName: 'Cosmic Drift', artistName: 'Orion Sun', isrc: 'US1232500004', instagram: 'https://instagram.com/orionsun', facebook: 'https://facebook.com/orionsun', status: 'Pending' },
+            { id: 2, songName: 'Neon Tides', artistName: 'Cyber Lazer', isrc: 'US1232500005', instagram: 'https://instagram.com/cyberlazer', facebook: '', status: 'Pending' },
+            { id: 3, songName: 'Lost Signal', artistName: 'Ghost FM', isrc: 'US1232500006', instagram: '', facebook: 'https://facebook.com/ghostfm', status: 'Rejected' }
+        ];
+
+        // --- DOM ELEMENTS ---
+        const tableBody = document.getElementById('tableBody');
+        const exportCsvBtn = document.getElementById('exportCsvBtn');
+        const newClaimForm = document.querySelector('#claimingRequestModal form');
+        const newClaimModal = new bootstrap.Modal(document.getElementById('claimingRequestModal'));
+
+        // --- RENDER & UPDATE FUNCTIONS ---
+        function renderTable(data) {
+            if (!data || data.length === 0) {
+                // FIXED: colspan changed from 6 to 5 to match the table headers
+                tableBody.innerHTML = `
+                    <tr>
+                        <td colspan="5" class="empty-state">
+                            <i data-feather="inbox"></i>
+                            <div>
+                                <h5 class="mb-2">No Claiming Requests found</h5>
+                                <p class="mb-0">Click 'New Claiming Request' to get started.</p>
+                            </div>
+                        </td>
+                    </tr>`;
+            } else {
+                tableBody.innerHTML = data.map(request => `
+                    <tr>
+                        <td class="text-center align-middle">${getStatusIcon(request.status)}</td>
+                        <td class="align-middle">
+                            <div>
+                                <div class="release-title">${request.songName}</div>
+                                <div class="release-artist text-muted small">${request.artistName}</div>
+                            </div>
+                        </td>
+                        <td class="align-middle">${request.isrc || 'N/A'}</td>
+                        <td class="align-middle text-center">
+                            ${request.instagram ? `<a href="${request.instagram}" target="_blank" class="social-link me-2 fs-5"><i class="bi bi-instagram"></i></a>` : ''}
+                            ${request.facebook ? `<a href="${request.facebook}" target="_blank" class="social-link fs-5"><i class="bi bi-facebook"></i></a>` : ''}
+                        </td>
+                        <td class="align-middle">${getStatusBadge(request.status)}</td>
+                    </tr>
+                `).join('');
+            }
+            feather.replace();
+        }
+
+        function getStatusIcon(status) {
+            const icons = { 'Approved': 'check-circle', 'Pending': 'clock', 'Rejected': 'x-circle' };
+            const colors = { 'Approved': 'text-success', 'Pending': 'text-warning', 'Rejected': 'text-danger' };
+            return `<i data-feather="${icons[status] || 'help-circle'}" class="${colors[status] || 'text-muted'}"></i>`;
+        }
+
+        function getStatusBadge(status) {
+            const badgeClasses = { 'Approved': 'success', 'Pending': 'warning', 'Rejected': 'danger' };
+            return `<span class="badge bg-${badgeClasses[status] || 'secondary'}">${status}</span>`;
+        }
+
+        // --- EVENT LISTENERS ---
+        
+        // ADDED: Logic to handle new claim form submission
+        newClaimForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const newRequest = {
+                id: Date.now(),
+                artistName: document.getElementById('artistName').value,
+                songName: document.getElementById('songName').value,
+                isrc: document.getElementById('upc').value, // Matches your HTML id="upc"
+                instagram: document.getElementById('instagramLink').value,
+                facebook: document.getElementById('facebookLink').value,
+                status: 'Pending' // New requests are always pending
+            };
+            
+            claimingRequests.unshift(newRequest); // Add to the beginning of the array
+            renderTable(claimingRequests); // Re-render the table
+            newClaimForm.reset(); // Clear the form
+            newClaimModal.hide(); // Hide the modal
+        });
+
+        // ADDED: Logic for CSV export
+        exportCsvBtn.addEventListener('click', function() {
+            const headers = ['ID', 'Song Name', 'Artist Name', 'ISRC', 'Instagram', 'Facebook', 'Status'];
+            const rows = claimingRequests.map(req => [
+                req.id,
+                req.songName,
+                req.artistName,
+                req.isrc,
+                req.instagram,
+                req.facebook,
+                req.status
+            ]);
+            
+            let csvContent = "data:text/csv;charset=utf-8," 
+                + headers.join(",") + "\n" 
+                + rows.map(e => e.join(",")).join("\n");
+                
+            const link = document.createElement("a");
+            link.setAttribute("href", encodeURI(csvContent));
+            link.setAttribute("download", "claiming-requests.csv");
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        });
+
+        // --- INITIAL RENDER ---
+        renderTable(claimingRequests);
+    }
+});
+
+// relocation-request js
+
+document.addEventListener('DOMContentLoaded', function() {
+    // This is the unique container for your relocation page
+    const relocReqPageContainer = document.querySelector('.admin-reloc-req-page');
+
+    // This ensures the code ONLY runs on the relocation request page
+    if (relocReqPageContainer) {
+
+        // --- DATA ---
+        const relocationRequests = [
+            { id: 1, songName: 'Cosmic Drift', artistName: 'Orion Sun', isrc: 'US1232500004', instagram: 'https://instagram.com/orionsun', facebook: 'https://facebook.com/orionsun', status: 'Done' },
+            { id: 2, songName: 'Neon Tides', artistName: 'Cyber Lazer', isrc: 'US1232500005', instagram: 'https://instagram.com/cyberlazer', facebook: '', status: 'Pending' },
+            { id: 3, songName: 'Lost Signal', artistName: 'Ghost FM', isrc: 'US1232500006', instagram: '', facebook: 'https://facebook.com/ghostfm', status: 'Rejected' }
+        ];
+
+        // --- DOM ELEMENTS ---
+        const tableBody = document.getElementById('relocationTableBody'); // FIXED: Using unique ID
+        const exportCsvBtn = document.getElementById('exportCsvBtn');
+        const newRelocForm = document.querySelector('#relocationRequestModal form');
+        const newRelocModal = new bootstrap.Modal(document.getElementById('relocationRequestModal'));
+
+        // --- RENDER & UPDATE FUNCTIONS ---
+        function renderTable(data) {
+            if (!data || data.length === 0) {
+                // FIXED: colspan changed from 6 to 5
+                tableBody.innerHTML = `
+                    <tr>
+                        <td colspan="5" class="empty-state">
+                            <i data-feather="inbox"></i>
+                            <div>
+                                <h5 class="mb-2">No relocation requests found</h5>
+                                <p class="mb-0">Click 'New Relocation Request' to get started.</p>
+                            </div>
+                        </td>
+                    </tr>`;
+            } else {
+                tableBody.innerHTML = data.map(request => `
+                    <tr>
+                        <td class="text-center align-middle">${getStatusIcon(request.status)}</td>
+                        <td class="align-middle">
+                            <div>
+                                <div class="release-title">${request.songName}</div>
+                                <div class="release-artist text-muted small">${request.artistName}</div>
+                            </div>
+                        </td>
+                        <td class="align-middle">${request.isrc || 'N/A'}</td>
+                        <td class="align-middle text-center">
+                            ${request.instagram ? `<a href="${request.instagram}" target="_blank" class="social-link me-2 fs-5"><i class="bi bi-instagram"></i></a>` : ''}
+                            ${request.facebook ? `<a href="${request.facebook}" target="_blank" class="social-link fs-5"><i class="bi bi-facebook"></i></a>` : ''}
+                        </td>
+                        <td class="align-middle">${getStatusBadge(request.status)}</td>
+                    </tr>
+                `).join('');
+            }
+            feather.replace();
+        }
+
+        function getStatusIcon(status) {
+            const icons = { 'Done': 'check-circle', 'Pending': 'clock', 'Rejected': 'x-circle' };
+            const colors = { 'Done': 'text-success', 'Pending': 'text-warning', 'Rejected': 'text-danger' };
+            return `<i data-feather="${icons[status] || 'help-circle'}" class="${colors[status] || 'text-muted'}"></i>`;
+        }
+
+        function getStatusBadge(status) {
+            const badgeClasses = { 'Done': 'success', 'Pending': 'warning', 'Rejected': 'danger' };
+            return `<span class="badge bg-${badgeClasses[status] || 'secondary'}">${status}</span>`;
+        }
+
+        // --- EVENT LISTENERS ---
+
+        // ADDED: Form submission logic
+        newRelocForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const newRequest = {
+                id: Date.now(),
+                artistName: this.querySelector('#artistName').value,
+                songName: this.querySelector('#songName').value,
+                isrc: this.querySelector('#ISRC').value,
+                instagram: this.querySelector('#instagramLink').value,
+                facebook: this.querySelector('#facebookLink').value,
+                status: 'Pending'
+            };
+            relocationRequests.unshift(newRequest);
+            renderTable(relocationRequests);
+            newRelocForm.reset();
+            newRelocModal.hide();
+        });
+
+        // ADDED: CSV export logic
+        exportCsvBtn.addEventListener('click', function() {
+            const headers = ['ID', 'Song Name', 'Artist Name', 'ISRC', 'Instagram', 'Facebook', 'Status'];
+            const rows = relocationRequests.map(req => [
+                req.id, req.songName, req.artistName, req.isrc, req.instagram, req.facebook, req.status
+            ]);
+            let csvContent = "data:text/csv;charset=utf-8," 
+                + headers.join(",") + "\n" 
+                + rows.map(e => e.join(",")).join("\n");
+            
+            const link = document.createElement("a");
+            link.setAttribute("href", encodeURI(csvContent));
+            link.setAttribute("download", "relocation-requests.csv");
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        });
+
+        // --- INITIAL RENDER ---
+        renderTable(relocationRequests);
+    }
+});
+
+// merge-request js
+
+document.addEventListener('DOMContentLoaded', function() {
+    // This is the unique container for your Claim/Merge page
+    const pageContainer = document.querySelector('.admin-claim-merge-req-page');
+
+    // This ensures the code ONLY runs on the Claim/Merge page
+    if (pageContainer) {
+
+        // --- DATA ---
+        let claimingRequests = [
+            { id: 1, songName: 'Cosmic Drift', isrc: 'US1232500004', instagramAudio: 'https://instagram.com/audio/123', reelMerge: 'https://instagram.com/reel/xyz', matchingTime: '00:15-00:45', status: 'Approved' },
+            { id: 2, songName: 'Neon Tides', isrc: 'US1232500005', instagramAudio: 'https://instagram.com/audio/456', reelMerge: 'https://instagram.com/reel/abc', matchingTime: '00:30-01:00', status: 'Pending' },
+            { id: 3, songName: 'Lost Signal', isrc: 'US1232500006', instagramAudio: 'https://instagram.com/audio/789', reelMerge: 'https://instagram.com/reel/def', matchingTime: '01:00-01:15', status: 'Rejected' }
+        ];
+
+        // --- DOM ELEMENTS ---
+        const tableBody = document.getElementById('claimMergeTableBody'); // FIXED: Using unique ID
+        const paginationText = document.getElementById('pagination-text');
+        const claimForm = document.getElementById('newClaimForm');
+        const newClaimModal = new bootstrap.Modal(document.getElementById('newClaimRequestModal'));
+        const exportCsvBtn = document.getElementById('exportCsvBtn');
+
+        // --- HELPER FUNCTIONS ---
+        function getStatusIcon(status) {
+            const icons = { 'Approved': 'check-circle', 'Pending': 'clock', 'Rejected': 'x-circle' };
+            const colors = { 'Approved': 'text-success', 'Pending': 'text-warning', 'Rejected': 'text-danger' };
+            return `<i data-feather="${icons[status] || 'help-circle'}" class="${colors[status] || 'text-muted'}"></i>`;
+        }
+
+        function getStatusBadge(status) {
+            const badgeClasses = { 'Approved': 'success', 'Pending': 'warning', 'Rejected': 'danger' };
+            const textClass = status === 'Pending' ? 'text-dark' : '';
+            return `<span class="badge bg-${badgeClasses[status] || 'secondary'} ${textClass}">${status}</span>`;
+        }
+        
+        function exportToCsv(filename, data) {
+            if (!data || data.length === 0) {
+                alert("No data to export.");
+                return;
+            }
+            const headers = ['ID', 'Song Name', 'ISRC', 'Instagram Audio Link', 'Reel Merge Link', 'Matching Time', 'Status'];
+            const rows = data.map(req => [req.id, req.songName, req.isrc, req.instagramAudio, req.reelMerge, req.matchingTime, req.status]);
+            const escapeCsvValue = (value) => {
+                const stringValue = String(value || '');
+                if (stringValue.includes(',') || stringValue.includes('"') || stringValue.includes('\n')) {
+                    return `"${stringValue.replace(/"/g, '""')}"`;
+                }
+                return stringValue;
+            };
+            let csvContent = "data:text/csv;charset=utf-8," 
+                + headers.join(",") + "\n" 
+                + rows.map(r => r.map(escapeCsvValue).join(",")).join("\n");
+            
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", filename);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        // --- RENDER & UPDATE FUNCTIONS ---
+        function renderTable(data) {
+            if (!data || data.length === 0) {
+                // FIXED: colspan changed from 8 to 7
+                tableBody.innerHTML = `
+                    <tr>
+                        <td colspan="7" class="empty-state">
+                            <i data-feather="inbox"></i>
+                            <div>
+                                <h5 class="mb-2">No Claiming Requests Found</h5>
+                                <p class="mb-0">Click 'New Claiming Request' to get started.</p>
+                            </div>
+                        </td>
+                    </tr>`;
+            } else {
+                tableBody.innerHTML = data.map(request => `
+                    <tr>
+                        <td class="text-center">${getStatusIcon(request.status)}</td>
+                        <td>
+                            <div class="release-title">
+                                <a href="#">${request.songName}</a>
+                            </div>
+                        </td>
+                        <td>${request.isrc || 'N/A'}</td>
+                        <td class="text-center">
+                            ${request.instagramAudio ? `<a href="${request.instagramAudio}" target="_blank" class="link-icon" title="Instagram Audio"><i class="bi bi-music-note-beamed"></i></a>` : 'N/A'}
+                        </td>
+                        <td class="text-center">
+                            ${request.reelMerge ? `<a href="${request.reelMerge}" target="_blank" class="link-icon" title="Reel Merge"><i class="bi bi-camera-reels"></i></a>` : 'N/A'}
+                        </td>
+                        <td>${request.matchingTime || 'N/A'}</td>
+                        <td>${getStatusBadge(request.status)}</td>
+                    </tr>
+                `).join('');
+            }
+            feather.replace();
+            updatePaginationText(data.length, data.length);
+        }
+
+        function updatePaginationText(end, total) {
+            paginationText.innerHTML = `Showing <strong>1</strong> to <strong>${end}</strong> of <strong>${total}</strong> entries`;
+        }
+        
+        // --- EVENT LISTENERS ---
+        claimForm.addEventListener('submit', function(event) {
+            event.preventDefault();
+            const newRequest = {
+                id: Date.now(),
+                songName: document.getElementById('songName').value,
+                isrc: document.getElementById('isrc').value,
+                instagramAudio: document.getElementById('instagramAudio').value,
+                reelMerge: document.getElementById('reelMerge').value,
+                matchingTime: document.getElementById('matchingTime').value,
+                status: 'Pending'
+            };
+            claimingRequests.push(newRequest);
+            renderTable(claimingRequests);
+            claimForm.reset();
+            newClaimModal.hide();
+        });
+
+        // ADDED: Event listener for the export button
+        exportCsvBtn.addEventListener('click', function() {
+            exportToCsv('claim-merge-requests.csv', claimingRequests);
+        });
+
+        // --- INITIAL RENDER ---
+        renderTable(claimingRequests);
+    }
+});
