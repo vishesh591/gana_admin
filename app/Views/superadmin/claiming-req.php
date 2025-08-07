@@ -1,10 +1,8 @@
 <div class="admin-claim-req-page content-page">
             <div class="content">
                 <div class="container-xxl">
-                    <div class="row align-items-center mb-5">
-                        <div class="col">
-                            <h1 class="page-title fs-2">Claiming Request</h1>
-                        </div>
+                    <div class="py-3 d-flex align-items-sm-center flex-sm-row flex-column justify-content-between">
+                            <h4 class="fs-18 fw-semibold m-0 page-title fs-2">Claiming Request</h4>
                         <div class="col-auto d-flex gap-2">
                             <button type="button" class="btn btn-outline-secondary rounded-pill px-4" id="exportCsvBtn">
                                 <i class="bi bi-download me-1"></i> Export to CSV
@@ -17,7 +15,7 @@
 
                     <div class="row">
                         <div class="col-12">
-                            <div class="card shadow-sm">
+                            <div class="card shadow-sm mt-4">
                                 <div class="card-body p-0">
                                     <div class="table-responsive">
                                         <table class="table table-hover mb-0" id="claimingTable">

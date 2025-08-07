@@ -1,10 +1,8 @@
 <div class="admin-reloc-req-page content-page">
     <div class="content">
         <div class="container-xxl">
-            <div class="row align-items-center mb-5">
-                <div class="col">
-                    <h1 class="page-title fs-2">Relocation Request</h1>
-                </div>
+            <div class="py-3 d-flex align-items-sm-center flex-sm-row flex-column justify-content-between">
+                    <h4 class="fs-18 fw-semibold m-0 page-title fs-2">Relocation Request</h4>
                 <div class="col-auto d-flex gap-2">
                     <button type="button" class="btn btn-outline-secondary rounded-pill px-4" id="exportCsvBtn">
                         <i class="bi bi-download me-1"></i> Export to CSV
@@ -17,7 +15,7 @@
 
             <div class="row">
                 <div class="col-12">
-                    <div class="card shadow-sm">
+                    <div class="card shadow-sm mt-4">
                         <div class="card-body p-0">
                             <div class="table-responsive">
                                 <table class="table table-hover mb-0" id="relocationTable">
@@ -31,67 +29,6 @@
                                         </tr>
                                     </thead>
                                     <tbody id="relocationTableBody">
-                                        <tr>
-                                            <td class="text-center align-middle">
-                                                <i data-feather="check-circle" class="text-success"></i>
-                                            </td>
-                                            <td class="align-middle">
-                                                <div>
-                                                    <div class="release-title">
-                                                        <a href="#">Cosmic Drift</a>
-                                                    </div>
-                                                    <div class="release-artist">Orion Sun</div>
-                                                </div>
-                                            </td>
-                                            <td class="align-middle">US1232500004</td>
-                                            <td class="align-middle">
-                                                <a href="https://instagram.com/orionsun" target="_blank" class="social-link me-2"><i class="bi bi-instagram"></i></a>
-                                                <a href="https://facebook.com/orionsun" target="_blank" class="social-link"><i class="bi bi-facebook"></i></a>
-                                            </td>
-                                            <td class="align-middle">
-                                                <span class="badge bg-success">Done</span>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td class="text-center align-middle">
-                                                <i data-feather="clock" class="text-warning"></i>
-                                            </td>
-                                            <td class="align-middle">
-                                                <div>
-                                                    <div class="release-title">
-                                                        <a href="#">Neon Tides</a>
-                                                    </div>
-                                                    <div class="release-artist">Cyber Lazer</div>
-                                                </div>
-                                            </td>
-                                            <td class="align-middle">US1232500005</td>
-                                            <td class="align-middle">
-                                                <a href="https://instagram.com/cyberlazer" target="_blank" class="social-link me-2"><i class="bi bi-instagram"></i></a>
-                                            </td>
-                                            <td class="align-middle">
-                                                <span class="badge bg-warning">Pending</span>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td class="text-center align-middle">
-                                                <i data-feather="x-circle" class="text-danger"></i>
-                                            </td>
-                                            <td class="align-middle">
-                                                <div>
-                                                    <div class="release-title">
-                                                        <a href="#">Lost Signal</a>
-                                                    </div>
-                                                    <div class="release-artist">Ghost FM</div>
-                                                </div>
-                                            </td>
-                                            <td class="align-middle">US1232500006</td>
-                                            <td class="align-middle">
-                                                <a href="https://facebook.com/ghostfm" target="_blank" class="social-link"><i class="bi bi-facebook"></i></a>
-                                            </td>
-                                            <td class="align-middle">
-                                                <span class="badge bg-danger">Rejected</span>
-                                            </td>
-                                        </tr>
                                     </tbody>
                                 </table>
                             </div>

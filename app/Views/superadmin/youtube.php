@@ -1,17 +1,11 @@
 <div class="admin-youtube-page content-page">
     <div class="content">
         <div class="container-fluid">
-            <div class="row">
-                <div class="col-12">
-                    <div class="page-title-box d-sm-flex align-items-center justify-content-between mb-4">
-                        <div>
-                            <h2 class="mb-2 fw-bold">Youtube owner conflict</h2>
-                        </div>
+                    <div class="py-3 d-flex align-items-sm-center flex-sm-row flex-column justify-content-between">
+                            <h4 class=" fw-semibold m-0 page-title fs-2">Youtube owner conflict</h4>
                     </div>
-                </div>
-            </div>
 
-            <div class="card shadow-sm">
+            <div class="card shadow-sm mt-4">
                 <div class="card-body p-0">
                     <div class="table-responsive">
                         <table class="table table-hover mb-0" id="releasesTable">

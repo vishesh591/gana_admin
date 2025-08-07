@@ -1,8 +1,8 @@
-<div class="content-page">
+<div class="admin-dashboard-page content-page">
     <div class="content">
 
         <!-- Start Content-->
-        <div class="container-xxl">
+        <div class="container-fluid">
 
             <div class="py-3 d-flex align-items-sm-center flex-sm-row flex-column justify-content-between">
                 <div class="flex-grow-1">

@@ -1,10 +1,8 @@
 <div class="admin-claim-merge-req-page content-page">
     <div class="content">
         <div class="container-xxl">
-            <div class="row align-items-center mb-5">
-                <div class="col">
-                    <h1 class="page-title fs-2">Claim / Reel Merge</h1>
-                </div>
+            <div class="py-3 d-flex align-items-sm-center flex-sm-row flex-column justify-content-between">
+                    <h1 class="fs-18 fw-semibold m-0 page-title fs-2">Claim / Reel Merge</h1>
                 <div class="col-auto d-flex gap-2">
                     <button type="button" class="btn btn-outline-secondary rounded-pill px-4" id="exportCsvBtn">
                         <i class="bi bi-download me-1"></i> Export to CSV
@@ -17,7 +15,7 @@
 
             <div class="row">
                 <div class="col-12">
-                    <div class="card shadow-sm">
+                    <div class="card shadow-sm mt-4">
                         <div class="card-body p-0">
                             <div class="table-responsive">
                                 <table class="table table-hover mb-0" id="claimingTable">
@@ -33,69 +31,6 @@
                                         </tr>
                                     </thead>
                                     <tbody id="claimMergeTableBody">
-                                        <tr>
-                                            <td class="text-center">
-                                                <i data-feather="check-circle" class="text-success"></i>
-                                            </td>
-                                            <td>
-                                                <div class="release-title">
-                                                    <a href="#">Cosmic Drift</a>
-                                                </div>
-                                            </td>
-                                            <td>US1232500004</td>
-                                            <td class="text-center">
-                                                <a href="https://instagram.com/audio/123" target="_blank" class="link-icon" title="Instagram Audio"><i class="bi bi-music-note-beamed"></i>Insta link</a>
-                                            </td>
-                                            <td class="text-center">
-                                                <a href="https://instagram.com/reel/xyz" target="_blank" class="link-icon" title="Reel Merge"><i class="bi bi-camera-reels"></i>Merge Link</a>
-                                            </td>
-                                            <td>00:15-00:45</td>
-                                            <td>
-                                                <span class="badge bg-success">Approved</span>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td class="text-center">
-                                                <i data-feather="clock" class="text-warning"></i>
-                                            </td>
-                                            <td>
-                                                <div class="release-title">
-                                                    <a href="#">Neon Tides</a>
-                                                </div>
-                                            </td>
-                                            <td>US1232500005</td>
-                                            <td class="text-center">
-                                                <a href="https://instagram.com/audio/456" target="_blank" class="link-icon" title="Instagram Audio"><i class="bi bi-music-note-beamed"></i>Insta link</a>
-                                            </td>
-                                            <td class="text-center">
-                                                <a href="https://instagram.com/reel/abc" target="_blank" class="link-icon" title="Reel Merge"><i class="bi bi-camera-reels"></i>Merge Link</a>
-                                            </td>
-                                            <td>00:30-01:00</td>
-                                            <td>
-                                                <span class="badge bg-warning text-dark">Pending</span>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td class="text-center">
-                                                <i data-feather="x-circle" class="text-danger"></i>
-                                            </td>
-                                            <td>
-                                                <div class="release-title">
-                                                    <a href="#">Lost Signal</a>
-                                                </div>
-                                            </td>
-                                            <td>US1232500006</td>
-                                            <td class="text-center">
-                                                <a href="https://instagram.com/audio/789" target="_blank" class="link-icon" title="Instagram Audio"><i class="bi bi-music-note-beamed"></i>Insta link</a>
-                                            </td>
-                                            <td class="text-center">
-                                                <a href="https://instagram.com/reel/def" target="_blank" class="link-icon" title="Reel Merge"><i class="bi bi-camera-reels"></i>Merge Link</a>
-                                            </td>
-                                            <td>01:00-01:15</td>
-                                            <td>
-                                                <span class="badge bg-danger">Rejected</span>
-                                            </td>
-                                        </tr>
                                     </tbody>
                                 </table>
                             </div>
