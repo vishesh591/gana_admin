@@ -15,7 +15,7 @@
     <?= $this->include('partials/sidebar') ?>
 
     <?= $this->include('superadmin/' . $file_name) ?>
-
+    <?= $this->include('partials/footer') ?>
 </div>
 
 
