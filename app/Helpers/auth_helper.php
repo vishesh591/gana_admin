@@ -14,29 +14,6 @@ if (!function_exists('getRoleNameById')) {
     }
 }
 
-if (!function_exists('getUserRoleName')) {
-    function getUserRoleName()
-    {
-        $session = session();
-        $user = $session->get('user'); // adjust key as per your session data
-
-        if (!$user || !isset($user['role'])) {
-            return null;
-        }
-
-        // Optional: Map role slugs to readable names
-        $roleMap = [
-            'superadmin' => 'Super Admin',
-            'admin'      => 'Sub Admin',
-            'distributor' => 'Distributor',
-            'label'      => 'Label',
-            'artist'     => 'Artist',
-        ];
-
-        return $roleMap[$user['role']] ?? ucfirst($user['role']);
-    }
-}
-
 
 if (!function_exists('getUserRoleSlug')) {
     function getUserRoleSlug()

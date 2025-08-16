@@ -2,68 +2,67 @@
 
 namespace App\Controllers;
 
+use App\Models\UserModel;
 use App\Controllers\BaseController;
-use CodeIgniter\HTTP\ResponseInterface;
 
 class Auth extends BaseController
 {
+    protected $userModel;
+
+    public function __construct()
+    {
+        $this->userModel = new UserModel();
+    }
+
     public function index()
     {
+        // If already logged in, redirect to dashboard based on role
+        if (session()->get('isLoggedIn')) {
+            $role = session()->get('user')['role'];
+            return redirect()->to('/' . strtolower($role));
+        }
+
         return view('auth/login');
     }
 
-    public function logincheck()
+    public function loginCheck()
     {
         $email = trim($this->request->getPost('email'));
         $password = trim($this->request->getPost('password'));
+        $user = $this->userModel->getUserWithRoleByEmail($email);
 
-        $db = \Config\Database::connect();
-        $builder = $db->table('users');
-        $result = $builder->getWhere(['email' => $email])->getResultArray();
-
-        if (sizeof($result) > 0) {
-            if (password_verify($password, $result[0]['password'])) {
-
-                $roleName = getRoleNameById($result[0]['role_id']);
-
-                $session = session();
-                $session->set('isLoggedIn', 1);
-                $session->set('user', [
-                    'id' => $result[0]['id'],
-                    'email' => $result[0]['email'],
-                    'country_code' => $result[0]['country_code'],
-                    'phone' => $result[0]['phone'],
-                    'role_id' => $result[0]['role_id'],
-                    'role' => $roleName,
-                ]);
-
-                // Redirect based on role
-                switch (strtolower($roleName)) {
-                    case 'superadmin':
-                        return redirect()->to('/superadmin');
-                    case 'subadmin':
-                        return redirect()->to('/subadmin');
-                    case 'distributor':
-                        return redirect()->to('/distributor');
-                    case 'label':
-                        return redirect()->to('/label');
-                    case 'artist':
-                        return redirect()->to('/artist');
-                    default:
-                        return redirect()->to('/unauthorized');
-                }
-            } else {
-                return redirect()->back()->with('error', 'Invalid Password.');
-            }
-        } else {
-            return redirect()->back()->with('error', 'Invalid Email.');
+        if (!$user) {
+            return redirect()->back()->withInput()->with('error', 'Invalid Email.');
         }
+
+        if (!password_verify($password, $user['password'])) {
+            return redirect()->back()->withInput()->with('error', 'Invalid Password.');
+        }
+
+        // Save session
+        session()->set([
+            'isLoggedIn' => true,
+            'user'       => [
+                'id'       => $user['id'],
+                'email'    => $user['email'],
+                'role'     => strtolower($user['role_name']),
+                'role_id'  => $user['role_id'],
+                'name'     => $user['name']
+            ]
+        ]);
+
+        // If "Remember Me" checked → set cookie
+        if ($this->request->getPost('remember')) {
+            setcookie('remember_email', $email, time() + (86400 * 30), "/"); // 30 days
+        }
+
+        // Redirect based on role
+        return redirect()->to('/' . strtolower($user['role_name']));
     }
 
     public function logout()
     {
-        $session = session();
-        $session->remove('user');
-        return redirect()->to('/login');
+        session()->destroy();
+        return redirect()->to('/login')->with('success', 'You have been logged out.');
     }
 }

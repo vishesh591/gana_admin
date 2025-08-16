@@ -6,8 +6,9 @@ use CodeIgniter\Router\RouteCollection;
  * @var RouteCollection $routes
  */
 
-$routes->get('/login', 'Auth::index', ['filter' => 'noauth']);
+$routes->get('/login', 'Auth::index');
 $routes->post('/loginCheck', 'Auth::loginCheck');
+$routes->get('auth-logout', 'Auth::logout');
 
 // Filter on route group
 $routes->group('', ['filter' => 'auth'], function ($routes) {
@@ -37,7 +38,13 @@ $routes->group('superadmin', ['filter' => 'role:superadmin'], function ($routes)
     $routes->get('merge-request', 'SuperAdmin::merge_request');
     $routes->get('youtube', 'SuperAdmin::youtube');
     $routes->get('facebook', 'SuperAdmin::facebook');
+    $routes->get('auth-logout', 'Auth::logout');
+
+    $routes->get('add-release', 'SuperAdmin::addRelease');
+
+    $routes->post('register', 'RegisterController::register');
 });
+
 
 // Routes only for artists
 $routes->group('artist', ['filter' => 'role:artist'], function ($routes) {

@@ -28,28 +28,35 @@
                                     <form method="POST" action="<?= base_url('loginCheck') ?>" class="my-4">
 
                                         <?php if (!empty(session()->getFlashdata('error'))) : ?>
-                                            <div class="text-danger"><?= session()->getFlashdata('error') ?></div>
+                                            <div class="alert alert-danger"><?= session()->getFlashdata('error') ?></div>
                                         <?php endif; ?>
+
+                                        <?php if (!empty(session()->getFlashdata('success'))) : ?>
+                                            <div class="alert alert-success"><?= session()->getFlashdata('success') ?></div>
+                                        <?php endif; ?>
+
+                                        <?= csrf_field() ?>
 
                                         <div class="form-group mb-3">
                                             <label for="emailaddress" class="form-label">Email address</label>
-                                            <input class="form-control" type="email" id="emailaddress" name="email" value="test@test.com" required="" placeholder="Enter your email">
+                                            <input class="form-control" type="email" id="emailaddress" name="email"
+                                                value="<?= old('email') ?>" required placeholder="Enter your email">
                                         </div>
 
                                         <div class="form-group mb-3">
                                             <label for="password" class="form-label">Password</label>
-                                            <input class="form-control" type="password" required="" id="password" name="password" value="password" placeholder="Enter your password">
+                                            <input class="form-control" type="password" id="password" name="password" required placeholder="Enter your password">
                                         </div>
 
                                         <div class="form-group d-flex mb-3">
                                             <div class="col-sm-6">
                                                 <div class="form-check">
-                                                    <input type="checkbox" class="form-check-input" id="checkbox-signin" checked>
+                                                    <input type="checkbox" class="form-check-input" id="checkbox-signin" name="remember">
                                                     <label class="form-check-label" for="checkbox-signin">Remember me</label>
                                                 </div>
                                             </div>
                                             <div class="col-sm-6 text-end">
-                                                <a class='text-muted fs-14' href='auth-recoverpw.html'>Forgot password?</a>
+                                                <a class="text-muted fs-14" href="<?= base_url('forgot-password') ?>">Forgot password?</a>
                                             </div>
                                         </div>
 
@@ -61,6 +68,7 @@
                                             </div>
                                         </div>
                                     </form>
+
 
                                     <div class="saprator my-4"><span>or sign in with</span></div>
 

@@ -8,7 +8,7 @@
                         <button type="button" class="btn btn-outline-secondary rounded-pill px-4" id="exportCsvBtn">
                             <i class="bi bi-download me-1"></i> Export table CSV
                         </button>
-                        <a href="add-release.php" class="btn btn-primary">
+                        <a href="<?= base_url('superadmin/add-release') ?>" class="btn btn-primary">
                             <i data-feather="plus" class="me-1"></i> Add New Release
                         </a>
                     </div>
@@ -164,7 +164,7 @@
                                             <td>INH722302516</td>
                                             <td><span class="badge status-badge status-review">IN REVIEW</span></td>
                                         </tr>
-                                         <tr>
+                                        <tr>
                                             <td class="text-center">
                                                 <i class="bi bi-check-circle-fill text-success" title="Approved"></i>
                                             </td>
@@ -224,13 +224,13 @@
                         <h2 class="modal-title text-white fw-bold" id="releaseTitle">Swapnil Dada Kartoy Raj</h2>
                         <p class="text-white mb-3" id="releaseArtistHeader">Mohit Jadhav</p>
                         <div id="releaseStatusBadges" class="d-flex align-items-center">
-                           <span class="badge bg-success me-2">DELIVERED</span>
+                            <span class="badge bg-success me-2">DELIVERED</span>
                         </div>
                     </div>
                     <button type="button" class="btn btn-takedown-header" id="takedownButton">
                         <i class="bi bi-trash me-2"></i>Request Takedown
                     </button>
-                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
             </div>
 
@@ -301,7 +301,7 @@
                                         <td>INH722302516</td>
                                         <td>Marathi</td>
                                         <td class="text-center">
-                                           <span class="track-tag-clean badge text-white">Clean</span>
+                                            <span class="track-tag-clean badge text-white">Clean</span>
                                         </td>
                                     </tr>
                                 </tbody>

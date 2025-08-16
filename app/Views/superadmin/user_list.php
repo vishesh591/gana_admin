@@ -98,99 +98,110 @@
 <div class="modal fade" id="claimingRequestModal" tabindex="-1" aria-labelledby="claimingRequestModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg modal-dialog-centered">
         <div class="modal-content rounded-4">
-            <form action="#" method="POST" id="claimingRequestForm">
+            <form action="<?= base_url('superadmin/register')?>" method="POST" enctype="multipart/form-data" id="claimingRequestForm">
+                <?= csrf_field() ?>
                 <div class="modal-header">
                     <h5 class="modal-title" id="claimingRequestModalLabel">New Account Request</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body p-4">
+                    
+                    <!-- Basic Information -->
                     <h6 class="text-primary fw-bold mb-3">Basic Information</h6>
                     <div class="row">
                         <div class="col-md-12 mb-3">
                             <label for="basicName" class="form-label">Name</label>
-                            <input type="text" class="form-control rounded-pill p-3" id="basicName" placeholder="Enter full name" required>
+                            <input type="text" class="form-control rounded-pill p-3" id="basicName" name="name" placeholder="Enter full name" required>
                         </div>
                         <div class="col-md-6 mb-3">
                             <label for="companyName" class="form-label">Company Name</label>
-                            <input type="text" class="form-control rounded-pill p-3" id="companyName" placeholder="Enter company name">
+                            <input type="text" class="form-control rounded-pill p-3" id="companyName" name="company_name" placeholder="Enter company name">
                         </div>
                         <div class="col-md-6 mb-3">
                             <label for="labelName" class="form-label">Label Name</label>
-                            <input type="text" class="form-control rounded-pill p-3" id="labelName" placeholder="Enter label name">
+                            <input type="text" class="form-control rounded-pill p-3" id="labelName" name="label_name" placeholder="Enter label name">
                         </div>
                         <div class="col-md-6 mb-3">
                             <label for="emailId" class="form-label">Email Id</label>
-                            <input type="email" class="form-control rounded-pill p-3" id="emailId" placeholder="example@email.com" required>
+                            <input type="email" class="form-control rounded-pill p-3" id="emailId" name="email" placeholder="example@email.com" required>
                         </div>
                         <div class="col-md-6 mb-3">
                             <label for="phoneNumber" class="form-label">Phone Number</label>
-                            <input type="tel" class="form-control rounded-pill p-3" id="phoneNumber" placeholder="Enter phone number" required>
+                            <input type="tel" class="form-control rounded-pill p-3" id="phoneNumber" name="phone" placeholder="Enter phone number" required>
                         </div>
                         <div class="col-12 mb-4">
                             <label class="form-label mb-2">Which describes you best?</label>
                             <div>
                                 <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" name="userType" id="typeArtist" value="Artist" checked>
+                                    <input class="form-check-input" type="radio" name="role" id="typeArtist" value="artist" checked>
                                     <label class="form-check-label" for="typeArtist">Artist</label>
                                 </div>
                                 <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" name="userType" id="typeLabel" value="Label">
+                                    <input class="form-check-input" type="radio" name="role" id="typeLabel" value="label">
                                     <label class="form-check-label" for="typeLabel">Label</label>
                                 </div>
                                 <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" name="userType" id="typeDistributor" value="Distributor">
+                                    <input class="form-check-input" type="radio" name="role" id="typeDistributor" value="distributor">
                                     <label class="form-check-label" for="typeDistributor">Distributor</label>
                                 </div>
                             </div>
                         </div>
                     </div>
+                    
+                    <!-- Login Credentials -->
                     <h6 class="text-primary fw-bold mb-3">Login Credentials</h6>
                     <div class="row">
                         <div class="col-md-6 mb-3">
                             <label for="username" class="form-label">Username</label>
-                            <input type="text" class="form-control rounded-pill p-3" id="username" placeholder="Create a username" required>
+                            <input type="text" class="form-control rounded-pill p-3" id="username" name="user_name" placeholder="Create a username" required>
                         </div>
                         <div class="col-md-6 mb-3">
                             <label for="password" class="form-label">Password</label>
                             <div class="input-group">
-                                <input type="password" class="form-control rounded-start-pill p-3" id="password" placeholder="Create a password" required style="border-right: none;">
+                                <input type="password" class="form-control rounded-start-pill p-3" id="password" name="password" placeholder="Create a password" required style="border-right: none;">
                                 <button class="btn btn-outline-secondary rounded-end-pill" type="button" id="togglePassword" style="border-left: none;">
                                     <i class="bi bi-eye-slash"></i>
                                 </button>
                             </div>
                         </div>
                     </div>
+                    
+                    <!-- Bank Details -->
                     <h6 class="text-primary fw-bold mb-3 pt-2">Bank Details</h6>
                     <div class="row">
                         <div class="col-12 mb-3">
                             <label for="accountHolderName" class="form-label">Account Holder Name</label>
-                            <input type="text" class="form-control rounded-pill p-3" id="accountHolderName" placeholder="Enter name as per bank records" required>
+                            <input type="text" class="form-control rounded-pill p-3" id="accountHolderName" name="holder_name" placeholder="Enter name as per bank records" required>
                         </div>
                         <div class="col-md-6 mb-3">
                             <label for="accountNumber" class="form-label">Account Number</label>
-                            <input type="text" class="form-control rounded-pill p-3" id="accountNumber" placeholder="Enter bank account number" required>
+                            <input type="text" class="form-control rounded-pill p-3" id="accountNumber" name="account_number" placeholder="Enter bank account number" required>
                         </div>
                         <div class="col-md-6 mb-3">
                             <label for="ifscCode" class="form-label">IFSC Code</label>
-                            <input type="text" class="form-control rounded-pill p-3" id="ifscCode" placeholder="Enter IFSC code" required>
+                            <input type="text" class="form-control rounded-pill p-3" id="ifscCode" name="ifsc_code" placeholder="Enter IFSC code" required>
                         </div>
                         <div class="col-12 mb-3">
                             <label for="branchName" class="form-label">Branch Name</label>
-                            <input type="text" class="form-control rounded-pill p-3" id="branchName" placeholder="Enter bank branch name" required>
+                            <input type="text" class="form-control rounded-pill p-3" id="branchName" name="branch_name" placeholder="Enter bank branch name" required>
                         </div>
                     </div>
+                    
+                    <!-- Agreement Period -->
                     <h6 class="text-primary fw-bold mb-3 pt-2">Agreement Period</h6>
                     <div class="row">
                         <div class="col-md-6 mb-3">
                             <label for="startDate" class="form-label">Agreement Start Date</label>
-                            <input type="date" class="form-control rounded-pill p-3" id="startDate" required>
+                            <input type="date" class="form-control rounded-pill p-3" id="startDate" name="agreement_start_date" required>
                         </div>
                         <div class="col-md-6 mb-3">
                             <label for="endDate" class="form-label">Agreement End Date</label>
-                            <input type="date" class="form-control rounded-pill p-3" id="endDate" required>
+                            <input type="date" class="form-control rounded-pill p-3" id="endDate" name="agreement_end_date" required>
                         </div>
                     </div>
                 </div>
+                
+                <!-- Footer -->
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary rounded-pill" data-bs-dismiss="modal">Close</button>
                     <button type="submit" class="btn btn-primary rounded-pill">Submit Request</button>
@@ -199,3 +210,4 @@
         </div>
     </div>
 </div>
+

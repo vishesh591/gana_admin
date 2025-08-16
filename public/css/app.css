@@ -17576,3 +17576,185 @@ admin-claim-req-page
 .admin-ownership-data-page .sortable-header[data-sort-direction="desc"] .sort-icon .bi-arrow-down {
     color: var(--bs-primary);
 }
+ .step-indicator-container {
+            padding: 0 15px;
+            margin-bottom: 30px;
+        }
+
+        .step-indicator {
+            position: relative;
+            counter-reset: step;
+            padding-bottom: 20px;
+        }
+
+        .step-indicator::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background-color: #e9ecef;
+            top: 18px;
+            z-index: 1;
+        }
+
+        .step {
+            position: relative;
+            z-index: 2;
+            text-align: center;
+            flex: 1;
+            padding: 0 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .step-number {
+            width: 36px;
+            height: 36px;
+            line-height: 36px;
+            border-radius: 50%;
+            background-color: #e9ecef;
+            color: #6c757d;
+            display: inline-block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .step.active .step-number {
+            background-color: #4361ee;
+            color: white;
+            transform: scale(1.1);
+        }
+
+        .step.completed .step-number {
+            background-color: #7209b7;
+            color: white;
+        }
+
+        /* Progress line animation */
+        .progress-line {
+            position: absolute;
+            height: 2px;
+            background-color: #7209b7;
+            top: 18px;
+            left: 0;
+            z-index: 0;
+            transition: width 0.5s ease;
+        }
+
+        .step-title {
+            color: #6c757d;
+            font-size: 14px;
+            display: block;
+            transition: all 0.3s ease;
+        }
+
+        .step.active .step-title {
+            color: #4361ee;
+            font-weight: 600;
+        }
+
+        .step.completed .step-title {
+            color: #7209b7;
+        }
+
+        .step:hover .step-number {
+            transform: scale(1.05);
+        }
+
+        .step:hover .step-title {
+            color: #4361ee;
+        }
+        
+        .form-section {
+            background-color: white;
+            border-radius: 8px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 0.75rem 1.5rem rgba(18, 38, 63, 0.03);
+            border: 1px solid #e9ecef;
+        }
+        
+        .form-section h5 {
+            color: #4361ee;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #f1f1f1;
+        }
+        
+        .required-field:after {
+            content: " *";
+            color: #dc3545;
+        }
+        
+        .file-upload-container {
+            border: 2px dashed #dee2e6;
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .file-upload-container:hover {
+            border-color: #4361ee;
+            background-color: rgba(67, 97, 238, 0.05);
+        }
+        
+        .file-upload-preview {
+            max-width: 200px;
+            max-height: 200px;
+            margin: 0 auto;
+            display: block;
+        }
+        
+        .store-checkbox-group {
+            max-height: 300px;
+            overflow-y: auto;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            padding: 15px;
+        }
+        
+        .store-checkbox-item {
+            margin-bottom: 8px;
+        }
+        
+        .step-content {
+            display: none;
+            opacity: 0;
+            transform: translateX(50px);
+            transition: all 0.3s ease;
+        }
+        
+        .step-content.active {
+            display: block;
+            opacity: 1;
+            transform: translateX(0);
+        }
+        
+        .current-step-title {
+            color: #4361ee;
+            font-weight: 600;
+        }
+
+        .feather-icon-lg {
+            width: 48px;
+            height: 48px;
+        }
+
+        body {
+            background-color: #f8f9fa;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .content-page {
+            padding: 20px;
+        }
+
+        .container-xxl {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
