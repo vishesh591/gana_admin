@@ -14778,7 +14778,6 @@ body.loading {
 /* admin-account-page css */
 
 .admin-account-page {
-    background-color: #f9fafb;
     overflow-x: hidden;
 }
 .admin-account-page .content-page {
@@ -14841,7 +14840,6 @@ body.loading {
 /* admin-releases-page css */
 
 .admin-releases-page {
-    background-color: #f8f9fa;
     font-size: 15px;
 }
 
@@ -15228,7 +15226,6 @@ body.loading {
 /* admin-artists-page css */
 
 .admin-artists-page {
-    background-color: #f8f9fa;
     font-size: 15px;
 }
 
@@ -15544,9 +15541,7 @@ body.loading {
 
 /* admin-labels-page css */
 
-.admin-labels-page {
-    background-color: #f8f9fa;
-    font-size: 15px;
+.admin-labels-page {    
     font-size: 15px;
 }
 
@@ -15860,7 +15855,6 @@ body.loading {
 
 /* admin-claim-req-page css */
 .admin-claim-req-page {
-  background-color: #f8f9fa;
     font-size: 15px;
     overflow-x: hidden;
 }
@@ -15961,7 +15955,6 @@ body.loading {
 /* admin-reloc-req-page */
 
 .admin-reloc-req-page {
-  background-color: #f8f9fa;
     font-size: 15px;
     overflow-x: hidden;
 }
@@ -16062,7 +16055,6 @@ body.loading {
 /* admin-claim-merge-req-page css */
 
 .admin-claim-merge-req-page  {
-  background-color: #f8f9fa;
     font-size: 15px;
     overflow-x: hidden;
 }
@@ -16135,7 +16127,6 @@ body.loading {
 /* admin-youtube-page css */
 
 .admin-youtube-page {
-    background-color: #f8f9fa;
     font-size: 15px;
     overflow-x: hidden;
 }
@@ -16339,7 +16330,6 @@ body.loading {
 /* admin-facebook-page css */
 
 .admin-facebook-page {
-    background-color: #f8f9fa;
     font-size: 15px;
     overflow-x: hidden;
 }
@@ -16997,7 +16987,6 @@ body.loading {
 /* admin-claim-data-page css */
 
 .admin-claim-data-page {
-    background-color: #f8f9fa;
     font-size: 15px;
     overflow-x: hidden;
 }
@@ -17165,7 +17154,6 @@ body.loading {
 /* admin-reloc-data-page css */
 /* General Body and Layout */
 .admin-reloc-data-page {
-    background-color: #f8f9fa;
     font-size: 15px;
     overflow-x: hidden;
 }
@@ -17332,7 +17320,6 @@ body.loading {
 
 
 .admin-merge-data-page  {
-    background-color: #f8f9fa;
     font-size: 15px;
     overflow-x: hidden;
 }
@@ -17495,7 +17482,6 @@ body.loading {
 
 /* admin-owner-data-page css */
 .admin-ownership-data-page  {
-    background-color: #f8f9fa;
     font-size: 15px;
     overflow-x: hidden;
 }
