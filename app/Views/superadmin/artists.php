@@ -115,34 +115,35 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
-                <form id="createArtistForm">
+                <form id="createArtistForm"
+                    action="<?= base_url('superadmin/create-artist') ?>"
+                    method="post"
+                    enctype="multipart/form-data">
                     <div class="mb-3">
                         <label class="form-label">Artist Name</label>
-                        <input type="text" class="form-control" id="artistName" required>
+                        <input type="text" class="form-control" id="artistName" name="artist_name" required>
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Spotify Id</label>
-                        <input type="text" class="form-control" id="Spotify">
+                        <input type="text" class="form-control" id="Spotify" name="spotify_id">
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Apple ID</label>
-                        <input type="text" class="form-control" id="Apple">
+                        <input type="text" class="form-control" id="Apple" name="apple_id">
                     </div>
 
                     <div class="mb-3">
                         <label class="form-label">Profile Image</label>
-                        <div class="image-upload-area">
-                            <i data-feather="camera" style="font-size: 2rem; color: #6c757d;"></i>
-                            <p class="mb-0 mt-2 text-muted">Click to upload artist image</p>
-                            <img id="imagePreview" class="image-preview" style="display: none;" alt="Image Preview">
-                        </div>
-                        <input type="file" id="imageInput" accept="image/*" style="display: none;">
+                        <p class="text-muted mb-1">Click to upload artist image</p>
+                        <input type="file" class="form-control" id="imageInput" name="profile_image" accept="image/*">
+                        <img id="imagePreview" style="display: none; max-width: 100%; margin-top: 10px;" alt="Image Preview">
                     </div>
                 </form>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                <button type="button" class="btn btn-create">
+                <!-- Submit button -->
+                <button type="submit" form="createArtistForm" class="btn btn-create">
                     <i data-feather="plus" class="me-1"></i>
                     Create Artist
                 </button>

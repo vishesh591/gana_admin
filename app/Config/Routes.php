@@ -38,11 +38,18 @@ $routes->group('superadmin', ['filter' => 'role:superadmin'], function ($routes)
     $routes->get('merge-request', 'SuperAdmin::merge_request');
     $routes->get('youtube', 'SuperAdmin::youtube');
     $routes->get('facebook', 'SuperAdmin::facebook');
-    $routes->get('auth-logout', 'Auth::logout');
 
     $routes->get('add-release', 'SuperAdmin::addRelease');
-
+    $routes->post('create-artist', 'Backend\Artist\ArtistController::store');
+    $routes->post('create-label', 'Backend\Label\LabelController::store');
+    $routes->get('getAll/artists', 'Backend\Artist\ArtistController::index');
+    $routes->get('getAll/labels', 'Backend\Label\LabelController::index');
     $routes->post('register', 'RegisterController::register');
+    $routes->get('auth-logout', 'Auth::logout');
+    $routes->get('releases', 'ReleaseController::index'); 
+    $routes->get('releases/create', 'ReleaseController::create');
+    $routes->post('releases/store', 'ReleaseController::store');   
+
 });
 
 

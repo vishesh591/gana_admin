@@ -99,33 +99,30 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
-                <form id="createlabelForm">
+                <form action="<?= base_url('superadmin/create-label') ?>" method="post" enctype="multipart/form-data">
                     <div class="mb-3">
                         <label class="form-label">Label Name</label>
-                        <input type="text" class="form-control" id="labelName" required>
+                        <input type="text" class="form-control" name="label_name" required>
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Primary Label Name</label>
-                        <input type="text" class="form-control" id="primaryLabelName" value="Your Main Label Name" readonly>
+                        <input type="text" class="form-control" name="primary_label" value="Your Main Label Name" readonly>
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Profile Image</label>
-                        <div class="image-upload-area">
-                            <i data-feather="camera" style="font-size: 2rem; color: #6c757d;"></i>
-                            <p class="mb-0 mt-2 text-muted">Click to upload label image</p>
-                            <img id="imagePreview" class="image-preview" style="display: none;" alt="Label Preview">
-                        </div>
-                        <input type="file" id="imageInput" accept="image/*" style="display: none;">
+                        <p class="text-muted mb-1">Click to upload label image</p>
+                        <input type="file" class="form-control" id="imageInput" name="profile_image" accept="image/*">
+                        <img id="imagePreview" style="display: none; max-width: 100%; margin-top: 10px;" alt="Image Preview">
                     </div>
-                </form>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                <button type="button" class="btn btn-create">
+                <button type="submit" class="btn btn-create">
                     <i data-feather="plus" class="me-1"></i>
                     Create label request
                 </button>
             </div>
+            </form>
         </div>
     </div>
 </div>
