@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Repositories;
+namespace App\Repositories\Releases;
 
-use App\Models\ReleaseModel;
+use App\Models\Backend\ReleaseModel;
 
 class ReleaseRepository
 {

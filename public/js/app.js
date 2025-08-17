@@ -324,6 +324,10 @@ document.getElementById("artworkUpload").addEventListener("click", function () {
   document.getElementById("artworkFile").click();
 });
 
+  document.getElementById('audioUpload').addEventListener('click', function() {
+            document.getElementById('audioFile').click();
+        });
+
 document.getElementById("artworkFile").addEventListener("change", function (e) {
   const file = e.target.files[0];
   if (file) {
@@ -339,7 +343,6 @@ document.getElementById("artworkFile").addEventListener("change", function (e) {
 
 // Form submission
 document.getElementById("releaseForm").addEventListener("submit", function (e) {
-  e.preventDefault();
   alert("Release submitted successfully!");
 });
 

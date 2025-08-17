@@ -46,12 +46,11 @@ $routes->group('superadmin', ['filter' => 'role:superadmin'], function ($routes)
     $routes->get('getAll/labels', 'Backend\Label\LabelController::index');
     $routes->post('register', 'RegisterController::register');
     $routes->get('auth-logout', 'Auth::logout');
-    $routes->get('releases', 'ReleaseController::index'); 
-    $routes->get('releases/create', 'ReleaseController::create');
-    $routes->post('releases/store', 'ReleaseController::store');   
+    $routes->get('releases', 'Backend\Release\ReleaseController::index'); 
+    $routes->get('releases/create', 'Backend\Release\ReleaseController::create');
+    $routes->post('releases/store', 'Backend\Release\ReleaseController::store');   
 
 });
-
 
 // Routes only for artists
 $routes->group('artist', ['filter' => 'role:artist'], function ($routes) {
