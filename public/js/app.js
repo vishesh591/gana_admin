@@ -305,29 +305,22 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 // claim-data-page js
-    document.addEventListener('DOMContentLoaded', function() {
+// In your app.js, replace the entire .admin-claim-data-page block with this:
+document.addEventListener('DOMContentLoaded', function() {
     const ownershipPageContainer = document.querySelector('.admin-claim-data-page');
 
-    // This entire block will only run if the .admin-claim-data-page element exists
     if (ownershipPageContainer) {
 
         // --- DATA ---
         let claimingRequests = [
-            { id: 1, songName: 'Cosmic Drift', artist: 'Orion Sun', isrc: 'US1232500004', instagramAudio: 'https://instagram.com/audio/123', reelMerge: 'https://instagram.com/reel/xyz', status: 'pending', artwork: 'https://i.scdn.co/image/ab67616d0000b273e6f6a7f1b2b2b2b2b2b2b2b2' },
+            { id: 1, songName: 'Cosmic Drift', artist: 'Orion Sun', isrc: 'US1232500004', instagramAudio: 'https://instagram.com/audio/123', reelMerge: 'https://instagram.com/reel/xyz', status: 'pending', artwork: 'https://i.scdn.co/image/ab67616d0000b273e6f6a7f1b2b2b2b2b2b2b2b2', matchingTime: 'N/A' },
             { id: 2, songName: 'Neon Tides', artist: 'Cyber Lazer', isrc: 'US1232500005', instagramAudio: 'https://instagram.com/audio/456', reelMerge: 'https://instagram.com/reel/abc', matchingTime: '00:30-01:00', status: 'pending', artwork: 'https://i.scdn.co/image/ab67616d0000b273f4f4f4f4f4f4f4f4f4f4f4f4' },
             { id: 3, songName: 'Lost Signal', artist: 'Ghost FM', isrc: 'US1232500006', instagramAudio: 'https://instagram.com/audio/789', reelMerge: 'https://instagram.com/reel/def', matchingTime: '01:00-01:15', status: 'rejected', artwork: 'https://i.scdn.co/image/ab67616d0000b273a8a8a8a8a8a8a8a8a8a8a8a8' }
         ];
         let currentFilter = 'all';
-        let filteredData = [...claimingRequests];
 
         // --- DOM ELEMENTS ---
-        const tableBody = document.getElementById('tableBody');
-        const paginationText = document.getElementById('pagination-text');
-        const newClaimForm = document.getElementById('newClaimForm');
-        const searchInput = document.getElementById('searchInput');
-        const searchButton = document.getElementById('searchButton');
-        const exportCsvBtn = document.getElementById('exportCsvBtn');
-        const newClaimModal = new bootstrap.Modal(document.getElementById('newClaimRequestModal'));
+        const table = $('#datatable');
         const releaseModalEl = document.getElementById('releaseModal');
         const releaseModal = new bootstrap.Modal(releaseModalEl);
 
@@ -343,34 +336,56 @@ document.addEventListener('DOMContentLoaded', function() {
         };
         const createLink = (url, iconClass) => url ? `<a href="${url}" target="_blank" class="link-icon me-2"><i class="bi ${iconClass}"></i></a>` : '';
 
+        // --- DATATABLE INITIALIZATION ---
+        const dataTableInstance = table.DataTable({
+            destroy: true,
+            data: [],
+            paging: true,
+            searching: true,
+            info: true,
+            lengthChange: true,
+            autoWidth: false,
+            columns: [
+                { data: 'status', className: 'text-center', orderable: false, render: (data) => getStatusIcon(data) },
+                { data: null, orderable: true, render: (data, type, row) => `
+                    <div class="release-title"><a href="#" class="view-details-link" data-id="${row.id}">${row.songName}</a></div>
+                    <div class="text-muted small">${row.artist}</div>`
+                },
+                { data: 'isrc', defaultContent: 'N/A' },
+                { data: null, className: 'text-center', orderable: false, render: (data, type, row) => createLink(row.instagramAudio, 'bi-music-note-beamed') + ' ' + createLink(row.reelMerge, 'bi-camera-reels') },
+                { data: 'status', className: 'text-center', render: (data) => `<div class="d-flex justify-content-center">${getStatusBadge(data)}</div>` }
+            ],
+            drawCallback: () => {
+                feather.replace(); 
+            },
+            language: {
+                info: "Showing _START_ to _END_ of _TOTAL_ entries",
+                infoEmpty: "Showing 0 to 0 of 0 entries",
+                infoFiltered: "(filtered from _MAX_ total entries)",
+                zeroRecords: "No matching requests found",
+                emptyTable: "No requests available",
+                search: "_INPUT_",
+                searchPlaceholder: "Search records..."
+            }
+        });
+        
         // --- RENDER & UPDATE FUNCTIONS ---
-        function renderTable() {
-            if (!filteredData || filteredData.length === 0) {
-                tableBody.innerHTML = `<tr><td colspan="5" class="empty-state"><i data-feather="inbox"></i><div><h5 class="mb-2">No Requests Found</h5><p class="mb-0">No requests match the current filter.</p></div></td></tr>`;
-            } else {
-                tableBody.innerHTML = filteredData.map(req => `
-                    <tr>
-                        <td class="text-center">${getStatusIcon(req.status)}</td>
-                        <td>
-                            <div class="release-title">
-                                <a href="#" class="view-details-link" data-id="${req.id}">${req.songName}</a>
-                            </div>
-                            <div class="text-muted small">${req.artist}</div>
-                        </td>
-                        <td>${req.isrc || 'N/A'}</td>
-                        <td class="text-center">${createLink(req.instagramAudio, 'bi-music-note-beamed')} ${createLink(req.reelMerge, 'bi-camera-reels')}</td>
-                        <td><div class="d-flex justify-content-center">${getStatusBadge(req.status)}</div></td>
-                    </tr>
-                `).join('');
-            }
-            feather.replace();
-            updatePaginationText(filteredData.length, claimingRequests.length);
-        }
-
-        function updatePaginationText(count, total) {
-            if(paginationText) {
-                paginationText.innerHTML = `Showing <strong>${count}</strong> of <strong>${total}</strong> entries`;
-            }
+        
+        // This is the single source of truth for filtering and drawing the table
+        function applyFiltersAndDraw() {
+            // Define the custom filter function
+            $.fn.dataTable.ext.search.pop(); // Clear any previous custom filters
+            $.fn.dataTable.ext.search.push(function(settings, data, dataIndex) {
+                if (currentFilter === 'all') {
+                    return true; // Show all rows if filter is 'all'
+                }
+                // Compare the row's status with the current filter
+                const rowStatus = claimingRequests[dataIndex].status;
+                return rowStatus === currentFilter;
+            });
+            
+            // Redraw the table to apply the filter
+            dataTableInstance.draw();
         }
         
         function openReleaseModal(id) {
@@ -386,7 +401,7 @@ document.addEventListener('DOMContentLoaded', function() {
             document.getElementById('modal-matchingTime').textContent = req.matchingTime || 'N/A';
             document.getElementById('modal-instagramAudio').innerHTML = req.instagramAudio ? `<a href="${req.instagramAudio}" target="_blank">${req.instagramAudio}</a>` : 'N/A';
             document.getElementById('modal-reelMerge').innerHTML = req.reelMerge ? `<a href="${req.reelMerge}" target="_blank">${req.reelMerge}</a>` : 'N/A';
-
+            
             releaseModalEl.dataset.currentId = req.id;
             releaseModal.show();
         }
@@ -396,31 +411,11 @@ document.addEventListener('DOMContentLoaded', function() {
             const request = claimingRequests.find(r => r.id === requestId);
             if (request) {
                 request.status = status;
-                filterAndRender();
+                applyFiltersAndDraw(); // Redraw table with updated data
             }
             releaseModal.hide();
         }
         
-        function filterAndRender() {
-            let dataToFilter = [...claimingRequests];
-            const searchTerm = searchInput.value.toLowerCase().trim();
-
-            if (searchTerm) {
-                dataToFilter = dataToFilter.filter(req =>
-                    req.songName.toLowerCase().includes(searchTerm) ||
-                    req.artist.toLowerCase().includes(searchTerm) ||
-                    (req.isrc && req.isrc.toLowerCase().includes(searchTerm))
-                );
-            }
-
-            if (currentFilter !== 'all') {
-                dataToFilter = dataToFilter.filter(req => req.status === currentFilter);
-            }
-
-            filteredData = dataToFilter;
-            renderTable();
-        }
-
         // --- EVENT LISTENERS ---
         document.getElementById('filterTabs').addEventListener('click', (e) => {
             if (e.target.matches('a.nav-link[data-filter]')) {
@@ -428,85 +423,48 @@ document.addEventListener('DOMContentLoaded', function() {
                 currentFilter = e.target.dataset.filter;
                 document.querySelectorAll('#filterTabs .nav-link').forEach(tab => tab.classList.remove('active'));
                 e.target.classList.add('active');
-                filterAndRender();
+                applyFiltersAndDraw(); // Apply the custom filter
             }
         });
 
-        searchButton.addEventListener('click', filterAndRender);
-        searchInput.addEventListener('keyup', (e) => {
-            if (e.key === 'Enter') filterAndRender();
-        });
-        searchInput.addEventListener('input', () => {
-            if (!searchInput.value) filterAndRender();
-        });
-
-        tableBody.addEventListener('click', (e) => {
-            const link = e.target.closest('.view-details-link');
-            if (link) {
-                e.preventDefault();
-                openReleaseModal(parseInt(link.dataset.id, 10));
-            }
-        });
-
-        newClaimForm.addEventListener('submit', (e) => {
+        $('#datatable tbody').on('click', '.view-details-link', function (e) {
             e.preventDefault();
-            // This logic is for the modal that is titled "Claiming Request Details",
-            // which seems to be for editing, not creating a new one.
-            // A proper implementation would handle status updates here.
-            newClaimModal.hide();
+            openReleaseModal(parseInt($(this).data('id'), 10));
         });
         
         document.getElementById('approveBtn').addEventListener('click', () => handleStatusUpdate('approved'));
         document.getElementById('rejectBtn').addEventListener('click', () => handleStatusUpdate('rejected'));
 
-        exportCsvBtn.addEventListener('click', () => {
-            const headers = ['ID', 'Song Name', 'Artist', 'ISRC', 'Instagram Audio Link', 'Reel Merge Link', 'Matching Time', 'Status'];
-            const rows = filteredData.map(req => [req.id, req.songName, req.artist, req.isrc, req.instagramAudio, req.reelMerge, req.matchingTime, req.status]);
-            const escapeCsvValue = (val) => `"${String(val || '').replace(/"/g, '""')}"`;
-            let csvContent = "data:text/csv;charset=utf-8," + headers.map(escapeCsvValue).join(",") + "\n" + rows.map(r => r.map(escapeCsvValue).join(",")).join("\n");
-            const link = document.createElement("a");
-            link.setAttribute("href", encodeURI(csvContent));
-            link.setAttribute("download", "claiming-requests.csv");
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-        });
-
         // --- INITIAL RENDER ---
-        feather.replace();
-        filterAndRender();
+        // Load all data into the table first
+        dataTableInstance.clear().rows.add(claimingRequests).draw();
+        // Then apply the initial filter (which is 'all')
+        applyFiltersAndDraw();
     }
 });
     // merge-data-page js
+// Add this entire new block to your app.js file
+document.addEventListener('DOMContentLoaded', function() {
+    const mergePageContainer = document.querySelector('.admin-merge-data-page');
 
+    if (mergePageContainer) {
 
-        document.addEventListener('DOMContentLoaded', function() {
-
-             const ownershipPageContainer = document.querySelector('.admin-merge-data-page');
-
-    // If this container doesn't exist, stop executing the rest of the script.
-    if (!ownershipPageContainer) {
-        return;
-    }
         // --- DATA ---
-        let claimingRequests = [
+        let mergeRequests = [
             { id: 1, songName: 'Cosmic Drift', artist: 'Orion Sun', isrc: 'US1232500004', instagramAudio: 'https://instagram.com/audio/123', reelMerge: 'https://instagram.com/reel/xyz', matchingTime: '00:15-00:45', status: 'pending', artwork: 'https://i.scdn.co/image/ab67616d0000b273e6f6a7f1b2b2b2b2b2b2b2b2' },
             { id: 2, songName: 'Neon Tides', artist: 'Cyber Lazer', isrc: 'US1232500005', instagramAudio: 'https://instagram.com/audio/456', reelMerge: 'https://instagram.com/reel/abc', matchingTime: '00:30-01:00', status: 'pending', artwork: 'https://i.scdn.co/image/ab67616d0000b273f4f4f4f4f4f4f4f4f4f4f4f4' },
             { id: 3, songName: 'Lost Signal', artist: 'Ghost FM', isrc: 'US1232500006', instagramAudio: 'https://instagram.com/audio/789', reelMerge: 'https://instagram.com/reel/def', matchingTime: '01:00-01:15', status: 'rejected', artwork: 'https://i.scdn.co/image/ab67616d0000b273a8a8a8a8a8a8a8a8a8a8a8a8' }
         ];
         let currentFilter = 'all';
-        let filteredData = [...claimingRequests];
 
         // --- DOM ELEMENTS ---
-        const tableBody = document.getElementById('tableBody');
-        const paginationText = document.getElementById('pagination-text');
-        const newClaimForm = document.getElementById('newClaimForm');
-        const searchInput = document.getElementById('searchInput');
-        const searchButton = document.getElementById('searchButton');
-        const exportCsvBtn = document.getElementById('exportCsvBtn');
-        const newClaimModal = new bootstrap.Modal(document.getElementById('newClaimRequestModal'));
+        const table = $('#datatable');
         const releaseModalEl = document.getElementById('releaseModal');
         const releaseModal = new bootstrap.Modal(releaseModalEl);
+        const newRequestModalEl = document.getElementById('newRequestModal');
+        const newRequestModal = new bootstrap.Modal(newRequestModalEl);
+        const newRequestForm = document.getElementById('newRequestForm');
+        const exportCsvBtn = document.getElementById('exportCsvBtn');
 
         // --- HELPER FUNCTIONS ---
         const getStatusIcon = (status) => {
@@ -520,37 +478,52 @@ document.addEventListener('DOMContentLoaded', function() {
         };
         const createLink = (url, iconClass) => url ? `<a href="${url}" target="_blank" class="link-icon me-2"><i class="bi ${iconClass}"></i></a>` : '';
 
-        // --- RENDER & UPDATE FUNCTIONS ---
-        function renderTable() {
-            if (!filteredData || filteredData.length === 0) {
-                tableBody.innerHTML = `<tr><td colspan="6" class="empty-state"><i data-feather="inbox"></i><div><h5 class="mb-2">No Requests Found</h5><p class="mb-0">No requests match the current filter.</p></div></td></tr>`;
-            } else {
-                tableBody.innerHTML = filteredData.map(req => `
-                    <tr>
-                        <td class="text-center">${getStatusIcon(req.status)}</td>
-                        <td>
-                            <div class="release-title">
-                                <a href="#" class="view-details-link" data-id="${req.id}">${req.songName}</a>
-                            </div>
-                            <div class="text-muted small">${req.artist}</div>
-                        </td>
-                        <td>${req.isrc || 'N/A'}</td>
-                        <td class="text-center">${createLink(req.instagramAudio, 'bi-music-note-beamed')} ${createLink(req.reelMerge, 'bi-camera-reels')}</td>
-                        <td>${req.matchingTime || 'N/A'}</td>
-                        <td>${getStatusBadge(req.status)}</td>
-                    </tr>
-                `).join('');
+        // --- DATATABLE INITIALIZATION ---
+        const dataTableInstance = table.DataTable({
+            destroy: true,
+            data: [],
+            paging: true,
+            searching: true,
+            info: true,
+            lengthChange: true,
+            autoWidth: false,
+            columns: [
+                { data: 'status', className: 'text-center', orderable: false, render: (data) => getStatusIcon(data) },
+                { data: null, orderable: true, render: (data, type, row) => `
+                    <div class="release-title"><a href="#" class="view-details-link" data-id="${row.id}">${row.songName}</a></div>
+                    <div class="text-muted small">${row.artist}</div>`
+                },
+                { data: 'isrc', defaultContent: 'N/A' },
+                { data: null, className: 'text-center', orderable: false, render: (data, type, row) => createLink(row.instagramAudio, 'bi-music-note-beamed') + ' ' + createLink(row.reelMerge, 'bi-camera-reels') },
+                { data: 'matchingTime', defaultContent: 'N/A' },
+                { data: 'status', className: 'text-center', render: (data) => `<div class="d-flex justify-content-center">${getStatusBadge(data)}</div>` }
+            ],
+            drawCallback: () => {
+                feather.replace();
+            },
+            language: {
+                info: "Showing _START_ to _END_ of _TOTAL_ entries",
+                infoEmpty: "Showing 0 to 0 of 0 entries",
+                infoFiltered: "(filtered from _MAX_ total entries)",
+                zeroRecords: "No matching requests found",
+                emptyTable: "No requests available",
+                search: "_INPUT_",
+                searchPlaceholder: "Search records..."
             }
-            feather.replace();
-            updatePaginationText(filteredData.length, claimingRequests.length);
-        }
-
-        function updatePaginationText(count, total) {
-            paginationText.innerHTML = `Showing <strong>${count}</strong> of <strong>${total}</strong> entries`;
+        });
+        
+        // --- RENDER & UPDATE FUNCTIONS ---
+        function applyFiltersAndDraw() {
+            $.fn.dataTable.ext.search.pop();
+            $.fn.dataTable.ext.search.push(function(settings, data, dataIndex) {
+                if (currentFilter === 'all') return true;
+                return mergeRequests[dataIndex].status === currentFilter;
+            });
+            dataTableInstance.draw();
         }
         
         function openReleaseModal(id) {
-            const req = claimingRequests.find(r => r.id === id);
+            const req = mergeRequests.find(r => r.id === id);
             if (!req) return;
 
             document.getElementById('releaseTitle').textContent = req.songName;
@@ -558,45 +531,25 @@ document.addEventListener('DOMContentLoaded', function() {
             document.getElementById('releaseAlbumArtwork').src = req.artwork;
             releaseModalEl.querySelector('.bg-image-blurred').style.backgroundImage = `url('${req.artwork}')`;
             document.getElementById('releaseStatusBadges').innerHTML = getStatusBadge(req.status);
-            document.getElementById('modal-isrc').textContent = req.isrc;
-            document.getElementById('modal-matchingTime').textContent = req.matchingTime;
+            document.getElementById('modal-isrc').textContent = req.isrc || 'N/A';
+            document.getElementById('modal-matchingTime').textContent = req.matchingTime || 'N/A';
             document.getElementById('modal-instagramAudio').innerHTML = req.instagramAudio ? `<a href="${req.instagramAudio}" target="_blank">${req.instagramAudio}</a>` : 'N/A';
             document.getElementById('modal-reelMerge').innerHTML = req.reelMerge ? `<a href="${req.reelMerge}" target="_blank">${req.reelMerge}</a>` : 'N/A';
-
+            
             releaseModalEl.dataset.currentId = req.id;
             releaseModal.show();
         }
 
         function handleStatusUpdate(status) {
             const requestId = parseInt(releaseModalEl.dataset.currentId, 10);
-            const request = claimingRequests.find(r => r.id === requestId);
+            const request = mergeRequests.find(r => r.id === requestId);
             if (request) {
                 request.status = status;
-                filterAndRender();
+                applyFiltersAndDraw();
             }
             releaseModal.hide();
         }
         
-        function filterAndRender() {
-            let dataToFilter = [...claimingRequests];
-            const searchTerm = searchInput.value.toLowerCase().trim();
-
-            if (searchTerm) {
-                dataToFilter = dataToFilter.filter(req =>
-                    req.songName.toLowerCase().includes(searchTerm) ||
-                    req.artist.toLowerCase().includes(searchTerm) ||
-                    req.isrc.toLowerCase().includes(searchTerm)
-                );
-            }
-
-            if (currentFilter !== 'all') {
-                dataToFilter = dataToFilter.filter(req => req.status === currentFilter);
-            }
-
-            filteredData = dataToFilter;
-            renderTable();
-        }
-
         // --- EVENT LISTENERS ---
         document.getElementById('filterTabs').addEventListener('click', (e) => {
             if (e.target.matches('a.nav-link[data-filter]')) {
@@ -604,27 +557,19 @@ document.addEventListener('DOMContentLoaded', function() {
                 currentFilter = e.target.dataset.filter;
                 document.querySelectorAll('#filterTabs .nav-link').forEach(tab => tab.classList.remove('active'));
                 e.target.classList.add('active');
-                filterAndRender();
+                applyFiltersAndDraw();
             }
         });
 
-        searchButton.addEventListener('click', filterAndRender);
-        searchInput.addEventListener('keyup', (e) => {
-            if (e.key === 'Enter') filterAndRender();
+        $('#datatable tbody').on('click', '.view-details-link', function (e) {
+            e.preventDefault();
+            openReleaseModal(parseInt($(this).data('id'), 10));
         });
-        searchInput.addEventListener('input', () => {
-            if (!searchInput.value) filterAndRender();
-        });
+        
+        document.getElementById('approveBtn').addEventListener('click', () => handleStatusUpdate('approved'));
+        document.getElementById('rejectBtn').addEventListener('click', () => handleStatusUpdate('rejected'));
 
-        tableBody.addEventListener('click', (e) => {
-            const link = e.target.closest('.view-details-link');
-            if (link) {
-                e.preventDefault();
-                openReleaseModal(parseInt(link.dataset.id, 10));
-            }
-        });
-
-        newClaimForm.addEventListener('submit', (e) => {
+        newRequestForm.addEventListener('submit', (e) => {
             e.preventDefault();
             const newRequest = {
                 id: Date.now(),
@@ -637,61 +582,59 @@ document.addEventListener('DOMContentLoaded', function() {
                 status: 'pending',
                 artwork: 'https://via.placeholder.com/150/cccccc/FFFFFF?text=New'
             };
-            claimingRequests.unshift(newRequest);
-            newClaimForm.reset();
-            newClaimModal.hide();
-            filterAndRender();
+            mergeRequests.unshift(newRequest);
+            dataTableInstance.clear().rows.add(mergeRequests).draw();
+            newRequestForm.reset();
+            newRequestModal.hide();
         });
-        
-        document.getElementById('rejectBtn').addEventListener('click', () => handleStatusUpdate('rejected'));
 
         exportCsvBtn.addEventListener('click', () => {
-             const headers = ['ID', 'Song Name', 'Artist', 'ISRC', 'Instagram Audio Link', 'Reel Merge Link', 'Matching Time', 'Status'];
-             const rows = filteredData.map(req => [req.id, req.songName, req.artist, req.isrc, req.instagramAudio, req.reelMerge, req.matchingTime, req.status]);
-             const escapeCsvValue = (val) => `"${String(val || '').replace(/"/g, '""')}"`;
-             let csvContent = "data:text/csv;charset=utf-8," + headers.join(",") + "\n" + rows.map(r => r.map(escapeCsvValue).join(",")).join("\n");
-             const link = document.createElement("a");
-             link.setAttribute("href", encodeURI(csvContent));
-             link.setAttribute("download", "claiming-requests.csv");
-             document.body.appendChild(link);
-             link.click();
-             document.body.removeChild(link);
+            const headers = ['ID', 'Song Name', 'Artist', 'ISRC', 'Instagram Audio Link', 'Reel Merge Link', 'Matching Time', 'Status'];
+            const rows = dataTableInstance.rows({ search: 'applied' }).data().toArray().map(req => 
+                [req.id, req.songName, req.artist, req.isrc, req.instagramAudio, req.reelMerge, req.matchingTime, req.status]
+            );
+            const escapeCsvValue = (val) => `"${String(val || '').replace(/"/g, '""')}"`;
+            let csvContent = "data:text/csv;charset=utf-8," + headers.join(",") + "\n" 
+                + rows.map(r => r.map(escapeCsvValue).join(",")).join("\n");
+            
+            const link = document.createElement("a");
+            link.setAttribute("href", encodeURI(csvContent));
+            link.setAttribute("download", "merge-requests.csv");
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
         });
 
         // --- INITIAL RENDER ---
-        feather.replace();
-        filterAndRender();
-    });
+        dataTableInstance.clear().rows.add(mergeRequests).draw();
+        applyFiltersAndDraw();
+    }
+});
 
 // relocation-data-page js
 
- document.addEventListener('DOMContentLoaded', function() {
+// Add this entire new block to your app.js file
+document.addEventListener('DOMContentLoaded', function() {
+    const relocationPageContainer = document.querySelector('.admin-reloc-data-page');
 
-    const ownershipPageContainer = document.querySelector('.admin-reloc-data-page');
+    if (relocationPageContainer) {
 
-    // If this container doesn't exist, stop executing the rest of the script.
-    if (!ownershipPageContainer) {
-        return;
-    }
         // --- DATA ---
         let relocationRequests = [
-            { id: 1, songName: 'Cosmic Drift', artist: 'Orion Sun', isrc: 'US1232500004', instagramAudio: 'https://instagram.com/audio/123', reelMerge: 'https://instagram.com/reel/xyz', status: 'pending', artwork: 'https://i.scdn.co/image/ab67616d0000b273e6f6a7f1b2b2b2b2b2b2b2b2' },
+            { id: 1, songName: 'Cosmic Drift', artist: 'Orion Sun', isrc: 'US1232500004', instagramAudio: 'https://instagram.com/audio/123', reelMerge: 'https://instagram.com/reel/xyz', status: 'pending', artwork: 'https://i.scdn.co/image/ab67616d0000b273e6f6a7f1b2b2b2b2b2b2b2b2', matchingTime: 'N/A' },
             { id: 2, songName: 'Neon Tides', artist: 'Cyber Lazer', isrc: 'US1232500005', instagramAudio: 'https://instagram.com/audio/456', reelMerge: 'https://instagram.com/reel/abc', matchingTime: '00:30-01:00', status: 'pending', artwork: 'https://i.scdn.co/image/ab67616d0000b273f4f4f4f4f4f4f4f4f4f4f4f4' },
             { id: 3, songName: 'Lost Signal', artist: 'Ghost FM', isrc: 'US1232500006', instagramAudio: 'https://instagram.com/audio/789', reelMerge: 'https://instagram.com/reel/def', matchingTime: '01:00-01:15', status: 'rejected', artwork: 'https://i.scdn.co/image/ab67616d0000b273a8a8a8a8a8a8a8a8a8a8a8a8' }
         ];
         let currentFilter = 'all';
-        let filteredData = [...relocationRequests];
 
         // --- DOM ELEMENTS ---
-        const tableBody = document.getElementById('tableBody');
-        const paginationText = document.getElementById('pagination-text');
-        const newClaimForm = document.getElementById('newClaimForm');
-        const searchInput = document.getElementById('searchInput');
-        const searchButton = document.getElementById('searchButton');
-        const exportCsvBtn = document.getElementById('exportCsvBtn');
-        const newClaimModal = new bootstrap.Modal(document.getElementById('newClaimRequestModal'));
+        const table = $('#datatable');
         const releaseModalEl = document.getElementById('releaseModal');
         const releaseModal = new bootstrap.Modal(releaseModalEl);
+        const newRequestModalEl = document.getElementById('newRequestModal');
+        const newRequestModal = new bootstrap.Modal(newRequestModalEl);
+        const newRequestForm = document.getElementById('newRequestForm');
+        const exportCsvBtn = document.getElementById('exportCsvBtn');
 
         // --- HELPER FUNCTIONS ---
         const getStatusIcon = (status) => {
@@ -705,48 +648,62 @@ document.addEventListener('DOMContentLoaded', function() {
         };
         const createLink = (url, iconClass) => url ? `<a href="${url}" target="_blank" class="link-icon me-2"><i class="bi ${iconClass}"></i></a>` : '';
 
-        // --- RENDER & UPDATE FUNCTIONS ---
-        function renderTable() {
-            if (!filteredData || filteredData.length === 0) {
-                tableBody.innerHTML = `<tr><td colspan="6" class="empty-state"><i data-feather="inbox"></i><div><h5 class="mb-2">No Requests Found</h5><p class="mb-0">No requests match the current filter.</p></div></td></tr>`;
-            } else {
-                tableBody.innerHTML = filteredData.map(req => `
-                    <tr>
-                        <td class="text-center">${getStatusIcon(req.status)}</td>
-                        <td>
-                            <div class="release-title">
-                                <a type="button"  data-bs-toggle="modal" data-bs-target="#newClaimRequestModal">${req.songName}</a>
-                            </div>
-                            <div class="text-muted small">${req.artist}</div>
-                        </td>
-                        <td>${req.isrc || 'N/A'}</td>
-                        <td class="text-center">${createLink(req.instagramAudio, 'bi-music-note-beamed')} ${createLink(req.reelMerge, 'bi-camera-reels')}</td>
-                        <td ><a class="d-flex justify-content-center">${getStatusBadge(req.status)}</a></td>
-                    </tr>
-                `).join('');
+        // --- DATATABLE INITIALIZATION ---
+        const dataTableInstance = table.DataTable({
+            destroy: true,
+            data: [],
+            paging: true,
+            searching: true,
+            info: true,
+            lengthChange: true,
+            autoWidth: false,
+            columns: [
+                { data: 'status', className: 'text-center', orderable: false, render: (data) => getStatusIcon(data) },
+                { data: null, orderable: true, render: (data, type, row) => `
+                    <div class="release-title"><a href="#" class="view-details-link" data-id="${row.id}">${row.songName}</a></div>
+                    <div class="text-muted small">${row.artist}</div>`
+                },
+                { data: 'isrc', defaultContent: 'N/A' },
+                { data: null, className: 'text-center', orderable: false, render: (data, type, row) => createLink(row.instagramAudio, 'bi-music-note-beamed') + ' ' + createLink(row.reelMerge, 'bi-camera-reels') },
+                { data: 'status', className: 'text-center', render: (data) => `<div class="d-flex justify-content-center">${getStatusBadge(data)}</div>` }
+            ],
+            drawCallback: () => {
+                feather.replace();
+            },
+            language: {
+                info: "Showing _START_ to _END_ of _TOTAL_ entries",
+                infoEmpty: "Showing 0 to 0 of 0 entries",
+                infoFiltered: "(filtered from _MAX_ total entries)",
+                zeroRecords: "No matching requests found",
+                emptyTable: "No requests available",
+                search: "_INPUT_",
+                searchPlaceholder: "Search records..."
             }
-            feather.replace();
-            updatePaginationText(filteredData.length, relocationRequests.length);
-        }
-
-        function updatePaginationText(count, total) {
-            paginationText.innerHTML = `Showing <strong>${count}</strong> of <strong>${total}</strong> entries`;
+        });
+        
+        // --- RENDER & UPDATE FUNCTIONS ---
+        function applyFiltersAndDraw() {
+            $.fn.dataTable.ext.search.pop();
+            $.fn.dataTable.ext.search.push(function(settings, data, dataIndex) {
+                if (currentFilter === 'all') return true;
+                return relocationRequests[dataIndex].status === currentFilter;
+            });
+            dataTableInstance.draw();
         }
         
         function openReleaseModal(id) {
             const req = relocationRequests.find(r => r.id === id);
             if (!req) return;
-
+            // (Code to populate the modal remains the same as your other page)
             document.getElementById('releaseTitle').textContent = req.songName;
             document.getElementById('releaseArtistHeader').textContent = req.artist;
             document.getElementById('releaseAlbumArtwork').src = req.artwork;
             releaseModalEl.querySelector('.bg-image-blurred').style.backgroundImage = `url('${req.artwork}')`;
             document.getElementById('releaseStatusBadges').innerHTML = getStatusBadge(req.status);
-            document.getElementById('modal-isrc').textContent = req.isrc;
-            document.getElementById('modal-matchingTime').textContent = req.matchingTime;
+            document.getElementById('modal-isrc').textContent = req.isrc || 'N/A';
+            document.getElementById('modal-matchingTime').textContent = req.matchingTime || 'N/A';
             document.getElementById('modal-instagramAudio').innerHTML = req.instagramAudio ? `<a href="${req.instagramAudio}" target="_blank">${req.instagramAudio}</a>` : 'N/A';
             document.getElementById('modal-reelMerge').innerHTML = req.reelMerge ? `<a href="${req.reelMerge}" target="_blank">${req.reelMerge}</a>` : 'N/A';
-
             releaseModalEl.dataset.currentId = req.id;
             releaseModal.show();
         }
@@ -756,31 +713,11 @@ document.addEventListener('DOMContentLoaded', function() {
             const request = relocationRequests.find(r => r.id === requestId);
             if (request) {
                 request.status = status;
-                filterAndRender();
+                applyFiltersAndDraw();
             }
             releaseModal.hide();
         }
         
-        function filterAndRender() {
-            let dataToFilter = [...relocationRequests];
-            const searchTerm = searchInput.value.toLowerCase().trim();
-
-            if (searchTerm) {
-                dataToFilter = dataToFilter.filter(req =>
-                    req.songName.toLowerCase().includes(searchTerm) ||
-                    req.artist.toLowerCase().includes(searchTerm) ||
-                    req.isrc.toLowerCase().includes(searchTerm)
-                );
-            }
-
-            if (currentFilter !== 'all') {
-                dataToFilter = dataToFilter.filter(req => req.status === currentFilter);
-            }
-
-            filteredData = dataToFilter;
-            renderTable();
-        }
-
         // --- EVENT LISTENERS ---
         document.getElementById('filterTabs').addEventListener('click', (e) => {
             if (e.target.matches('a.nav-link[data-filter]')) {
@@ -788,27 +725,19 @@ document.addEventListener('DOMContentLoaded', function() {
                 currentFilter = e.target.dataset.filter;
                 document.querySelectorAll('#filterTabs .nav-link').forEach(tab => tab.classList.remove('active'));
                 e.target.classList.add('active');
-                filterAndRender();
+                applyFiltersAndDraw();
             }
         });
 
-        searchButton.addEventListener('click', filterAndRender);
-        searchInput.addEventListener('keyup', (e) => {
-            if (e.key === 'Enter') filterAndRender();
+        $('#datatable tbody').on('click', '.view-details-link', function (e) {
+            e.preventDefault();
+            openReleaseModal(parseInt($(this).data('id'), 10));
         });
-        searchInput.addEventListener('input', () => {
-            if (!searchInput.value) filterAndRender();
-        });
+        
+        document.getElementById('approveBtn').addEventListener('click', () => handleStatusUpdate('approved'));
+        document.getElementById('rejectBtn').addEventListener('click', () => handleStatusUpdate('rejected'));
 
-        tableBody.addEventListener('click', (e) => {
-            const link = e.target.closest('.view-details-link');
-            if (link) {
-                e.preventDefault();
-                openReleaseModal(parseInt(link.dataset.id, 10));
-            }
-        });
-
-        newClaimForm.addEventListener('submit', (e) => {
+        newRequestForm.addEventListener('submit', (e) => {
             e.preventDefault();
             const newRequest = {
                 id: Date.now(),
@@ -819,33 +748,36 @@ document.addEventListener('DOMContentLoaded', function() {
                 reelMerge: document.getElementById('reelMergeInput').value,
                 matchingTime: document.getElementById('matchingTimeInput').value,
                 status: 'pending',
-                artwork: 'https://via.placeholder.com/150/cccccc/FFFFFF?text=New'
+                artwork: 'https://via.placeholder.com/150/cccccc/FFFFFF?text=New' // Default artwork
             };
-            relocationRequests.unshift(newRequest);
-            newClaimForm.reset();
-            newClaimModal.hide();
-            filterAndRender();
+            relocationRequests.unshift(newRequest); // Add to the start of the main data array
+            dataTableInstance.clear().rows.add(relocationRequests).draw(); // Reload DataTable
+            newRequestForm.reset();
+            newRequestModal.hide();
         });
-        
-        document.getElementById('rejectBtn').addEventListener('click', () => handleStatusUpdate('rejected'));
 
         exportCsvBtn.addEventListener('click', () => {
-             const headers = ['ID', 'Song Name', 'Artist', 'ISRC', 'Instagram Audio Link', 'Reel Merge Link', 'Status'];
-             const rows = filteredData.map(req => [req.id, req.songName, req.artist, req.isrc, req.instagramAudio, req.reelMerge, req.matchingTime, req.status]);
-             const escapeCsvValue = (val) => `"${String(val || '').replace(/"/g, '""')}"`;
-             let csvContent = "data:text/csv;charset=utf-8," + headers.join(",") + "\n" + rows.map(r => r.map(escapeCsvValue).join(",")).join("\n");
-             const link = document.createElement("a");
-             link.setAttribute("href", encodeURI(csvContent));
-             link.setAttribute("download", "relocation-requests.csv");
-             document.body.appendChild(link);
-             link.click();
-             document.body.removeChild(link);
+            const headers = ['ID', 'Song Name', 'Artist', 'ISRC', 'Instagram Audio Link', 'Reel Merge Link', 'Matching Time', 'Status'];
+            const rows = dataTableInstance.rows({ search: 'applied' }).data().toArray().map(req => 
+                [req.id, req.songName, req.artist, req.isrc, req.instagramAudio, req.reelMerge, req.matchingTime, req.status]
+            );
+            const escapeCsvValue = (val) => `"${String(val || '').replace(/"/g, '""')}"`;
+            let csvContent = "data:text/csv;charset=utf-8," + headers.join(",") + "\n" 
+                + rows.map(r => r.map(escapeCsvValue).join(",")).join("\n");
+            
+            const link = document.createElement("a");
+            link.setAttribute("href", encodeURI(csvContent));
+            link.setAttribute("download", "relocation-requests.csv"); // Correct filename
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
         });
 
         // --- INITIAL RENDER ---
-        feather.replace();
-        filterAndRender();
-    });
+        dataTableInstance.clear().rows.add(relocationRequests).draw();
+        applyFiltersAndDraw();
+    }
+});
 
 // releases-page js
 
