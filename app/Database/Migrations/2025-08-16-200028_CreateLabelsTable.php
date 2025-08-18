@@ -24,7 +24,7 @@ class CreateLabelsTable extends Migration
                 'constraint' => 255,
                 'null'       => true,
             ],
-            'profile_image' => [
+            'logo' => [
                 'type'       => 'VARCHAR',
                 'constraint' => 255, // store file path/URL
                 'null'       => true,

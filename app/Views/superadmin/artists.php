@@ -34,55 +34,36 @@
                             </tr>
                         </thead>
                         <tbody id="artistTableBody">
-                            <tr>
-                                <td>
-                                    <input type="checkbox" class="form-check-input artist-checkbox" value="1">
-                                </td>
-                                <td>
-                                    <div class="artist-profile">
-                                        <img src="/images/instagram.png" alt="Mohit Jadhav" class="artist-image">
-                                        <div>
-                                            <div class="artist-name">Mohit Jadhav</div>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td class="text-center">
-                                    <span class="releases-badge">12 releases</span>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <input type="checkbox" class="form-check-input artist-checkbox" value="2">
-                                </td>
-                                <td>
-                                    <div class="artist-profile">
-                                        <img src="/images/instagram.png" alt="Sarah Johnson" class="artist-image">
-                                        <div>
-                                            <div class="artist-name">Sarah Johnson</div>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td class="text-center">
-                                    <span class="releases-badge">8 releases</span>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <input type="checkbox" class="form-check-input artist-checkbox" value="3">
-                                </td>
-                                <td>
-                                    <div class="artist-profile">
-                                        <img src="/images/instagram.png" alt="Alex Rodriguez" class="artist-image">
-                                        <div>
-                                            <div class="artist-name">Alex Rodriguez</div>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td class="text-center">
-                                    <span class="releases-badge">15 releases</span>
-                                </td>
-                            </tr>
+                            <?php if (!empty($data['artists'])): ?>
+                                <?php foreach ($data['artists'] as $artist): ?>
+                                    <tr>
+                                        <td>
+                                            <input type="checkbox" class="form-check-input artist-checkbox" value="<?= esc($artist['id']) ?>">
+                                        </td>
+                                        <td>
+                                            <div class="artist-profile">
+                                                <img src="<?= !empty($artist['profile_image']) ? base_url($artist['profile_image']) : '/images/default.png' ?>"
+                                                    alt="<?= esc($artist['name']) ?>"
+                                                    class="artist-image">
+                                                <div>
+                                                    <div class="artist-name"><?= esc($artist['name']) ?></div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td class="text-center">
+                                            <span class="releases-badge">
+                                                <?= esc($artist['release_count'] ?? 0) ?> releases
+                                            </span>
+                                        </td>
+                                    </tr>
+                                <?php endforeach; ?>
+                            <?php else: ?>
+                                <tr>
+                                    <td colspan="3" class="text-center">No artists found</td>
+                                </tr>
+                            <?php endif; ?>
                         </tbody>
+
                     </table>
                 </div>
 

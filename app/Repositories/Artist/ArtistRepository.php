@@ -16,9 +16,9 @@ class ArtistRepository
     /**
      * Get paginated list of artists
      */
-    public function getPaginated($perPage = 3)
+    public function findAll()
     {
-        return $this->artistModel->paginate($perPage);
+        return $this->artistModel->findAll();
     }
 
     /**

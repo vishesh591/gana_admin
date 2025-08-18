@@ -34,6 +34,11 @@ class CreateArtistsTable extends Migration
                 'constraint' => 255, // store file path/URL
                 'null'       => true,
             ],
+            'release_count'        => [
+                'type'       => 'INT',
+                'constraint' => 11,
+                'null'       => true,
+            ],
             'created_at'  => [
                 'type' => 'DATETIME',
                 'null' => true,

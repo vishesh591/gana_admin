@@ -34,62 +34,50 @@
                                 </tr>
                             </thead>
                             <tbody id="tableBody">
-                                <tr>
-                                    <td class="text-center"><i data-feather="check-circle" class="text-success"></i></td>
-                                    <td>T-Series</td>
-                                    <td>T-Series</td>
-                                    <td>2024-01-15</td>
-                                    <td>2026-01-14</td>
-                                    <td><span class="badge bg-success">Active</span></td>
-                                </tr>
-                                <tr>
-                                    <td class="text-center"><i data-feather="check-circle" class="text-success"></i></td>
-                                    <td>Sony Music</td>
-                                    <td>Sony Music India</td>
-                                    <td>2025-03-01</td>
-                                    <td>2027-02-28</td>
-                                    <td><span class="badge bg-success">Active</span></td>
-                                </tr>
-                                <tr>
-                                    <td class="text-center"><i data-feather="x-circle" class="text-danger"></i></td>
-                                    <td>Universal</td>
-                                    <td>Universal Music</td>
-                                    <td>2023-06-20</td>
-                                    <td>2025-06-19</td>
-                                    <td><span class="badge bg-danger">Inactive</span></td>
-                                </tr>
-                                <tr>
-                                    <td class="text-center"><i data-feather="check-circle" class="text-success"></i></td>
-                                    <td>Zee Music</td>
-                                    <td>Zee Music Company</td>
-                                    <td>2022-11-10</td>
-                                    <td>2025-11-09</td>
-                                    <td><span class="badge bg-success">Active</span></td>
-                                </tr>
-                                <tr>
-                                    <td class="text-center"><i data-feather="x-circle" class="text-danger"></i></td>
-                                    <td>Saregama</td>
-                                    <td>Saregama India Ltd</td>
-                                    <td>2024-08-01</td>
-                                    <td>2026-07-31</td>
-                                    <td><span class="badge bg-danger">Inactive</span></td>
-                                </tr>
+                                <?php if (!empty($users)): ?>
+                                    <?php foreach ($users as $user): ?>
+                                        <tr>
+                                            <td class="text-center">
+                                                <?php if ($user['status'] === 'Active'): ?>
+                                                    <i data-feather="check-circle" class="text-success"></i>
+                                                <?php else: ?>
+                                                    <i data-feather="x-circle" class="text-danger"></i>
+                                                <?php endif; ?>
+                                            </td>
+                                            <td><?= esc($user['company_name']) ?></td>
+                                            <td><?= esc($user['label_name']) ?></td>
+                                            <td><?= esc($user['agreement_start_date']) ?></td>
+                                            <td><?= esc($user['agreement_end_date']) ?></td>
+                                            <td>
+                                                <span class="badge <?= $user['status'] === 'Active' ? 'bg-success' : 'bg-danger' ?>">
+                                                    <?= $user['status'] ?>
+                                                </span>
+                                            </td>
+                                        </tr>
+                                    <?php endforeach; ?>
+                                <?php else: ?>
+                                    <tr>
+                                        <td colspan="6" class="text-center">No users found.</td>
+                                    </tr>
+                                <?php endif; ?>
                             </tbody>
+
+
                         </table>
                     </div>
                 </div>
                 <div class="card-footer bg-white d-flex flex-column flex-md-row justify-content-between align-items-center py-3">
-                   <div class="mb-2 mb-md-0" id="pagination-text">
+                    <div class="mb-2 mb-md-0" id="pagination-text">
                         Showing <strong>1</strong> to <strong>5</strong> of <strong>5</strong> entries
-                   </div>
-                   <nav>
-                       <ul class="pagination mb-0">
-                           <li class="page-item disabled"><a class="page-link" href="#">Previous</a></li>
-                           <li class="page-item active"><a class="page-link" href="#">1</a></li>
-                           <li class="page-item"><a class="page-link" href="#">Next</a></li>
-                       </ul>
-                   </nav>
-               </div>
+                    </div>
+                    <nav>
+                        <ul class="pagination mb-0">
+                            <li class="page-item disabled"><a class="page-link" href="#">Previous</a></li>
+                            <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                            <li class="page-item"><a class="page-link" href="#">Next</a></li>
+                        </ul>
+                    </nav>
+                </div>
             </div>
         </div>
     </div>
@@ -98,14 +86,14 @@
 <div class="modal fade" id="claimingRequestModal" tabindex="-1" aria-labelledby="claimingRequestModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg modal-dialog-centered">
         <div class="modal-content rounded-4">
-            <form action="<?= base_url('superadmin/register')?>" method="POST" enctype="multipart/form-data" id="claimingRequestForm">
+            <form action="<?= base_url('superadmin/register') ?>" method="POST" enctype="multipart/form-data" id="claimingRequestForm">
                 <?= csrf_field() ?>
                 <div class="modal-header">
                     <h5 class="modal-title" id="claimingRequestModalLabel">New Account Request</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body p-4">
-                    
+
                     <!-- Basic Information -->
                     <h6 class="text-primary fw-bold mb-3">Basic Information</h6>
                     <div class="row">
@@ -147,7 +135,7 @@
                             </div>
                         </div>
                     </div>
-                    
+
                     <!-- Login Credentials -->
                     <h6 class="text-primary fw-bold mb-3">Login Credentials</h6>
                     <div class="row">
@@ -165,7 +153,7 @@
                             </div>
                         </div>
                     </div>
-                    
+
                     <!-- Bank Details -->
                     <h6 class="text-primary fw-bold mb-3 pt-2">Bank Details</h6>
                     <div class="row">
@@ -186,7 +174,7 @@
                             <input type="text" class="form-control rounded-pill p-3" id="branchName" name="branch_name" placeholder="Enter bank branch name" required>
                         </div>
                     </div>
-                    
+
                     <!-- Agreement Period -->
                     <h6 class="text-primary fw-bold mb-3 pt-2">Agreement Period</h6>
                     <div class="row">
@@ -200,7 +188,7 @@
                         </div>
                     </div>
                 </div>
-                
+
                 <!-- Footer -->
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary rounded-pill" data-bs-dismiss="modal">Close</button>
@@ -210,4 +198,3 @@
         </div>
     </div>
 </div>
-

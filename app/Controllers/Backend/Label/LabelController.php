@@ -19,8 +19,14 @@ class LabelController extends BaseController
      */
     public function index()
     {
-        $data['labels'] = $this->labelRepo->getPaginated(3);
-        return view('superadmin/labels', $data);
+        $data['labels'] = $this->labelRepo->findAll();
+
+        $page_array = [
+            'file_name' => 'labels',
+            'data' => $data
+        ];
+
+        return view('superadmin/index', $page_array);
     }
 
     /**
@@ -31,7 +37,7 @@ class LabelController extends BaseController
         $validationRules = [
             'label_name'   => 'required|min_length[2]|max_length[255]',
             'primary_label'=> 'required|min_length[2]|max_length[255]',
-            'profile_image'=> 'uploaded[profile_image]|is_image[profile_image]|mime_in[profile_image,image/jpg,image/jpeg,image/png]'
+            'logo'=> 'uploaded[logo]|is_image[logo]|mime_in[logo,image/jpg,image/jpeg,image/png]'
         ];
 
         if (!$this->validate($validationRules)) {
@@ -44,11 +50,11 @@ class LabelController extends BaseController
         ];
 
         // Handle image upload
-        $img = $this->request->getFile('profile_image');
+        $img = $this->request->getFile('logo');
         if ($img && $img->isValid() && !$img->hasMoved()) {
             $newName = $img->getRandomName();
             $img->move(FCPATH . 'uploads/label', $newName);
-            $data['profile_image'] = 'uploads/label/' . $newName;
+            $data['logo'] = 'uploads/label/' . $newName;
         }
 
         $this->labelRepo->create($data);

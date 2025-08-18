@@ -34,39 +34,38 @@
                             </tr>
                         </thead>
                         <tbody id="labelTableBody">
-                            <tr>
-                                <td>
-                                    <input type="checkbox" class="form-check-input label-checkbox" value="1">
-                                </td>
-                                <td>
-                                    <div class="label-profile">
-                                        <img src="/images/rocket.png" alt="Mohit Jadhav" class="label-image">
-                                        <div>
-                                            <div class="label-name">Mohit Jadhav</div>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td class="text-center">
-                                    <span class="releases-badge">12 releases</span>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <input type="checkbox" class="form-check-input label-checkbox" value="2">
-                                </td>
-                                <td>
-                                    <div class="label-profile">
-                                        <img src="/images/rocket.png" alt="Sarah Johnson" class="label-image">
-                                        <div>
-                                            <div class="label-name">Sarah Johnson</div>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td class="text-center">
-                                    <span class="releases-badge">8 releases</span>
-                                </td>
-                            </tr>
+                            <?php if (!empty($data['labels'])): ?>
+                                <?php foreach ($data['labels'] as $label): ?>
+                                    <tr>
+                                        <td>
+                                            <input type="checkbox"
+                                                class="form-check-input label-checkbox"
+                                                value="<?= esc($label['id']) ?>">
+                                        </td>
+                                        <td>
+                                            <div class="label-profile">
+                                                <img src="<?= !empty($label['logo']) ? base_url($label['logo']) : '/images/default.png' ?>"
+                                                    alt="<?= esc($label['label_name']) ?>"
+                                                    class="label-image">
+                                                <div>
+                                                    <div class="label-name"><?= esc($label['label_name']) ?></div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td class="text-center">
+                                            <span class="releases-badge">
+                                                <?= esc($label['release_count'] ?? 0) ?> releases
+                                            </span>
+                                        </td>
+                                    </tr>
+                                <?php endforeach; ?>
+                            <?php else: ?>
+                                <tr>
+                                    <td colspan="3" class="text-center">No labels found</td>
+                                </tr>
+                            <?php endif; ?>
                         </tbody>
+
                     </table>
                 </div>
 

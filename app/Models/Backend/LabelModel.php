@@ -12,7 +12,7 @@ class LabelModel extends Model
     protected $allowedFields = [
         'label_name',
         'primary_label',
-        'profile_image',
+        'logo',
         'created_at',
         'updated_at'
     ];

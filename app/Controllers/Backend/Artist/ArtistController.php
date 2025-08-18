@@ -48,8 +48,13 @@ class ArtistController extends BaseController
 
     public function index()
     {
-        $data['artists'] = $this->artistRepo->getPaginated(3);
+        $data['artists'] = $this->artistRepo->findAll();
 
-        return view('superadmin/artists', $data);
+        $page_array = [
+            'file_name' => 'artists',
+            'data' => $data
+        ];
+
+        return view('superadmin/index', $page_array);
     }
 }

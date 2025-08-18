@@ -79,16 +79,27 @@ class RegisterController extends BaseController
         return redirect()->back()->with('success', 'User registered successfully');
     }
 
-    public function index()
+    public function accounts()
     {
-        $users = $this->userModel
-            ->select('g_users.*, g_roles.role_name')
-            ->join('g_roles', 'g_roles.id = g_users.role_id', 'left')
-            ->findAll();
+        $users = $this->userModel->findAll();
+        $currentDate = date('Y-m-d');
+        foreach ($users as &$user) {
+            if (
+                !empty($user['agreement_start_date']) &&
+                !empty($user['agreement_end_date']) &&
+                $user['agreement_start_date'] <= $currentDate &&
+                $user['agreement_end_date'] >= $currentDate
+            ) {
+                $user['status'] = 'Active';
+            } else {
+                $user['status'] = 'Inactive';
+            }
+        }
+        $page_array = [
+            'file_name' => 'user_list',
+            'users' => $users
+        ];
 
-        return $this->response->setJSON([
-            'status' => 'success',
-            'data'   => $users
-        ]);
+        return view('superadmin/index', $page_array);
     }
 }

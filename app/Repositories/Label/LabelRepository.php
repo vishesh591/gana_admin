@@ -16,9 +16,14 @@ class LabelRepository
     /**
      * Get paginated list of labels
      */
-    public function getPaginated($perPage = 3)
+    // public function getPaginated($perPage = 3)
+    // {
+    //     return $this->labelModel->paginate($perPage);
+    // }
+
+    public function findAll()
     {
-        return $this->labelModel->paginate($perPage);
+        return $this->labelModel->findAll();
     }
 
     /**
