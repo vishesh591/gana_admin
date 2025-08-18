@@ -65,19 +65,15 @@
             <div class="card shadow-sm">
                 <div class="card-body p-3 border-bottom">
                     <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center">
-                        <ul class="nav nav-pills mb-3 mb-md-0">
-                            <li class="nav-item"><a class="nav-link active" href="#" data-filter="all">All</a></li>
-                            <li class="nav-item"><a class="nav-link" href="#" data-filter="delivered">Delivered</a></li>
-                            <li class="nav-item"><a class="nav-link" href="#" data-filter="approved">Approved</a></li>
-                            <li class="nav-item"><a class="nav-link" href="#" data-filter="review">In Review</a></li>
-                            <li class="nav-item"><a class="nav-link" href="#" data-filter="rejected">Rejected</a></li>
-                            <li class="nav-item"><a class="nav-link" href="#" data-filter="takedown">Takedown</a></li>
-                        </ul>
-                        <div class="input-group" style="max-width: 300px;">
-                            <input type="search" class="form-control" placeholder="Search by title, artist, UPC..." id="searchInput">
-                            <button class="btn btn-outline-secondary" type="button" id="searchButton"><i data-feather="search"></i></button>
-                        </div>
-                    </div>
+    <ul class="nav nav-pills w-100 justify-content-evenly mb-3 mb-md-0">
+        <li class="nav-item"><a class="nav-link active" href="#" data-filter="all">All</a></li>
+        <li class="nav-item"><a class="nav-link" href="#" data-filter="delivered">Delivered</a></li>
+        <li class="nav-item"><a class="nav-link" href="#" data-filter="approved">Approved</a></li>
+        <li class="nav-item"><a class="nav-link" href="#" data-filter="review">In Review</a></li>
+        <li class="nav-item"><a class="nav-link" href="#" data-filter="rejected">Rejected</a></li>
+        <li class="nav-item"><a class="nav-link" href="#" data-filter="takedown">Takedown</a></li>
+    </ul>
+</div>
                 </div>
                 
                 <div class="card-body p-4">
