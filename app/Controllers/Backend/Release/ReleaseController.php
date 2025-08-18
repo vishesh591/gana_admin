@@ -53,14 +53,14 @@ class ReleaseController extends BaseController
     }
     */
 
-        $artworkFile = $this->request->getFile('artwork');
+        $artworkFile = $this->request->getFile('artworkFile');
         $artworkName = null;
         if ($artworkFile && $artworkFile->isValid()) {
             $artworkName = $artworkFile->getRandomName();
             $artworkFile->move(FCPATH . 'uploads/artworks', $artworkName);
         }
 
-        $audioFile = $this->request->getFile('audio_file');
+        $audioFile = $this->request->getFile('audioFile');
         $audioName = null;
         if ($audioFile && $audioFile->isValid()) {
             $audioName = $audioFile->getRandomName();
@@ -97,9 +97,10 @@ class ReleaseController extends BaseController
             'explicit_song'             => $this->request->getPost('explicit'),
             'lyrics'                    => $this->request->getPost('lyrics'),
             'audio_file'                => $audioName,
-            'stores_ids'                => $this->request->getPost('stores[]'),
-            'rights_management_options' => $this->request->getPost('rights[]'),
-            'release_date'              => $this->request->getPost('release_date'),
+            'release_date' => $this->request->getPost('release_date'),
+            'stores_ids' => json_encode($this->request->getPost('stores') ?? []),
+            'rights_management_options' => json_encode($this->request->getPost('rights') ?? []),
+
             'pre_sale_date'             => $this->request->getPost('pre_sale_date'),
             'original_release_date'     => $this->request->getPost('original_release_date'),
             'release_price'             => $this->request->getPost('release_price'),

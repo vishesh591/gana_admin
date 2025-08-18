@@ -65,7 +65,7 @@
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label for="labelName" class="form-label required-field">Label Name</label>
-                                <input type="text" class="form-control" id="labelName" name="labelName" value="Label Name">
+                                <input type="text" class="form-control" id="labelName" name="labelName" value="Label Name" readonly>
                             </div>
                         </div>
                         <div class="row">
