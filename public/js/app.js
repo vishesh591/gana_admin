@@ -1,18 +1,13 @@
 function _typeof(e){return(_typeof="function"==typeof Symbol&&"symbol"==typeof Symbol.iterator?function(e){return typeof e}:function(e){return e&&"function"==typeof Symbol&&e.constructor===Symbol&&e!==Symbol.prototype?"symbol":typeof e})(e)}function _classCallCheck(e,t){if(!(e instanceof t))throw new TypeError("Cannot call a class as a function")}function _defineProperties(e,t){for(var n=0;n<t.length;n++){var r=t[n];r.enumerable=r.enumerable||!1,r.configurable=!0,"value"in r&&(r.writable=!0),Object.defineProperty(e,_toPropertyKey(r.key),r)}}function _createClass(e,t,n){return t&&_defineProperties(e.prototype,t),n&&_defineProperties(e,n),Object.defineProperty(e,"prototype",{writable:!1}),e}function _defineProperty(e,t,n){return(t=_toPropertyKey(t))in e?Object.defineProperty(e,t,{value:n,enumerable:!0,configurable:!0,writable:!0}):e[t]=n,e}function _toPropertyKey(e){e=_toPrimitive(e,"string");return"symbol"==_typeof(e)?e:e+""}function _toPrimitive(e,t){if("object"!=_typeof(e)||!e)return e;var n=e[Symbol.toPrimitive];if(void 0===n)return("string"===t?String:Number)(e);n=n.call(e,t||"default");if("object"!=_typeof(n))return n;throw new TypeError("@@toPrimitive must return a primitive value.")}var App=(()=>_createClass(function e(){_classCallCheck(this,e),_defineProperty(this,"initControls",function(){function e(){document.webkitIsFullScreen||document.mozFullScreen||document.msFullscreenElement||$("body").removeClass("fullscreen-enable")}$('[data-toggle="fullscreen"]').on("click",function(e){e.preventDefault(),$("body").toggleClass("fullscreen-enable"),document.fullscreenElement||document.mozFullScreenElement||document.webkitFullscreenElement?document.cancelFullScreen?document.cancelFullScreen():document.mozCancelFullScreen?document.mozCancelFullScreen():document.webkitCancelFullScreen&&document.webkitCancelFullScreen():document.documentElement.requestFullscreen?document.documentElement.requestFullscreen():document.documentElement.mozRequestFullScreen?document.documentElement.mozRequestFullScreen():document.documentElement.webkitRequestFullscreen&&document.documentElement.webkitRequestFullscreen(Element.ALLOW_KEYBOARD_INPUT)}),document.addEventListener("fullscreenchange",e),document.addEventListener("webkitfullscreenchange",e),document.addEventListener("mozfullscreenchange",e)})},[{key:"initComponents",value:function(){Waves.init(),feather.replace();[].slice.call(document.querySelectorAll('[data-bs-toggle="popover"]')).map(function(e){return new bootstrap.Popover(e)}),[].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]')).map(function(e){return new bootstrap.Tooltip(e)}),[].slice.call(document.querySelectorAll(".toast")).map(function(e){return new bootstrap.Toast(e)});var e=document.getElementById("toastPlacement"),r=(e&&document.getElementById("selectToastPlacement").addEventListener("change",function(){e.dataset.originalClass||(e.dataset.originalClass=e.className),e.className=e.dataset.originalClass+" "+this.value}),document.getElementById("liveAlertPlaceholder")),t=document.getElementById("liveAlertBtn");t&&t.addEventListener("click",function(){var e,t,n;e="Nice, you triggered this alert message!",t="primary",(n=document.createElement("div")).innerHTML='<div class="alert alert-'+t+' alert-dismissible" role="alert">'+e+'<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>',r.append(n)})}},{key:"initMenu",value:function(){function e(){window.innerWidth<1040?t.setAttribute("data-sidebar","hidden"):t.setAttribute("data-sidebar","default")}var t=document.body,n=document.querySelector(".button-toggle-menu");n&&n.addEventListener("click",function(){"default"==t.getAttribute("data-sidebar")?t.setAttribute("data-sidebar","hidden"):t.setAttribute("data-sidebar","default")});e(),window.addEventListener("resize",e),$("#side-menu").length&&($("#side-menu li .collapse").on({"show.bs.collapse":function(e){e=$(e.target).parents(".collapse.show");$("#side-menu .collapse.show").not(e).collapse("hide")}}),$("#side-menu a").each(function(){var e=window.location.href.split(/[?#]/)[0];this.href==e&&($(this).addClass("active"),$(this).parent().addClass("menuitem-active"),$(this).parent().parent().parent().addClass("show"),$(this).parent().parent().parent().parent().addClass("menuitem-active"),"sidebar-menu"!==(e=$(this).parent().parent().parent().parent().parent().parent()).attr("id")&&e.addClass("show"),$(this).parent().parent().parent().parent().parent().parent().parent().addClass("menuitem-active"),"wrapper"!==(e=$(this).parent().parent().parent().parent().parent().parent().parent().parent().parent()).attr("id")&&e.addClass("show"),(e=$(this).parent().parent().parent().parent().parent().parent().parent().parent().parent().parent()).is("body")||e.addClass("menuitem-active"))}))}},{key:"init",value:function(){this.initComponents(),this.initMenu(),this.initControls()}}]))();(new App).init();
 
 
+// In your app.js, replace the entire .admin-ownership-data-page block with this:
 document.addEventListener('DOMContentLoaded', function() {
 
-    // --- Page-Specific Guard Clause ---
-    // First, find the unique container for the ownership data page.
     const ownershipPageContainer = document.querySelector('.admin-ownership-data-page');
-
-    // If this container doesn't exist, stop executing the rest of the script.
     if (!ownershipPageContainer) {
         return;
     }
-
-    // --- If we are on the correct page, proceed with the original script ---
 
     // --- DATA ---
     const conflictRequests = [
@@ -28,170 +23,80 @@ document.addEventListener('DOMContentLoaded', function() {
         { id: 10, category: 'Policy', assetTitle: 'Golden Skyline', artist: 'Sunset State', assetId: '18723908473', upc: '198007112233', isrc: 'USAT22880011', otherParty: 'Repost by SoundCloud', dailyViews: '9.5K', expiry: '-', status: 'Resolved', albumCoverUrl: 'https://placehold.co/80x80/f1c40f/ffffff?text=G' }
     ];
 
-    const territoriesByRegion = { "Africa": [ {name: "Algeria", code: "DZ"}, {name: "Angola", code: "AO"}, {name: "Benin", code: "BJ"}, {name: "Botswana", code: "BW"}, {name: "Burkina Faso", code: "BF"}, {name: "Burundi", code: "BI"}, {name: "Cabo Verde", code: "CV"}, {name: "Cameroon", code: "CM"}, {name: "Central African Republic", code: "CF"}, {name: "Chad", code: "TD"}, {name: "Comoros", code: "KM"}, {name: "Congo", code: "CG"}, {name: "Congo (DRC)", code: "CD"}, {name: "Côte d'Ivoire", code: "CI"}, {name: "Djibouti", code: "DJ"}, {name: "Egypt", code: "EG"}, {name: "Equatorial Guinea", code: "GQ"}, {name: "Eritrea", code: "ER"}, {name: "Eswatini", code: "SZ"}, {name: "Ethiopia", code: "ET"}, {name: "Gabon", code: "GA"}, {name: "Gambia", code: "GM"}, {name: "Ghana", code: "GH"}, {name: "Guinea", code: "GN"}, {name: "Guinea-Bissau", code: "GW"}, {name: "Kenya", code: "KE"}, {name: "Lesotho", code: "LS"}, {name: "Liberia", code: "LR"}, {name: "Libya", code: "LY"}, {name: "Madagascar", code: "MG"}, {name: "Malawi", code: "MW"}, {name: "Mali", code: "ML"}, {name: "Mauritania", code: "MR"}, {name: "Mauritius", code: "MU"}, {name: "Mayotte", code: "YT"}, {name: "Morocco", code: "MA"}, {name: "Mozambique", code: "MZ"}, {name: "Namibia", code: "NA"}, {name: "Niger", code: "NE"}, {name: "Nigeria", code: "NG"}, {name: "Réunion", code: "RE"}, {name: "Rwanda", code: "RW"}, {name: "Saint Helena", code: "SH"}, {name: "Sao Tome and Principe", code: "ST"}, {name: "Senegal", code: "SN"}, {name: "Seychelles", code: "SC"}, {name: "Sierra Leone", code: "SL"}, {name: "Somalia", code: "SO"}, {name: "South Africa", code: "ZA"}, {name: "South Sudan", code: "SS"}, {name: "Sudan", code: "SD"}, {name: "Tanzania", code: "TZ"}, {name: "Togo", code: "TG"}, {name: "Tunisia", code: "TN"}, {name: "Uganda", code: "UG"}, {name: "Zambia", code: "ZM"}, {name: "Zimbabwe", code: "ZW"} ], "Antarctica": [ {name: "Antarctica", code: "AQ"}, {name: "French Southern Territories", code: "TF"}, {name: "South Georgia and the South Sandwich Islands", code: "GS"} ], "Asia": [ {name: "Afghanistan", code: "AF"}, {name: "Armenia", code: "AM"}, {name: "Azerbaijan", code: "AZ"}, {name: "Bahrain", code: "BH"}, {name: "Bangladesh", code: "BD"}, {name: "Bhutan", code: "BT"}, {name: "British Indian Ocean Territory", code: "IO"}, {name: "Brunei", code: "BN"}, {name: "Cambodia", code: "KH"}, {name: "China", code: "CN"}, {name: "Cyprus", code: "CY"}, {name: "Georgia", code: "GE"}, {name: "Hong Kong", code: "HK"}, {name: "India", code: "IN"}, {name: "Indonesia", code: "ID"}, {name: "Iran", code: "IR"}, {name: "Iraq", code: "IQ"}, {name: "Israel", code: "IL"}, {name: "Japan", code: "JP"}, {name: "Jordan", code: "JO"}, {name: "Kazakhstan", code: "KZ"}, {name: "Kuwait", code: "KW"}, {name: "Kyrgyzstan", code: "KG"}, {name: "Laos", code: "LA"}, {name: "Lebanon", code: "LB"}, {name: "Macao", code: "MO"}, {name: "Malaysia", code: "MY"}, {name: "Maldives", code: "MV"}, {name: "Mongolia", code: "MN"}, {name: "Myanmar", code: "MM"}, {name: "Nepal", code: "NP"}, {name: "North Korea", code: "KP"}, {name: "Oman", code: "OM"}, {name: "Pakistan", code: "PK"}, {name: "Palestine", code: "PS"}, {name: "Philippines", code: "PH"}, {name: "Qatar", code: "QA"}, {name: "Saudi Arabia", code: "SA"}, {name: "Singapore", code: "SG"}, {name: "South Korea", code: "KR"}, {name: "Sri Lanka", code: "LK"}, {name: "Syria", code: "SY"}, {name: "Taiwan", code: "TW"}, {name: "Tajikistan", code: "TJ"}, {name: "Thailand", code: "TH"}, {name: "Timor-Leste", code: "TL"}, {name: "Turkey", code: "TR"}, {name: "Turkmenistan", code: "TM"}, {name: "United Arab Emirates", code: "AE"}, {name: "Uzbekistan", code: "UZ"}, {name: "Vietnam", code: "VN"}, {name: "Yemen", code: "YE"} ], "Europe": [ {name: "Åland Islands", code: "AX"}, {name: "Albania", code: "AL"}, {name: "Andorra", code: "AD"}, {name: "Austria", code: "AT"}, {name: "Belarus", code: "BY"}, {name: "Belgium", code: "BE"}, {name: "Bosnia and Herzegovina", code: "BA"}, {name: "Bulgaria", code: "BG"}, {name: "Croatia", code: "HR"}, {name: "Czechia", code: "CZ"}, {name: "Denmark", code: "DK"}, {name: "Estonia", code: "EE"}, {name: "Faroe Islands", code: "FO"}, {name: "Finland", code: "FI"}, {name: "France", code: "FR"}, {name: "Germany", code: "DE"}, {name: "Gibraltar", code: "GI"}, {name: "Greece", code: "GR"}, {name: "Guernsey", code: "GG"}, {name: "Holy See", code: "VA"}, {name: "Hungary", code: "HU"}, {name: "Iceland", code: "IS"}, {name: "Ireland", code: "IE"}, {name: "Isle of Man", code: "IM"}, {name: "Italy", code: "IT"}, {name: "Jersey", code: "JE"}, {name: "Latvia", code: "LV"}, {name: "Liechtenstein", code: "LI"}, {name: "Lithuania", code: "LT"}, {name: "Luxembourg", code: "LU"}, {name: "Malta", code: "MT"}, {name: "Moldova", code: "MD"}, {name: "Monaco", code: "MC"}, {name: "Montenegro", code: "ME"}, {name: "Netherlands", code: "NL"}, {name: "North Macedonia", code: "MK"}, {name: "Norway", code: "NO"}, {name: "Poland", code: "PL"}, {name: "Portugal", code: "PT"}, {name: "Romania", code: "RO"}, {name: "Russia", code: "RU"}, {name: "San Marino", code: "SM"}, {name: "Serbia", code: "RS"}, {name: "Slovakia", code: "SK"}, {name: "Slovenia", code: "SI"}, {name: "Spain", code: "ES"}, {name: "Svalbard and Jan Mayen", code: "SJ"}, {name: "Sweden", code: "SE"}, {name: "Switzerland", code: "CH"}, {name: "Ukraine", code: "UA"}, {name: "United Kingdom", code: "GB"} ], "North America": [ {name: "Anguilla", code: "AI"}, {name: "Antigua and Barbuda", code: "AG"}, {name: "Aruba", code: "AW"}, {name: "Bahamas", code: "BS"}, {name: "Barbados", code: "BB"}, {name: "Belize", code: "BZ"}, {name: "Bermuda", code: "BM"}, {name: "Bonaire", code: "BQ"}, {name: "Canada", code: "CA"}, {name: "Cayman Islands", code: "KY"}, {name: "Costa Rica", code: "CR"}, {name: "Cuba", code: "CU"}, {name: "Curaçao", code: "CW"}, {name: "Dominica", code: "DM"}, {name: "Dominican Republic", code: "DO"}, {name: "El Salvador", code: "SV"}, {name: "Greenland", code: "GL"}, {name: "Grenada", code: "GD"}, {name: "Guadeloupe", code: "GP"}, {name: "Guatemala", code: "GT"}, {name: "Haiti", code: "HT"}, {name: "Honduras", code: "HN"}, {name: "Jamaica", code: "JM"}, {name: "Martinique", code: "MQ"}, {name: "Mexico", code: "MX"}, {name: "Montserrat", code: "MS"}, {name: "Nicaragua", code: "NI"}, {name: "Panama", code: "PA"}, {name: "Puerto Rico", code: "PR"}, {name: "Saint Barthélemy", code: "BL"}, {name: "Saint Kitts and Nevis", code: "KN"}, {name: "Saint Lucia", code: "LC"}, {name: "Saint Martin", code: "MF"}, {name: "Saint Pierre and Miquelon", code: "PM"}, {name: "Saint Vincent and the Grenadines", code: "VC"}, {name: "Sint Maarten", code: "SX"}, {name: "Trinidad and Tobago", code: "TT"}, {name: "Turks and Caicos Islands", code: "TC"}, {name: "United States", code: "US"}, {name: "U.S. Virgin Islands", code: "VI"} ], "Oceania": [ {name: "American Samoa", code: "AS"}, {name: "Australia", code: "AU"}, {name: "Christmas Island", code: "CX"}, {name: "Cocos (Keeling) Islands", code: "CC"}, {name: "Cook Islands", code: "CK"}, {name: "Fiji", code: "FJ"}, {name: "French Polynesia", code: "PF"}, {name: "Guam", code: "GU"}, {name: "Kiribati", code: "KI"}, {name: "Marshall Islands", code: "MH"}, {name: "Micronesia", code: "FM"}, {name: "Nauru", code: "NR"}, {name: "New Caledonia", code: "NC"}, {name: "New Zealand", code: "NZ"}, {name: "Niue", code: "NU"}, {name: "Norfolk Island", code: "NF"}, {name: "Northern Mariana Islands", code: "MP"}, {name: "Palau", code: "PW"}, {name: "Papua New Guinea", code: "PG"}, {name: "Pitcairn", code: "PN"}, {name: "Samoa", code: "WS"}, {name: "Solomon Islands", code: "SB"}, {name: "Tokelau", code: "TK"}, {name: "Tonga", code: "TO"}, {name: "Tuvalu", code: "TV"}, {name: "U.S. Minor Outlying Islands", code: "UM"}, {name: "Vanuatu", code: "VU"}, {name: "Wallis and Futuna", code: "WF"} ], "South America": [ {name: "Argentina", code: "AR"}, {name: "Bolivia", code: "BO"}, {name: "Brazil", code: "BR"}, {name: "Chile", code: "CL"}, {name: "Colombia", code: "CO"}, {name: "Ecuador", code: "EC"}, {name: "Falkland Islands", code: "FK"}, {name: "French Guiana", code: "GF"}, {name: "Guyana", code: "GY"}, {name: "Paraguay", code: "PY"}, {name: "Peru", code: "PE"}, {name: "Suriname", code: "SR"}, {name: "Uruguay", code: "UY"}, {name: "Venezuela", code: "VE"} ] };
-    const totalCountries = Object.values(territoriesByRegion).reduce((sum, region) => sum + region.length, 0);
+    // --- COMPLETE DATA OBJECT ---
+    const territoriesByRegion={Africa:[{name:"Algeria",code:"DZ"},{name:"Angola",code:"AO"},{name:"Benin",code:"BJ"},{name:"Botswana",code:"BW"},{name:"Burkina Faso",code:"BF"},{name:"Burundi",code:"BI"},{name:"Cabo Verde",code:"CV"},{name:"Cameroon",code:"CM"},{name:"Central African Republic",code:"CF"},{name:"Chad",code:"TD"},{name:"Comoros",code:"KM"},{name:"Congo",code:"CG"},{name:"Congo (DRC)",code:"CD"},{name:"Côte d'Ivoire",code:"CI"},{name:"Djibouti",code:"DJ"},{name:"Egypt",code:"EG"},{name:"Equatorial Guinea",code:"GQ"},{name:"Eritrea",code:"ER"},{name:"Eswatini",code:"SZ"},{name:"Ethiopia",code:"ET"},{name:"Gabon",code:"GA"},{name:"Gambia",code:"GM"},{name:"Ghana",code:"GH"},{name:"Guinea",code:"GN"},{name:"Guinea-Bissau",code:"GW"},{name:"Kenya",code:"KE"},{name:"Lesotho",code:"LS"},{name:"Liberia",code:"LR"},{name:"Libya",code:"LY"},{name:"Madagascar",code:"MG"},{name:"Malawi",code:"MW"},{name:"Mali",code:"ML"},{name:"Mauritania",code:"MR"},{name:"Mauritius",code:"MU"},{name:"Mayotte",code:"YT"},{name:"Morocco",code:"MA"},{name:"Mozambique",code:"MZ"},{name:"Namibia",code:"NA"},{name:"Niger",code:"NE"},{name:"Nigeria",code:"NG"},{name:"Réunion",code:"RE"},{name:"Rwanda",code:"RW"},{name:"Saint Helena",code:"SH"},{name:"Sao Tome and Principe",code:"ST"},{name:"Senegal",code:"SN"},{name:"Seychelles",code:"SC"},{name:"Sierra Leone",code:"SL"},{name:"Somalia",code:"SO"},{name:"South Africa",code:"ZA"},{name:"South Sudan",code:"SS"},{name:"Sudan",code:"SD"},{name:"Tanzania",code:"TZ"},{name:"Togo",code:"TG"},{name:"Tunisia",code:"TN"},{name:"Uganda",code:"UG"},{name:"Zambia",code:"ZM"},{name:"Zimbabwe",code:"ZW"}],Asia:[{name:"Afghanistan",code:"AF"},{name:"Armenia",code:"AM"},{name:"Azerbaijan",code:"AZ"},{name:"Bahrain",code:"BH"},{name:"Bangladesh",code:"BD"},{name:"Bhutan",code:"BT"},{name:"Brunei",code:"BN"},{name:"Cambodia",code:"KH"},{name:"China",code:"CN"},{name:"Cyprus",code:"CY"},{name:"Georgia",code:"GE"},{name:"Hong Kong",code:"HK"},{name:"India",code:"IN"},{name:"Indonesia",code:"ID"},{name:"Iraq",code:"IQ"},{name:"Israel",code:"IL"},{name:"Japan",code:"JP"},{name:"Jordan",code:"JO"},{name:"Kazakhstan",code:"KZ"},{name:"Kuwait",code:"KW"},{name:"Kyrgyzstan",code:"KG"},{name:"Laos",code:"LA"},{name:"Lebanon",code:"LB"},{name:"Macao",code:"MO"},{name:"Malaysia",code:"MY"},{name:"Maldives",code:"MV"},{name:"Mongolia",code:"MN"},{name:"Myanmar",code:"MM"},{name:"Nepal",code:"NP"},{name:"Oman",code:"OM"},{name:"Pakistan",code:"PK"},{name:"Palestine",code:"PS"},{name:"Philippines",code:"PH"},{name:"Qatar",code:"QA"},{name:"Saudi Arabia",code:"SA"},{name:"Singapore",code:"SG"},{name:"South Korea",code:"KR"},{name:"Sri Lanka",code:"LK"},{name:"Syria",code:"SY"},{name:"Taiwan",code:"TW"},{name:"Tajikistan",code:"TJ"},{name:"Thailand",code:"TH"},{name:"Timor-Leste",code:"TL"},{name:"Turkey",code:"TR"},{name:"Turkmenistan",code:"TM"},{name:"United Arab Emirates",code:"AE"},{name:"Uzbekistan",code:"UZ"},{name:"Vietnam",code:"VN"},{name:"Yemen",code:"YE"}],Europe:[{name:"Åland Islands",code:"AX"},{name:"Albania",code:"AL"},{name:"Andorra",code:"AD"},{name:"Austria",code:"AT"},{name:"Belarus",code:"BY"},{name:"Belgium",code:"BE"},{name:"Bosnia and Herzegovina",code:"BA"},{name:"Bulgaria",code:"BG"},{name:"Croatia",code:"HR"},{name:"Czechia",code:"CZ"},{name:"Denmark",code:"DK"},{name:"Estonia",code:"EE"},{name:"Faroe Islands",code:"FO"},{name:"Finland",code:"FI"},{name:"France",code:"FR"},{name:"Germany",code:"DE"},{name:"Gibraltar",code:"GI"},{name:"Greece",code:"GR"},{name:"Guernsey",code:"GG"},{name:"Hungary",code:"HU"},{name:"Iceland",code:"IS"},{name:"Ireland",code:"IE"},{name:"Isle of Man",code:"IM"},{name:"Italy",code:"IT"},{name:"Jersey",code:"JE"},{name:"Latvia",code:"LV"},{name:"Liechtenstein",code:"LI"},{name:"Lithuania",code:"LT"},{name:"Luxembourg",code:"LU"},{name:"Malta",code:"MT"},{name:"Moldova",code:"MD"},{name:"Monaco",code:"MC"},{name:"Montenegro",code:"ME"},{name:"Netherlands",code:"NL"},{name:"North Macedonia",code:"MK"},{name:"Norway",code:"NO"},{name:"Poland",code:"PL"},{name:"Portugal",code:"PT"},{name:"Romania",code:"RO"},{name:"Russia",code:"RU"},{name:"San Marino",code:"SM"},{name:"Serbia",code:"RS"},{name:"Slovakia",code:"SK"},{name:"Slovenia",code:"SI"},{name:"Spain",code:"ES"},{name:"Svalbard and Jan Mayen",code:"SJ"},{name:"Sweden",code:"SE"},{name:"Switzerland",code:"CH"},{name:"Ukraine",code:"UA"},{name:"United Kingdom",code:"GB"}],"North America":[{name:"Anguilla",code:"AI"},{name:"Antigua and Barbuda",code:"AG"},{name:"Aruba",code:"AW"},{name:"Bahamas",code:"BS"},{name:"Barbados",code:"BB"},{name:"Belize",code:"BZ"},{name:"Bermuda",code:"BM"},{name:"Canada",code:"CA"},{name:"Cayman Islands",code:"KY"},{name:"Costa Rica",code:"CR"},{name:"Cuba",code:"CU"},{name:"Curaçao",code:"CW"},{name:"Dominica",code:"DM"},{name:"Dominican Republic",code:"DO"},{name:"El Salvador",code:"SV"},{name:"Greenland",code:"GL"},{name:"Grenada",code:"GD"},{name:"Guadeloupe",code:"GP"},{name:"Guatemala",code:"GT"},{name:"Haiti",code:"HT"},{name:"Honduras",code:"HN"},{name:"Jamaica",code:"JM"},{name:"Martinique",code:"MQ"},{name:"Mexico",code:"MX"},{name:"Montserrat",code:"MS"},{name:"Nicaragua",code:"NI"},{name:"Panama",code:"PA"},{name:"Puerto Rico",code:"PR"},{name:"Saint Barthélemy",code:"BL"},{name:"Saint Kitts and Nevis",code:"KN"},{name:"Saint Lucia",code:"LC"},{name:"Saint Martin",code:"MF"},{name:"Saint Pierre and Miquelon",code:"PM"},{name:"Saint Vincent and the Grenadines",code:"VC"},{name:"Sint Maarten",code:"SX"},{name:"Trinidad and Tobago",code:"TT"},{name:"Turks and Caicos Islands",code:"TC"},{name:"United States",code:"US"}],Oceania:[{name:"Australia",code:"AU"},{name:"Fiji",code:"FJ"},{name:"French Polynesia",code:"PF"},{name:"Guam",code:"GU"},{name:"Kiribati",code:"KI"},{name:"Marshall Islands",code:"MH"},{name:"Micronesia",code:"FM"},{name:"Nauru",code:"NR"},{name:"New Caledonia",code:"NC"},{name:"New Zealand",code:"NZ"},{name:"Norfolk Island",code:"NF"},{name:"Northern Mariana Islands",code:"MP"},{name:"Palau",code:"PW"},{name:"Papua New Guinea",code:"PG"},{name:"Samoa",code:"WS"},{name:"Solomon Islands",code:"SB"},{name:"Tonga",code:"TO"},{name:"Tuvalu",code:"TV"},{name:"Vanuatu",code:"VU"}],"South America":[{name:"Argentina",code:"AR"},{name:"Bolivia",code:"BO"},{name:"Brazil",code:"BR"},{name:"Chile",code:"CL"},{name:"Colombia",code:"CO"},{name:"Ecuador",code:"EC"},{name:"Falkland Islands",code:"FK"},{name:"French Guiana",code:"GF"},{name:"Guyana",code:"GY"},{name:"Paraguay",code:"PY"},{name:"Peru",code:"PE"},{name:"Suriname",code:"SR"},{name:"Uruguay",code:"UY"},{name:"Venezuela",code:"VE"}]};
+    const totalCountries = Object.values(territoriesByRegion).flat().length;
 
-    let sortState = { key: null, direction: 'asc' };
+    // --- DOM ELEMENTS ---
+    const table = $('#datatable');
 
-    // --- RENDER FUNCTIONS ---
-    function renderTable(data) {
-        const tableBody = document.getElementById('tableBody');
-        const paginationText = document.getElementById('pagination-text');
+    // --- HELPER & PARSING FUNCTIONS ---
+    const parseViews = (views) => (typeof views !== 'string') ? 0 : parseFloat(views.toUpperCase()) * (views.toUpperCase().includes('K') ? 1000 : 1);
+    const parseExpiry = (expiry) => (typeof expiry !== 'string' || expiry === '-') ? Infinity : parseInt(expiry);
+    const getStatusBadge = (status) => `<span class="badge rounded-pill border ${getStatusBadgeClass(status)}">${status}</span>`;
+    const getStatusBadgeClass = (status) => {
+        const lowerStatus = status.toLowerCase();
+        if (lowerStatus.includes('action required')) return 'bg-danger-subtle text-danger-emphasis';
+        if (lowerStatus.includes('resolved')) return 'bg-success-subtle text-success-emphasis';
+        if (lowerStatus.includes('in review')) return 'bg-warning-subtle text-warning-emphasis';
+        return 'bg-secondary-subtle text-secondary-emphasis';
+    };
 
-        if (!tableBody) return; // Defensive check
-
-        tableBody.innerHTML = !data || data.length === 0
-            ? `<tr><td colspan="10" class="text-center p-5"><h5>No matching conflicts.</h5></td></tr>`
-            : data.map(req => `
-                <tr data-bs-toggle="offcanvas" data-bs-target="#conflictResolutionOffcanvas"
-                    data-song-name="${req.assetTitle}" data-artist-name="${req.artist}" data-isrc="${req.isrc}" 
-                    data-cover-url="${req.albumCoverUrl}" data-category="${req.category}" data-other-party="${req.otherParty}">
-                    
-                    <td class="text-center"><i class="bi bi-youtube text-danger fs-5"></i></td>
-                    <td>${req.category}</td>
-                    <td> <a href="#" data-bs-toggle="modal" data-bs-target="#relocationRequestModal">
-                        ${req.assetTitle}
-                    </a></td>
-                    <td><div class="fw-bold">${req.artist}</div><small class="text-muted">Asset ID: ${req.assetId}</small></td>
-                    <td>${req.upc}</td>
-                    <td>${req.otherParty}</td>
-                    <td>${req.dailyViews}</td>
-                    <td>${req.expiry}</td>
-                    <td><span class="badge rounded-pill border bg-danger-subtle text-danger-emphasis">${req.status}</span></td>
-                    <td><i class="bi bi-chevron-right text-muted"></i></td>
-                </tr>`).join('');
-        
-        if (paginationText) {
-            paginationText.textContent = `${data.length} of ${conflictRequests.length} results`;
-        }
-    }
-
-    function renderTerritoryAccordion() {
-        const accordionContainer = document.getElementById('territoryAccordion');
-        if (!accordionContainer) return; // Defensive check
-
-        accordionContainer.innerHTML = Object.entries(territoriesByRegion).map(([region, countries]) => {
-            const regionId = region.replace(/[^a-zA-Z0-9]/g, '');
-            return `
-            <div class="accordion-item">
-                <h2 class="accordion-header" id="heading-${regionId}">
-                    <button class="accordion-button collapsed d-flex align-items-center" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-${regionId}" aria-expanded="false">
-                        <div class="form-check me-auto pe-2">
-                            <input class="form-check-input region-checkbox" type="checkbox" id="region-${regionId}" data-region="${region}" checked>
-                            <label class="form-check-label fw-bold" for="region-${regionId}">${region}</label>
-                        </div>
-                        <span class="text-muted small me-2">${countries.length} countries</span>
-                        <i class="bi bi-chevron-down"></i>
-                    </button>
-                </h2>
-                <div id="collapse-${regionId}" class="accordion-collapse collapse" data-bs-parent="#territoryAccordion">
-                    <div class="accordion-body">
-                        <div class="territory-list-inner">
-                        ${countries.map(country => `
-                            <div class="form-check">
-                                <input class="form-check-input country-checkbox" type="checkbox" value="${country.code}" id="country-${country.code}" data-region="${region}" checked>
-                                <label class="form-check-label" for="country-${country.code}">${country.name}</label>
-                            </div>
-                        `).join('')}
-                        </div>
-                    </div>
-                </div>
-            </div>
-            `;
-        }).join('');
-        addTerritoryEventListeners();
-        updateTerritoryCounter();
-    }
-
-    // --- SORTING & UPDATE LOGIC ---
-    function parseViews(views) {
-        if (typeof views !== 'string') return 0;
-        const upperViews = views.toUpperCase();
-        const num = parseFloat(upperViews);
-        if (upperViews.includes('K')) return num * 1000;
-        return num;
-    }
-
-    function parseExpiry(expiry) {
-        if (typeof expiry !== 'string' || expiry === '-') return Infinity;
-        return parseInt(expiry);
-    }
-
-    function updateTerritoryCounter() {
-        const selectedCount = document.querySelectorAll('.country-checkbox:checked').length;
-        const counterElement = document.getElementById('territoryCounter');
-        if (counterElement) {
-            counterElement.textContent = `${selectedCount} contested countries out of ${totalCountries} delivered`;
-        }
-    }
-    
-    function updateSortIcons() {
-        document.querySelectorAll('.sortable-header').forEach(header => {
-            header.removeAttribute('data-sort-direction');
-        });
-        
-        if (sortState.key) {
-            const activeHeader = document.querySelector(`.sortable-header[data-sort="${sortState.key}"]`);
-            if (activeHeader) {
-                activeHeader.setAttribute('data-sort-direction', sortState.direction);
-            }
-        }
-    }
-
-    // --- EVENT HANDLERS & INITIALIZATION ---
-    renderTable(conflictRequests);
-
-    // Table header click handler for sorting
-    const releasesTable = document.getElementById('releasesTable');
-    if (releasesTable) {
-        releasesTable.querySelector('thead').addEventListener('click', (e) => {
-            const target = e.target;
-            if (!target.matches('.bi-arrow-up, .bi-arrow-down')) {
-                return;
-            }
-
-            const headerCell = target.closest('.sortable-header');
-            if (!headerCell) return;
-
-            sortState.key = headerCell.dataset.sort;
-            sortState.direction = target.classList.contains('bi-arrow-up') ? 'asc' : 'desc';
-
-            conflictRequests.sort((a, b) => {
-                let valA = a[sortState.key];
-                let valB = b[sortState.key];
-
-                if (sortState.key === 'dailyViews') {
-                    valA = parseViews(valA);
-                    valB = parseViews(valB);
-                } else if (sortState.key === 'expiry') {
-                    valA = parseExpiry(valA);
-                    valB = parseExpiry(valB);
-                }
-
-                let comparison = 0;
-                if (valA === null || valA === undefined) return 1;
-                if (valB === null || valB === undefined) return -1;
-                
-                if (typeof valA === 'string' && typeof valB === 'string') {
-                    comparison = valA.localeCompare(valB, undefined, {numeric: true});
-                } else {
-                    if (valA > valB) comparison = 1;
-                    else if (valA < valB) comparison = -1;
-                }
-                
-                return sortState.direction === 'desc' ? comparison * -1 : comparison;
+    // --- FULL DATATABLES CONFIGURATION ---
+    const dataTableInstance = table.DataTable({
+        destroy: true,
+        data: conflictRequests,
+        paging: true,
+        searching: true,
+        info: true,
+        lengthChange: true,
+        autoWidth: false,
+        columns: [
+            { data: null, className: 'text-center', orderable: false, render: () => `<i class="bi bi-youtube text-danger fs-5"></i>` },
+            { data: 'category' },
+            { data: 'assetTitle' },
+            { data: null, render: (data, type, row) => `<div class="fw-bold">${row.artist}</div><small class="text-muted">Asset ID: ${row.assetId}</small>` },
+            { data: 'upc' },
+            { data: 'otherParty' },
+            { 
+                data: 'dailyViews',
+                render: { _: (data) => data, sort: (data) => parseViews(data), filter: (data) => parseViews(data) }
+            },
+            { 
+                data: 'expiry',
+                render: { _: (data) => data, sort: (data) => parseExpiry(data), filter: (data) => parseExpiry(data) }
+            },
+            { data: 'status', render: (data) => getStatusBadge(data) },
+            { data: null, className: 'text-center', orderable: false, render: () => `<i class="bi bi-chevron-right text-muted"></i>` }
+        ],
+        createdRow: function(row, data) {
+            $(row).attr({
+                'data-bs-toggle': 'offcanvas',
+                'data-bs-target': '#conflictResolutionOffcanvas',
+                'data-song-name': data.assetTitle,
+                'data-artist-name': data.artist,
+                'data-isrc': data.isrc,
+                'data-cover-url': data.albumCoverUrl,
+                'data-category': data.category,
+                'data-other-party': data.otherParty
             });
+        },
+        language: {
+            info: "Showing _START_ to _END_ of _TOTAL_ entries",
+            infoEmpty: "Showing 0 to 0 of 0 entries",
+            infoFiltered: "(filtered from _MAX_ total entries)",
+            zeroRecords: "No matching conflicts found",
+            emptyTable: "No conflicts available",
+            search: "_INPUT_",
+            searchPlaceholder: "Search conflicts..."
+        }
+    });
 
-            renderTable(conflictRequests);
-            updateSortIcons();
-        });
-    }
-
-    // --- Offcanvas and Form Logic ---
-    const conflictOffcanvas = document.getElementById('conflictResolutionOffcanvas');
-    if (conflictOffcanvas) { 
+    // --- OFFCANVAS LOGIC ---
+    const conflictOffcanvasEl = document.getElementById('conflictResolutionOffcanvas');
+    if (conflictOffcanvasEl) {
         const conflictForm = document.getElementById('conflictForm');
-        const steps = Array.from(document.querySelectorAll('.form-step'));
+        const steps = Array.from(conflictOffcanvasEl.querySelectorAll('.form-step'));
         const nextBtn = document.getElementById('nextBtn');
         const backBtn = document.getElementById('backBtn');
         const submitBtn = document.getElementById('submitBtn');
@@ -199,104 +104,130 @@ document.addEventListener('DOMContentLoaded', function() {
 
         function showStep(stepIndex) {
             steps.forEach((step, index) => step.classList.toggle('d-none', index !== stepIndex));
-            if(backBtn) backBtn.classList.toggle('d-none', stepIndex === 0);
-            if(nextBtn) nextBtn.classList.toggle('d-none', stepIndex === steps.length - 1);
-            if(submitBtn) submitBtn.classList.toggle('d-none', stepIndex !== steps.length - 1);
+            backBtn.classList.toggle('d-none', stepIndex === 0);
+            nextBtn.classList.toggle('d-none', stepIndex === steps.length - 1);
+            submitBtn.classList.toggle('d-none', stepIndex !== steps.length - 1);
             currentStep = stepIndex;
         }
 
-        if(nextBtn) nextBtn.addEventListener('click', () => {
-            if (currentStep === 0 && !document.querySelector('input[name="rightsOwned"]:checked')) return alert('Please select a rights option.');
-            if (document.getElementById('territoryAccordion') && currentStep === 1 && !document.querySelector('.country-checkbox:checked')) return alert('Please select at least one territory.');
+        nextBtn.addEventListener('click', () => {
+            if (currentStep === 0 && !conflictForm.querySelector('input[name="rightsOwned"]:checked')) return alert('Please select a rights option.');
+            if (currentStep === 1 && !conflictForm.querySelector('.country-checkbox:checked')) return alert('Please select at least one territory.');
             if (currentStep < steps.length - 1) showStep(currentStep + 1);
         });
 
-        if(backBtn) backBtn.addEventListener('click', () => showStep(currentStep - 1));
+        backBtn.addEventListener('click', () => showStep(currentStep - 1));
 
-        conflictOffcanvas.addEventListener('show.bs.offcanvas', function(event) {
-            if(document.getElementById('territoryAccordion')) {
-                renderTerritoryAccordion();
-            }
+        conflictOffcanvasEl.addEventListener('show.bs.offcanvas', function(event) {
+            renderTerritoryAccordion();
             
             const data = event.relatedTarget.dataset;
             ['', '2', '3'].forEach(s => {
                 const cover = document.getElementById(`modalAlbumCover${s}`);
                 const song = document.getElementById(`modalSongName${s}`);
                 const artist = document.getElementById(`modalArtistName${s}`);
-                if(cover) cover.src = data.coverUrl;
-                if(song) song.textContent = data.songName;
-                if(artist) artist.textContent = data.artistName;
+                if (cover) cover.src = data.coverUrl;
+                if (song) song.textContent = data.songName;
+                if (artist) artist.textContent = data.artistName;
             });
-            const modalIsrc = document.getElementById('modalIsrc');
-            const offcanvasTitle = document.getElementById('offcanvasTitle');
-            const offcanvasSubtitle = document.getElementById('offcanvasSubtitle');
-
-            if(modalIsrc) modalIsrc.textContent = `ISRC: ${data.isrc}`;
-            if(offcanvasTitle) offcanvasTitle.textContent = data.category;
-            if(offcanvasSubtitle) offcanvasSubtitle.textContent = `VS. ${data.otherParty}`;
+            document.getElementById('offcanvasTitle').textContent = data.category;
+            document.getElementById('offcanvasSubtitle').textContent = `VS. ${data.otherParty}`;
             
-            if(conflictForm) conflictForm.reset();
-
-            document.querySelectorAll('.radio-card').forEach(c => c.classList.remove('selected'));
-            
-            const selectedFileName = document.getElementById('selectedFileName');
-            if(selectedFileName) selectedFileName.classList.add('d-none');
-            
-            document.querySelectorAll('#territoryAccordion input[type="checkbox"]').forEach(cb => cb.checked = true);
-            if(document.getElementById('territoryCounter')) updateTerritoryCounter();
+            conflictForm.reset();
+            conflictForm.querySelectorAll('.radio-card').forEach(c => c.classList.remove('selected'));
+            document.getElementById('selectedFileName')?.classList.add('d-none');
             showStep(0);
         });
         
-        if(conflictForm) conflictForm.addEventListener('submit', function(e) {
+        conflictForm.addEventListener('submit', function(e) {
             e.preventDefault();
             const formFile = document.getElementById('formFile');
             if (formFile && !formFile.files.length) return alert('Please upload a supporting document.');
             alert('Resolution submitted successfully!');
-            bootstrap.Offcanvas.getInstance(conflictOffcanvas).hide();
+            bootstrap.Offcanvas.getInstance(conflictOffcanvasEl).hide();
         });
 
-        document.querySelectorAll('.radio-card').forEach(c => c.addEventListener('click', function() {
-            document.querySelectorAll('.radio-card').forEach(el => el.classList.remove('selected'));
-            this.classList.add('selected');
-            this.querySelector('input[type="radio"]').checked = true;
-        }));
+        function renderTerritoryAccordion() {
+            const accordionContainer = document.getElementById('territoryAccordion');
+            if (!accordionContainer) return;
+
+            accordionContainer.innerHTML = Object.entries(territoriesByRegion).map(([region, countries]) => {
+                if (countries.length === 0) return '';
+                const regionId = region.replace(/[^a-zA-Z0-9]/g, '');
+                return `
+                <div class="accordion-item">
+                    <h2 class="accordion-header">
+                        <button class="accordion-button collapsed d-flex align-items-center" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-${regionId}">
+                            <div class="form-check me-auto pe-2">
+                                <input class="form-check-input region-checkbox" type="checkbox" id="region-${regionId}" data-region="${region}" checked>
+                                <label class="form-check-label fw-bold" for="region-${regionId}">${region}</label>
+                            </div>
+                            <span class="text-muted small me-2">${countries.length} countries</span>
+                        </button>
+                    </h2>
+                    <div id="collapse-${regionId}" class="accordion-collapse collapse" data-bs-parent="#territoryAccordion">
+                        <div class="accordion-body">
+                            <div class="territory-list-inner">
+                            ${countries.map(country => `
+                                <div class="form-check">
+                                    <input class="form-check-input country-checkbox" type="checkbox" value="${country.code}" id="country-${country.code}" data-region="${region}" checked>
+                                    <label class="form-check-label" for="country-${country.code}">${country.name}</label>
+                                </div>`).join('')}
+                            </div>
+                        </div>
+                    </div>
+                </div>`;
+            }).join('');
+            addTerritoryEventListeners();
+            updateTerritoryCounter();
+        }
+
+        function updateTerritoryCounter() {
+            const selectedCount = conflictOffcanvasEl.querySelectorAll('.country-checkbox:checked').length;
+            const counterElement = document.getElementById('territoryCounter');
+            if (counterElement) {
+                counterElement.textContent = `${selectedCount} contested countries out of ${totalCountries} delivered`;
+            }
+        }
 
         function addTerritoryEventListeners() {
-            document.querySelectorAll('.region-checkbox').forEach(regionCheckbox => {
-                regionCheckbox.addEventListener('change', function() {
+            conflictOffcanvasEl.querySelectorAll('.region-checkbox').forEach(cb => {
+                cb.addEventListener('change', function() {
                     const region = this.dataset.region;
-                    document.querySelectorAll(`.country-checkbox[data-region="${region}"]`).forEach(countryCheckbox => {
-                        countryCheckbox.checked = this.checked;
-                    });
-                    if(document.getElementById('territoryCounter')) updateTerritoryCounter();
+                    conflictOffcanvasEl.querySelectorAll(`.country-checkbox[data-region="${region}"]`).forEach(countryCb => countryCb.checked = this.checked);
+                    updateTerritoryCounter();
                 });
             });
-
-            document.querySelectorAll('.country-checkbox').forEach(countryCheckbox => {
-                countryCheckbox.addEventListener('change', function() {
+            conflictOffcanvasEl.querySelectorAll('.country-checkbox').forEach(cb => {
+                cb.addEventListener('change', function() {
                     const region = this.dataset.region;
-                    const allInRegionChecked = Array.from(document.querySelectorAll(`.country-checkbox[data-region="${region}"]`)).every(cb => cb.checked);
-                    const regionCheckbox = document.querySelector(`.region-checkbox[data-region="${region}"]`);
-                    if (regionCheckbox) {
-                        regionCheckbox.checked = allInRegionChecked;
-                    }
-                    if(document.getElementById('territoryCounter')) updateTerritoryCounter();
+                    const allInRegion = [...conflictOffcanvasEl.querySelectorAll(`.country-checkbox[data-region="${region}"]`)].every(c => c.checked);
+                    conflictOffcanvasEl.querySelector(`.region-checkbox[data-region="${region}"]`).checked = allInRegion;
+                    updateTerritoryCounter();
                 });
             });
         }
         
+        // --- Remaining event listeners for form interactions ---
+        conflictOffcanvasEl.addEventListener('click', function(e) {
+            if (e.target.closest('.radio-card')) {
+                const card = e.target.closest('.radio-card');
+                conflictOffcanvasEl.querySelectorAll('.radio-card').forEach(c => c.classList.remove('selected'));
+                card.classList.add('selected');
+                card.querySelector('input[type="radio"]').checked = true;
+            }
+        });
+
         const fileInput = document.getElementById('formFile');
         const fileDisplay = document.getElementById('selectedFileName');
-        const fileUploadContainer = document.getElementById('fileUploadContainer');
-
-        if(fileUploadContainer) fileUploadContainer.addEventListener('click', () => fileInput.click());
-        if(fileInput) fileInput.addEventListener('change', () => {
+        document.getElementById('fileUploadContainer')?.addEventListener('click', () => fileInput.click());
+        fileInput?.addEventListener('change', () => {
             if (fileInput.files.length > 0 && fileDisplay) {
                 fileDisplay.querySelector('span').textContent = fileInput.files[0].name;
                 fileDisplay.classList.remove('d-none');
             }
         });
-        if(fileDisplay) fileDisplay.querySelector('.btn-close').addEventListener('click', (e) => {
+        fileDisplay?.querySelector('.btn-close').addEventListener('click', (e) => {
             e.stopPropagation(); 
             if(fileInput) fileInput.value = '';
             fileDisplay.classList.add('d-none');
