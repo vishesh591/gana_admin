@@ -53,7 +53,7 @@ $routes->group('superadmin', ['filter' => 'role:superadmin'], function ($routes)
     $routes->post('releases/store', 'Backend\Release\ReleaseController::store');
     $routes->get('api/releases/(:num)', 'ReleaseController::show/$1');
     $routes->get('api/labels', 'Backend\Label\LabelController::getLabelsJson');
-
+    $routes->get('api/accounts', 'RegisterController::getAccountsJson');
 });
 
 // Routes only for artists

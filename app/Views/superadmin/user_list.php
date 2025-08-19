@@ -1,17 +1,17 @@
 <div class="admin-account-page content-page">
     <div class="content">
         <div class="container-xxl">
-                    <div class="py-3 d-flex align-items-sm-center flex-sm-row flex-column justify-content-between">
-                            <h2 class="fs-18 fw-semibold m-0 page-title ">Account</h2>
-                        <div class="col-auto d-flex gap-2">
-                            <button type="button" class="btn btn-outline-secondary rounded-pill px-4" id="exportCsvBtn">
-                                <i class="bi bi-download me-1"></i> Export to CSV
-                            </button>
-                            <button type="button" class="btn btn-primary rounded-pill px-4" data-bs-toggle="modal" data-bs-target="#claimingRequestModal">
-                                <i class="bi bi-plus-lg me-1"></i>Create New Account
-                            </button>
-                        </div>
-                    </div>
+            <div class="py-3 d-flex align-items-sm-center flex-sm-row flex-column justify-content-between">
+                <h2 class="fs-18 fw-semibold m-0 page-title ">Account</h2>
+                <div class="col-auto d-flex gap-2">
+                    <button type="button" class="btn btn-outline-secondary rounded-pill px-4" id="exportCsvBtn">
+                        <i class="bi bi-download me-1"></i> Export to CSV
+                    </button>
+                    <button type="button" class="btn btn-primary rounded-pill px-4" data-bs-toggle="modal" data-bs-target="#claimingRequestModal">
+                        <i class="bi bi-plus-lg me-1"></i>Create New Account
+                    </button>
+                </div>
+            </div>
 
             <div class="card shadow-sm mt-4">
                 <div class="card-body p-0">
@@ -20,47 +20,18 @@
                             <thead>
                                 <tr>
                                     <th width="50"></th>
-                                    <th class="sortable-header" data-sort="primaryLabelName">Primary Label Name <span class="sort-icon"><i class="bi bi-arrow-up"></i><i class="bi bi-arrow-down"></i></span></th>
-                                    <th class="sortable-header" data-sort="labelName">Label Name <span class="sort-icon"><i class="bi bi-arrow-up"></i><i class="bi bi-arrow-down"></i></span></th>
-                                    <th class="sortable-header" data-sort="startDate">Start Date <span class="sort-icon"><i class="bi bi-arrow-up"></i><i class="bi bi-arrow-down"></i></span></th>
-                                    <th class="sortable-header" data-sort="endDate">End Date <span class="sort-icon"><i class="bi bi-arrow-up"></i><i class="bi bi-arrow-down"></i></span></th>
-                                    <th class="sortable-header" data-sort="status">Status <span class="sort-icon"><i class="bi bi-arrow-up"></i><i class="bi bi-arrow-down"></i></span></th>
+                                    <th>Primary Label Name</th>
+                                    <th>Label Name</th>
+                                    <th>Start Date</th>
+                                    <th>End Date</th>
+                                    <th>Status</th>
                                 </tr>
                             </thead>
-                            <tbody id="accountsTableBody">
-                                <?php if (!empty($users)): ?>
-                                    <?php foreach ($users as $user): ?>
-                                        <tr>
-                                            <td class="text-center">
-                                                <?php if ($user['status'] === 'Active'): ?>
-                                                    <i data-feather="check-circle" class="text-success"></i>
-                                                <?php else: ?>
-                                                    <i data-feather="x-circle" class="text-danger"></i>
-                                                <?php endif; ?>
-                                            </td>
-                                            <td><?= esc($user['company_name']) ?></td>
-                                            <td><?= esc($user['label_name']) ?></td>
-                                            <td><?= esc($user['agreement_start_date']) ?></td>
-                                            <td><?= esc($user['agreement_end_date']) ?></td>
-                                            <td>
-                                                <span class="badge <?= $user['status'] === 'Active' ? 'bg-success' : 'bg-danger' ?>">
-                                                    <?= $user['status'] ?>
-                                                </span>
-                                            </td>
-                                        </tr>
-                                    <?php endforeach; ?>
-                                <?php else: ?>
-                                    <tr>
-                                        <td colspan="6" class="text-center">No users found.</td>
-                                    </tr>
-                                <?php endif; ?>
-                            </tbody>
-
-
                         </table>
+
                     </div>
                 </div>
-                <div class="card-footer bg-white d-flex flex-column flex-md-row justify-content-between align-items-center py-3">
+                <!-- <div class="card-footer bg-white d-flex flex-column flex-md-row justify-content-between align-items-center py-3">
                     <div class="mb-2 mb-md-0" id="pagination-text">
                         Showing <strong>1</strong> to <strong>5</strong> of <strong>5</strong> entries
                     </div>
@@ -71,7 +42,7 @@
                             <li class="page-item"><a class="page-link" href="#">Next</a></li>
                         </ul>
                     </nav>
-                </div>
+                </div> -->
             </div>
         </div>
     </div>

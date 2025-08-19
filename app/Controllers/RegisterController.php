@@ -102,4 +102,27 @@ class RegisterController extends BaseController
 
         return view('superadmin/index', $page_array);
     }
+
+    public function getAccountsJson()
+    {
+        $users = $this->userModel->findAll();
+        $currentDate = date('Y-m-d');
+
+        foreach ($users as &$user) {
+            if (
+                !empty($user['agreement_start_date']) &&
+                !empty($user['agreement_end_date']) &&
+                $user['agreement_start_date'] <= $currentDate &&
+                $user['agreement_end_date'] >= $currentDate
+            ) {
+                $user['status'] = 'Active';
+            } else {
+                $user['status'] = 'Inactive';
+            }
+        }
+
+        return $this->response->setJSON([
+            "data" => $users
+        ]);
+    }
 }
