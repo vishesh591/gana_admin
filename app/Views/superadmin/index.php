@@ -4,6 +4,7 @@
 <head>
     <?php echo view("partials/title-meta", array("title" => "Music Dashboard")) ?>
     <?= $this->include('partials/head-css') ?>
+     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 
 </head>
 
@@ -15,7 +16,7 @@
     <?= $this->include('partials/sidebar') ?>
 
     <?= $this->include('superadmin/' . $file_name) ?>
-
+    <?= $this->include('partials/footer') ?>
 </div>
 
 

@@ -1,93 +1,31 @@
 <div class="admin-ownership-data-page content-page">
     <div class="content">
         <div class="container-fluid">
-            <div class="row">
-                <div class="col-12">
-                    <div class="page-title-box d-sm-flex align-items-center justify-content-between mb-4">
-                        <div>
-                            <h2 class="mb-2 fw-bold">Youtube owner conflict</h2>
-                        </div>
-                    </div>
-                </div>
+            <div class="py-3 d-flex align-items-sm-center flex-sm-row flex-column justify-content-between">
+                <h4 class="fs-18 fw-bold m-0">YouTube Owner Conflict</h4>
             </div>
 
             <div class="card shadow-sm">
-                <div class="card-body p-0">
+                <div class="card-body p-4">
                     <div class="table-responsive">
-                        <table class="table table-hover mb-0" id="releasesTable">
-                            <thead>
+                        <table class="table table-hover mb-0 align-middle" id="datatable" style="width:100%;">
+                            <thead class="table-light">
                                 <tr>
-                                    <th width="50">Store</th>
-                                    <th class="sortable-header" data-sort="category">Category <span class="sort-icon"><i class="bi bi-arrow-up"></i><i class="bi bi-arrow-down"></i></span></th>
-                                    <th class="sortable-header" data-sort="assetTitle">Asset Title <span class="sort-icon"><i class="bi bi-arrow-up"></i><i class="bi bi-arrow-down"></i></span></th>
-                                    <th class="sortable-header" data-sort="artist">Artist / Asset ID <span class="sort-icon"><i class="bi bi-arrow-up"></i><i class="bi bi-arrow-down"></i></span></th>
-                                    <th class="sortable-header" data-sort="upc">UPC <span class="sort-icon"><i class="bi bi-arrow-up"></i><i class="bi bi-arrow-down"></i></span></th>
-                                    <th class="sortable-header" data-sort="otherParty">Other Party <span class="sort-icon"><i class="bi bi-arrow-up"></i><i class="bi bi-arrow-down"></i></span></th>
-                                    <th class="sortable-header" data-sort="dailyViews">Daily Views <span class="sort-icon"><i class="bi bi-arrow-up"></i><i class="bi bi-arrow-down"></i></span></th>
-                                    <th class="sortable-header" data-sort="expiry">Expiry <span class="sort-icon"><i class="bi bi-arrow-up"></i><i class="bi bi-arrow-down"></i></span></th>
-                                    <th class="sortable-header" data-sort="status">Status <span class="sort-icon"><i class="bi bi-arrow-up"></i><i class="bi bi-arrow-down"></i></span></th>
-                                    <th width="50"></th>
+                                    <th width="50" class="no-sort">Store</th>
+                                    <th>Category</th>
+                                    <th>Asset Title</th>
+                                    <th>Artist / Asset ID</th>
+                                    <th>UPC</th>
+                                    <th>Other Party</th>
+                                    <th>Daily Views</th>
+                                    <th>Expiry</th>
+                                    <th>Status</th>
+                                    <th width="50" class="no-sort"></th>
                                 </tr>
                             </thead>
                             <tbody id="tableBody">
-                                <tr data-bs-toggle="modal" data-bs-target="#relocationRequestModal">
-                                    <td class="text-center"><i class="bi bi-youtube text-danger fs-5"></i></td>
-                                    <td>Ownership conflict</td>
-                                    <td><a href="#" data-bs-toggle="modal" data-bs-target="#relocationRequestModal">Cosmic Drift</a></td>
-                                    <td><div class="fw-bold">Astro Beats</div><small class="text-muted">Asset ID: 90736897913</small></td>
-                                    <td>198009123456</td>
-                                    <td>The Orchard</td>
-                                    <td>79K</td>
-                                    <td>2 days</td>
-                                    <td><span class="badge rounded-pill border bg-danger-subtle text-danger-emphasis">Action Required</span></td>
-                                    <td><i class="bi bi-chevron-right text-muted"></i></td>
-                                </tr>
-                                <tr data-bs-toggle="modal" data-bs-target="#relocationRequestModal">
-                                    <td class="text-center"><i class="bi bi-youtube text-danger fs-5"></i></td>
-                                    <td>Policy</td>
-                                    <td><a href="#" data-bs-toggle="modal" data-bs-target="#relocationRequestModal">Ocean Tides</a></td>
-                                    <td><div class="fw-bold">Deep Wave</div><small class="text-muted">Asset ID: 3478239381</small></td>
-                                    <td>198009654321</td>
-                                    <td>Believe</td>
-                                    <td>3K</td>
-                                    <td>-</td>
-                                    <td><span class="badge rounded-pill border bg-success-subtle text-success-emphasis">Resolved</span></td>
-                                    <td><i class="bi bi-chevron-right text-muted"></i></td>
-                                </tr>
-                                <tr data-bs-toggle="modal" data-bs-target="#relocationRequestModal">
-                                    <td class="text-center"><i class="bi bi-youtube text-danger fs-5"></i></td>
-                                    <td>Ownership conflict</td>
-                                    <td><a href="#" data-bs-toggle="modal" data-bs-target="#relocationRequestModal">City Lights</a></td>
-                                    <td><div class="fw-bold">Urban Glow</div><small class="text-muted">Asset ID: 3478239381</small></td>
-                                    <td>198009789012</td>
-                                    <td>CD Baby</td>
-                                    <td>1.2K</td>
-                                    <td>15 days</td>
-                                    <td><span class="badge rounded-pill border bg-warning-subtle text-warning-emphasis">In Review</span></td>
-                                    <td><i class="bi bi-chevron-right text-muted"></i></td>
-                                </tr>
-                                <tr data-bs-toggle="modal" data-bs-target="#relocationRequestModal">
-                                    <td class="text-center"><i class="bi bi-youtube text-danger fs-5"></i></td>
-                                    <td>Metadata Error</td>
-                                    <td><a href="#" data-bs-toggle="modal" data-bs-target="#relocationRequestModal">Desert Mirage</a></td>
-                                    <td><div class="fw-bold">Sahara Echo</div><small class="text-muted">Asset ID: 89321756430</small></td>
-                                    <td>198001112233</td>
-                                    <td>TuneCore</td>
-                                    <td>58K</td>
-                                    <td>5 days</td>
-                                    <td><span class="badge rounded-pill border bg-danger-subtle text-danger-emphasis">Action Required</span></td>
-                                    <td><i class="bi bi-chevron-right text-muted"></i></td>
-                                </tr>
-                            </tbody>
+                                </tbody>
                         </table>
-                    </div>
-                </div>
-
-                <div class="card-footer bg-white d-flex align-items-center justify-content-end text-muted py-2">
-                    <div class="me-3" id="pagination-text">4 of 10 results</div>
-                    <div>
-                        <button class="btn btn-sm"><i class="bi bi-chevron-left"></i></button>
-                        <button class="btn btn-sm ms-1"><i class="bi bi-chevron-right"></i></button>
                     </div>
                 </div>
             </div>
@@ -95,55 +33,78 @@
     </div>
 </div>
 
-<div class="modal fade" id="relocationRequestModal" tabindex="-1" aria-labelledby="relocationRequestModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg modal-dialog-centered">
-        <div class="modal-content rounded-4">
-            <form action="#" method="POST">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="relocationRequestModalLabel">Review Asset Details</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body p-4">
-                    <div class="row">
-                        <div class="col-md-6 mb-4">
-                            <label for="storeCategory" class="form-label">Store/Category</label>
-                            <input type="text" class="form-control rounded-pill p-3" id="storeCategory" value="YouTube / Ownership conflict" readonly>
-                        </div>
-                        <div class="col-md-6 mb-4">
-                            <label for="assetTitle" class="form-label">Asset Title</label>
-                            <input type="text" class="form-control rounded-pill p-3" id="assetTitle" value="Cosmic Drift" readonly>
-                        </div>
-                        <div class="col-md-6 mb-4">
-                            <label for="artistAssetId" class="form-label">Artist / Asset ID</label>
-                            <input type="text" class="form-control rounded-pill p-3" id="artistAssetId" value="Astro Beats / 90736897913" readonly>
-                        </div>
-                        <div class="col-md-6 mb-4">
-                            <label for="upc" class="form-label">UPC</label>
-                            <input type="text" class="form-control rounded-pill p-3" id="upc" value="198009123456" readonly>
-                        </div>
-                        <div class="col-md-6 mb-4">
-                            <label for="otherParty" class="form-label">Other Party</label>
-                            <input type="text" class="form-control rounded-pill p-3" id="otherParty" value="The Orchard" readonly>
-                        </div>
-                        <div class="col-md-6 mb-4">
-                            <label for="dailyViews" class="form-label">Daily Views</label>
-                            <input type="text" class="form-control rounded-pill p-3" id="dailyViews" value="79K" readonly>
-                        </div>
-                        <div class="col-md-6 mb-4">
-                            <label for="expiry" class="form-label">Expiry</label>
-                            <input type="text" class="form-control rounded-pill p-3" id="expiry" value="2 days" readonly>
-                        </div>
-                        <div class="col-md-6 mb-4">
-                            <label for="status" class="form-label">Status</label>
-                            <input type="text" class="form-control rounded-pill p-3" id="status" value="Action Required" readonly>
-                        </div>
+<div class="offcanvas offcanvas-end" tabindex="-1" id="conflictResolutionOffcanvas" style="width: 600px;">
+    <div class="offcanvas-header border-bottom">
+        <div>
+            <h5 class="offcanvas-title" id="offcanvasTitle">Conflict Details</h5>
+            <small class="text-muted" id="offcanvasSubtitle">VS. Other Party</small>
+        </div>
+        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+    <div class="offcanvas-body">
+        <form id="conflictForm" novalidate>
+            <div class="form-step">
+                <div class="d-flex align-items-center mb-3">
+                    <img id="modalAlbumCover" src="" class="rounded me-3" style="width:60px; height:60px; object-fit: cover;">
+                    <div>
+                        <h6 class="mb-0" id="modalSongName">Song Title</h6>
+                        <small class="text-muted" id="modalArtistName">Artist Name</small>
                     </div>
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-danger rounded-pill" data-bs-dismiss="modal">Reject</button>
-                    <button type="submit" class="btn btn-success rounded-pill">Approve</button>
+                <hr>
+                <p class="fw-bold">Do you own the recording rights for this asset?</p>
+                <div class="row g-2">
+                    <div class="col-6"><label class="radio-card"><input type="radio" name="rightsOwned" value="yes" class="form-check-input" required> Yes, I do</label></div>
+                    <div class="col-6"><label class="radio-card"><input type="radio" name="rightsOwned" value="no" class="form-check-input" required> No, I don't</label></div>
                 </div>
-            </form>
+            </div>
+
+            <div class="form-step d-none">
+                <p class="fw-bold">In which territories do you own these rights?</p>
+                <p class="text-muted small" id="territoryCounter">0 contested countries</p>
+                <div class="accordion" id="territoryAccordion">
+                    </div>
+            </div>
+
+            <div class="form-step d-none">
+                <div class="d-flex align-items-center mb-3">
+                    <img id="modalAlbumCover2" src="" class="rounded me-3" style="width:60px; height:60px; object-fit: cover;">
+                    <div>
+                        <h6 class="mb-0" id="modalSongName2"></h6>
+                        <small class="text-muted" id="modalArtistName2"></small>
+                    </div>
+                </div>
+                <p class="fw-bold">Please provide supporting documentation.</p>
+                <div id="fileUploadContainer" class="file-upload-box" role="button" tabindex="0">
+                    <i class="bi bi-cloud-arrow-up fs-1 text-muted"></i>
+                    <p class="mb-0">Click to browse or drag and drop your file</p>
+                    <small class="text-muted">PDF, DOC, JPG, PNG accepted</small>
+                </div>
+                <input class="form-control d-none" type="file" id="formFile" required>
+                <div id="selectedFileName" class="alert alert-secondary d-flex align-items-center p-2 mt-2 d-none">
+                    <i class="bi bi-file-earmark-text me-2"></i>
+                    <span class="flex-grow-1"></span>
+                    <button type="button" class="btn-close btn-sm"></button>
+                </div>
+            </div>
+             <div class="form-step d-none">
+                 <div class="d-flex align-items-center mb-3">
+                    <img id="modalAlbumCover3" src="" class="rounded me-3" style="width:60px; height:60px; object-fit: cover;">
+                    <div>
+                        <h6 class="mb-0" id="modalSongName3"></h6>
+                        <small class="text-muted" id="modalArtistName3"></small>
+                    </div>
+                </div>
+                <h5 class="mb-3">Review your dispute</h5>
+                 <p>Please review the details of your dispute before submitting.</p>
+                 </div>
+        </form>
+    </div>
+    <div class="offcanvas-footer p-3 bg-light border-top d-flex justify-content-between">
+        <button type="button" class="btn btn-secondary" id="backBtn">Back</button>
+        <div>
+            <button type="button" class="btn btn-primary" id="nextBtn">Next</button>
+            <button type="submit" form="conflictForm" class="btn btn-success d-none" id="submitBtn">Submit Dispute</button>
         </div>
     </div>
 </div>

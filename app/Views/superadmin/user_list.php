@@ -1,12 +1,8 @@
 <div class="admin-account-page content-page">
     <div class="content">
         <div class="container-xxl">
-            <div class="row">
-                <div class="col-12">
-                    <div class="page-title-box d-sm-flex align-items-center justify-content-between mb-4">
-                        <div>
-                            <h2 class="mb-2 fw-bold">Account</h2>
-                        </div>
+                    <div class="py-3 d-flex align-items-sm-center flex-sm-row flex-column justify-content-between">
+                            <h2 class="fs-18 fw-semibold m-0 page-title ">Account</h2>
                         <div class="col-auto d-flex gap-2">
                             <button type="button" class="btn btn-outline-secondary rounded-pill px-4" id="exportCsvBtn">
                                 <i class="bi bi-download me-1"></i> Export to CSV
@@ -16,10 +12,8 @@
                             </button>
                         </div>
                     </div>
-                </div>
-            </div>
 
-            <div class="card shadow-sm">
+            <div class="card shadow-sm mt-4">
                 <div class="card-body p-0">
                     <div class="table-responsive">
                         <table class="table table-hover mb-0" id="claimingTable">
@@ -33,7 +27,7 @@
                                     <th class="sortable-header" data-sort="status">Status <span class="sort-icon"><i class="bi bi-arrow-up"></i><i class="bi bi-arrow-down"></i></span></th>
                                 </tr>
                             </thead>
-                            <tbody id="tableBody">
+                            <tbody id="accountsTableBody">
                                 <?php if (!empty($users)): ?>
                                     <?php foreach ($users as $user): ?>
                                         <tr>
