@@ -1,3 +1,4 @@
+<<<<<<< Updated upstream
 <div class="content">
     <div class="container-xxl">
         <div class="row">
@@ -13,6 +14,39 @@
                         <button type="button" class="btn btn-primary rounded-pill px-4" data-bs-toggle="modal" data-bs-target="#claimingRequestModal">
                             <i class="bi bi-plus-lg me-1"></i>Create New Account
                         </button>
+=======
+<div class="admin-account-page content-page">
+    <div class="content">
+        <div class="container-xxl">
+            <div class="py-3 d-flex align-items-sm-center flex-sm-row flex-column justify-content-between">
+                <h2 class="fs-50 fw-bold m-0 page-title text-black ">Account</h2>
+                <div class="col-auto d-flex gap-2">
+                    <button type="button" class="btn btn-outline-secondary rounded-pill px-4" id="exportCsvBtn">
+                        <i class="bi bi-download me-1"></i> Export to CSV
+                    </button>
+                    <button type="button" class="btn btn-primary rounded-pill px-4" data-bs-toggle="modal" data-bs-target="#claimingRequestModal">
+                        <i class="bi bi-plus-lg me-1"></i>Create New Account
+                    </button>
+                </div>
+            </div>
+
+            <div class="card shadow-sm mt-4 p-4">
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0" id="claimingTable">
+                            <thead>
+                                <tr>
+                                    <th width="50"></th>
+                                    <th>Primary Label Name</th>
+                                    <th>Label Name</th>
+                                    <th>Start Date</th>
+                                    <th>End Date</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                        </table>
+
+>>>>>>> Stashed changes
                     </div>
                 </div>
             </div>
