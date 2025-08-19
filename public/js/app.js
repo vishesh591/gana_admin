@@ -2,8 +2,8 @@ function _typeof(e){return(_typeof="function"==typeof Symbol&&"symbol"==typeof S
 
 
 // In your app.js, replace the entire .admin-ownership-data-page block with this:
+// Add this entire new block to your app.js file
 document.addEventListener('DOMContentLoaded', function() {
-
     const ownershipPageContainer = document.querySelector('.admin-ownership-data-page');
     if (!ownershipPageContainer) {
         return;
@@ -15,16 +15,8 @@ document.addEventListener('DOMContentLoaded', function() {
         { id: 2, category: 'Policy', assetTitle: 'Ocean Tides', artist: 'Deep Wave', assetId: '3478239381', upc: '198009654321', isrc: 'USAT22354321', otherParty: 'Believe', dailyViews: '3K', expiry: '-', status: 'Resolved', albumCoverUrl: 'https://placehold.co/80x80/1abc9c/ffffff?text=O' },
         { id: 3, category: 'Ownership conflict', assetTitle: 'City Lights', artist: 'Urban Glow', assetId: '3478239381', upc: '198009789012', isrc: 'USAT22398765', otherParty: 'CD Baby', dailyViews: '1.2K', expiry: '15 days', status: 'In Review', albumCoverUrl: 'https://placehold.co/80x80/9b59b6/ffffff?text=C' },
         { id: 4, category: 'Metadata Error', assetTitle: 'Desert Mirage', artist: 'Sahara Echo', assetId: '89321756430', upc: '198001112233', isrc: 'USAT22445566', otherParty: 'TuneCore', dailyViews: '58K', expiry: '5 days', status: 'Action Required', albumCoverUrl: 'https://placehold.co/80x80/e67e22/ffffff?text=D' },
-        { id: 5, category: 'Ownership conflict', assetTitle: 'Electric Horizon', artist: 'Volt Squad', assetId: '98574623109', upc: '198002244466', isrc: 'USAT22449900', otherParty: 'The Orchard', dailyViews: '12K', expiry: '7 days', status: 'In Review', albumCoverUrl: 'https://placehold.co/80x80/f39c12/ffffff?text=E' },
-        { id: 6, category: 'Policy', assetTitle: 'Rainforest Lullaby', artist: 'Nature Pulse', assetId: '76234589012', upc: '198003333444', isrc: 'USAT22300011', otherParty: 'Believe', dailyViews: '620', expiry: '-', status: 'Resolved', albumCoverUrl: 'https://placehold.co/80x80/2ecc71/ffffff?text=R' },
-        { id: 7, category: 'Metadata Error', assetTitle: 'Moonlit Roads', artist: 'Midnight Cruiser', assetId: '67392018376', upc: '198004556677', isrc: 'USAT22556677', otherParty: 'DistroKid', dailyViews: '4.8K', expiry: '10 days', status: 'Action Required', albumCoverUrl: 'https://placehold.co/80x80/34495e/ffffff?text=M' },
-        { id: 8, category: 'Ownership conflict', assetTitle: 'Neon Nightfall', artist: 'Retro Blaze', assetId: '38472019487', upc: '198005778899', isrc: 'USAT22668899', otherParty: 'Amuse', dailyViews: '22K', expiry: '3 days', status: 'In Review', albumCoverUrl: 'https://placehold.co/80x80/e74c3c/ffffff?text=N' },
-        { id: 9, category: 'Metadata Error', assetTitle: 'Frozen Echo', artist: 'Icy Vibe', assetId: '28476019283', upc: '198006998877', isrc: 'USAT22779900', otherParty: 'RouteNote', dailyViews: '930', expiry: '1 day', status: 'Action Required', albumCoverUrl: 'https://placehold.co/80x80/2980b9/ffffff?text=F' },
-        { id: 10, category: 'Policy', assetTitle: 'Golden Skyline', artist: 'Sunset State', assetId: '18723908473', upc: '198007112233', isrc: 'USAT22880011', otherParty: 'Repost by SoundCloud', dailyViews: '9.5K', expiry: '-', status: 'Resolved', albumCoverUrl: 'https://placehold.co/80x80/f1c40f/ffffff?text=G' }
     ];
-
-    // --- COMPLETE DATA OBJECT ---
-    const territoriesByRegion={Africa:[{name:"Algeria",code:"DZ"},{name:"Angola",code:"AO"},{name:"Benin",code:"BJ"},{name:"Botswana",code:"BW"},{name:"Burkina Faso",code:"BF"},{name:"Burundi",code:"BI"},{name:"Cabo Verde",code:"CV"},{name:"Cameroon",code:"CM"},{name:"Central African Republic",code:"CF"},{name:"Chad",code:"TD"},{name:"Comoros",code:"KM"},{name:"Congo",code:"CG"},{name:"Congo (DRC)",code:"CD"},{name:"Côte d'Ivoire",code:"CI"},{name:"Djibouti",code:"DJ"},{name:"Egypt",code:"EG"},{name:"Equatorial Guinea",code:"GQ"},{name:"Eritrea",code:"ER"},{name:"Eswatini",code:"SZ"},{name:"Ethiopia",code:"ET"},{name:"Gabon",code:"GA"},{name:"Gambia",code:"GM"},{name:"Ghana",code:"GH"},{name:"Guinea",code:"GN"},{name:"Guinea-Bissau",code:"GW"},{name:"Kenya",code:"KE"},{name:"Lesotho",code:"LS"},{name:"Liberia",code:"LR"},{name:"Libya",code:"LY"},{name:"Madagascar",code:"MG"},{name:"Malawi",code:"MW"},{name:"Mali",code:"ML"},{name:"Mauritania",code:"MR"},{name:"Mauritius",code:"MU"},{name:"Mayotte",code:"YT"},{name:"Morocco",code:"MA"},{name:"Mozambique",code:"MZ"},{name:"Namibia",code:"NA"},{name:"Niger",code:"NE"},{name:"Nigeria",code:"NG"},{name:"Réunion",code:"RE"},{name:"Rwanda",code:"RW"},{name:"Saint Helena",code:"SH"},{name:"Sao Tome and Principe",code:"ST"},{name:"Senegal",code:"SN"},{name:"Seychelles",code:"SC"},{name:"Sierra Leone",code:"SL"},{name:"Somalia",code:"SO"},{name:"South Africa",code:"ZA"},{name:"South Sudan",code:"SS"},{name:"Sudan",code:"SD"},{name:"Tanzania",code:"TZ"},{name:"Togo",code:"TG"},{name:"Tunisia",code:"TN"},{name:"Uganda",code:"UG"},{name:"Zambia",code:"ZM"},{name:"Zimbabwe",code:"ZW"}],Asia:[{name:"Afghanistan",code:"AF"},{name:"Armenia",code:"AM"},{name:"Azerbaijan",code:"AZ"},{name:"Bahrain",code:"BH"},{name:"Bangladesh",code:"BD"},{name:"Bhutan",code:"BT"},{name:"Brunei",code:"BN"},{name:"Cambodia",code:"KH"},{name:"China",code:"CN"},{name:"Cyprus",code:"CY"},{name:"Georgia",code:"GE"},{name:"Hong Kong",code:"HK"},{name:"India",code:"IN"},{name:"Indonesia",code:"ID"},{name:"Iraq",code:"IQ"},{name:"Israel",code:"IL"},{name:"Japan",code:"JP"},{name:"Jordan",code:"JO"},{name:"Kazakhstan",code:"KZ"},{name:"Kuwait",code:"KW"},{name:"Kyrgyzstan",code:"KG"},{name:"Laos",code:"LA"},{name:"Lebanon",code:"LB"},{name:"Macao",code:"MO"},{name:"Malaysia",code:"MY"},{name:"Maldives",code:"MV"},{name:"Mongolia",code:"MN"},{name:"Myanmar",code:"MM"},{name:"Nepal",code:"NP"},{name:"Oman",code:"OM"},{name:"Pakistan",code:"PK"},{name:"Palestine",code:"PS"},{name:"Philippines",code:"PH"},{name:"Qatar",code:"QA"},{name:"Saudi Arabia",code:"SA"},{name:"Singapore",code:"SG"},{name:"South Korea",code:"KR"},{name:"Sri Lanka",code:"LK"},{name:"Syria",code:"SY"},{name:"Taiwan",code:"TW"},{name:"Tajikistan",code:"TJ"},{name:"Thailand",code:"TH"},{name:"Timor-Leste",code:"TL"},{name:"Turkey",code:"TR"},{name:"Turkmenistan",code:"TM"},{name:"United Arab Emirates",code:"AE"},{name:"Uzbekistan",code:"UZ"},{name:"Vietnam",code:"VN"},{name:"Yemen",code:"YE"}],Europe:[{name:"Åland Islands",code:"AX"},{name:"Albania",code:"AL"},{name:"Andorra",code:"AD"},{name:"Austria",code:"AT"},{name:"Belarus",code:"BY"},{name:"Belgium",code:"BE"},{name:"Bosnia and Herzegovina",code:"BA"},{name:"Bulgaria",code:"BG"},{name:"Croatia",code:"HR"},{name:"Czechia",code:"CZ"},{name:"Denmark",code:"DK"},{name:"Estonia",code:"EE"},{name:"Faroe Islands",code:"FO"},{name:"Finland",code:"FI"},{name:"France",code:"FR"},{name:"Germany",code:"DE"},{name:"Gibraltar",code:"GI"},{name:"Greece",code:"GR"},{name:"Guernsey",code:"GG"},{name:"Hungary",code:"HU"},{name:"Iceland",code:"IS"},{name:"Ireland",code:"IE"},{name:"Isle of Man",code:"IM"},{name:"Italy",code:"IT"},{name:"Jersey",code:"JE"},{name:"Latvia",code:"LV"},{name:"Liechtenstein",code:"LI"},{name:"Lithuania",code:"LT"},{name:"Luxembourg",code:"LU"},{name:"Malta",code:"MT"},{name:"Moldova",code:"MD"},{name:"Monaco",code:"MC"},{name:"Montenegro",code:"ME"},{name:"Netherlands",code:"NL"},{name:"North Macedonia",code:"MK"},{name:"Norway",code:"NO"},{name:"Poland",code:"PL"},{name:"Portugal",code:"PT"},{name:"Romania",code:"RO"},{name:"Russia",code:"RU"},{name:"San Marino",code:"SM"},{name:"Serbia",code:"RS"},{name:"Slovakia",code:"SK"},{name:"Slovenia",code:"SI"},{name:"Spain",code:"ES"},{name:"Svalbard and Jan Mayen",code:"SJ"},{name:"Sweden",code:"SE"},{name:"Switzerland",code:"CH"},{name:"Ukraine",code:"UA"},{name:"United Kingdom",code:"GB"}],"North America":[{name:"Anguilla",code:"AI"},{name:"Antigua and Barbuda",code:"AG"},{name:"Aruba",code:"AW"},{name:"Bahamas",code:"BS"},{name:"Barbados",code:"BB"},{name:"Belize",code:"BZ"},{name:"Bermuda",code:"BM"},{name:"Canada",code:"CA"},{name:"Cayman Islands",code:"KY"},{name:"Costa Rica",code:"CR"},{name:"Cuba",code:"CU"},{name:"Curaçao",code:"CW"},{name:"Dominica",code:"DM"},{name:"Dominican Republic",code:"DO"},{name:"El Salvador",code:"SV"},{name:"Greenland",code:"GL"},{name:"Grenada",code:"GD"},{name:"Guadeloupe",code:"GP"},{name:"Guatemala",code:"GT"},{name:"Haiti",code:"HT"},{name:"Honduras",code:"HN"},{name:"Jamaica",code:"JM"},{name:"Martinique",code:"MQ"},{name:"Mexico",code:"MX"},{name:"Montserrat",code:"MS"},{name:"Nicaragua",code:"NI"},{name:"Panama",code:"PA"},{name:"Puerto Rico",code:"PR"},{name:"Saint Barthélemy",code:"BL"},{name:"Saint Kitts and Nevis",code:"KN"},{name:"Saint Lucia",code:"LC"},{name:"Saint Martin",code:"MF"},{name:"Saint Pierre and Miquelon",code:"PM"},{name:"Saint Vincent and the Grenadines",code:"VC"},{name:"Sint Maarten",code:"SX"},{name:"Trinidad and Tobago",code:"TT"},{name:"Turks and Caicos Islands",code:"TC"},{name:"United States",code:"US"}],Oceania:[{name:"Australia",code:"AU"},{name:"Fiji",code:"FJ"},{name:"French Polynesia",code:"PF"},{name:"Guam",code:"GU"},{name:"Kiribati",code:"KI"},{name:"Marshall Islands",code:"MH"},{name:"Micronesia",code:"FM"},{name:"Nauru",code:"NR"},{name:"New Caledonia",code:"NC"},{name:"New Zealand",code:"NZ"},{name:"Norfolk Island",code:"NF"},{name:"Northern Mariana Islands",code:"MP"},{name:"Palau",code:"PW"},{name:"Papua New Guinea",code:"PG"},{name:"Samoa",code:"WS"},{name:"Solomon Islands",code:"SB"},{name:"Tonga",code:"TO"},{name:"Tuvalu",code:"TV"},{name:"Vanuatu",code:"VU"}],"South America":[{name:"Argentina",code:"AR"},{name:"Bolivia",code:"BO"},{name:"Brazil",code:"BR"},{name:"Chile",code:"CL"},{name:"Colombia",code:"CO"},{name:"Ecuador",code:"EC"},{name:"Falkland Islands",code:"FK"},{name:"French Guiana",code:"GF"},{name:"Guyana",code:"GY"},{name:"Paraguay",code:"PY"},{name:"Peru",code:"PE"},{name:"Suriname",code:"SR"},{name:"Uruguay",code:"UY"},{name:"Venezuela",code:"VE"}]};
+    const territoriesByRegion={ "Africa": [ {name: "Algeria", code: "DZ"}, {name: "Angola", code: "AO"}, {name: "Benin", code: "BJ"}, {name: "Botswana", code: "BW"}, {name: "Burkina Faso", code: "BF"}, {name: "Burundi", code: "BI"}, {name: "Cabo Verde", code: "CV"}, {name: "Cameroon", code: "CM"}, {name: "Central African Republic", code: "CF"}, {name: "Chad", code: "TD"}, {name: "Comoros", code: "KM"}, {name: "Congo", code: "CG"}, {name: "Congo (DRC)", code: "CD"}, {name: "Côte d'Ivoire", code: "CI"}, {name: "Djibouti", code: "DJ"}, {name: "Egypt", code: "EG"}, {name: "Equatorial Guinea", code: "GQ"}, {name: "Eritrea", code: "ER"}, {name: "Eswatini", code: "SZ"}, {name: "Ethiopia", code: "ET"}, {name: "Gabon", code: "GA"}, {name: "Gambia", code: "GM"}, {name: "Ghana", code: "GH"}, {name: "Guinea", code: "GN"}, {name: "Guinea-Bissau", code: "GW"}, {name: "Kenya", code: "KE"}, {name: "Lesotho", code: "LS"}, {name: "Liberia", code: "LR"}, {name: "Libya", code: "LY"}, {name: "Madagascar", code: "MG"}, {name: "Malawi", code: "MW"}, {name: "Mali", code: "ML"}, {name: "Mauritania", code: "MR"}, {name: "Mauritius", code: "MU"}, {name: "Mayotte", code: "YT"}, {name: "Morocco", code: "MA"}, {name: "Mozambique", code: "MZ"}, {name: "Namibia", code: "NA"}, {name: "Niger", code: "NE"}, {name: "Nigeria", code: "NG"}, {name: "Réunion", code: "RE"}, {name: "Rwanda", code: "RW"}, {name: "Saint Helena", code: "SH"}, {name: "Sao Tome and Principe", code: "ST"}, {name: "Senegal", code: "SN"}, {name: "Seychelles", code: "SC"}, {name: "Sierra Leone", code: "SL"}, {name: "Somalia", code: "SO"}, {name: "South Africa", code: "ZA"}, {name: "South Sudan", code: "SS"}, {name: "Sudan", code: "SD"}, {name: "Tanzania", code: "TZ"}, {name: "Togo", code: "TG"}, {name: "Tunisia", code: "TN"}, {name: "Uganda", code: "UG"}, {name: "Zambia", code: "ZM"}, {name: "Zimbabwe", code: "ZW"} ], "Antarctica": [ {name: "Antarctica", code: "AQ"}, {name: "French Southern Territories", code: "TF"}, {name: "South Georgia and the South Sandwich Islands", code: "GS"} ], "Asia": [ {name: "Afghanistan", code: "AF"}, {name: "Armenia", code: "AM"}, {name: "Azerbaijan", code: "AZ"}, {name: "Bahrain", code: "BH"}, {name: "Bangladesh", code: "BD"}, {name: "Bhutan", code: "BT"}, {name: "British Indian Ocean Territory", code: "IO"}, {name: "Brunei", code: "BN"}, {name: "Cambodia", code: "KH"}, {name: "China", code: "CN"}, {name: "Cyprus", code: "CY"}, {name: "Georgia", code: "GE"}, {name: "Hong Kong", code: "HK"}, {name: "India", code: "IN"}, {name: "Indonesia", code: "ID"}, {name: "Iran", code: "IR"}, {name: "Iraq", code: "IQ"}, {name: "Israel", code: "IL"}, {name: "Japan", code: "JP"}, {name: "Jordan", code: "JO"}, {name: "Kazakhstan", code: "KZ"}, {name: "Kuwait", code: "KW"}, {name: "Kyrgyzstan", code: "KG"}, {name: "Laos", code: "LA"}, {name: "Lebanon", code: "LB"}, {name: "Macao", code: "MO"}, {name: "Malaysia", code: "MY"}, {name: "Maldives", code: "MV"}, {name: "Mongolia", code: "MN"}, {name: "Myanmar", code: "MM"}, {name: "Nepal", code: "NP"}, {name: "North Korea", code: "KP"}, {name: "Oman", code: "OM"}, {name: "Pakistan", code: "PK"}, {name: "Palestine", code: "PS"}, {name: "Philippines", code: "PH"}, {name: "Qatar", code: "QA"}, {name: "Saudi Arabia", code: "SA"}, {name: "Singapore", code: "SG"}, {name: "South Korea", code: "KR"}, {name: "Sri Lanka", code: "LK"}, {name: "Syria", code: "SY"}, {name: "Taiwan", code: "TW"}, {name: "Tajikistan", code: "TJ"}, {name: "Thailand", code: "TH"}, {name: "Timor-Leste", code: "TL"}, {name: "Turkey", code: "TR"}, {name: "Turkmenistan", code: "TM"}, {name: "United Arab Emirates", code: "AE"}, {name: "Uzbekistan", code: "UZ"}, {name: "Vietnam", code: "VN"}, {name: "Yemen", code: "YE"} ], "Europe": [ {name: "Åland Islands", code: "AX"}, {name: "Albania", code: "AL"}, {name: "Andorra", code: "AD"}, {name: "Austria", code: "AT"}, {name: "Belarus", code: "BY"}, {name: "Belgium", code: "BE"}, {name: "Bosnia and Herzegovina", code: "BA"}, {name: "Bulgaria", code: "BG"}, {name: "Croatia", code: "HR"}, {name: "Czechia", code: "CZ"}, {name: "Denmark", code: "DK"}, {name: "Estonia", code: "EE"}, {name: "Faroe Islands", code: "FO"}, {name: "Finland", code: "FI"}, {name: "France", code: "FR"}, {name: "Germany", code: "DE"}, {name: "Gibraltar", code: "GI"}, {name: "Greece", code: "GR"}, {name: "Guernsey", code: "GG"}, {name: "Holy See", code: "VA"}, {name: "Hungary", code: "HU"}, {name: "Iceland", code: "IS"}, {name: "Ireland", code: "IE"}, {name: "Isle of Man", code: "IM"}, {name: "Italy", code: "IT"}, {name: "Jersey", code: "JE"}, {name: "Latvia", code: "LV"}, {name: "Liechtenstein", code: "LI"}, {name: "Lithuania", code: "LT"}, {name: "Luxembourg", code: "LU"}, {name: "Malta", code: "MT"}, {name: "Moldova", code: "MD"}, {name: "Monaco", code: "MC"}, {name: "Montenegro", code: "ME"}, {name: "Netherlands", code: "NL"}, {name: "North Macedonia", code: "MK"}, {name: "Norway", code: "NO"}, {name: "Poland", code: "PL"}, {name: "Portugal", code: "PT"}, {name: "Romania", code: "RO"}, {name: "Russia", code: "RU"}, {name: "San Marino", code: "SM"}, {name: "Serbia", code: "RS"}, {name: "Slovakia", code: "SK"}, {name: "Slovenia", code: "SI"}, {name: "Spain", code: "ES"}, {name: "Svalbard and Jan Mayen", code: "SJ"}, {name: "Sweden", code: "SE"}, {name: "Switzerland", code: "CH"}, {name: "Ukraine", code: "UA"}, {name: "United Kingdom", code: "GB"} ], "North America": [ {name: "Anguilla", code: "AI"}, {name: "Antigua and Barbuda", code: "AG"}, {name: "Aruba", code: "AW"}, {name: "Bahamas", code: "BS"}, {name: "Barbados", code: "BB"}, {name: "Belize", code: "BZ"}, {name: "Bermuda", code: "BM"}, {name: "Bonaire", code: "BQ"}, {name: "Canada", code: "CA"}, {name: "Cayman Islands", code: "KY"}, {name: "Costa Rica", code: "CR"}, {name: "Cuba", code: "CU"}, {name: "Curaçao", code: "CW"}, {name: "Dominica", code: "DM"}, {name: "Dominican Republic", code: "DO"}, {name: "El Salvador", code: "SV"}, {name: "Greenland", code: "GL"}, {name: "Grenada", code: "GD"}, {name: "Guadeloupe", code: "GP"}, {name: "Guatemala", code: "GT"}, {name: "Haiti", code: "HT"}, {name: "Honduras", code: "HN"}, {name: "Jamaica", code: "JM"}, {name: "Martinique", code: "MQ"}, {name: "Mexico", code: "MX"}, {name: "Montserrat", code: "MS"}, {name: "Nicaragua", code: "NI"}, {name: "Panama", code: "PA"}, {name: "Puerto Rico", code: "PR"}, {name: "Saint Barthélemy", code: "BL"}, {name: "Saint Kitts and Nevis", code: "KN"}, {name: "Saint Lucia", code: "LC"}, {name: "Saint Martin", code: "MF"}, {name: "Saint Pierre and Miquelon", code: "PM"}, {name: "Saint Vincent and the Grenadines", code: "VC"}, {name: "Sint Maarten", code: "SX"}, {name: "Trinidad and Tobago", code: "TT"}, {name: "Turks and Caicos Islands", code: "TC"}, {name: "United States", code: "US"}, {name: "U.S. Virgin Islands", code: "VI"} ], "Oceania": [ {name: "American Samoa", code: "AS"}, {name: "Australia", code: "AU"}, {name: "Christmas Island", code: "CX"}, {name: "Cocos (Keeling) Islands", code: "CC"}, {name: "Cook Islands", code: "CK"}, {name: "Fiji", code: "FJ"}, {name: "French Polynesia", code: "PF"}, {name: "Guam", code: "GU"}, {name: "Kiribati", code: "KI"}, {name: "Marshall Islands", code: "MH"}, {name: "Micronesia", code: "FM"}, {name: "Nauru", code: "NR"}, {name: "New Caledonia", code: "NC"}, {name: "New Zealand", code: "NZ"}, {name: "Niue", code: "NU"}, {name: "Norfolk Island", code: "NF"}, {name: "Northern Mariana Islands", code: "MP"}, {name: "Palau", code: "PW"}, {name: "Papua New Guinea", code: "PG"}, {name: "Pitcairn", code: "PN"}, {name: "Samoa", code: "WS"}, {name: "Solomon Islands", code: "SB"}, {name: "Tokelau", code: "TK"}, {name: "Tonga", code: "TO"}, {name: "Tuvalu", code: "TV"}, {name: "U.S. Minor Outlying Islands", code: "UM"}, {name: "Vanuatu", code: "VU"}, {name: "Wallis and Futuna", code: "WF"} ], "South America": [ {name: "Argentina", code: "AR"}, {name: "Bolivia", code: "BO"}, {name: "Brazil", code: "BR"}, {name: "Chile", code: "CL"}, {name: "Colombia", code: "CO"}, {name: "Ecuador", code: "EC"}, {name: "Falkland Islands", code: "FK"}, {name: "French Guiana", code: "GF"}, {name: "Guyana", code: "GY"}, {name: "Paraguay", code: "PY"}, {name: "Peru", code: "PE"}, {name: "Suriname", code: "SR"}, {name: "Uruguay", code: "UY"}, {name: "Venezuela", code: "VE"} ] };
     const totalCountries = Object.values(territoriesByRegion).flat().length;
 
     // --- DOM ELEMENTS ---
@@ -42,7 +34,7 @@ document.addEventListener('DOMContentLoaded', function() {
         return 'bg-secondary-subtle text-secondary-emphasis';
     };
 
-    // --- FULL DATATABLES CONFIGURATION ---
+    // --- DATATABLES CONFIGURATION ---
     const dataTableInstance = table.DataTable({
         destroy: true,
         data: conflictRequests,
@@ -60,16 +52,16 @@ document.addEventListener('DOMContentLoaded', function() {
             { data: 'otherParty' },
             { 
                 data: 'dailyViews',
-                render: { _: (data) => data, sort: (data) => parseViews(data), filter: (data) => parseViews(data) }
+                render: { _: (data) => data, sort: (data) => parseViews(data) }
             },
             { 
                 data: 'expiry',
-                render: { _: (data) => data, sort: (data) => parseExpiry(data), filter: (data) => parseExpiry(data) }
+                render: { _: (data) => data, sort: (data) => parseExpiry(data) }
             },
             { data: 'status', render: (data) => getStatusBadge(data) },
             { data: null, className: 'text-center', orderable: false, render: () => `<i class="bi bi-chevron-right text-muted"></i>` }
         ],
-        createdRow: function(row, data) {
+        createdRow: function(row, data, dataIndex) {
             $(row).attr({
                 'data-bs-toggle': 'offcanvas',
                 'data-bs-target': '#conflictResolutionOffcanvas',
@@ -120,29 +112,27 @@ document.addEventListener('DOMContentLoaded', function() {
 
         conflictOffcanvasEl.addEventListener('show.bs.offcanvas', function(event) {
             renderTerritoryAccordion();
-            
             const data = event.relatedTarget.dataset;
             ['', '2', '3'].forEach(s => {
                 const cover = document.getElementById(`modalAlbumCover${s}`);
                 const song = document.getElementById(`modalSongName${s}`);
                 const artist = document.getElementById(`modalArtistName${s}`);
-                if (cover) cover.src = data.coverUrl;
-                if (song) song.textContent = data.songName;
-                if (artist) artist.textContent = data.artistName;
+                if(cover) cover.src = data.coverUrl;
+                if(song) song.textContent = data.songName;
+                if(artist) artist.textContent = data.artistName;
             });
             document.getElementById('offcanvasTitle').textContent = data.category;
             document.getElementById('offcanvasSubtitle').textContent = `VS. ${data.otherParty}`;
-            
             conflictForm.reset();
             conflictForm.querySelectorAll('.radio-card').forEach(c => c.classList.remove('selected'));
             document.getElementById('selectedFileName')?.classList.add('d-none');
             showStep(0);
         });
-        
+
         conflictForm.addEventListener('submit', function(e) {
             e.preventDefault();
             const formFile = document.getElementById('formFile');
-            if (formFile && !formFile.files.length) return alert('Please upload a supporting document.');
+            if (currentStep === 2 && formFile && !formFile.files.length) return alert('Please upload a supporting document.');
             alert('Resolution submitted successfully!');
             bootstrap.Offcanvas.getInstance(conflictOffcanvasEl).hide();
         });
@@ -150,7 +140,6 @@ document.addEventListener('DOMContentLoaded', function() {
         function renderTerritoryAccordion() {
             const accordionContainer = document.getElementById('territoryAccordion');
             if (!accordionContainer) return;
-
             accordionContainer.innerHTML = Object.entries(territoriesByRegion).map(([region, countries]) => {
                 if (countries.length === 0) return '';
                 const regionId = region.replace(/[^a-zA-Z0-9]/g, '');
@@ -167,11 +156,10 @@ document.addEventListener('DOMContentLoaded', function() {
                     </h2>
                     <div id="collapse-${regionId}" class="accordion-collapse collapse" data-bs-parent="#territoryAccordion">
                         <div class="accordion-body">
-                            <div class="territory-list-inner">
-                            ${countries.map(country => `
+                            <div class="territory-list-inner">${countries.map(c =>`
                                 <div class="form-check">
-                                    <input class="form-check-input country-checkbox" type="checkbox" value="${country.code}" id="country-${country.code}" data-region="${region}" checked>
-                                    <label class="form-check-label" for="country-${country.code}">${country.name}</label>
+                                    <input class="form-check-input country-checkbox" type="checkbox" value="${c.code}" id="country-${c.code}" data-region="${region}" checked>
+                                    <label class="form-check-label" for="country-${c.code}">${c.name}</label>
                                 </div>`).join('')}
                             </div>
                         </div>
@@ -183,32 +171,25 @@ document.addEventListener('DOMContentLoaded', function() {
         }
 
         function updateTerritoryCounter() {
-            const selectedCount = conflictOffcanvasEl.querySelectorAll('.country-checkbox:checked').length;
-            const counterElement = document.getElementById('territoryCounter');
-            if (counterElement) {
-                counterElement.textContent = `${selectedCount} contested countries out of ${totalCountries} delivered`;
-            }
+            const selected = conflictOffcanvasEl.querySelectorAll('.country-checkbox:checked').length;
+            document.getElementById('territoryCounter').textContent = `${selected} contested countries out of ${totalCountries} delivered`;
         }
 
         function addTerritoryEventListeners() {
-            conflictOffcanvasEl.querySelectorAll('.region-checkbox').forEach(cb => {
-                cb.addEventListener('change', function() {
-                    const region = this.dataset.region;
-                    conflictOffcanvasEl.querySelectorAll(`.country-checkbox[data-region="${region}"]`).forEach(countryCb => countryCb.checked = this.checked);
-                    updateTerritoryCounter();
-                });
-            });
-            conflictOffcanvasEl.querySelectorAll('.country-checkbox').forEach(cb => {
-                cb.addEventListener('change', function() {
-                    const region = this.dataset.region;
+            const checkboxes = conflictOffcanvasEl.querySelectorAll('.region-checkbox, .country-checkbox');
+            checkboxes.forEach(cb => cb.addEventListener('change', function(e) {
+                if (e.target.classList.contains('region-checkbox')) {
+                    const region = e.target.dataset.region;
+                    conflictOffcanvasEl.querySelectorAll(`.country-checkbox[data-region="${region}"]`).forEach(countryCb => countryCb.checked = e.target.checked);
+                } else {
+                    const region = e.target.dataset.region;
                     const allInRegion = [...conflictOffcanvasEl.querySelectorAll(`.country-checkbox[data-region="${region}"]`)].every(c => c.checked);
                     conflictOffcanvasEl.querySelector(`.region-checkbox[data-region="${region}"]`).checked = allInRegion;
-                    updateTerritoryCounter();
-                });
-            });
+                }
+                updateTerritoryCounter();
+            }));
         }
-        
-        // --- Remaining event listeners for form interactions ---
+
         conflictOffcanvasEl.addEventListener('click', function(e) {
             if (e.target.closest('.radio-card')) {
                 const card = e.target.closest('.radio-card');
@@ -234,7 +215,6 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 });
-
 // claim-data-page js
 // In your app.js, replace the entire .admin-claim-data-page block with this:
 document.addEventListener('DOMContentLoaded', function() {
