@@ -91,17 +91,18 @@
                     </div>
                 </div>
                 <div class="mb-3">
-                    <label class="form-label fw-bold">Please upload any supporting documents</label>
-                    <div class="file-upload-container rounded" id="fileUploadContainer" role="button" tabindex="0">
-                        <label for="formFile" class="file-upload-label text-muted">
-                            <i class="bi bi-cloud-arrow-up fs-3"></i><br>Drag & drop or click to browse
-                        </label>
-                        <input class="file-input-hidden" type="file" id="formFile" required>
-                    </div>
-                    <div class="selected-file-name d-none mt-2" id="selectedFileName">
-                        <span></span>
-                        <button type="button" class="btn-close btn-sm ms-2" aria-label="Remove file"></button>
-                    </div>
+                   <p class="fw-bold">Please provide supporting documentation.</p>
+                <div id="fileUploadContainer" class="file-upload-box" role="button" tabindex="0">
+                    <i class="bi bi-cloud-arrow-up fs-1 text-muted"></i>
+                    <p class="mb-0">Click to browse or drag and drop your file</p>
+                    <small class="text-muted">PDF, DOC, JPG, PNG accepted</small>
+                </div>
+                <input class="form-control d-none" type="file" id="formFile" required>
+                <div id="selectedFileName" class="alert alert-secondary d-flex align-items-center p-2 mt-2 d-none">
+                    <i class="bi bi-file-earmark-text me-2"></i>
+                    <span class="flex-grow-1"></span>
+                    <button type="button" class="btn-close btn-sm"></button>
+                </div>
                 </div>
             </div>
         </form>
