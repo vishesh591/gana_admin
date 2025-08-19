@@ -366,3 +366,29 @@ document
       reader.readAsDataURL(file);
     }
   });
+
+
+document.addEventListener('DOMContentLoaded', function () {
+    const releaseModal = document.getElementById('releaseModal');
+    releaseModal.addEventListener('show.bs.modal', function (event) {
+        const button = event.relatedTarget;
+        const releaseId = button.getAttribute('data-id');
+        console.log('Release ID:', releaseId);
+        fetch(`superadmin/api/releases/${releaseId}`)
+            .then(res => res.json())
+            .then(data => {
+                document.getElementById('releaseTitle').textContent = data.title;
+                document.getElementById('releaseArtistHeader').textContent = data.author;
+                document.getElementById('releaseArtist').textContent = data.author;
+                document.getElementById('releaseUpc').textContent = data.upc_ean;
+                document.getElementById('releaseDate').textContent = data.created_at;
+                document.getElementById('releaseLabel').textContent = data.label;
+                document.getElementById('releaseCatno').textContent = data.cat_no;
+                document.getElementById('releaseFeat').textContent = data.featuring;
+                document.getElementById('releaseLyricist').textContent = data.lyricists;
+
+            });
+    });
+});
+
+

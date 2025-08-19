@@ -125,65 +125,57 @@
                                             <th>Status</th>
                                         </tr>
                                     </thead>
+                                    <!-- need to change artist -->
                                     <tbody id="tableBody">
-                                        <tr>
-                                            <td class="text-center">
-                                                <i class="bi bi-check-circle-fill text-success" title="Delivered"></i>
-                                            </td>
-                                            <td>
-                                                <div>
-                                                    <div class="release-title">
-                                                        <a href="#" class="text-primary text-decoration-none" data-bs-toggle="modal" data-bs-target="#releaseModal">
-                                                            Swapnil Dada Kartoy Raj
+                                        <?php foreach ($data['releases'] as $release): ?>
+                                            <tr>
+                                                <td class="text-center">
+                                                    <?php if ($release['status'] == 3): ?>
+                                                        <i class="bi bi-check-circle-fill text-success" title="Delivered"></i>
+                                                    <?php elseif ($release['status'] == 1): ?>
+                                                        <i class="bi bi-hourglass-split text-warning" title="In Review"></i>
+                                                    <?php elseif ($release['status'] == 5): ?>
+                                                        <i class="bi bi-check-circle-fill text-primary" title="Approved"></i>
+                                                    <?php elseif ($release['status'] == 2): ?>
+                                                        <i class="bi bi-x-circle-fill text-danger" title="Takedown"></i>
+                                                    <?php elseif ($release['status'] == 4): ?>
+                                                        <i class="bi bi-slash-circle text-danger" title="Rejected"></i>
+                                                    <?php endif; ?>
+                                                </td>
+                                                <td>
+                                                    <div>
+                                                        <a href="#"
+                                                            class="release-link"
+                                                            data-id="<?= $release['id'] ?>"
+                                                            data-bs-toggle="modal"
+                                                            data-bs-target="#releaseModal">
+                                                            <?= esc($release['title']) ?>
                                                         </a>
+
+                                                        <div class="release-artist"><?= esc($release['author']) ?></div>
                                                     </div>
-                                                    <div class="release-artist">Mohit Jadhav</div>
-                                                </div>
-                                            </td>
-                                            <td>7th July 2025</td>
-                                            <td>5863544729375</td>
-                                            <td>INH722302515</td>
-                                            <td><span class="badge status-badge status-delivered">DELIVERED</span></td>
-                                        </tr>
-                                        <tr>
-                                            <td class="text-center">
-                                                <i class="bi bi-hourglass-split text-warning" title="In Review"></i>
-                                            </td>
-                                            <td>
-                                                <div>
-                                                    <div class="release-title">
-                                                        <a href="#" class="text-primary text-decoration-none" data-bs-toggle="modal" data-bs-target="#releaseModal">
-                                                            Dream Chaser
-                                                        </a>
-                                                    </div>
-                                                    <div class="release-artist">Sarah Johnson</div>
-                                                </div>
-                                            </td>
-                                            <td>5th July 2025</td>
-                                            <td>5863544729376</td>
-                                            <td>INH722302516</td>
-                                            <td><span class="badge status-badge status-review">IN REVIEW</span></td>
-                                        </tr>
-                                        <tr>
-                                            <td class="text-center">
-                                                <i class="bi bi-check-circle-fill text-success" title="Approved"></i>
-                                            </td>
-                                            <td>
-                                                <div>
-                                                    <div class="release-title">
-                                                        <a href="#" class="text-primary text-decoration-none" data-bs-toggle="modal" data-bs-target="#releaseModal">
-                                                            Midnight Blues
-                                                        </a>
-                                                    </div>
-                                                    <div class="release-artist">Alex Rodriguez</div>
-                                                </div>
-                                            </td>
-                                            <td>3rd July 2025</td>
-                                            <td>5863544729377</td>
-                                            <td>INH722302517</td>
-                                            <td><span class="badge status-badge status-approved">APPROVED</span></td>
-                                        </tr>
+
+                                                </td>
+                                                <td><?= date('jS F Y', strtotime($release['created_at'])) ?></td>
+                                                <td><?= esc($release['upc_ean']) ?></td>
+                                                <td><?= esc($release['isrc']) ?></td>
+                                                <td>
+                                                    <?php if ($release['status'] == 1): ?>
+                                                        <span class="badge status-badge status-review">IN REVIEW</span>
+                                                    <?php elseif ($release['status'] == 2): ?>
+                                                        <span class="badge status-badge status-takedown">TAKEDOWN</span>
+                                                    <?php elseif ($release['status'] == 3): ?>
+                                                        <span class="badge status-badge status-delivered">DELIVERED</span>
+                                                    <?php elseif ($release['status'] == 4): ?>
+                                                        <span class="badge status-badge status-rejected">REJECTED</span>
+                                                    <?php elseif ($release['status'] == 5): ?>
+                                                        <span class="badge status-badge status-approved">APPROVED</span>
+                                                    <?php endif; ?>
+                                                </td>
+                                            </tr>
+                                        <?php endforeach; ?>
                                     </tbody>
+
                                 </table>
                             </div>
                         </div>
@@ -216,21 +208,22 @@
         <div class="modal-content rounded-3 shadow-lg">
 
             <div class="modal-header-custom position-relative overflow-hidden" id="releaseModalHeader">
-                <div class="position-absolute top-0 start-0 w-100 h-100 bg-image-blurred" style="background-image: url('/images/rocket.png');"></div>
+                <div class="position-absolute top-0 start-0 w-100 h-100 bg-image-blurred"
+                    style="background-image: url('/images/rocket.png');"></div>
 
                 <div class="d-flex align-items-center position-relative z-1 w-100">
-                    <img id="releaseAlbumArtwork" src="/images/rocket.png" alt="Album Artwork" class="rounded shadow-sm me-4">
+                    <img id="releaseAlbumArtwork" src="/images/rocket.png" alt="Album Artwork"
+                        class="rounded shadow-sm me-4">
                     <div class="flex-grow-1">
-                        <h2 class="modal-title text-white fw-bold" id="releaseTitle">Swapnil Dada Kartoy Raj</h2>
-                        <p class="text-white mb-3" id="releaseArtistHeader">Mohit Jadhav</p>
-                        <div id="releaseStatusBadges" class="d-flex align-items-center">
-                            <span class="badge bg-success me-2">DELIVERED</span>
-                        </div>
+                        <h2 class="modal-title text-white fw-bold" id="releaseTitle"></h2>
+                        <p class="text-white mb-3" id="releaseArtistHeader"></p>
+                        <div id="releaseStatusBadges" class="d-flex align-items-center"></div>
                     </div>
                     <button type="button" class="btn btn-takedown-header" id="takedownButton">
                         <i class="bi bi-trash me-2"></i>Request Takedown
                     </button>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
                 </div>
             </div>
 
@@ -241,71 +234,32 @@
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <label class="form-label">Artist</label>
-                                <p class="form-control-plaintext fw-bold">Mohit Jadhav</p>
+                                <p class="form-control-plaintext fw-bold" id="releaseArtist"></p>
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label class="form-label">Submitted Date</label>
-                                <p class="form-control-plaintext">7th July 2025</p>
+                                <p class="form-control-plaintext" id="releaseDate"></p>
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label class="form-label">Cat. No</label>
-                                <p class="form-control-plaintext">MJ-001</p>
+                                <p class="form-control-plaintext" id="releaseCatno"></p>
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label class="form-label">UPC/EAN</label>
-                                <p class="form-control-plaintext">5863544729375</p>
+                                <p class="form-control-plaintext" id="releaseUpc"></p>
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label class="form-label">Record Label</label>
-                                <p class="form-control-plaintext">Music Dreams</p>
+                                <p class="form-control-plaintext" id="releaseLabel"></p>
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label class="form-label">Featuring Artist</label>
-                                <p class="form-control-plaintext">None</p>
+                                <p class="form-control-plaintext" id="releaseFeat"></p>
                             </div>
                             <div class="col-12 mb-0">
                                 <label class="form-label">Lyricist(s)</label>
-                                <p class="form-control-plaintext">Mohit Jadhav, Priya Sharma</p>
+                                <p class="form-control-plaintext" id="releaseLyricist"></p>
                             </div>
-                        </div>
-                    </div>
-                    <div class="modal-content-card">
-                        <h5 class="card-title">Track List</h5>
-                        <div class="table-responsive">
-                            <table class="table table-hover align-middle track-list-table">
-                                <thead>
-                                    <tr>
-                                        <th scope="col" class="text-center">#</th>
-                                        <th scope="col">Title</th>
-                                        <th scope="col">Duration</th>
-                                        <th scope="col">ISRC</th>
-                                        <th scope="col">Language</th>
-                                        <th scope="col" class="text-center">Tags</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td class="text-center">1</td>
-                                        <td>Swapnil Dada Kartoy Raj</td>
-                                        <td>3:45</td>
-                                        <td>INH722302515</td>
-                                        <td>Marathi</td>
-                                        <td class="text-center">
-                                            <span class="track-tag-clean badge text-white">Clean</span>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td class="text-center">2</td>
-                                        <td>Jai Maharashtra</td>
-                                        <td>4:10</td>
-                                        <td>INH722302516</td>
-                                        <td>Marathi</td>
-                                        <td class="text-center">
-                                            <span class="track-tag-clean badge text-white">Clean</span>
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
                         </div>
                     </div>
                 </div>

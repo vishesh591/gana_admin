@@ -29,7 +29,7 @@ $routes->group('superadmin', ['filter' => 'role:superadmin'], function ($routes)
     $routes->get('relocation-data', 'SuperAdmin::relocation_data');
     $routes->get('merge-data', 'SuperAdmin::merge_data');
     $routes->get('ownership-data', 'SuperAdmin::ownership_data');
-    $routes->get('releases', 'SuperAdmin::releases');
+    // $routes->get('releases', 'SuperAdmin::releases');
     // $routes->get('artists', 'SuperAdmin::artists');
     // $routes->get('labels', 'SuperAdmin::labels');
     $routes->get('sales-report', 'SuperAdmin::sales_report');
@@ -47,10 +47,10 @@ $routes->group('superadmin', ['filter' => 'role:superadmin'], function ($routes)
     $routes->post('register', 'RegisterController::register');
     $routes->get('accounts', 'RegisterController::accounts');
     $routes->get('auth-logout', 'Auth::logout');
-    $routes->get('releases', 'Backend\Release\ReleaseController::index'); 
+    $routes->get('releases', 'Backend\Release\ReleaseController::index');
     $routes->get('releases/create', 'Backend\Release\ReleaseController::create');
-    $routes->post('releases/store', 'Backend\Release\ReleaseController::store');   
-
+    $routes->post('releases/store', 'Backend\Release\ReleaseController::store');
+    $routes->get('api/releases/(:num)', 'ReleaseController::show/$1');
 });
 
 // Routes only for artists

@@ -18,12 +18,25 @@ class ReleaseController extends BaseController
     // Show all releases (paginated)
     public function index()
     {
-        $page = $this->request->getVar('page') ?? 1;
-        $data['releases'] = $this->releaseRepo->paginate(10, 'default', $page);
-        $data['pager'] = $this->releaseRepo->getPager();
+        $data['releases'] = $this->releaseRepo->findAll();
+        // return response()->setJSON($data);
+        $page_array = [
+            'file_name' => 'releases',
+            'data' => $data
+        ];
 
-        return view('superadmin/releases/index', $data);
+        return view('superadmin/index', $page_array);
     }
+
+    public function show($id)
+    {
+        $release = $this->releaseRepo->findWithRelations($id);
+        if (!$release) {
+            return $this->response->setStatusCode(404)->setJSON(['error' => 'Not found']);
+        }
+        return $this->response->setJSON($release);
+    }
+
 
     // Show create form
     public function create()

@@ -110,7 +110,7 @@
                     <div class="mb-3">
                         <label class="form-label">Profile Image</label>
                         <p class="text-muted mb-1">Click to upload label image</p>
-                        <input type="file" class="form-control" id="imageInput" name="profile_image" accept="image/*">
+                        <input type="file" class="form-control" id="imageInput" name="logo" accept="image/*">
                         <img id="imagePreview" style="display: none; max-width: 100%; margin-top: 10px;" alt="Image Preview">
                     </div>
             </div>

@@ -27,4 +27,18 @@ class ReleaseRepository
     {
         return $this->model->pager;
     }
+
+    public function findAll()
+    {
+        return $this->model->findAll();
+    }
+
+    public function findWithRelations(int $id)
+    {
+        return $this->model
+            ->select('g_release.*, g_labels.name as label_name')
+            ->join('g_labels', 'g_labels.id = g_release.label_id', 'left')
+            ->where('g_release.id', $id)
+            ->first();
+    }
 }
