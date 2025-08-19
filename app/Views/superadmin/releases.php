@@ -8,9 +8,9 @@
                         <button type="button" class="btn btn-outline-secondary rounded-pill px-4" id="exportCsvBtn">
                             <i class="bi bi-download me-1"></i> Export CSV
                         </button>
-                        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#labelSelectModal">
-                            <i class="bi bi-plus-lg me-1"></i> Add New Release
-                        </button>
+                        <a href="<?= base_url('superadmin/add-release') ?>" class="btn btn-primary">
+                            <i data-feather="plus" class="me-1"></i> Add New Release
+                        </a>
                     </div>
                 </div>
             </div>
@@ -65,17 +65,17 @@
             <div class="card shadow-sm">
                 <div class="card-body p-3 border-bottom">
                     <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center">
-    <ul class="nav nav-pills w-100 justify-content-evenly mb-3 mb-md-0">
-        <li class="nav-item"><a class="nav-link active" href="#" data-filter="all">All</a></li>
-        <li class="nav-item"><a class="nav-link" href="#" data-filter="delivered">Delivered</a></li>
-        <li class="nav-item"><a class="nav-link" href="#" data-filter="approved">Approved</a></li>
-        <li class="nav-item"><a class="nav-link" href="#" data-filter="review">In Review</a></li>
-        <li class="nav-item"><a class="nav-link" href="#" data-filter="rejected">Rejected</a></li>
-        <li class="nav-item"><a class="nav-link" href="#" data-filter="takedown">Takedown</a></li>
-    </ul>
-</div>
+                        <ul class="nav nav-pills w-100 justify-content-evenly mb-3 mb-md-0">
+                            <li class="nav-item"><a class="nav-link active" href="#" data-filter="all">All</a></li>
+                            <li class="nav-item"><a class="nav-link" href="#" data-filter="delivered">Delivered</a></li>
+                            <li class="nav-item"><a class="nav-link" href="#" data-filter="approved">Approved</a></li>
+                            <li class="nav-item"><a class="nav-link" href="#" data-filter="review">In Review</a></li>
+                            <li class="nav-item"><a class="nav-link" href="#" data-filter="rejected">Rejected</a></li>
+                            <li class="nav-item"><a class="nav-link" href="#" data-filter="takedown">Takedown</a></li>
+                        </ul>
+                    </div>
                 </div>
-                
+
                 <div class="card-body p-4">
                     <div class="table-responsive">
                         <table class="table table-hover mb-0 align-middle" id="datatable" style="width:100%;">
@@ -90,17 +90,17 @@
                                 </tr>
                             </thead>
                             <tbody id="tableBody">
-                                </tbody>
+                            </tbody>
                         </table>
                     </div>
                 </div>
 
                 <div class="card-footer bg-white d-flex flex-column flex-md-row justify-content-between align-items-center py-3">
                     <div class="mb-2 mb-md-0" id="pagination-text">
-                        </div>
+                    </div>
                     <nav>
                         <ul class="pagination mb-0" id="pagination-controls">
-                            </ul>
+                        </ul>
                     </nav>
                 </div>
             </div>
@@ -148,7 +148,7 @@
                 </div>
             </div>
             <div class="modal-body p-4">
-                </div>
+            </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                 <button type="button" class="btn btn-primary">Edit Release</button>

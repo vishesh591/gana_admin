@@ -116,4 +116,11 @@ class SuperAdmin extends BaseController
         $page_array['file_name'] = 'facebook';
         return view('superadmin/index', $page_array);
     }
+
+    public function addRelease()
+    {
+        $page_array = array();
+        $page_array['file_name'] = 'add-release';
+        return view('superadmin/index', $page_array);
+    }
 }

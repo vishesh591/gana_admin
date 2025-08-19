@@ -37,6 +37,7 @@ $routes->group('superadmin', ['filter' => 'role:superadmin'], function ($routes)
     $routes->get('merge-request', 'SuperAdmin::merge_request');
     $routes->get('youtube', 'SuperAdmin::youtube');
     $routes->get('facebook', 'SuperAdmin::facebook');
+    $routes->get('add-release', 'SuperAdmin::addRelease');
 });
 
 // Routes only for artists
