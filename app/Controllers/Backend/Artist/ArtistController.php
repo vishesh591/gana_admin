@@ -57,4 +57,21 @@ class ArtistController extends BaseController
 
         return view('superadmin/index', $page_array);
     }
+
+    public function getArtistsJson()
+    {
+        $artists = $this->artistRepo->findAll();
+        $data = array_map(function ($artist) {
+            return [
+                'id'            => $artist['id'],
+                'name'          => $artist['name'],
+                'profile_image' => !empty($artist['profile_image'])
+                    ? base_url($artist['profile_image'])
+                    : '/images/default.png',
+                'release_count' => $artist['release_count'] ?? 0,
+            ];
+        }, $artists);
+
+        return $this->response->setJSON(['data' => $data]);
+    }
 }

@@ -26,7 +26,7 @@
 
             <div class="artist-table">
                 <div class="table-responsive">
-                    <table class="table">
+                    <table id="artistTable" class="table">
                         <thead>
                             <tr>
                                 <th width="40">
@@ -36,57 +36,13 @@
                                 <th class="text-center">Releases</th>
                             </tr>
                         </thead>
-                        <tbody id="artistTableBody">
-                            <?php if (!empty($data['artists'])): ?>
-                                <?php foreach ($data['artists'] as $artist): ?>
-                                    <tr>
-                                        <td>
-                                            <input type="checkbox" class="form-check-input artist-checkbox" value="<?= esc($artist['id']) ?>">
-                                        </td>
-                                        <td>
-                                            <div class="artist-profile">
-                                                <img src="<?= !empty($artist['profile_image']) ? base_url($artist['profile_image']) : '/images/default.png' ?>"
-                                                    alt="<?= esc($artist['name']) ?>"
-                                                    class="artist-image">
-                                                <div>
-                                                    <div class="artist-name"><?= esc($artist['name']) ?></div>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td class="text-center">
-                                            <span class="releases-badge">
-                                                <?= esc($artist['release_count'] ?? 0) ?> releases
-                                            </span>
-                                        </td>
-                                    </tr>
-                                <?php endforeach; ?>
-                            <?php else: ?>
-                                <tr>
-                                    <td colspan="3" class="text-center">No artists found</td>
-                                </tr>
-                            <?php endif; ?>
+                        <tbody>
+                            <!-- leave empty, DataTables will fill this -->
                         </tbody>
-
                     </table>
                 </div>
-
-                <div class="pagination-wrapper d-flex justify-content-between align-items-center">
-                    <span class="text-muted" id="paginationInfo">Showing 1-3 of 3 artists</span>
-                    <nav>
-                        <ul class="pagination pagination-sm mb-0">
-                            <li class="page-item disabled">
-                                <span class="page-link">Previous</span>
-                            </li>
-                            <li class="page-item active">
-                                <span class="page-link">1</span>
-                            </li>
-                            <li class="page-item disabled">
-                                <span class="page-link">Next</span>
-                            </li>
-                        </ul>
-                    </nav>
-                </div>
             </div>
+
         </div>
     </div>
 </div>
@@ -148,8 +104,8 @@
                     <!-- <th class="text-center">Releases</th> -->
                 </tr>
             </thead>
-            <tbody id="artistTableBody">
-            </tbody>
+            <!-- <tbody id="artistTableBody">
+            </tbody> -->
         </table>
     </div>
     <div class="pagination-wrapper d-flex justify-content-between align-items-center">

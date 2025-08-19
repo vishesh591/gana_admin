@@ -2240,240 +2240,61 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 // artists-page js
-document.addEventListener("DOMContentLoaded", function () {
-  const artistsPageContainer = document.querySelector(".admin-artists-page");
-
-  // This entire block will only run if the .admin-artists-page element exists
-  if (artistsPageContainer) {
-    // --- DATA ---
-    let artistsData = [
-      {
-        id: 1,
-        name: "Mohit Jadhav",
-        image: "/images/instagram.png",
-        releases: 12,
-      },
-      {
-        id: 2,
-        name: "Sarah Johnson",
-        image: "/images/instagram.png",
-        releases: 8,
-      },
-      {
-        id: 3,
-        name: "Alex Rodriguez",
-        image: "/images/instagram.png",
-        releases: 15,
-      },
-      {
-        id: 4,
-        name: "Emma Thompson",
-        image: "/images/instagram.png",
-        releases: 5,
-      },
-    ];
-    let filteredData = [...artistsData];
-    let selectedArtists = new Set();
-
-    // --- MODAL INSTANCES ---
-    const createModal = new bootstrap.Modal(
-      document.getElementById("createArtistModal")
-    );
-    const deleteModal = new bootstrap.Modal(
-      document.getElementById("deleteConfirmModal")
-    );
-
-    // --- DOM ELEMENTS ---
-    const tableBody = document.getElementById("artistTableBody");
-    const searchInput = document.getElementById("searchInput");
-    const selectAllCheckbox = document.getElementById("selectAllCheckbox"); // FIXED ID
-    const deleteBtn = document.getElementById("deleteSelectedBtn"); // FIXED ID
-    const paginationInfo = document.getElementById("paginationInfo");
-    const createArtistForm = document.getElementById("createArtistForm");
-    const createArtistBtn = document.getElementById("createArtistBtn");
-    const imageUploadArea = document.getElementById("imageUploadArea");
-    const imageInput = document.getElementById("imageInput");
-    const confirmDeleteBtn = document.getElementById("confirmDeleteBtn");
-
-    // --- RENDER & UPDATE FUNCTIONS ---
-    function renderTable() {
-      if (filteredData.length === 0) {
-        // FIXED colspan from 4 to 3
-        tableBody.innerHTML = `<tr><td colspan="3" class="empty-state"><i data-feather="users"></i><h4>No Artists Found</h4><p class="mb-0">No artists match your search criteria.</p></td></tr>`;
-      } else {
-        tableBody.innerHTML = filteredData
-          .map(
-            (artist) => `
-                    <tr>
-                        <td><input type="checkbox" class="form-check-input artist-checkbox" value="${artist.id}"></td>
-                        <td>
-                            <div class="artist-profile">
-                                <img src="${artist.image}" alt="${artist.name}" class="artist-image">
-                                <div><div class="artist-name">${artist.name}</div></div>
-                            </div>
-                        </td>
-                        <td class="text-center"><span class="releases-badge">${artist.releases} releases</span></td>
-                    </tr>
-                `
-          )
-          .join("");
-      }
-      // Add event listeners after rendering new checkboxes
-      tableBody.querySelectorAll(".artist-checkbox").forEach((checkbox) => {
-        checkbox.addEventListener("change", updateSelection);
-      });
-      updatePaginationInfo();
-      feather.replace();
-    }
-
-    function updateSelection() {
-      selectedArtists.clear();
-      document
-        .querySelectorAll(".artist-checkbox:checked")
-        .forEach((checkbox) => {
-          selectedArtists.add(parseInt(checkbox.value));
-        });
-      updateDeleteButton();
-      updateSelectAllCheckbox();
-    }
-
-    function updateDeleteButton() {
-      if (selectedArtists.size > 0) {
-        deleteBtn.style.display = "inline-flex"; // Show the button
-      } else {
-        deleteBtn.style.display = "none"; // Hide the button
-      }
-    }
-
-    function updateSelectAllCheckbox() {
-      const totalCheckboxes =
-        document.querySelectorAll(".artist-checkbox").length;
-      const checkedCount = selectedArtists.size;
-
-      if (totalCheckboxes > 0 && checkedCount === totalCheckboxes) {
-        selectAllCheckbox.indeterminate = false;
-        selectAllCheckbox.checked = true;
-      } else if (checkedCount > 0) {
-        selectAllCheckbox.indeterminate = true;
-        selectAllCheckbox.checked = false;
-      } else {
-        selectAllCheckbox.indeterminate = false;
-        selectAllCheckbox.checked = false;
-      }
-    }
-
-    function updatePaginationInfo() {
-      const count = filteredData.length;
-      paginationInfo.textContent = `Showing 1-${count} of ${count} artists`;
-    }
-
-    function previewImage() {
-      const preview = document.getElementById("imagePreview");
-      if (imageInput.files && imageInput.files[0]) {
-        const reader = new FileReader();
-        reader.onload = (e) => {
-          preview.src = e.target.result;
-          preview.style.display = "block";
-          imageUploadArea.querySelector("i").style.display = "none";
-          imageUploadArea.querySelector("p").style.display = "none";
-        };
-        reader.readAsDataURL(imageInput.files[0]);
-      }
-    }
-
-    // --- EVENT LISTENERS ---
-    searchInput.addEventListener("input", function (e) {
-      const searchTerm = e.target.value.toLowerCase().trim();
-      filteredData = artistsData.filter((artist) =>
-        artist.name.toLowerCase().includes(searchTerm)
-      );
-      renderTable();
-      selectedArtists.clear();
-      updateSelection(); // Call this to ensure button state is correct
+$(document).ready(function () {
+    let table = $('#artistTable').DataTable({
+        ajax: '/superadmin/api/artists', // backend route returning JSON
+        columns: [
+            {
+                data: 'id',
+                render: function (data) {
+                    return `<input type="checkbox" class="form-check-input artist-checkbox" value="${data}">`;
+                },
+                orderable: false
+            },
+            {
+                data: null,
+                render: function (row) {
+                    return `
+                        <div class="artist-profile d-flex align-items-center">
+                            <img src="${row.profile_image}" alt="${row.name}" class="artist-image me-2">
+                            <div class="artist-name fw-bold">${row.name}</div>
+                        </div>
+                    `;
+                }
+            },
+            {
+                data: 'release_count',
+                className: 'text-center',
+                render: function (d) {
+                    return `<span class="releases-badge badge bg-primary">${d} releases</span>`;
+                }
+            }
+        ],
+        paging: true,       // enable pagination
+        searching: true,    // enable search box
+        ordering: true,     // enable sorting
+        responsive: true,   // mobile friendly
+        autoWidth: false,   // keeps column width consistent
+        drawCallback: function () {
+            // Re-bind checkbox events or icon replacements after redraw
+            $('.artist-checkbox').off('change').on('change', function () {
+                let selected = $('.artist-checkbox:checked').length;
+                if (selected > 0) {
+                    $('#deleteSelectedBtn').show();
+                } else {
+                    $('#deleteSelectedBtn').hide();
+                }
+            });
+        }
     });
 
-    selectAllCheckbox.addEventListener("change", function () {
-      document.querySelectorAll(".artist-checkbox").forEach((checkbox) => {
-        checkbox.checked = this.checked;
-      });
-      updateSelection();
+    // "Select all" checkbox
+    $('#selectAll').on('click', function () {
+        let checked = this.checked;
+        $('.artist-checkbox').prop('checked', checked).trigger('change');
     });
-
-    createArtistBtn.addEventListener("click", () =>
-      createArtistForm.requestSubmit()
-    );
-
-    createArtistForm.addEventListener("submit", function (e) {
-      e.preventDefault();
-      const nameInput = document.getElementById("artistNameInput"); // FIXED ID
-      const name = nameInput.value.trim();
-      if (!name) {
-        alert("Please enter an artist name.");
-        return;
-      }
-
-      const newId = artistsData.length
-        ? Math.max(...artistsData.map((a) => a.id)) + 1
-        : 1;
-
-      if (imageInput.files && imageInput.files[0]) {
-        const reader = new FileReader();
-        reader.onload = function (e) {
-          artistsData.push({
-            id: newId,
-            name: name,
-            image: e.target.result,
-            releases: 0,
-          });
-          filteredData = [...artistsData];
-          renderTable();
-        };
-        reader.readAsDataURL(imageInput.files[0]);
-      } else {
-        artistsData.push({
-          id: newId,
-          name: name,
-          image: `https://via.placeholder.com/60x60.png?text=${name
-            .charAt(0)
-            .toUpperCase()}`,
-          releases: 0,
-        });
-        filteredData = [...artistsData];
-        renderTable();
-      }
-
-      createModal.hide();
-      createArtistForm.reset();
-      document.getElementById("imagePreview").style.display = "none";
-    });
-
-    imageUploadArea.addEventListener("click", () => imageInput.click());
-    imageInput.addEventListener("change", previewImage);
-
-    deleteBtn.addEventListener("click", () => {
-      document.getElementById("deleteCount").textContent = selectedArtists.size;
-      deleteModal.show();
-    });
-
-    confirmDeleteBtn.addEventListener("click", () => {
-      artistsData = artistsData.filter(
-        (artist) => !selectedArtists.has(artist.id)
-      );
-      filteredData = filteredData.filter(
-        (artist) => !selectedArtists.has(artist.id)
-      );
-      selectedArtists.clear();
-
-      renderTable();
-      updateSelection();
-
-      deleteModal.hide();
-    });
-
-    // --- INITIAL RENDER ---
-    renderTable();
-  }
 });
+
 // labels-page js
 document.addEventListener("DOMContentLoaded", function () {
   const labelsPageContainer = document.querySelector(".admin-labels-page");

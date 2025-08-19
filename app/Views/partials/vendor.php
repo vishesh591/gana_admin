@@ -39,3 +39,4 @@
 <script src="/libs/datatables.net-select-bs5/js/select.bootstrap5.min.js"></script>
 <!-- Datatable Demo App Js -->
 <script src="/js/pages/datatable.init.js"></script>
+
