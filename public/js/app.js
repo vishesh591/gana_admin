@@ -1269,7 +1269,7 @@ document.addEventListener('DOMContentLoaded', function() {
                             </div>
                         </td>
                         <td class="align-middle">${request.isrc || 'N/A'}</td>
-                        <td class="align-middle text-center">
+                        <td class="align-middle">
                             ${request.instagram ? `<a href="${request.instagram}" target="_blank" class="social-link me-2 fs-5"><i class="bi bi-instagram"></i></a>` : ''}
                             ${request.facebook ? `<a href="${request.facebook}" target="_blank" class="social-link fs-5"><i class="bi bi-facebook"></i></a>` : ''}
                         </td>
@@ -1390,7 +1390,7 @@ document.addEventListener('DOMContentLoaded', function() {
                             </div>
                         </td>
                         <td class="align-middle">${request.isrc || 'N/A'}</td>
-                        <td class="align-middle text-center">
+                        <td class="align-middle">
                             ${request.instagram ? `<a href="${request.instagram}" target="_blank" class="social-link me-2 fs-5"><i class="bi bi-instagram"></i></a>` : ''}
                             ${request.facebook ? `<a href="${request.facebook}" target="_blank" class="social-link fs-5"><i class="bi bi-facebook"></i></a>` : ''}
                         </td>
