@@ -61,4 +61,23 @@ class LabelController extends BaseController
 
         return redirect()->back()->with('success', 'Label created successfully');
     }
+
+    public function getLabelsJson()
+    {
+        $labels = $this->labelRepo->findAll(); // or paginate if needed
+
+        $data = [];
+        foreach ($labels as $label) {
+            $data[] = [
+                'id'            => $label['id'],
+                'name'          => $label['label_name'],
+                'logo'          => !empty($label['logo']) ? base_url($label['logo']) : base_url('images/default.png'),
+                'release_count' => $label['release_count'] ?? 0,
+            ];
+        }
+
+        return $this->response->setJSON([
+            'data' => $data
+        ]);
+    }
 }

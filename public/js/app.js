@@ -2297,202 +2297,136 @@ $(document).ready(function () {
 
 // labels-page js
 document.addEventListener("DOMContentLoaded", function () {
-  const labelsPageContainer = document.querySelector(".admin-labels-page");
+  const tableBody = document.getElementById("labelTableBody");
+  const paginationInfo = document.getElementById("paginationInfo");
+  const paginationLinks = document.getElementById("paginationLinks");
+  const selectAllCheckbox = document.getElementById("selectAll");
+  const searchInput = document.getElementById("searchInput");
 
-  // This entire block will only run if the .admin-labels-page element exists
-  if (labelsPageContainer) {
-    // --- DATA ---
-    let labelsData = [
-      {
-        id: 1,
-        name: "Mohit Jadhav",
-        image: "/images/rocket.png",
-        releases: 12,
-      },
-      {
-        id: 2,
-        name: "Sarah Johnson",
-        image: "/images/rocket.png",
-        releases: 8,
-      },
-    ];
-    let filteredData = [...labelsData]; // Renamed from filteredData2
-    let selectedLabels = new Set(); // Renamed from selectedlabels
+  let labelsData = [];
+  let filteredData = [];
+  let currentPage = 1;
+  const pageSize = 5;
 
-    // --- DOM ELEMENTS ---
-    const tableBody = document.getElementById("labelTableBody");
-    const searchInput = document.getElementById("searchInput");
-    const selectAllCheckbox = document.getElementById("selectAll");
-    const deleteBtn = document.getElementById("deleteBtn");
-    const paginationInfo = document.getElementById("paginationInfo");
-    const createLabelForm = document.getElementById("createlabelForm");
-
-    // --- RENDER & UPDATE FUNCTIONS ---
-    function renderTable() {
-      if (filteredData.length === 0) {
-        tableBody.innerHTML = `<tr><td colspan="4" class="empty-state"><i data-feather="tag"></i><h4>No Labels Found</h4><p class="mb-0">No labels match your search criteria.</p></td></tr>`;
-      } else {
-        tableBody.innerHTML = filteredData
-          .map(
-            (label) => `
-                    <tr>
-                        <td>
-                            <input type="checkbox" class="form-check-input label-checkbox" value="${label.id}">
-                        </td>
-                        <td>
-                            <div class="label-profile">
-                                <img src="${label.image}" alt="${label.name}" class="label-image">
-                                <div><div class="label-name">${label.name}</div></div>
-                            </div>
-                        </td>
-                        <td class="text-center">
-                            <span class="releases-badge">${label.releases} releases</span>
-                        </td>
-                    </tr>
-                `
-          )
-          .join("");
-      }
-      // Add event listeners after rendering new checkboxes
-      tableBody.querySelectorAll(".label-checkbox").forEach((checkbox) => {
-        checkbox.addEventListener("change", updateSelection);
-      });
-      updatePaginationInfo();
-      feather.replace();
-    }
-
-    function updateSelection() {
-      selectedLabels.clear();
-      document
-        .querySelectorAll(".label-checkbox:checked")
-        .forEach((checkbox) => {
-          selectedLabels.add(parseInt(checkbox.value));
-        });
-      updateDeleteButton();
-      updateSelectAllCheckbox();
-    }
-
-    function updateDeleteButton() {
-      deleteBtn.disabled = selectedLabels.size === 0;
-      if (selectedLabels.size > 0) {
-        deleteBtn.innerHTML = `<i data-feather="trash-2" class="me-1"></i> Delete (${selectedLabels.size})`;
-      } else {
-        deleteBtn.innerHTML = `<i data-feather="trash-2" class="me-1"></i> Delete Label`;
-      }
-      feather.replace();
-    }
-
-    function updateSelectAllCheckbox() {
-      const totalCheckboxes =
-        document.querySelectorAll(".label-checkbox").length;
-      const checkedCount = selectedLabels.size;
-
-      if (totalCheckboxes > 0 && checkedCount === totalCheckboxes) {
-        selectAllCheckbox.indeterminate = false;
-        selectAllCheckbox.checked = true;
-      } else if (checkedCount > 0) {
-        selectAllCheckbox.indeterminate = true;
-        selectAllCheckbox.checked = false;
-      } else {
-        selectAllCheckbox.indeterminate = false;
-        selectAllCheckbox.checked = false;
-      }
-    }
-
-    function updatePaginationInfo() {
-      const count = filteredData.length;
-      paginationInfo.textContent = `Showing 1-${count} of ${count} labels`;
-    }
-
-    function previewImage() {
-      const input = document.getElementById("imageInput");
-      const preview = document.getElementById("imagePreview");
-      if (input.files && input.files[0]) {
-        const reader = new FileReader();
-        reader.onload = (e) => {
-          preview.src = e.target.result;
-          preview.style.display = "block";
-        };
-        reader.readAsDataURL(input.files[0]);
-      }
-    }
-
-    // --- EVENT LISTENERS ---
-    searchInput.addEventListener("input", function (e) {
-      const searchTerm = e.target.value.toLowerCase().trim();
-      filteredData = labelsData.filter((label) =>
-        label.name.toLowerCase().includes(searchTerm)
-      );
+  // Fetch JSON
+  async function fetchLabels() {
+    try {
+      const response = await fetch("/superadmin/api/labels");
+      const result = await response.json();
+      labelsData = result.data || [];
+      filteredData = labelsData;
       renderTable();
-      selectedLabels.clear();
-      updateDeleteButton();
-      updateSelectAllCheckbox();
-    });
+    } catch (err) {
+      console.error("Error fetching labels:", err);
+    }
+  }
 
-    selectAllCheckbox.addEventListener("change", function () {
-      const checkboxes = document.querySelectorAll(".label-checkbox");
-      checkboxes.forEach((checkbox) => {
-        checkbox.checked = this.checked;
-      });
-      updateSelection();
-    });
+  // Render rows
+  function renderTable() {
+    const start = (currentPage - 1) * pageSize;
+    const paginatedData = filteredData.slice(start, start + pageSize);
 
-    createLabelForm.addEventListener("submit", function (e) {
-      e.preventDefault();
-      const name = document.getElementById("labelName").value.trim(); // Assuming the input has id="labelName"
-      const imageInput = document.getElementById("imageInput");
-      if (!name) {
-        alert("Please enter a label name.");
-        return;
-      }
+    if (paginatedData.length === 0) {
+      tableBody.innerHTML = `<tr><td colspan="3" class="text-center">No labels found</td></tr>`;
+    } else {
+      tableBody.innerHTML = paginatedData
+        .map(
+          (label) => `
+            <tr>
+              <td>
+                <input type="checkbox" class="form-check-input label-checkbox" value="${label.id}">
+              </td>
+              <td>
+                <div class="label-profile">
+                  <img src="${label.logo ? label.logo : "/images/default.png"}"
+                       alt="${label.name}" class="label-image">
+                  <div>
+                    <div class="label-name">${label.name}</div>
+                  </div>
+                </div>
+              </td>
+              <td class="text-center">
+                <span class="releases-badge">${label.release_count ?? 0} releases</span>
+              </td>
+            </tr>
+          `
+        )
+        .join("");
+    }
 
-      const newId = labelsData.length
-        ? Math.max(...labelsData.map((l) => l.id)) + 1
-        : 1;
-
-      if (imageInput.files && imageInput.files[0]) {
-        const reader = new FileReader();
-        reader.onload = function (e) {
-          const newLabel = {
-            id: newId,
-            name: name,
-            image: e.target.result,
-            releases: 0,
-          };
-          labelsData.push(newLabel);
-          filteredData = [...labelsData];
-          renderTable();
-        };
-        reader.readAsDataURL(imageInput.files[0]);
-      } else {
-        const newLabel = {
-          id: newId,
-          name: name,
-          image: `https://via.placeholder.com/60x60.png?text=${name
-            .charAt(0)
-            .toUpperCase()}`,
-          releases: 0,
-        };
-        labelsData.push(newLabel);
-        filteredData = [...labelsData];
-        renderTable();
-      }
-
-      bootstrap.Modal.getInstance(
-        document.getElementById("createlabelModal")
-      ).hide();
-      alert(`Label "${name}" created successfully!`);
-    });
-
-    document
-      .getElementById("imageInput")
-      .addEventListener("change", previewImage);
-
-    // --- INITIAL RENDER ---
-    renderTable();
+    updatePagination();
     feather.replace();
   }
+
+  // Pagination UI
+  function updatePagination() {
+    const total = filteredData.length;
+    const totalPages = Math.ceil(total / pageSize);
+    const start = total ? (currentPage - 1) * pageSize + 1 : 0;
+    const end = Math.min(currentPage * pageSize, total);
+
+    paginationInfo.textContent = total
+      ? `Showing ${start}-${end} of ${total} labels`
+      : "Showing 0-0 of 0 labels";
+
+    let html = `
+      <li class="page-item ${currentPage === 1 ? "disabled" : ""}">
+        <a class="page-link" href="#" data-page="${currentPage - 1}">Previous</a>
+      </li>
+    `;
+
+    for (let i = 1; i <= totalPages; i++) {
+      html += `
+        <li class="page-item ${currentPage === i ? "active" : ""}">
+          <a class="page-link" href="#" data-page="${i}">${i}</a>
+        </li>
+      `;
+    }
+
+    html += `
+      <li class="page-item ${currentPage === totalPages ? "disabled" : ""}">
+        <a class="page-link" href="#" data-page="${currentPage + 1}">Next</a>
+      </li>
+    `;
+
+    paginationLinks.innerHTML = html;
+
+    paginationLinks.querySelectorAll("a").forEach((link) => {
+      link.addEventListener("click", function (e) {
+        e.preventDefault();
+        const page = parseInt(this.dataset.page);
+        if (page > 0 && page <= totalPages) {
+          currentPage = page;
+          renderTable();
+        }
+      });
+    });
+  }
+
+  // Search filter
+  searchInput.addEventListener("keyup", function () {
+    const query = this.value.toLowerCase();
+    filteredData = labelsData.filter(
+      (label) =>
+        label.name.toLowerCase().includes(query) ||
+        (label.release_count + "").includes(query)
+    );
+    currentPage = 1; // reset to first page on search
+    renderTable();
+  });
+
+  // Select All Checkbox
+  selectAllCheckbox.addEventListener("change", function () {
+    document.querySelectorAll(".label-checkbox").forEach((cb) => {
+      cb.checked = selectAllCheckbox.checked;
+    });
+  });
+
+  // Init
+  fetchLabels();
 });
+
+
 
 // claiming-req js
 document.addEventListener("DOMContentLoaded", function () {

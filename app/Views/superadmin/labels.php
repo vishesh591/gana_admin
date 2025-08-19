@@ -21,71 +21,34 @@
                 </div>
             </div>
 
-            <div class="label-table">
-                <div class="table-responsive">
-                    <table class="table">
-                        <thead>
-                            <tr>
-                                <th width="40">
-                                    <input type="checkbox" class="form-check-input" id="selectAll">
-                                </th>
-                                <th>Label</th>
-                                <th class="text-center">Releases</th>
-                            </tr>
-                        </thead>
-                        <tbody id="labelTableBody">
-                            <?php if (!empty($data['labels'])): ?>
-                                <?php foreach ($data['labels'] as $label): ?>
-                                    <tr>
-                                        <td>
-                                            <input type="checkbox"
-                                                class="form-check-input label-checkbox"
-                                                value="<?= esc($label['id']) ?>">
-                                        </td>
-                                        <td>
-                                            <div class="label-profile">
-                                                <img src="<?= !empty($label['logo']) ? base_url($label['logo']) : '/images/default.png' ?>"
-                                                    alt="<?= esc($label['label_name']) ?>"
-                                                    class="label-image">
-                                                <div>
-                                                    <div class="label-name"><?= esc($label['label_name']) ?></div>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td class="text-center">
-                                            <span class="releases-badge">
-                                                <?= esc($label['release_count'] ?? 0) ?> releases
-                                            </span>
-                                        </td>
-                                    </tr>
-                                <?php endforeach; ?>
-                            <?php else: ?>
-                                <tr>
-                                    <td colspan="3" class="text-center">No labels found</td>
-                                </tr>
-                            <?php endif; ?>
-                        </tbody>
+<div class="label-table">
+    <div class="table-responsive">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th width="40">
+                        <input type="checkbox" class="form-check-input" id="selectAll">
+                    </th>
+                    <th>Label</th>
+                    <th class="text-center">Releases</th>
+                </tr>
+            </thead>
+            <tbody id="labelTableBody">
+                <!-- Rows will be inserted by JS -->
+            </tbody>
+        </table>
+    </div>
 
-                    </table>
-                </div>
+    <div class="pagination-wrapper d-flex justify-content-between align-items-center">
+        <span class="text-muted" id="paginationInfo">Showing 0-0 of 0 labels</span>
+        <nav>
+            <ul class="pagination pagination-sm mb-0" id="paginationLinks">
+                <!-- Pagination injected by JS -->
+            </ul>
+        </nav>
+    </div>
+</div>
 
-                <div class="pagination-wrapper d-flex justify-content-between align-items-center">
-                    <span class="text-muted" id="paginationInfo">Showing 1-2 of 2 labels</span>
-                    <nav>
-                        <ul class="pagination pagination-sm mb-0">
-                            <li class="page-item disabled">
-                                <span class="page-link">Previous</span>
-                            </li>
-                            <li class="page-item active">
-                                <span class="page-link">1</span>
-                            </li>
-                            <li class="page-item disabled">
-                                <span class="page-link">Next</span>
-                            </li>
-                        </ul>
-                    </nav>
-                </div>
-            </div>
         </div>
     </div>
 </div>
