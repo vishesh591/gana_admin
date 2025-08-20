@@ -1,30 +1,38 @@
 <div class="admin-artists-page content-page">
     <div class="content">
         <div class="container-xxl">
-            <div class="page-header pt-4 pb-2">
-                <h1 class="page-title">Artists</h1>
-                <p class="page-subtitle">Manage your artists and track their releases</p>
-            </div>
 
-            <div class="header-controls">
-                <div class="d-flex justify-content-between align-items-center controls-row">
-                    <div class="search-container flex-grow-1 me-3">
-                        <input type="search" class="form-control search-input" placeholder="Search artist..." id="searchInput">
-                    </div>
-                    <div class="button-group d-flex gap-2">
-                        <button class="btn btn-danger" id="deleteSelectedBtn" style="display: none;">
-                            <i data-feather="trash-2" class="me-1"></i>
-                            Delete Selected
-                        </button>
-                        <button class="btn btn-create" data-bs-toggle="modal" data-bs-target="#createArtistModal">
-                            <i data-feather="plus" class="me-1"></i>
-                            Create Artist
-                        </button>
-                    </div>
+            <!-- Page Header -->
+            <div class="page-header d-flex flex-column flex-md-row justify-content-between align-items-md-center pt-4 pb-3 border-bottom">
+                <div>
+                    <h1 class="page-title mb-1">Artists</h1>
+                    <p class="page-subtitle mb-0 text-muted">
+                        Manage your artists and track their releases
+                    </p>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="button-group d-flex gap-2 mt-3 mt-md-0">
+                    <button class="btn btn-create d-flex align-items-center" data-bs-toggle="modal" data-bs-target="#createArtistModal">
+                        <i data-feather="plus" class="me-1"></i>
+                        Create Artist
+                    </button>
+
+                    <!-- Future delete button -->
+                    <!--
+                    <button class="btn btn-danger d-flex align-items-center" id="deleteSelectedBtn" style="display: none;">
+                        <i data-feather="trash-2" class="me-1"></i>
+                        Delete Selected
+                    </button>
+                    -->
                 </div>
             </div>
+            <!-- /Page Header -->
 
-            <div class="artist-table">
+
+
+
+            <div class="artist-table p-4">
                 <div class="table-responsive">
                     <table id="artistTable" class="table">
                         <thead>
@@ -92,32 +100,8 @@
     </div>
 </div>
 
-<div class="artist-table shadow-sm">
-    <div class="table-responsive">
-        <table class="table align-middle">
-            <thead>
-                <tr>
-                    <th width="40">
-                        <input type="checkbox" class="form-check-input" id="selectAllCheckbox">
-                    </th>
-                    <th>Artist</th>
-                    <!-- <th class="text-center">Releases</th> -->
-                </tr>
-            </thead>
-            <!-- <tbody id="artistTableBody">
-            </tbody> -->
-        </table>
-    </div>
-    <div class="pagination-wrapper d-flex justify-content-between align-items-center">
-        <span class="text-muted" id="paginationInfo"></span>
-        <nav id="paginationControls"></nav>
-    </div>
-</div>
-</div>
-</div>
-</div>
 
-<div class="modal fade" id="createArtistModal" tabindex="-1">
+<!-- <div class="modal fade" id="createArtistModal" tabindex="-1">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
@@ -157,9 +141,9 @@
             </div>
         </div>
     </div>
-</div>
+</div> -->
 
-<div class="modal fade" id="deleteConfirmModal" tabindex="-1">
+<!-- <div class="modal fade" id="deleteConfirmModal" tabindex="-1">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
@@ -178,4 +162,4 @@
             </div>
         </div>
     </div>
-</div>
+</div> -->

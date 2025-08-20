@@ -1,47 +1,55 @@
-<div class="admin-support-page content-page">
+<div class="admin-support-dashboard content-page">
     <div class="content">
         <div class="container-xxl">
             <div class="py-3 d-flex align-items-sm-center flex-sm-row flex-column justify-content-between">
-                <div class="flex-grow-1">
-                    <h4 class="fs-18 fw-semibold m-0">Support Center</h4>
+                <h2 class="fs-50 fw-bold m-0 page-title text-black">Support Center</h2>
+                <div class="col-auto d-flex gap-2">
+                    <button type="button" class="btn btn-outline-secondary rounded-pill px-4" id="exportCsvBtn">
+                        <i class="bi bi-download me-1"></i> Export to CSV
+                    </button>
                 </div>
             </div>
 
-            <div class="row justify-content-center">
-                <div class="col-lg-8">
-                    <div class="card support-form-card">
-                        <div class="card-body">
-                            <h5 class="card-title text-center mb-4">How can we help you?</h5>
-                            <p class="text-muted text-center mb-4">
-                                Please fill out the form below with your inquiry, and we'll get back to you as soon as possible.
-                            </p>
-
-                            <form id="supportForm" action="#" method="POST">
-                                <div class="mb-3">
-                                    <label for="fullName" class="form-label">Full Name</label>
-                                    <input type="text" class="form-control" id="fullName" placeholder="Enter your full name" required>
-                                </div>
-                                <div class="mb-3">
-                                    <label for="emailAddress" class="form-label">Email Address</label>
-                                    <input type="email" class="form-control" id="emailAddress" placeholder="Enter your email" required>
-                                </div>
-                                <div class="mb-3">
-                                    <label for="subject" class="form-label">Subject</label>
-                                    <input type="text" class="form-control" id="subject" placeholder="What is your inquiry about?" required>
-                                </div>
-                                <div class="mb-4">
-                                    <label for="message" class="form-label">Message</label>
-                                    <textarea class="form-control" id="message" rows="5" placeholder="Describe your issue or question in detail" required></textarea>
-                                </div>
-                                <div class="text-center">
-                                    <button type="submit" class="btn btn-submit">Submit Request</button>
-                                </div>
-                            </form>
-
-                            <div id="formSubmissionAlert" class="alert alert-success mt-4 d-none" role="alert">
-                                Thank you for your submission! We have received your request and will get back to you shortly.
-                            </div>
-                        </div>
+            <div class="card shadow-sm mt-4 p-4">
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0" id="datatable">
+                            <thead>
+                                <tr>
+                                    <th width="50">ID</th>
+                                    <th>Full Name</th>
+                                    <th>Email</th>
+                                    <th>Subject</th>
+                                    <th>Status</th>
+                                    <th>Date</th>
+                                    <th class="text-center">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>#101</td>
+                                    <td>John Doe</td>
+                                    <td>john@example.com</td>
+                                    <td>Login Issue</td>
+                                    <td><span class="badge bg-warning">Pending</span></td>
+                                    <td>2025-08-18</td>
+                                    <td class="text-center">
+                                        <button class="btn btn-sm btn-primary rounded-pill px-3">View</button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>#102</td>
+                                    <td>Jane Smith</td>
+                                    <td>jane@example.com</td>
+                                    <td>Password Reset</td>
+                                    <td><span class="badge bg-success">Resolved</span></td>
+                                    <td>2025-08-17</td>
+                                    <td class="text-center">
+                                        <button class="btn btn-sm btn-primary rounded-pill px-3">View</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>

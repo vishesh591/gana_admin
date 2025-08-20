@@ -2,16 +2,16 @@
     <div class="content">
 
         <!-- Start Content-->
-        <div class="container-fluid">
+        <div class="container-xxl">
 
             <div class="py-3 d-flex align-items-sm-center flex-sm-row flex-column justify-content-between">
                 <div class="flex-grow-1">
                     <h4 class="fs-18 fw-semibold m-0">Welcome Yash Rajak</h4>
                 </div>
                 <div>
-                    <button class="btn btn-primary" onclick="openLabelModal()">
+                    <a href="<?= base_url('superadmin/add-release') ?>" class="btn btn-primary">
                         <i data-feather="plus" class="me-1"></i> Add New Release
-                    </button>
+                    </a>
                 </div>
             </div>
 

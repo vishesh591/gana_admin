@@ -123,4 +123,10 @@ class SuperAdmin extends BaseController
         $page_array['file_name'] = 'add-release';
         return view('superadmin/index', $page_array);
     }
+    public function support()
+    {
+        $page_array = [];
+        $page_array['file_name'] = 'support';
+        return view('superadmin/index', $page_array);
+    }
 }

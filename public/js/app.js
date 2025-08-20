@@ -2266,7 +2266,7 @@ $(document).ready(function () {
                 data: 'release_count',
                 className: 'text-center',
                 render: function (d) {
-                    return `<span class="releases-badge badge bg-primary">${d} releases</span>`;
+                    return `<span class="releases-badge badge">${d} releases</span>`;
                 }
             }
         ],

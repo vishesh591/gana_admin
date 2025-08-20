@@ -26,15 +26,16 @@
                         <table class="table table-hover mb-0 align-middle" id="datatable" style="width:100%;">
                             <thead class="table-light">
                                 <tr>
-                                    <th width="60" class="text-center"></th>
-                                    <th>Song Name / Artist</th>
-                                    <th>ISRC</th>
-                                    <th class="text-center">Links</th>
+                                    <th width="60" class="text-center">#</th>
+                                    <th>Song Name</th>
+                                    <th>Artist Name</th>
+                                    <th class="text-center">UPC</th>
                                     <th class="text-center">Status</th>
+                                    <th class="text-center">Actions</th>
                                 </tr>
                             </thead>
                             <tbody id="tableBody">
-                                </tbody>
+                            </tbody>
                         </table>
                     </div>
                 </div>
@@ -95,10 +96,18 @@
                             <div class="card-body p-4">
                                 <h5 class="card-title mb-4">Request Details</h5>
                                 <div class="row">
-                                    <div class="col-md-6 mb-3"><label class="detail-label">ISRC</label><p class="detail-value" id="modal-isrc"></p></div>
-                                    <div class="col-md-6 mb-3"><label class="detail-label">Matching Time</label><p class="detail-value" id="modal-matchingTime"></p></div>
-                                    <div class="col-md-6 mb-3"><label class="detail-label">Instagram Audio</label><p class="detail-value" id="modal-instagramAudio"></p></div>
-                                    <div class="col-md-6 mb-3"><label class="detail-label">Reel Merge</label><p class="detail-value" id="modal-reelMerge"></p></div>
+                                    <div class="col-md-6 mb-3"><label class="detail-label">ISRC</label>
+                                        <p class="detail-value" id="modal-isrc"></p>
+                                    </div>
+                                    <div class="col-md-6 mb-3"><label class="detail-label">Matching Time</label>
+                                        <p class="detail-value" id="modal-matchingTime"></p>
+                                    </div>
+                                    <div class="col-md-6 mb-3"><label class="detail-label">Instagram Audio</label>
+                                        <p class="detail-value" id="modal-instagramAudio"></p>
+                                    </div>
+                                    <div class="col-md-6 mb-3"><label class="detail-label">Reel Merge</label>
+                                        <p class="detail-value" id="modal-reelMerge"></p>
+                                    </div>
                                 </div>
                             </div>
                         </div>

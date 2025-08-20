@@ -2,7 +2,7 @@
     <div class="content">
         <div class="container-xxl">
             <div class="py-3 d-flex align-items-sm-center flex-sm-row flex-column justify-content-between">
-                    <h1 class="fs-18 fw-semibold m-0 page-title fs-2">Claim / Reel Merge</h1>
+                <h1 class="fs-18 fw-semibold m-0 page-title fs-2">Claim / Reel Merge</h1>
                 <div class="col-auto d-flex gap-2">
                     <button type="button" class="btn btn-outline-secondary rounded-pill px-4" id="exportCsvBtn">
                         <i class="bi bi-download me-1"></i> Export to CSV
@@ -53,12 +53,29 @@
                 <div class="modal-body p-4">
                     <div class="mb-3">
                         <label for="songName" class="form-label">Song Name</label>
-                        <input type="text" class="form-control rounded-pill p-3" id="songName" required>
+                        <select class="form-select rounded-pill p-3" id="songName" required>
+                            <option value="" selected disabled>Select Song</option>
+                            <option value="1">Song One</option>
+                            <option value="2">Song Two</option>
+                            <option value="3">Song Three</option>
+                        </select>
                     </div>
+
+                    <div class="mb-3">
+                        <label for="artistName" class="form-label">Artist Name</label>
+                        <input type="text" class="form-control rounded-pill p-3" id="artistName" readonly>
+                    </div>
+
                     <div class="mb-3">
                         <label for="isrc" class="form-label">ISRC</label>
-                        <input type="text" class="form-control rounded-pill p-3" id="isrc" required>
+                        <input type="text" class="form-control rounded-pill p-3" id="isrc" readonly>
                     </div>
+
+                    <div class="mb-3">
+                        <label for="upc" class="form-label">UPC Code</label>
+                        <input type="text" class="form-control rounded-pill p-3" id="upc" readonly>
+                    </div>
+
                     <div class="mb-3">
                         <label for="instagramAudio" class="form-label">Instagram Audio Link</label>
                         <input type="url" class="form-control rounded-pill p-3" id="instagramAudio" placeholder="https://www.instagram.com/reels/audio/..." required>

@@ -2,7 +2,7 @@
     <div class="content">
         <div class="container-xxl">
             <div class="py-3 d-flex align-items-sm-center flex-sm-row flex-column justify-content-between">
-                <h2 class="fs-18 fw-semibold m-0 page-title ">Account</h2>
+                <h2 class="fs-50 fw-bold m-0 page-title text-black ">Account</h2>
                 <div class="col-auto d-flex gap-2">
                     <button type="button" class="btn btn-outline-secondary rounded-pill px-4" id="exportCsvBtn">
                         <i class="bi bi-download me-1"></i> Export to CSV
@@ -13,7 +13,7 @@
                 </div>
             </div>
 
-            <div class="card shadow-sm mt-4">
+            <div class="card shadow-sm mt-4 p-4">
                 <div class="card-body p-0">
                     <div class="table-responsive">
                         <table class="table table-hover mb-0" id="claimingTable">
