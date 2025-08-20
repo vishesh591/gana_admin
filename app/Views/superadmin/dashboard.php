@@ -6,7 +6,7 @@
 
             <div class="py-3 d-flex align-items-sm-center flex-sm-row flex-column justify-content-between">
                 <div class="flex-grow-1">
-                    <h4 class="fs-18 fw-semibold m-0">Welcome Yash Rajak</h4>
+                    <h4 class="fs-18 fw-semibold m-0">Welcome <?= session()->get('user')['name'] ?></h4>
                 </div>
                 <div>
                     <a href="<?= base_url('superadmin/add-release') ?>" class="btn btn-primary">

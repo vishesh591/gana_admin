@@ -125,4 +125,12 @@ class RegisterController extends BaseController
             "data" => $users
         ]);
     }
+
+    public function index(){
+
+        $user = $this->userModel->findAll();
+
+        return response()->setJson($user);
+
+    }
 }
