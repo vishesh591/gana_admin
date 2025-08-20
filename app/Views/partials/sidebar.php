@@ -60,6 +60,12 @@
                         <span> Ownership Data </span>
                     </a>
                 </li>
+                <li>
+                    <a href="<?= base_url() . getUserRoleSlug() ?>/support" class="tp-link">
+                        <i data-feather="help-circle"></i>
+                        <span> Support List </span>
+                    </a>
+                </li>
                 </li>
 
                 <li class="menu-title mt-2">Music Distribution</li>
@@ -143,7 +149,7 @@
                 </li>
 
                 <li>
-                    <a href="<?= base_url() . getUserRoleSlug() ?>/support" class="tp-link">
+                    <a href="<?= base_url() . getUserRoleSlug() ?>/support_user" class="tp-link">
                         <i data-feather="help-circle"></i>
                         <span> Support </span>
                     </a>

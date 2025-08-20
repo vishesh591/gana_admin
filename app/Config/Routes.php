@@ -41,6 +41,7 @@ $routes->group('superadmin', ['filter' => 'role:superadmin'], function ($routes)
 
     $routes->get('add-release', 'SuperAdmin::addRelease');
     $routes->get('support', 'SuperAdmin::support');
+    $routes->get('support_user', 'SuperAdmin::support_user');
     $routes->post('create-artist', 'Backend\Artist\ArtistController::store');
     $routes->post('create-label', 'Backend\Label\LabelController::store');
     $routes->get('artists', 'Backend\Artist\ArtistController::index');
