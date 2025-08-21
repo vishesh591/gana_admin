@@ -1060,7 +1060,7 @@ document.addEventListener("DOMContentLoaded", function () {
         className: "text-center",
       },
       { data: "company_name" },
-      { data: "label_name" },
+      { data: "primary_label_name" },
       { data: "agreement_start_date" },
       { data: "agreement_end_date" },
       {
