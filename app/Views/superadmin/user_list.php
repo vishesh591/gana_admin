@@ -71,8 +71,8 @@
                             <input type="text" class="form-control rounded-pill p-3" id="companyName" name="company_name" placeholder="Enter company name">
                         </div>
                         <div class="col-md-6 mb-3">
-                            <label for="labelName" class="form-label">Label Name</label>
-                            <input type="text" class="form-control rounded-pill p-3" id="labelName" name="label_name" placeholder="Enter label name">
+                            <label for="labelName" class="form-label">Primary Label Name</label>
+                            <input type="text" class="form-control rounded-pill p-3" id="labelName" name="primary_label_name" placeholder="Enter label name">
                         </div>
                         <div class="col-md-6 mb-3">
                             <label for="emailId" class="form-label">Email Id</label>

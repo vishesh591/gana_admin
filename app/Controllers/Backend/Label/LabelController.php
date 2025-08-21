@@ -21,9 +21,19 @@ class LabelController extends BaseController
     {
         $data['labels'] = $this->labelRepo->findAll();
 
+        $session = session();
+        $user = $session->get('user');
+
+        $userModel = new \App\Models\UserModel();
+        $primaryLabels = $userModel->select('id, primary_label_name')
+            ->where('primary_label_name IS NOT NULL')
+            ->findAll();
+
         $page_array = [
             'file_name' => 'labels',
-            'data' => $data
+            'data' => $data,
+            'primaryLabels' => $primaryLabels,
+            'user' => $user,
         ];
 
         return view('superadmin/index', $page_array);
@@ -36,17 +46,26 @@ class LabelController extends BaseController
     {
         $validationRules = [
             'label_name'   => 'required|min_length[2]|max_length[255]',
-            'primary_label'=> 'required|min_length[2]|max_length[255]',
-            'logo'=> 'uploaded[logo]|is_image[logo]|mime_in[logo,image/jpg,image/jpeg,image/png]'
+            // 'primary_label' => 'required|min_length[2]|max_length[255]',
+            'logo'         => 'uploaded[logo]|is_image[logo]|mime_in[logo,image/jpg,image/jpeg,image/png]'
         ];
 
         if (!$this->validate($validationRules)) {
             return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
         }
 
+        $session = session();
+        $user    = $session->get('user');
+
+        $primaryLabelName = $this->request->getPost('primary_label_name');
+
+        $userModel = new \App\Models\UserModel();
+        $userRow   = $userModel->where('primary_label_name', $primaryLabelName)->first();
+
         $data = [
             'label_name'         => $this->request->getPost('label_name'),
-            'primary_label_name' => $this->request->getPost('primary_label'),
+            'primary_label_name' => $primaryLabelName,
+            'user_id'            => $userRow ? $userRow['id'] : null,
         ];
 
         // Handle image upload
@@ -61,6 +80,7 @@ class LabelController extends BaseController
 
         return redirect()->back()->with('success', 'Label created successfully');
     }
+
 
     public function getLabelsJson()
     {

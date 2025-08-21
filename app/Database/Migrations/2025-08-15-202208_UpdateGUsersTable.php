@@ -58,7 +58,7 @@ class UpdateGUsersTable extends Migration
                 'constraint' => '150',
                 'null'       => true,
             ],
-            'label_name'           => [
+            'primary_label_name'           => [
                 'type'       => 'VARCHAR',
                 'constraint' => '150',
                 'null'       => true,

@@ -129,4 +129,29 @@ class ReleaseController extends BaseController
         return redirect()->to('/superadmin/releases')
             ->with('success', 'Release created successfully');
     }
+
+    public function addRelease()
+    {
+        $session = session();
+        $user = $session->get('user');
+
+        $labels = [];
+        $labelModel = new \App\Models\Backend\LabelModel();
+
+        if (in_array($user['role_id'], [1, 2])) {
+            // Admins: all labels
+            $labels = $labelModel->findAll();
+        } else {
+            // Normal users: only their labels
+            $labels = $labelModel->getLabelsByUser($user['id']);
+        }
+
+        $page_array = [
+            'file_name'      => 'add-release',
+            'user'           => $user,
+            'labels'         => $labels,
+        ];
+
+        return view('superadmin/index', $page_array);
+    }
 }

@@ -25,7 +25,7 @@ class RegisterController extends BaseController
             'password'             => 'required|min_length[6]',
             'profile_picture'      => 'if_exist|uploaded[profile_picture]|max_size[profile_picture,2048]|is_image[profile_picture]|mime_in[profile_picture,image/jpg,image/jpeg,image/png]',
             'company_name'         => 'required|min_length[3]',
-            'label_name'           => 'required|min_length[3]',
+            'primary_label_name'   => 'required|min_length[3]',
             'phone'                => 'required|regex_match[/^\+?[0-9]{10,15}$/]',
             'role'                 => 'required|in_list[artist,label,distributor,subadmin,superadmin]',
             'user_name'            => 'required|min_length[3]|max_length[20]|alpha_numeric',

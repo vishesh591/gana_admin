@@ -16,7 +16,7 @@ class UserModel extends Model
         'password',
         'profile_picture',
         'company_name',
-        'label_name',
+        'primary_label_name',
         'phone',
         'label',
         'user_name',

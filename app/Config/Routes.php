@@ -39,7 +39,7 @@ $routes->group('superadmin', ['filter' => 'role:superadmin'], function ($routes)
     $routes->get('youtube', 'SuperAdmin::youtube');
     $routes->get('facebook', 'SuperAdmin::facebook');
 
-    $routes->get('add-release', 'SuperAdmin::addRelease');
+    $routes->get('add-release', 'Backend\Release\ReleaseController::addRelease');
     $routes->get('support', 'SuperAdmin::support');
     $routes->get('support_user', 'SuperAdmin::support_user');
     $routes->post('create-artist', 'Backend\Artist\ArtistController::store');
@@ -53,7 +53,7 @@ $routes->group('superadmin', ['filter' => 'role:superadmin'], function ($routes)
     $routes->get('releases', 'Backend\Release\ReleaseController::index');
     $routes->get('releases/create', 'Backend\Release\ReleaseController::create');
     $routes->post('releases/store', 'Backend\Release\ReleaseController::store');
-    $routes->get('api/releases/(:num)', 'ReleaseController::show/$1');
+    $routes->get('api/releases/(:num)', 'Backend\Release\ReleaseController::show/$1');
     $routes->get('api/labels', 'Backend\Label\LabelController::getLabelsJson');
     $routes->get('api/accounts', 'RegisterController::getAccountsJson');
     $routes->get('pages-profile', 'RegisterController::index');

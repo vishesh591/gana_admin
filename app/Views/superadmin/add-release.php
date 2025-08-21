@@ -47,7 +47,7 @@
                             <label class="form-label required-field">Update Artwork</label>
                             <div class="file-upload-container" id="artworkUpload">
                                 <i data-feather="upload" class="feather-icon-lg mb-2"></i>
-      
+
                                 <p class="mb-1">Drag & drop your artwork here or click to browse</p>
                                 <small class="text-muted">Recommended size: 3000x3000px, JPG/PNG</small>
                                 <img id="artworkPreview" class="file-upload-preview mt-3 d-none" src="" alt="Artwork Preview">
@@ -63,10 +63,36 @@
                                 <label for="releaseTitle" class="form-label required-field">Title</label>
                                 <input type="text" class="form-control" id="releaseTitle" name="releaseTitle" required>
                             </div>
+                            <!-- <div class="col-md-6 mb-3">
+                                <label for="labelName" class="form-label required-field">Label Name</label>
+                                <input type="text" class="form-control" id="labelName" name="labelName" value="<?= session()->get('user')['primary_label_name'] ?>" readonly>
+                            </div> -->
                             <div class="col-md-6 mb-3">
                                 <label for="labelName" class="form-label required-field">Label Name</label>
-                                <input type="text" class="form-control" id="labelName" name="labelName" value="<?= session()->get('user')['name']?>" readonly>
+
+                                <?php if (in_array($user['role_id'], [1, 2])): ?>
+                                    <!-- Admin/Superadmin: Dropdown -->
+                                    <select class="form-control" id="labelName" name="label_id">
+                                        <option value="">Select Label</option>
+                                        <?php foreach ($labels as $label): ?>
+                                            <option value="<?= esc($label['id']) ?>">
+                                                <?= esc($label['label_name']) ?> (<?= esc($label['primary_label_name']) ?>)
+                                            </option>
+                                        <?php endforeach; ?>
+                                    </select>
+                                <?php else: ?>
+                                    <!-- Normal user: readonly field -->
+                                    <?php if (!empty($labels)): ?>
+                                        <input type="text"
+                                            class="form-control"
+                                            value="<?= esc($labels[0]['label_name']) ?> (<?= esc($labels[0]['primary_label_name']) ?>)"
+                                            readonly>
+                                        <input type="hidden" name="label_id" value="<?= esc($labels[0]['id']) ?>">
+                                    <?php endif; ?>
+                                <?php endif; ?>
+
                             </div>
+
                         </div>
                         <div class="row">
                             <div class="col-md-6 mb-3">

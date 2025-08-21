@@ -48,7 +48,8 @@ class Auth extends BaseController
                 'role'     => strtolower($user['role_name']),
                 'role_id'  => $user['role_id'],
                 'name'     => $user['user_name'],
-                'profile_image' => $user['profile_picture']
+                'profile_image' => $user['profile_picture'],
+                'primary_label_name' => $user['primary_label_name'],
             ]
         ]);
 

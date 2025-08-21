@@ -11,11 +11,18 @@ class LabelModel extends Model
 
     protected $allowedFields = [
         'label_name',
-        'primary_label',
+        'primary_label_name',
         'logo',
+        'user_id',
         'created_at',
-        'updated_at'
+        'updated_at',
+        'user_id'
     ];
 
     protected $useTimestamps = true;
+
+    public function getLabelsByUser($userId)
+    {
+        return $this->where('user_id', $userId)->findAll();
+    }
 }

@@ -67,7 +67,26 @@
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Primary Label Name</label>
-                        <input type="text" class="form-control" name="primary_label" value="Your Main Label Name" readonly>
+                        <?php if (in_array($user['role_id'], [1, 2])): ?>
+                            <select class="form-control" id="labelName" name="primary_label_name">
+                                <option value="">Select Label</option>
+
+                                <?php foreach ($primaryLabels as $primaryLabel): ?>
+                                    <option value="<?= esc($primaryLabel['primary_label_name']) ?>">
+                                        <?= esc($primaryLabel['primary_label_name']) ?>
+                                    </option>
+                                <?php endforeach; ?>
+                            </select>
+
+                        <?php else: ?>
+                            <!-- Normal user: readonly field -->
+                            <input type="text"
+                                class="form-control"
+                                id="labelName"
+                                name="primary_label_name"
+                                value="<?= esc($user['primary_label_name']) ?>"
+                                readonly>
+                        <?php endif; ?>
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Profile Image</label>
