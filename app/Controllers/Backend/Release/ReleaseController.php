@@ -47,6 +47,7 @@ class ReleaseController extends BaseController
     // Store release
     public function store()
     {
+        dd(1);
         // --- DEBUG: Validation temporarily skipped ---
         /*
     $validationRules = [

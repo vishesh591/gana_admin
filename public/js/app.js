@@ -1959,6 +1959,10 @@ document.querySelectorAll('.step').forEach(step => {
 });
 
 // File upload functionality
+document.getElementById('audioUpload').addEventListener('click', function () {
+    document.getElementById('audioFile').click();
+});
+
 document.getElementById('artworkUpload').addEventListener('click', function () {
     document.getElementById('artworkFile').click();
 });
