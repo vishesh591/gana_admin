@@ -59,6 +59,8 @@
                 <h5 class="modal-title">Create New label</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
+            <div id="labelAlertBox" class="mt-2 w-100"></div>
+
             <div class="modal-body">
                 <form action="<?= base_url('superadmin/create-label') ?>" method="post" enctype="multipart/form-data">
                     <div class="mb-3">

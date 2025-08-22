@@ -24,8 +24,18 @@ class ArtistController extends BaseController
         ];
 
         if (!$this->validate($validationRules)) {
-            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+            $errors = $this->validator->getErrors();
+
+            if ($this->request->isAJAX()) {
+                return $this->response->setJSON([
+                    'success' => false,
+                    'errors'  => $errors
+                ]);
+            }
+
+            return redirect()->back()->withInput()->with('errors', $errors);
         }
+
 
         $data = [
             'name'        => $this->request->getPost('artist_name'),
@@ -33,7 +43,6 @@ class ArtistController extends BaseController
             'apple_id'    => $this->request->getPost('apple_id'),
         ];
 
-        // Handle image upload
         $img = $this->request->getFile('profile_image');
         if ($img && $img->isValid() && !$img->hasMoved()) {
             $newName = $img->getRandomName();
@@ -43,8 +52,16 @@ class ArtistController extends BaseController
 
         $this->artistRepo->create($data);
 
+        if ($this->request->isAJAX()) {
+            return $this->response->setJSON([
+                'success' => true,
+                'message' => 'Artist created successfully'
+            ]);
+        }
+
         return redirect()->back()->with('success', 'Artist created successfully');
     }
+
 
     public function index()
     {

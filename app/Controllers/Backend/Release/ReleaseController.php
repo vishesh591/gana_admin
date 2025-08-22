@@ -47,7 +47,7 @@ class ReleaseController extends BaseController
     // Store release
     public function store()
     {
-        dd(1);
+        // return response()->setJSON("Api Call Successfull");
         // --- DEBUG: Validation temporarily skipped ---
         /*
     $validationRules = [

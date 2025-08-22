@@ -46,17 +46,24 @@ class LabelController extends BaseController
     {
         $validationRules = [
             'label_name'   => 'required|min_length[2]|max_length[255]',
-            // 'primary_label' => 'required|min_length[2]|max_length[255]',
             'logo'         => 'uploaded[logo]|is_image[logo]|mime_in[logo,image/jpg,image/jpeg,image/png]'
         ];
 
         if (!$this->validate($validationRules)) {
-            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+            $errors = $this->validator->getErrors();
+
+            if ($this->request->isAJAX()) {
+                return $this->response->setJSON([
+                    'success' => false,
+                    'errors'  => $errors
+                ]);
+            }
+
+            return redirect()->back()->withInput()->with('errors', $errors);
         }
 
         $session = session();
         $user    = $session->get('user');
-
         $primaryLabelName = $this->request->getPost('primary_label_name');
 
         $userModel = new \App\Models\UserModel();
@@ -78,8 +85,16 @@ class LabelController extends BaseController
 
         $this->labelRepo->create($data);
 
+        if ($this->request->isAJAX()) {
+            return $this->response->setJSON([
+                'success' => true,
+                'message' => 'Label created successfully'
+            ]);
+        }
+
         return redirect()->back()->with('success', 'Label created successfully');
     }
+
 
 
     public function getLabelsJson()

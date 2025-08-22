@@ -1,4 +1,4 @@
-<div class="content-page">
+<div class="admin-add-releases-form content-page mb-4">
     <div class="content">
         <div class="container-xxl">
             <div class="py-3 d-flex align-items-sm-center flex-sm-row flex-column justify-content-between">

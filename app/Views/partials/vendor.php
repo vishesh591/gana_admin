@@ -7,12 +7,8 @@
 <script src="/libs/jquery.counterup/jquery.counterup.min.js"></script>
 <script src="/libs/feather-icons/feather.min.js"></script>
 
-<script src="/js/app.js"></script>
-
-
 <!-- Datatables js -->
 <script src="/libs/datatables.net/js/jquery.dataTables.min.js"></script>
-
 <!-- dataTables.bootstrap5 -->
 <script src="/libs/datatables.net-bs5/js/dataTables.bootstrap5.min.js"></script>
 <script src="/libs/datatables.net-buttons/js/dataTables.buttons.min.js"></script>
@@ -40,3 +36,4 @@
 <!-- Datatable Demo App Js -->
 <script src="/js/pages/datatable.init.js"></script>
 
+<script src="/js/app.js"></script>

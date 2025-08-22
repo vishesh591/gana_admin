@@ -40,7 +40,7 @@ $routes->group('superadmin', ['filter' => 'role:superadmin'], function ($routes)
     $routes->get('facebook', 'SuperAdmin::facebook');
 
     $routes->get('add-release', 'Backend\Release\ReleaseController::addRelease');
-    $routes->get('support', 'SuperAdmin::support');
+    // $routes->get('support', 'SuperAdmin::support');//will comment later
     $routes->get('support_user', 'SuperAdmin::support_user');
     $routes->post('create-artist', 'Backend\Artist\ArtistController::store');
     $routes->post('create-label', 'Backend\Label\LabelController::store');
@@ -57,6 +57,10 @@ $routes->group('superadmin', ['filter' => 'role:superadmin'], function ($routes)
     $routes->get('api/labels', 'Backend\Label\LabelController::getLabelsJson');
     $routes->get('api/accounts', 'RegisterController::getAccountsJson');
     $routes->get('pages-profile', 'RegisterController::index');
+    $routes->get('support', 'Backend\Support\SupportController::index');
+    $routes->post('support/store', 'Backend\Support\SupportController::store');
+    $routes->get('support/data', 'Backend\Support\SupportController::data');
+    $routes->post('support/update-status/(:num)', 'Backend\Support\SupportController::updateStatus/$1');
 });
 
 // Routes only for artists

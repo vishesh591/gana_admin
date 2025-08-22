@@ -21,8 +21,13 @@
 
 
 <!-- END wrapper -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
+<!-- DataTables after jQuery -->
+<!-- <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script> -->
 <?= $this->include('partials/vendor') ?>
+
+ <script src="/js/app.js"></script>
 
 <!-- Apexcharts JS -->
 <script src="/libs/apexcharts/apexcharts.min.js"></script>
@@ -206,9 +211,8 @@
         uploadsChart.render();
     });
 </script>
-
 <!-- App js-->
-<script src="/js/app.js"></script>
+
 </body>
 
 </html>
