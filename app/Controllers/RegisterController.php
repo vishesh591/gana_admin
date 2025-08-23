@@ -131,6 +131,12 @@ class RegisterController extends BaseController
         $user = $this->userModel->findAll();
 
         // return response()->setJson($user);
+        $page_array = [
+            'file_name' => 'profile_page',
+            'users' => $user
+        ];
+
+        return view('superadmin/index', $page_array);
 
     }
 }
