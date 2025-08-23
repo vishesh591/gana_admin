@@ -2,16 +2,16 @@ function _typeof(e) {
   return (_typeof =
     "function" == typeof Symbol && "symbol" == typeof Symbol.iterator
       ? function (e) {
-          return typeof e;
-        }
+        return typeof e;
+      }
       : function (e) {
-          return e &&
-            "function" == typeof Symbol &&
-            e.constructor === Symbol &&
-            e !== Symbol.prototype
-            ? "symbol"
-            : typeof e;
-        })(e);
+        return e &&
+          "function" == typeof Symbol &&
+          e.constructor === Symbol &&
+          e !== Symbol.prototype
+          ? "symbol"
+          : typeof e;
+      })(e);
 }
 function _classCallCheck(e, t) {
   if (!(e instanceof t))
@@ -38,11 +38,11 @@ function _defineProperty(e, t, n) {
   return (
     (t = _toPropertyKey(t)) in e
       ? Object.defineProperty(e, t, {
-          value: n,
-          enumerable: !0,
-          configurable: !0,
-          writable: !0,
-        })
+        value: n,
+        enumerable: !0,
+        configurable: !0,
+        writable: !0,
+      })
       : (e[t] = n),
     e
   );
@@ -74,22 +74,22 @@ var App = (() =>
             e.preventDefault(),
               $("body").toggleClass("fullscreen-enable"),
               document.fullscreenElement ||
-              document.mozFullScreenElement ||
-              document.webkitFullscreenElement
+                document.mozFullScreenElement ||
+                document.webkitFullscreenElement
                 ? document.cancelFullScreen
                   ? document.cancelFullScreen()
                   : document.mozCancelFullScreen
-                  ? document.mozCancelFullScreen()
-                  : document.webkitCancelFullScreen &&
+                    ? document.mozCancelFullScreen()
+                    : document.webkitCancelFullScreen &&
                     document.webkitCancelFullScreen()
                 : document.documentElement.requestFullscreen
-                ? document.documentElement.requestFullscreen()
-                : document.documentElement.mozRequestFullScreen
-                ? document.documentElement.mozRequestFullScreen()
-                : document.documentElement.webkitRequestFullscreen &&
-                  document.documentElement.webkitRequestFullscreen(
-                    Element.ALLOW_KEYBOARD_INPUT
-                  );
+                  ? document.documentElement.requestFullscreen()
+                  : document.documentElement.mozRequestFullScreen
+                    ? document.documentElement.mozRequestFullScreen()
+                    : document.documentElement.webkitRequestFullscreen &&
+                    document.documentElement.webkitRequestFullscreen(
+                      Element.ALLOW_KEYBOARD_INPUT
+                    );
           }),
             document.addEventListener("fullscreenchange", e),
             document.addEventListener("webkitfullscreenchange", e),
@@ -127,7 +127,7 @@ var App = (() =>
                       (e.className =
                         e.dataset.originalClass + " " + this.value);
                   }),
-              document.getElementById("liveAlertPlaceholder")),
+                document.getElementById("liveAlertPlaceholder")),
             t = document.getElementById("liveAlertBtn");
           t &&
             t.addEventListener("click", function () {
@@ -163,25 +163,25 @@ var App = (() =>
           e(),
             window.addEventListener("resize", e),
             $("#side-menu").length &&
-              ($("#side-menu li .collapse").on({
-                "show.bs.collapse": function (e) {
-                  e = $(e.target).parents(".collapse.show");
-                  $("#side-menu .collapse.show").not(e).collapse("hide");
-                },
-              }),
+            ($("#side-menu li .collapse").on({
+              "show.bs.collapse": function (e) {
+                e = $(e.target).parents(".collapse.show");
+                $("#side-menu .collapse.show").not(e).collapse("hide");
+              },
+            }),
               $("#side-menu a").each(function () {
                 var e = window.location.href.split(/[?#]/)[0];
                 this.href == e &&
                   ($(this).addClass("active"),
-                  $(this).parent().addClass("menuitem-active"),
-                  $(this).parent().parent().parent().addClass("show"),
-                  $(this)
-                    .parent()
-                    .parent()
-                    .parent()
-                    .parent()
-                    .addClass("menuitem-active"),
-                  "sidebar-menu" !==
+                    $(this).parent().addClass("menuitem-active"),
+                    $(this).parent().parent().parent().addClass("show"),
+                    $(this)
+                      .parent()
+                      .parent()
+                      .parent()
+                      .parent()
+                      .addClass("menuitem-active"),
+                    "sidebar-menu" !==
                     (e = $(this)
                       .parent()
                       .parent()
@@ -189,16 +189,16 @@ var App = (() =>
                       .parent()
                       .parent()
                       .parent()).attr("id") && e.addClass("show"),
-                  $(this)
-                    .parent()
-                    .parent()
-                    .parent()
-                    .parent()
-                    .parent()
-                    .parent()
-                    .parent()
-                    .addClass("menuitem-active"),
-                  "wrapper" !==
+                    $(this)
+                      .parent()
+                      .parent()
+                      .parent()
+                      .parent()
+                      .parent()
+                      .parent()
+                      .parent()
+                      .addClass("menuitem-active"),
+                    "wrapper" !==
                     (e = $(this)
                       .parent()
                       .parent()
@@ -209,17 +209,17 @@ var App = (() =>
                       .parent()
                       .parent()
                       .parent()).attr("id") && e.addClass("show"),
-                  (e = $(this)
-                    .parent()
-                    .parent()
-                    .parent()
-                    .parent()
-                    .parent()
-                    .parent()
-                    .parent()
-                    .parent()
-                    .parent()
-                    .parent()).is("body") || e.addClass("menuitem-active"));
+                    (e = $(this)
+                      .parent()
+                      .parent()
+                      .parent()
+                      .parent()
+                      .parent()
+                      .parent()
+                      .parent()
+                      .parent()
+                      .parent()
+                      .parent()).is("body") || e.addClass("menuitem-active"));
               }));
         },
       },
@@ -573,7 +573,7 @@ document.addEventListener("DOMContentLoaded", function () {
     typeof views !== "string"
       ? 0
       : parseFloat(views.toUpperCase()) *
-        (views.toUpperCase().includes("K") ? 1000 : 1);
+      (views.toUpperCase().includes("K") ? 1000 : 1);
   const parseExpiry = (expiry) =>
     typeof expiry !== "string" || expiry === "-" ? Infinity : parseInt(expiry);
   const getStatusBadge = (status) =>
@@ -742,22 +742,21 @@ document.addEventListener("DOMContentLoaded", function () {
                                 <input class="form-check-input region-checkbox" type="checkbox" id="region-${regionId}" data-region="${region}" checked>
                                 <label class="form-check-label fw-bold" for="region-${regionId}">${region}</label>
                             </div>
-                            <span class="text-muted small me-2">${
-                              countries.length
-                            } countries</span>
+                            <span class="text-muted small me-2">${countries.length
+            } countries</span>
                         </button>
                     </h2>
                     <div id="collapse-${regionId}" class="accordion-collapse collapse" data-bs-parent="#territoryAccordion">
                         <div class="accordion-body">
                             <div class="territory-list-inner">${countries
-                              .map(
-                                (c) => `
+              .map(
+                (c) => `
                                 <div class="form-check">
                                     <input class="form-check-input country-checkbox" type="checkbox" value="${c.code}" id="country-${c.code}" data-region="${region}" checked>
                                     <label class="form-check-label" for="country-${c.code}">${c.name}</label>
                                 </div>`
-                              )
-                              .join("")}
+              )
+              .join("")}
                             </div>
                         </div>
                     </div>
@@ -899,9 +898,8 @@ document.addEventListener("DOMContentLoaded", function () {
         pending: "text-warning",
         rejected: "text-danger",
       };
-      return `<i data-feather="${icons[status] || "help-circle"}" class="${
-        colors[status] || "text-muted"
-      }"></i>`;
+      return `<i data-feather="${icons[status] || "help-circle"}" class="${colors[status] || "text-muted"
+        }"></i>`;
     };
     const getStatusBadge = (status) => {
       const config = {
@@ -909,9 +907,8 @@ document.addEventListener("DOMContentLoaded", function () {
         pending: "status-pending",
         rejected: "status-rejected",
       };
-      return `<span class="badge status-badge ${
-        config[status] || "bg-secondary"
-      }">${status.toUpperCase()}</span>`;
+      return `<span class="badge status-badge ${config[status] || "bg-secondary"
+        }">${status.toUpperCase()}</span>`;
     };
     const createLink = (url, iconClass) =>
       url
@@ -1131,9 +1128,8 @@ document.addEventListener("DOMContentLoaded", function () {
         pending: "text-warning",
         rejected: "text-danger",
       };
-      return `<i data-feather="${icons[status] || "help-circle"}" class="${
-        colors[status] || "text-muted"
-      }"></i>`;
+      return `<i data-feather="${icons[status] || "help-circle"}" class="${colors[status] || "text-muted"
+        }"></i>`;
     };
     const getStatusBadge = (status) => {
       const config = {
@@ -1141,9 +1137,8 @@ document.addEventListener("DOMContentLoaded", function () {
         pending: "status-pending",
         rejected: "status-rejected",
       };
-      return `<span class="badge status-badge ${
-        config[status] || "bg-secondary"
-      }">${status.toUpperCase()}</span>`;
+      return `<span class="badge status-badge ${config[status] || "bg-secondary"
+        }">${status.toUpperCase()}</span>`;
     };
     const createLink = (url, iconClass) =>
       url
@@ -1417,9 +1412,8 @@ document.addEventListener("DOMContentLoaded", function () {
         pending: "text-warning",
         rejected: "text-danger",
       };
-      return `<i data-feather="${icons[status] || "help-circle"}" class="${
-        colors[status] || "text-muted"
-      }"></i>`;
+      return `<i data-feather="${icons[status] || "help-circle"}" class="${colors[status] || "text-muted"
+        }"></i>`;
     };
     const getStatusBadge = (status) => {
       const config = {
@@ -1427,9 +1421,8 @@ document.addEventListener("DOMContentLoaded", function () {
         pending: "status-pending",
         rejected: "status-rejected",
       };
-      return `<span class="badge status-badge ${
-        config[status] || "bg-secondary"
-      }">${status.toUpperCase()}</span>`;
+      return `<span class="badge status-badge ${config[status] || "bg-secondary"
+        }">${status.toUpperCase()}</span>`;
     };
     const createLink = (url, iconClass) =>
       url
@@ -1848,9 +1841,8 @@ document.addEventListener("DOMContentLoaded", function () {
         review: "bi-hourglass-split text-warning",
         takedown: "bi-exclamation-circle-fill text-secondary",
       };
-      return `<i class="bi ${
-        icons[status] || "bi-question-circle-fill text-muted"
-      }" title="${status}"></i>`;
+      return `<i class="bi ${icons[status] || "bi-question-circle-fill text-muted"
+        }" title="${status}"></i>`;
     }
 
     function getStatusBadge(status) {
@@ -2152,9 +2144,8 @@ document.addEventListener("DOMContentLoaded", function () {
           (label) => `
             <tr>
               <td>
-                <input type="checkbox" class="form-check-input label-checkbox" value="${
-                  label.id
-                }">
+                <input type="checkbox" class="form-check-input label-checkbox" value="${label.id
+            }">
               </td>
               <td>
                 <div class="label-profile">
@@ -2166,9 +2157,8 @@ document.addEventListener("DOMContentLoaded", function () {
                 </div>
               </td>
               <td class="text-center">
-                <span class="releases-badge">${
-                  label.release_count ?? 0
-                } releases</span>
+                <span class="releases-badge">${label.release_count ?? 0
+            } releases</span>
               </td>
             </tr>
           `
@@ -2193,9 +2183,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
     let html = `
       <li class="page-item ${currentPage === 1 ? "disabled" : ""}">
-        <a class="page-link" href="#" data-page="${
-          currentPage - 1
-        }">Previous</a>
+        <a class="page-link" href="#" data-page="${currentPage - 1
+      }">Previous</a>
       </li>
     `;
 
@@ -2349,44 +2338,44 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 $(document).ready(function () {
-    $("#claimingRequestForm").on("submit", function (e) {
-        e.preventDefault();
+  $("#claimingRequestForm").on("submit", function (e) {
+    e.preventDefault();
 
-        let formData = new FormData(this);
+    let formData = new FormData(this);
 
-        $.ajax({
-            url: $(this).attr("action"),
-            type: "POST",
-            data: formData,
-            processData: false,
-            contentType: false,
-            success: function (response) {
-                if (response.status === "error") {
-                    let errorHtml = '<div class="alert alert-danger">';
-                    if (response.errors) {
-                        $.each(response.errors, function (key, error) {
-                            errorHtml += `<div>${error}</div>`;
-                        });
-                    } else if (response.message) {
-                        errorHtml += `<div>${response.message}</div>`;
-                    }
-                    errorHtml += '</div>';
-                    $("#labelAlertBox").html(errorHtml);
-                } else {
-                    $("#labelAlertBox").html(
-                        '<div class="alert alert-success">User registered successfully.</div>'
-                    );
-                    $("#claimingRequestForm")[0].reset();
-                    $("#claimingRequestModal").modal("hide");
-                }
-            },
-            error: function () {
-                $("#labelAlertBox").html(
-                    '<div class="alert alert-danger">Something went wrong. Try again.</div>'
-                );
-            }
-        });
+    $.ajax({
+      url: $(this).attr("action"),
+      type: "POST",
+      data: formData,
+      processData: false,
+      contentType: false,
+      success: function (response) {
+        if (response.status === "error") {
+          let errorHtml = '<div class="alert alert-danger">';
+          if (response.errors) {
+            $.each(response.errors, function (key, error) {
+              errorHtml += `<div>${error}</div>`;
+            });
+          } else if (response.message) {
+            errorHtml += `<div>${response.message}</div>`;
+          }
+          errorHtml += '</div>';
+          $("#labelAlertBox").html(errorHtml);
+        } else {
+          $("#labelAlertBox").html(
+            '<div class="alert alert-success">User registered successfully.</div>'
+          );
+          $("#claimingRequestForm")[0].reset();
+          $("#claimingRequestModal").modal("hide");
+        }
+      },
+      error: function () {
+        $("#labelAlertBox").html(
+          '<div class="alert alert-danger">Something went wrong. Try again.</div>'
+        );
+      }
     });
+  });
 });
 
 // claiming-req js
@@ -2455,34 +2444,30 @@ document.addEventListener("DOMContentLoaded", function () {
             (request) => `
                     <tr>
                         <td class="text-center align-middle">${getStatusIcon(
-                          request.status
-                        )}</td>
+              request.status
+            )}</td>
                         <td class="align-middle">
                             <div>
-                                <div class="release-title">${
-                                  request.songName
-                                }</div>
-                                <div class="release-artist text-muted small">${
-                                  request.artistName
-                                }</div>
+                                <div class="release-title">${request.songName
+              }</div>
+                                <div class="release-artist text-muted small">${request.artistName
+              }</div>
                             </div>
                         </td>
                         <td class="align-middle">${request.isrc || "N/A"}</td>
                         <td class="align-middle">
-                            ${
-                              request.instagram
-                                ? `<a href="${request.instagram}" target="_blank" class="social-link me-2 fs-5"><i class="bi bi-instagram"></i></a>`
-                                : ""
-                            }
-                            ${
-                              request.facebook
-                                ? `<a href="${request.facebook}" target="_blank" class="social-link fs-5"><i class="bi bi-facebook"></i></a>`
-                                : ""
-                            }
+                            ${request.instagram
+                ? `<a href="${request.instagram}" target="_blank" class="social-link me-2 fs-5"><i class="bi bi-instagram"></i></a>`
+                : ""
+              }
+                            ${request.facebook
+                ? `<a href="${request.facebook}" target="_blank" class="social-link fs-5"><i class="bi bi-facebook"></i></a>`
+                : ""
+              }
                         </td>
                         <td class="align-middle">${getStatusBadge(
-                          request.status
-                        )}</td>
+                request.status
+              )}</td>
                     </tr>
                 `
           )
@@ -2502,9 +2487,8 @@ document.addEventListener("DOMContentLoaded", function () {
         Pending: "text-warning",
         Rejected: "text-danger",
       };
-      return `<i data-feather="${icons[status] || "help-circle"}" class="${
-        colors[status] || "text-muted"
-      }"></i>`;
+      return `<i data-feather="${icons[status] || "help-circle"}" class="${colors[status] || "text-muted"
+        }"></i>`;
     }
 
     function getStatusBadge(status) {
@@ -2513,9 +2497,8 @@ document.addEventListener("DOMContentLoaded", function () {
         Pending: "warning",
         Rejected: "danger",
       };
-      return `<span class="badge bg-${
-        badgeClasses[status] || "secondary"
-      }">${status}</span>`;
+      return `<span class="badge bg-${badgeClasses[status] || "secondary"
+        }">${status}</span>`;
     }
 
     // --- EVENT LISTENERS ---
@@ -2647,34 +2630,30 @@ document.addEventListener("DOMContentLoaded", function () {
             (request) => `
                     <tr>
                         <td class="text-center align-middle">${getStatusIcon(
-                          request.status
-                        )}</td>
+              request.status
+            )}</td>
                         <td class="align-middle">
                             <div>
-                                <div class="release-title">${
-                                  request.songName
-                                }</div>
-                                <div class="release-artist text-muted small">${
-                                  request.artistName
-                                }</div>
+                                <div class="release-title">${request.songName
+              }</div>
+                                <div class="release-artist text-muted small">${request.artistName
+              }</div>
                             </div>
                         </td>
                         <td class="align-middle">${request.isrc || "N/A"}</td>
                         <td class="align-middle">
-                            ${
-                              request.instagram
-                                ? `<a href="${request.instagram}" target="_blank" class="social-link me-2 fs-5"><i class="bi bi-instagram"></i></a>`
-                                : ""
-                            }
-                            ${
-                              request.facebook
-                                ? `<a href="${request.facebook}" target="_blank" class="social-link fs-5"><i class="bi bi-facebook"></i></a>`
-                                : ""
-                            }
+                            ${request.instagram
+                ? `<a href="${request.instagram}" target="_blank" class="social-link me-2 fs-5"><i class="bi bi-instagram"></i></a>`
+                : ""
+              }
+                            ${request.facebook
+                ? `<a href="${request.facebook}" target="_blank" class="social-link fs-5"><i class="bi bi-facebook"></i></a>`
+                : ""
+              }
                         </td>
                         <td class="align-middle">${getStatusBadge(
-                          request.status
-                        )}</td>
+                request.status
+              )}</td>
                     </tr>
                 `
           )
@@ -2694,9 +2673,8 @@ document.addEventListener("DOMContentLoaded", function () {
         Pending: "text-warning",
         Rejected: "text-danger",
       };
-      return `<i data-feather="${icons[status] || "help-circle"}" class="${
-        colors[status] || "text-muted"
-      }"></i>`;
+      return `<i data-feather="${icons[status] || "help-circle"}" class="${colors[status] || "text-muted"
+        }"></i>`;
     }
 
     function getStatusBadge(status) {
@@ -2705,9 +2683,8 @@ document.addEventListener("DOMContentLoaded", function () {
         Pending: "warning",
         Rejected: "danger",
       };
-      return `<span class="badge bg-${
-        badgeClasses[status] || "secondary"
-      }">${status}</span>`;
+      return `<span class="badge bg-${badgeClasses[status] || "secondary"
+        }">${status}</span>`;
     }
 
     // --- EVENT LISTENERS ---
@@ -2829,9 +2806,8 @@ document.addEventListener("DOMContentLoaded", function () {
         Pending: "text-warning",
         Rejected: "text-danger",
       };
-      return `<i data-feather="${icons[status] || "help-circle"}" class="${
-        colors[status] || "text-muted"
-      }"></i>`;
+      return `<i data-feather="${icons[status] || "help-circle"}" class="${colors[status] || "text-muted"
+        }"></i>`;
     }
 
     function getStatusBadge(status) {
@@ -2841,9 +2817,8 @@ document.addEventListener("DOMContentLoaded", function () {
         Rejected: "danger",
       };
       const textClass = status === "Pending" ? "text-dark" : "";
-      return `<span class="badge bg-${
-        badgeClasses[status] || "secondary"
-      } ${textClass}">${status}</span>`;
+      return `<span class="badge bg-${badgeClasses[status] || "secondary"
+        } ${textClass}">${status}</span>`;
     }
 
     function exportToCsv(filename, data) {
@@ -2915,8 +2890,8 @@ document.addEventListener("DOMContentLoaded", function () {
             (request) => `
                     <tr>
                         <td class="text-center">${getStatusIcon(
-                          request.status
-                        )}</td>
+              request.status
+            )}</td>
                         <td>
                             <div class="release-title">
                                 <a href="#">${request.songName}</a>
@@ -2924,18 +2899,16 @@ document.addEventListener("DOMContentLoaded", function () {
                         </td>
                         <td>${request.isrc || "N/A"}</td>
                         <td class="text-center">
-                            ${
-                              request.instagramAudio
-                                ? `<a href="${request.instagramAudio}" target="_blank" class="link-icon" title="Instagram Audio"><i class="bi bi-music-note-beamed"></i></a>`
-                                : "N/A"
-                            }
+                            ${request.instagramAudio
+                ? `<a href="${request.instagramAudio}" target="_blank" class="link-icon" title="Instagram Audio"><i class="bi bi-music-note-beamed"></i></a>`
+                : "N/A"
+              }
                         </td>
                         <td class="text-center">
-                            ${
-                              request.reelMerge
-                                ? `<a href="${request.reelMerge}" target="_blank" class="link-icon" title="Reel Merge"><i class="bi bi-camera-reels"></i></a>`
-                                : "N/A"
-                            }
+                            ${request.reelMerge
+                ? `<a href="${request.reelMerge}" target="_blank" class="link-icon" title="Reel Merge"><i class="bi bi-camera-reels"></i></a>`
+                : "N/A"
+              }
                         </td>
                         <td>${request.matchingTime || "N/A"}</td>
                         <td>${getStatusBadge(request.status)}</td>
@@ -3408,22 +3381,18 @@ document.addEventListener("DOMContentLoaded", function () {
         !data || data.length === 0
           ? `<tr><td colspan="10" class="text-center p-5"><h5>No matching conflicts found.</h5></td></tr>`
           : data
-              .map(
-                (req) => `
+            .map(
+              (req) => `
                 <tr style="cursor: pointer;" data-bs-toggle="offcanvas" data-bs-target="#conflictResolutionOffcanvas"
-                    data-song-name="${req.assetTitle}" data-artist-name="${
-                  req.artist
+                    data-song-name="${req.assetTitle}" data-artist-name="${req.artist
                 }" data-isrc="${req.isrc}" 
-                    data-cover-url="${req.albumCoverUrl}" data-category="${
-                  req.category
+                    data-cover-url="${req.albumCoverUrl}" data-category="${req.category
                 }" data-other-party="${req.otherParty}">
                     <td class="text-center"><i class="bi bi-youtube text-danger fs-5"></i></td>
                     <td>${req.category}</td>
                     <td>${req.assetTitle}</td>
-                    <td><div class="fw-bold">${
-                      req.artist
-                    }</div><small class="text-muted">Asset ID: ${
-                  req.assetId
+                    <td><div class="fw-bold">${req.artist
+                }</div><small class="text-muted">Asset ID: ${req.assetId
                 }</small></td>
                     <td>${req.upc}</td>
                     <td>${req.otherParty}</td>
@@ -3432,8 +3401,8 @@ document.addEventListener("DOMContentLoaded", function () {
                     <td>${getStatusBadge(req.status)}</td>
                     <td><i class="bi bi-chevron-right text-muted"></i></td>
                 </tr>`
-              )
-              .join("");
+            )
+            .join("");
       document.getElementById(
         "pagination-text"
       ).textContent = `${data.length} of ${conflictRequests.length} results`;
@@ -3450,18 +3419,17 @@ document.addEventListener("DOMContentLoaded", function () {
                     <h2 class="accordion-header" id="heading-${regionId}">
                         <button class="accordion-button collapsed d-flex align-items-center" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-${regionId}" aria-expanded="false">
                             <div class="form-check me-auto pe-2"><input class="form-check-input region-checkbox" type="checkbox" id="region-${regionId}" data-region="${region}" checked><label class="form-check-label fw-bold" for="region-${regionId}">${region}</label></div>
-                            <span class="text-muted small me-2">${
-                              countries.length
-                            } countries</span>
+                            <span class="text-muted small me-2">${countries.length
+            } countries</span>
                         </button>
                     </h2>
                     <div id="collapse-${regionId}" class="accordion-collapse collapse" data-bs-parent="#territoryAccordion">
                         <div class="accordion-body"><div class="territory-list-inner">${countries
-                          .map(
-                            (country) =>
-                              `<div class="form-check"><input class="form-check-input country-checkbox" type="checkbox" value="${country.code}" id="country-${country.code}" data-region="${region}" checked><label class="form-check-label" for="country-${country.code}">${country.name}</label></div>`
-                          )
-                          .join("")}</div></div>
+              .map(
+                (country) =>
+                  `<div class="form-check"><input class="form-check-input country-checkbox" type="checkbox" value="${country.code}" id="country-${country.code}" data-region="${region}" checked><label class="form-check-label" for="country-${country.code}">${country.name}</label></div>`
+              )
+              .join("")}</div></div>
                     </div>
                 </div>`;
         })
@@ -3942,7 +3910,7 @@ document.addEventListener("DOMContentLoaded", function () {
       typeof views !== "string"
         ? 0
         : parseFloat(views.toUpperCase()) *
-          (views.toUpperCase().includes("K") ? 1000 : 1);
+        (views.toUpperCase().includes("K") ? 1000 : 1);
     const parseExpiry = (expiry) =>
       typeof expiry !== "string" || expiry === "-"
         ? Infinity
@@ -4117,22 +4085,21 @@ document.addEventListener("DOMContentLoaded", function () {
                                     <input class="form-check-input region-checkbox" type="checkbox" id="region-fb-${regionId}" data-region="${region}" checked>
                                     <label class="form-check-label fw-bold" for="region-fb-${regionId}">${region}</label>
                                 </div>
-                                <span class="text-muted small me-2">${
-                                  countries.length
-                                } countries</span>
+                                <span class="text-muted small me-2">${countries.length
+              } countries</span>
                             </button>
                         </h2>
                         <div id="collapse-fb-${regionId}" class="accordion-collapse collapse" data-bs-parent="#territoryAccordion">
                             <div class="accordion-body">
                                 <div class="territory-list-inner">${countries
-                                  .map(
-                                    (c) => `
+                .map(
+                  (c) => `
                                     <div class="form-check">
                                         <input class="form-check-input country-checkbox" type="checkbox" value="${c.code}" id="country-fb-${c.code}" data-region="${region}" checked>
                                         <label class="form-check-label" for="country-fb-${c.code}">${c.name}</label>
                                     </div>`
-                                  )
-                                  .join("")}
+                )
+                .join("")}
                                 </div>
                             </div>
                         </div>
@@ -4330,20 +4297,17 @@ $(document).ready(function () {
   });
 });
 
-//Add Releases Js
+// Add Releases Multi-Step Form JavaScript
 document.addEventListener("DOMContentLoaded", function () {
   // --- Page-Specific Guard Clause for the Add Release Page ---
-  const addReleasePageContainer = document.querySelector(
-    ".admin-add-releases-form"
-  );
+  const addReleasePageContainer = document.querySelector(".admin-add-releases-form");
 
   // If this container doesn't exist, stop executing the rest of the script.
   if (!addReleasePageContainer) {
     return;
   }
 
-  // --- If we are on the correct page, proceed with the form logic ---
-  const releaseForm = document.getElementById("releaseForm");
+  // --- Configuration ---
   const totalSteps = 5;
   const stepTitles = {
     1: "Metadata",
@@ -4353,26 +4317,23 @@ document.addEventListener("DOMContentLoaded", function () {
     5: "Terms",
   };
 
-  // This function handles showing/hiding steps and updating the progress bar
-  function showStep(step) {
-    // Hide all step content
-    document.querySelectorAll(".step-content").forEach((content) => {
-      content.classList.remove("active");
-    });
+  let currentStep = 1;
 
-    // Show the correct step content
-    const nextStepContent = document.getElementById(`step-${step}`);
-    if (nextStepContent) {
-      nextStepContent.classList.add("active");
-    }
+  // --- Initialize feather icons ---
+  if (typeof feather !== "undefined") {
+    feather.replace();
+  }
 
-    // Update the progress indicator at the top
+  // --- STEP NAVIGATION FUNCTIONS ---
+
+  function updateStepIndicator(step) {
     const steps = document.querySelectorAll(".step");
     const progressLine = document.getElementById("progressLine");
 
     steps.forEach((stepEl, index) => {
       const stepNum = index + 1;
       stepEl.classList.remove("active", "completed");
+
       if (stepNum < step) {
         stepEl.classList.add("completed");
       } else if (stepNum === step) {
@@ -4380,31 +4341,209 @@ document.addEventListener("DOMContentLoaded", function () {
       }
     });
 
+    // Update progress line width
     if (progressLine) {
       const progressWidth = ((step - 1) / (totalSteps - 1)) * 100;
       progressLine.style.width = progressWidth + "%";
     }
+  }
 
-    // Update the main page title
+  function showStep(step) {
+    // Hide all step contents
+    document.querySelectorAll(".step-content").forEach((content) => {
+      content.classList.remove("active");
+    });
+
+    // Show the target step with slight delay for smooth transition
+    setTimeout(() => {
+      const targetStep = document.getElementById(`step-${step}`);
+      if (targetStep) {
+        targetStep.classList.add("active");
+      }
+    }, 150);
+
+    // Update step indicator
+    updateStepIndicator(step);
+
+    // Update page title
     const currentStepTitleEl = document.querySelector(".current-step-title");
     if (currentStepTitleEl) {
       currentStepTitleEl.textContent = stepTitles[step];
     }
+
+    currentStep = step;
   }
+
+  // --- STEP 1 VALIDATION (Basic Information + Artwork) ---
+
+  function initializeStep1Validation() {
+
+    // Validation rules for each field
+    const rules = {
+      releaseTitle: { required: true, minLength: 2, maxLength: 100 },
+      labelName: { required: true },
+      artist: { required: true, minLength: 2, maxLength: 100 },
+      featuringArtist: { minLength: 2, maxLength: 100 },
+      releaseType: { required: true, type: 'radio' },
+      mood: { required: true, type: 'select' },
+      genre: { required: true, type: 'select' },
+      language: { required: true, type: 'select' },
+      upcEan: { pattern: /^\d{12,13}$/, patternMsg: 'UPC/EAN must be 12 or 13 digits only.' },
+      artworkFile: { required: true, type: 'file' }
+    };
+
+    // Generic validation function
+    function validateField(fieldId) {
+      const field = document.getElementById(fieldId);
+      const error = document.getElementById(fieldId + 'Error');
+      const rule = rules[fieldId];
+
+      if (!field || !rule) return true;
+
+      // Clear previous validation
+      field.classList.remove('is-invalid', 'is-valid');
+      if (error) {
+        error.textContent = '';
+        error.style.display = 'none';
+      }
+
+      let value = field.value ? field.value.trim() : '';
+      let isValid = true;
+      let errorMsg = '';
+
+      // Handle different field types
+      if (rule.type === 'radio') {
+        const radios = document.querySelectorAll(`input[name="${fieldId}"]`);
+        isValid = Array.from(radios).some(r => r.checked);
+        errorMsg = 'Please select a release type.';
+        field = document.querySelector('.release-type-container');
+      } else if (rule.type === 'select') {
+        isValid = value !== '' && value !== null;
+        errorMsg = `Please select a ${fieldId}.`;
+      } else if (rule.type === 'file') {
+        // File validation for artwork
+        return validateArtworkFile();
+      } else {
+        // Text inputs
+        if (rule.required && !value) {
+          isValid = false;
+          errorMsg = `${fieldId.replace(/([A-Z])/g, ' $1').toLowerCase()} is required.`;
+        } else if (value && rule.minLength && value.length < rule.minLength) {
+          isValid = false;
+          errorMsg = `Must be at least ${rule.minLength} characters long.`;
+        } else if (value && rule.maxLength && value.length > rule.maxLength) {
+          isValid = false;
+          errorMsg = `Cannot exceed ${rule.maxLength} characters.`;
+        } else if (value && rule.pattern && !rule.pattern.test(value)) {
+          isValid = false;
+          errorMsg = rule.patternMsg || 'Invalid format.';
+        }
+      }
+
+      // Apply validation styling
+      if (!isValid && rule.required || (!isValid && value)) {
+        field.classList.add('is-invalid');
+        if (error) {
+          error.textContent = errorMsg;
+          error.style.display = 'block';
+        }
+      } else if (isValid && (value || rule.required)) {
+        field.classList.add('is-valid');
+      }
+
+      return isValid || (!rule.required && !value);
+    }
+
+    // Artwork file validation (integrated)
+    function validateArtworkFile() {
+      const artworkFile = document.getElementById("artworkFile");
+      const artworkFileError = document.getElementById("artworkFileError");
+      const artworkUpload = document.getElementById("artworkUpload");
+
+      if (!artworkFile || !artworkFileError || !artworkUpload) return true;
+
+      // Reset validation state
+      artworkUpload.classList.remove("is-invalid", "is-valid");
+      artworkFileError.textContent = '';
+      artworkFileError.style.display = 'none';
+
+      if (!artworkFile.files || artworkFile.files.length === 0) {
+        artworkUpload.classList.add("is-invalid");
+        artworkFileError.textContent = 'Please select an artwork file.';
+        artworkFileError.style.display = 'block';
+        return false;
+      }
+
+      const file = artworkFile.files[0];
+      const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png'];
+      const maxSize = 10 * 1024 * 1024; // 10MB
+
+      if (!allowedTypes.includes(file.type)) {
+        artworkUpload.classList.add("is-invalid");
+        artworkFileError.textContent = 'Please select a valid image file (JPG, JPEG, or PNG).';
+        artworkFileError.style.display = 'block';
+        return false;
+      }
+
+      if (file.size > maxSize) {
+        artworkUpload.classList.add("is-invalid");
+        artworkFileError.textContent = 'File size should not exceed 10MB.';
+        artworkFileError.style.display = 'block';
+        return false;
+      }
+
+      // Valid file
+      artworkUpload.classList.add("is-valid");
+      artworkFileError.style.display = 'none';
+      return true;
+    }
+
+    // Add event listeners
+    Object.keys(rules).forEach(fieldId => {
+      const field = document.getElementById(fieldId);
+      if (!field) return;
+
+      if (rules[fieldId].type === 'radio') {
+        document.querySelectorAll(`input[name="${fieldId}"]`).forEach(radio => {
+          radio.addEventListener('change', () => validateField(fieldId));
+        });
+      } else if (rules[fieldId].type === 'file') {
+        field.addEventListener('change', () => validateField(fieldId));
+      } else {
+        field.addEventListener('input', () => validateField(fieldId));
+        field.addEventListener('change', () => validateField(fieldId));
+        field.addEventListener('blur', () => validateField(fieldId));
+      }
+    });
+
+    // Return validation function for the entire step 1
+    return function validateStep1() {
+      return Object.keys(rules).every(fieldId => validateField(fieldId));
+    };
+  }
+
+  // Initialize Step 1 validation
+  const validateStep1 = initializeStep1Validation();
 
   // --- EVENT LISTENERS ---
 
-  // Add click listener for all "Next" buttons
+  // Step navigation - Next buttons
   document.querySelectorAll(".next-step").forEach((btn) => {
     btn.addEventListener("click", function () {
       const nextStep = parseInt(this.dataset.next, 10);
+
+      // Validate current step before proceeding
+      if (currentStep === 1 && !validateStep1()) {
+        return; // Stay on step 1, validation errors will show
+      }
+
       if (nextStep <= totalSteps) {
         showStep(nextStep);
       }
     });
   });
 
-  // Add click listener for all "Previous" buttons
+  // Step navigation - Previous buttons
   document.querySelectorAll(".prev-step").forEach((btn) => {
     btn.addEventListener("click", function () {
       const prevStep = parseInt(this.dataset.prev, 10);
@@ -4414,18 +4553,42 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   });
 
-  // Artwork file upload logic
-  const artworkUpload = document.getElementById("artworkUpload");
-  if (artworkUpload) {
-    artworkUpload.addEventListener("click", function () {
-      document.getElementById("artworkFile").click();
+  // Step navigation - Click on step indicators
+  document.querySelectorAll(".step").forEach((step) => {
+    step.addEventListener("click", function () {
+      const stepNum = parseInt(this.dataset.step, 10);
+      if (stepNum >= 1 && stepNum <= totalSteps) {
+        showStep(stepNum);
+      }
+    });
+  });
+
+  // --- FILE UPLOAD FUNCTIONALITY ---
+
+  // Audio file upload
+  const audioUpload = document.getElementById("audioUpload");
+  const audioFile = document.getElementById("audioFile");
+
+  if (audioUpload && audioFile) {
+    audioUpload.addEventListener("click", function () {
+      audioFile.click();
     });
   }
 
+  // Artwork file upload
+  const artworkUpload = document.getElementById("artworkUpload");
   const artworkFile = document.getElementById("artworkFile");
-  if (artworkFile) {
+
+  if (artworkUpload && artworkFile) {
+    artworkUpload.addEventListener("click", function () {
+      artworkFile.click();
+    });
+
+    // Artwork file change handler with preview
     artworkFile.addEventListener("change", function (e) {
-      if (e.target.files && e.target.files[0]) {
+      const file = e.target.files[0];
+      if (file) {
+        // Show preview (validation happens automatically via event listener)
         const reader = new FileReader();
         reader.onload = function (event) {
           const preview = document.getElementById("artworkPreview");
@@ -4434,129 +4597,30 @@ document.addEventListener("DOMContentLoaded", function () {
             preview.classList.remove("d-none");
           }
         };
-        reader.readAsDataURL(e.target.files[0]);
+        reader.readAsDataURL(file);
       }
     });
   }
-  // Add any other listeners for this page here (e.g., for the audio upload)
-});
 
-let currentStep = 1;
-const totalSteps = 5;
+  // --- FORM SUBMISSION ---
 
-// Step titles for updating the header
-const stepTitles = {
-  1: "Metadata",
-  2: "Uploads",
-  3: "Stores",
-  4: "Date & Price",
-  5: "Terms",
-};
+  const releaseForm = document.getElementById("releaseForm");
+  if (releaseForm) {
+    releaseForm.addEventListener("submit", function (e) {
+      e.preventDefault();
 
-// Initialize feather icons
-if (typeof feather !== "undefined") {
-  feather.replace();
-}
+      // Validate Step 1 before submission
+      if (!validateStep1()) {
+        showStep(1); // Go back to step 1
+        return;
+      }
 
-// Function to update step indicator
-function updateStepIndicator(step) {
-  const steps = document.querySelectorAll(".step");
-  const progressLine = document.getElementById("progressLine");
+      // Add validation for other steps here as needed
 
-  steps.forEach((stepEl, index) => {
-    const stepNum = index + 1;
-    stepEl.classList.remove("active", "completed");
-
-    if (stepNum < step) {
-      stepEl.classList.add("completed");
-    } else if (stepNum === step) {
-      stepEl.classList.add("active");
-    }
-  });
-
-  // Update progress line width
-  const progressWidth = ((step - 1) / (totalSteps - 1)) * 100;
-  progressLine.style.width = progressWidth + "%";
-}
-
-// Function to show specific step content
-function showStep(step) {
-  // Hide all step contents
-  document.querySelectorAll(".step-content").forEach((content) => {
-    content.classList.remove("active");
-  });
-
-  // Show the target step
-  setTimeout(() => {
-    document.getElementById(`step-${step}`).classList.add("active");
-  }, 150);
-
-  // Update step indicator
-  updateStepIndicator(step);
-
-  // Update page title
-  document.querySelector(".current-step-title").textContent = stepTitles[step];
-
-  currentStep = step;
-}
-
-// Next step functionality
-document.querySelectorAll(".next-step").forEach((btn) => {
-  btn.addEventListener("click", function () {
-    const nextStep = parseInt(this.dataset.next);
-    if (nextStep <= totalSteps) {
-      showStep(nextStep);
-    }
-  });
-});
-
-// Previous step functionality
-document.querySelectorAll(".prev-step").forEach((btn) => {
-  btn.addEventListener("click", function () {
-    const prevStep = parseInt(this.dataset.prev);
-    if (prevStep >= 1) {
-      showStep(prevStep);
-    }
-  });
-});
-
-// Click on step indicator to navigate
-document.querySelectorAll(".step").forEach((step) => {
-  step.addEventListener("click", function () {
-    const stepNum = parseInt(this.dataset.step);
-    showStep(stepNum);
-  });
-});
-
-// File upload functionality
-document.getElementById("audioUpload").addEventListener("click", function () {
-  document.getElementById("audioFile").click();
-});
-
-document.getElementById("artworkUpload").addEventListener("click", function () {
-  document.getElementById("artworkFile").click();
-});
-
-document.getElementById("artworkFile").addEventListener("change", function (e) {
-  const file = e.target.files[0];
-  if (file) {
-    const reader = new FileReader();
-    reader.onload = function (e) {
-      const preview = document.getElementById("artworkPreview");
-      preview.src = e.target.result;
-      preview.classList.remove("d-none");
-    };
-    reader.readAsDataURL(file);
+      alert("Release submitted successfully!");
+    });
   }
-});
 
-// Form submission
-document.getElementById("releaseForm").addEventListener("submit", function (e) {
-  e.preventDefault();
-  alert("Release submitted successfully!");
-});
-
-// Initialize the form
-document.addEventListener("DOMContentLoaded", function () {
+  // --- INITIALIZATION ---
   updateStepIndicator(1);
 });

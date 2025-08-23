@@ -47,12 +47,12 @@
                             <label class="form-label required-field">Update Artwork</label>
                             <div class="file-upload-container" id="artworkUpload">
                                 <i data-feather="upload" class="feather-icon-lg mb-2"></i>
-
                                 <p class="mb-1">Drag & drop your artwork here or click to browse</p>
                                 <small class="text-muted">Recommended size: 3000x3000px, JPG/PNG</small>
                                 <img id="artworkPreview" class="file-upload-preview mt-3 d-none" src="" alt="Artwork Preview">
                             </div>
-                            <input type="file" id="artworkFile" name="artworkFile" accept="image/*" class="d-none">
+                            <input type="file" id="artworkFile" name="artworkFile" accept="image/*" class="d-none" required>
+                            <div class="invalid-feedback" id="artworkFileError"></div>
                         </div>
                     </div>
 
@@ -62,17 +62,14 @@
                             <div class="col-md-6 mb-3">
                                 <label for="releaseTitle" class="form-label required-field">Title</label>
                                 <input type="text" class="form-control" id="releaseTitle" name="releaseTitle" required>
+                                <div class="invalid-feedback" id="releaseTitleError"></div>
                             </div>
-                            <!-- <div class="col-md-6 mb-3">
-                                <label for="labelName" class="form-label required-field">Label Name</label>
-                                <input type="text" class="form-control" id="labelName" name="labelName" value="<?= session()->get('user')['primary_label_name'] ?>" readonly>
-                            </div> -->
                             <div class="col-md-6 mb-3">
                                 <label for="labelName" class="form-label required-field">Label Name</label>
 
                                 <?php if (in_array($user['role_id'], [1, 2])): ?>
                                     <!-- Admin/Superadmin: Dropdown -->
-                                    <select class="form-control" id="labelName" name="label_id">
+                                    <select class="form-select" id="labelName" name="label_id" required>
                                         <option value="">Select Label</option>
                                         <?php foreach ($labels as $label): ?>
                                             <option value="<?= esc($label['id']) ?>">
@@ -80,45 +77,53 @@
                                             </option>
                                         <?php endforeach; ?>
                                     </select>
+                                    <div class="invalid-feedback" id="labelNameError"></div>
                                 <?php else: ?>
                                     <!-- Normal user: readonly field -->
                                     <?php if (!empty($labels)): ?>
                                         <input type="text"
                                             class="form-control"
+                                            id="labelName"
+                                            name="labelName"
                                             value="<?= esc($labels[0]['label_name']) ?> (<?= esc($labels[0]['primary_label_name']) ?>)"
                                             readonly>
                                         <input type="hidden" name="label_id" value="<?= esc($labels[0]['id']) ?>">
                                     <?php endif; ?>
                                 <?php endif; ?>
-
                             </div>
-
                         </div>
+
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <label for="artist" class="form-label required-field">Artist</label>
                                 <input type="text" class="form-control" id="artist" name="artist" required>
+                                <div class="invalid-feedback" id="artistError"></div>
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label for="featuringArtist" class="form-label">Featuring Artist</label>
                                 <input type="text" class="form-control" id="featuringArtist" name="featuringArtist">
+                                <div class="invalid-feedback" id="featuringArtistError"></div>
                             </div>
                         </div>
+
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <label class="form-label required-field">Release Type</label>
-                                <div class="form-check">
-                                    <input class="form-check-input" type="radio" name="releaseType" id="single" value="single" checked>
-                                    <label class="form-check-label" for="single">Single</label>
+                                <div class="release-type-container">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="releaseType" id="single" value="single" checked required>
+                                        <label class="form-check-label" for="single">Single</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="releaseType" id="ep" value="ep" required>
+                                        <label class="form-check-label" for="ep">EP</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="releaseType" id="album" value="album" required>
+                                        <label class="form-check-label" for="album">Album</label>
+                                    </div>
                                 </div>
-                                <div class="form-check">
-                                    <input class="form-check-input" type="radio" name="releaseType" id="ep" value="ep">
-                                    <label class="form-check-label" for="ep">EP</label>
-                                </div>
-                                <div class="form-check">
-                                    <input class="form-check-input" type="radio" name="releaseType" id="album" value="album">
-                                    <label class="form-check-label" for="album">Album</label>
-                                </div>
+                                <div class="invalid-feedback" id="releaseTypeError"></div>
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label for="mood" class="form-label required-field">Mood</label>
@@ -130,7 +135,11 @@
                                     <option value="melancholic">Melancholic</option>
                                     <option value="chill">Chill</option>
                                 </select>
+                                <div class="invalid-feedback" id="moodError"></div>
                             </div>
+                        </div>
+
+                        <div class="row">
                             <div class="col-md-6 mb-3">
                                 <label for="genre" class="form-label required-field">Genre</label>
                                 <select class="form-select" id="genre" name="genre" required>
@@ -142,12 +151,15 @@
                                     <option value="jazz">Jazz</option>
                                     <option value="classical">Classical</option>
                                 </select>
+                                <div class="invalid-feedback" id="genreError"></div>
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label for="upcEan" class="form-label mb-0">UPC/EAN</label>
                                 <input type="text" class="form-control" id="upcEan" name="upcEan" placeholder="Optional">
+                                <div class="invalid-feedback" id="upcEanError"></div>
                             </div>
                         </div>
+
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <label for="language" class="form-label required-field">Language</label>
@@ -159,6 +171,7 @@
                                     <option value="german">German</option>
                                     <option value="hindi">Hindi</option>
                                 </select>
+                                <div class="invalid-feedback" id="languageError"></div>
                             </div>
                         </div>
                     </div>
