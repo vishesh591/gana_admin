@@ -13,6 +13,8 @@
             <div class="card shadow-sm mt-4 p-4">
                 <div class="card-body p-0">
                     <div class="table-responsive">
+                        <div id="alertBox" class="mt-3"></div>
+
                         <table class="table table-hover mb-0" id="datatable">
                             <thead>
                                 <tr>
@@ -22,36 +24,45 @@
                                     <th>Subject</th>
                                     <th>Status</th>
                                     <th>Date</th>
-                                    <th class="text-center">Actions</th>
+                                    <th>Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
-                                    <td>#101</td>
-                                    <td>John Doe</td>
-                                    <td>john@example.com</td>
-                                    <td>Login Issue</td>
-                                    <td><span class="badge bg-warning">Pending</span></td>
-                                    <td>2025-08-18</td>
-                                    <td class="text-center">
-                                        <button class="btn btn-sm btn-primary rounded-pill px-3">View</button>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>#102</td>
-                                    <td>Jane Smith</td>
-                                    <td>jane@example.com</td>
-                                    <td>Password Reset</td>
-                                    <td><span class="badge bg-success">Resolved</span></td>
-                                    <td>2025-08-17</td>
-                                    <td class="text-center">
-                                        <button class="btn btn-sm btn-primary rounded-pill px-3">View</button>
-                                    </td>
-                                </tr>
+
                             </tbody>
+
                         </table>
                     </div>
                 </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Support Modal -->
+<div class="modal fade" id="supportModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content rounded-3 shadow">
+            <div class="modal-header">
+                <h5 class="modal-title">Support Request</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p><strong>Message:</strong></p>
+                <p id="supportMessage" class="border p-3 rounded bg-light"></p>
+
+                <div class="mt-3">
+                    <label for="supportStatus" class="form-label">Update Status</label>
+                    <select id="supportStatus" name="Status" class="form-select">
+                        <option value="pending">Pending</option>
+                        <option value="in_review">In Review</option>
+                        <option value="resolved">Resolved</option>
+                    </select>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button class="btn btn-primary" id="saveSupportStatus">Save Changes</button>
             </div>
         </div>
     </div>

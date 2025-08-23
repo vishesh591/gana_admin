@@ -1,37 +1,3 @@
-<<<<<<< Updated upstream
-<?php
-
-use CodeIgniter\Router\RouteCollection;
-
-/**
- * @var RouteCollection $routes
- */
-
-$routes->get('/login', 'Auth::index', ['filter' => 'noauth']);
-$routes->post('/loginCheck', 'Auth::loginCheck');
-
-// Filter on route group
-$routes->group('', ['filter' => 'auth'], function ($routes) {
-    /**
-     * Auth Routes
-     */
-    $routes->get('/logout', 'Auth::logout');
-
-    $routes->get('/', 'Home::index');
-});
-
-// Routes only for super admins
-$routes->group('superadmin', ['filter' => 'role:superadmin'], function ($routes) {
-    $routes->get('/', 'SuperAdmin::dashboard');
-    $routes->get('accounts', 'SuperAdmin::accounts');
-});
-
-// Routes only for artists
-$routes->group('artist', ['filter' => 'role:artist'], function ($routes) {
-    $routes->get('/', 'Artist::dashboard');
-    $routes->get('songs', 'Artist::manageSongs');
-});
-=======
 <?php
 
 use CodeIgniter\Router\RouteCollection;
@@ -73,8 +39,9 @@ $routes->group('superadmin', ['filter' => 'role:superadmin'], function ($routes)
     $routes->get('youtube', 'SuperAdmin::youtube');
     $routes->get('facebook', 'SuperAdmin::facebook');
 
-    $routes->get('add-release', 'SuperAdmin::addRelease');
-    $routes->get('support', 'SuperAdmin::support');
+    $routes->get('add-release', 'Backend\Release\ReleaseController::addRelease');
+    // $routes->get('support', 'SuperAdmin::support');//will comment later
+    $routes->get('support_user', 'SuperAdmin::support_user');
     $routes->post('create-artist', 'Backend\Artist\ArtistController::store');
     $routes->post('create-label', 'Backend\Label\LabelController::store');
     $routes->get('artists', 'Backend\Artist\ArtistController::index');
@@ -86,9 +53,14 @@ $routes->group('superadmin', ['filter' => 'role:superadmin'], function ($routes)
     $routes->get('releases', 'Backend\Release\ReleaseController::index');
     $routes->get('releases/create', 'Backend\Release\ReleaseController::create');
     $routes->post('releases/store', 'Backend\Release\ReleaseController::store');
-    $routes->get('api/releases/(:num)', 'ReleaseController::show/$1');
+    $routes->get('api/releases/(:num)', 'Backend\Release\ReleaseController::show/$1');
     $routes->get('api/labels', 'Backend\Label\LabelController::getLabelsJson');
     $routes->get('api/accounts', 'RegisterController::getAccountsJson');
+    $routes->get('pages-profile', 'RegisterController::index');
+    $routes->get('support', 'Backend\Support\SupportController::index');
+    $routes->post('support/store', 'Backend\Support\SupportController::store');
+    $routes->get('support/data', 'Backend\Support\SupportController::data');
+    $routes->post('support/update-status/(:num)', 'Backend\Support\SupportController::updateStatus/$1');
 });
 
 // Routes only for artists
@@ -96,4 +68,3 @@ $routes->group('artist', ['filter' => 'role:artist'], function ($routes) {
     $routes->get('/', 'Artist::dashboard');
     $routes->get('songs', 'Artist::manageSongs');
 });
->>>>>>> Stashed changes

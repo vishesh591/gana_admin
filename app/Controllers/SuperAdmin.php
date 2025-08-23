@@ -25,8 +25,6 @@ class SuperAdmin extends BaseController
         $page_array['file_name'] = 'user_list';
         return view('superadmin/index', $page_array);
     }
-<<<<<<< Updated upstream
-=======
 
     public function claiming_data()
     {
@@ -131,5 +129,10 @@ class SuperAdmin extends BaseController
         $page_array['file_name'] = 'support';
         return view('superadmin/index', $page_array);
     }
->>>>>>> Stashed changes
+    public function support_user()
+    {
+        $page_array = [];
+        $page_array['file_name'] = 'support_user';
+        return view('superadmin/index', $page_array); 
+    }
 }

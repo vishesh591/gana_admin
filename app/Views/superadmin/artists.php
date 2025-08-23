@@ -62,6 +62,8 @@
                 <h5 class="modal-title">Create New Artist</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
+                        <div id="artistAlertBox" class="mt-2 w-100"></div>
+
             <div class="modal-body">
                 <form id="createArtistForm"
                     action="<?= base_url('superadmin/create-artist') ?>"

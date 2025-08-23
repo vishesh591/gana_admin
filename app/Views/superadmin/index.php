@@ -4,6 +4,8 @@
 <head>
     <?php echo view("partials/title-meta", array("title" => "Music Dashboard")) ?>
     <?= $this->include('partials/head-css') ?>
+     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
 </head>
 
 <?php echo view('partials/body', array("class" => false)) ?>
@@ -14,13 +16,18 @@
     <?= $this->include('partials/sidebar') ?>
 
     <?= $this->include('superadmin/' . $file_name) ?>
-
+    <?= $this->include('partials/footer') ?>
 </div>
 
 
 <!-- END wrapper -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
+<!-- DataTables after jQuery -->
+<!-- <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script> -->
 <?= $this->include('partials/vendor') ?>
+
+ <script src="/js/app.js"></script>
 
 <!-- Apexcharts JS -->
 <script src="/libs/apexcharts/apexcharts.min.js"></script>
@@ -204,9 +211,8 @@
         uploadsChart.render();
     });
 </script>
-
 <!-- App js-->
-<script src="/js/app.js"></script>
+
 </body>
 
 </html>

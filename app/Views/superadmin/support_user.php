@@ -15,23 +15,24 @@
                             <p class="text-muted text-center mb-4">
                                 Please fill out the form below with your inquiry, and we'll get back to you as soon as possible.
                             </p>
+                            <div id="formAlertBox" class="mt-3"></div>
 
-                            <form id="supportForm" action="#" method="POST">
+                            <form id="supportForm" action="<?= base_url('superadmin/support/store') ?>" method="POST">
                                 <div class="mb-3">
                                     <label for="fullName" class="form-label">Full Name</label>
-                                    <input type="text" class="form-control" id="fullName" placeholder="Enter your full name" required>
+                                    <input type="text" class="form-control" id="fullName" name="full_name" placeholder="Enter your full name" required>
                                 </div>
                                 <div class="mb-3">
                                     <label for="emailAddress" class="form-label">Email Address</label>
-                                    <input type="email" class="form-control" id="emailAddress" placeholder="Enter your email" required>
+                                    <input type="email" class="form-control" id="emailAddress" name="email" placeholder="Enter your email" required>
                                 </div>
                                 <div class="mb-3">
                                     <label for="subject" class="form-label">Subject</label>
-                                    <input type="text" class="form-control" id="subject" placeholder="What is your inquiry about?" required>
+                                    <input type="text" class="form-control" id="subject" name="subject" placeholder="What is your inquiry about?" required>
                                 </div>
                                 <div class="mb-4">
                                     <label for="message" class="form-label">Message</label>
-                                    <textarea class="form-control" id="message" rows="5" placeholder="Describe your issue or question in detail" required></textarea>
+                                    <textarea class="form-control" id="message" name="message" rows="5" placeholder="Describe your issue or question in detail" required></textarea>
                                 </div>
                                 <div class="text-center">
                                     <button type="submit" class="btn btn-submit">Submit Request</button>

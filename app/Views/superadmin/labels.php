@@ -21,9 +21,9 @@
                 </div>
             </div>
 
-            <div class="label-table p-4">
+            <div class="label-table">
                 <div class="table-responsive">
-                    <table class="table" id="datatable">
+                    <table class="table">
                         <thead>
                             <tr>
                                 <th width="40">
@@ -38,6 +38,15 @@
                         </tbody>
                     </table>
                 </div>
+
+                <div class="pagination-wrapper d-flex justify-content-between align-items-center">
+                    <span class="text-muted" id="paginationInfo">Showing 0-0 of 0 labels</span>
+                    <nav>
+                        <ul class="pagination pagination-sm mb-0" id="paginationLinks">
+                            <!-- Pagination injected by JS -->
+                        </ul>
+                    </nav>
+                </div>
             </div>
         </div>
     </div>
@@ -50,6 +59,8 @@
                 <h5 class="modal-title">Create New label</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
+            <div id="labelAlertBox" class="mt-2 w-100"></div>
+
             <div class="modal-body">
                 <form action="<?= base_url('superadmin/create-label') ?>" method="post" enctype="multipart/form-data">
                     <div class="mb-3">
@@ -58,7 +69,26 @@
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Primary Label Name</label>
-                        <input type="text" class="form-control" name="primary_label" value="Your Main Label Name" readonly>
+                        <?php if (in_array($user['role_id'], [1, 2])): ?>
+                            <select class="form-control" id="labelName" name="primary_label_name">
+                                <option value="">Select Label</option>
+
+                                <?php foreach ($primaryLabels as $primaryLabel): ?>
+                                    <option value="<?= esc($primaryLabel['primary_label_name']) ?>">
+                                        <?= esc($primaryLabel['primary_label_name']) ?>
+                                    </option>
+                                <?php endforeach; ?>
+                            </select>
+
+                        <?php else: ?>
+                            <!-- Normal user: readonly field -->
+                            <input type="text"
+                                class="form-control"
+                                id="labelName"
+                                name="primary_label_name"
+                                value="<?= esc($user['primary_label_name']) ?>"
+                                readonly>
+                        <?php endif; ?>
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Profile Image</label>
