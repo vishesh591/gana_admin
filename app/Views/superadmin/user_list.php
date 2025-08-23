@@ -52,7 +52,6 @@
     <div class="modal-dialog modal-lg modal-dialog-centered">
 
         <div class="modal-content rounded-4">
-                    <div id="labelAlertBox" class="mt-2 w-100"></div>
 
             <form action="<?= base_url('superadmin/register') ?>" method="POST" enctype="multipart/form-data" id="claimingRequestForm">
                 <?= csrf_field() ?>
@@ -156,6 +155,7 @@
                         </div>
                     </div>
                 </div>
+                <div id="labelAlertBox" class="mt-2 w-100"></div>
 
                 <!-- Footer -->
                 <div class="modal-footer">

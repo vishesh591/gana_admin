@@ -29,9 +29,6 @@
             </div>
             <!-- /Page Header -->
 
-
-
-
             <div class="artist-table p-4">
                 <div class="table-responsive">
                     <table id="artistTable" class="table">
