@@ -190,6 +190,7 @@
                             <div class="col-md-6 mb-3">
                                 <label for="trackTitle" class="form-label required-field">Title</label>
                                 <input type="text" class="form-control" id="trackTitle" name="trackTitle" required>
+                                <div class="invalid-feedback">Please enter a track title.</div>
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label for="secondaryTrackType" class="form-label required-field">Secondary Track Type</label>
@@ -202,6 +203,7 @@
                                     <option value="cover">Cover</option>
                                     <option value="cover_band">Cover by cover band</option>
                                 </select>
+                                <div class="invalid-feedback">Please select a secondary track type.</div>
                             </div>
                         </div>
                         <div class="row">
@@ -215,6 +217,8 @@
                                     <input class="form-check-input" type="radio" name="instrumental" id="instrumentalNo" value="no" checked>
                                     <label class="form-check-label" for="instrumentalNo">No</label>
                                 </div>
+                                <!-- This div will be targeted by the validation script for the radio group -->
+                                <div class="invalid-feedback d-block" style="display: none;">Please select an option.</div>
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label for="isrc" class="form-label mb-0">ISRC</label>
@@ -229,10 +233,12 @@
                             <div class="col-md-6 mb-3">
                                 <label for="author" class="form-label required-field">Author</label>
                                 <input type="text" class="form-control" id="author" name="author" placeholder="Comma separated names" required>
+                                <div class="invalid-feedback">Please provide the author's name(s).</div>
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label for="composer" class="form-label required-field">Composer</label>
                                 <input type="text" class="form-control" id="composer" name="composer" placeholder="Comma separated names" required>
+                                <div class="invalid-feedback">Please provide the composer's name(s).</div>
                             </div>
                         </div>
                         <div class="row">
@@ -268,6 +274,7 @@
                                     <option value="2024">2024</option>
                                     <option value="2023">2023</option>
                                 </select>
+                                <div class="invalid-feedback">Please select a © Line Year.</div>
                             </div>
                             <div class="col-md-3 mb-3">
                                 <label for="cLine" class="form-label">© Line</label>
@@ -281,6 +288,7 @@
                                     <option value="2024">2024</option>
                                     <option value="2023">2023</option>
                                 </select>
+                                <div class="invalid-feedback">Please select a ℗ Line Year.</div>
                             </div>
                             <div class="col-md-3 mb-3">
                                 <label for="pLine" class="form-label">℗ Line</label>
@@ -296,6 +304,7 @@
                                     <option value="2024">2024</option>
                                     <option value="2023">2023</option>
                                 </select>
+                                <div class="invalid-feedback">Please select the production year.</div>
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label for="trackLanguage" class="form-label required-field">Track Title Language</label>
@@ -307,6 +316,7 @@
                                     <option value="german">German</option>
                                     <option value="hindi">Hindi</option>
                                 </select>
+                                <div class="invalid-feedback">Please select the track title language.</div>
                             </div>
                         </div>
                         <div class="mb-3">
@@ -316,6 +326,7 @@
                                 <option value="yes">Yes</option>
                                 <option value="no">No</option>
                             </select>
+                            <div class="invalid-feedback">Please specify if the song is explicit.</div>
                         </div>
                         <div class="mb-3">
                             <label for="lyrics" class="form-label">Lyrics</label>
@@ -329,10 +340,28 @@
                             <label class="form-label required-field">Upload Audio</label>
                             <div class="file-upload-container" id="audioUpload">
                                 <i data-feather="upload" class="feather-icon-lg mb-2"></i>
-                                <p class="mb-1">Drag & drop your audio file here or click to browse</p>
-                                <small class="text-muted">Accepted formats: WAV, FLAC, AIFF, MP3 (320kbps)</small>
+                                <p class="mb-1">Drag & drop your WAV audio file here or click to browse</p>
+                                <small class="text-muted">⚠️ Only WAV format accepted - Max 50MB</small>
+
+                                <!-- Audio Preview Section (initially hidden) -->
+                                <div id="audioPreviewContainer" class="mt-3 d-none">
+                                    <div class="audio-preview-wrapper">
+                                        <audio id="audioPreview" controls class="w-100" style="max-width: 100%;">
+                                            Your browser does not support the audio element.
+                                        </audio>
+                                        <div class="audio-info mt-2">
+                                            <small class="text-success">
+                                                <i data-feather="check-circle" class="feather-sm me-1"></i>
+                                                <span id="audioFileName">WAV file loaded</span>
+                                            </small>
+                                            <br>
+                                            <small class="text-muted" id="audioFileSize">Size: 0 MB</small>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
-                            <input type="file" id="audioFile" name="audioFile" accept="audio/*" class="d-none">
+                            <input type="file" id="audioFile" name="audioFile" accept=".wav,audio/wav" class="d-none">
+                            <div id="audioFileError" class="invalid-feedback" style="display: none;"></div>
                         </div>
                     </div>
 
@@ -371,7 +400,6 @@
                                         <label class="form-check-label" for="store-amazon-music">Amazon Music</label>
                                     </div>
                                 </div>
-
                                 <div class="store-checkbox-item">
                                     <div class="form-check">
                                         <input class="form-check-input" type="checkbox" id="store-anghami" name="stores[]" value="anghami" checked>
@@ -487,6 +515,8 @@
                                     </div>
                                 </div>
                             </div>
+                            <!-- ** ADDED THIS DIV FOR ERROR MESSAGES ** -->
+                            <div id="storesError" class="invalid-feedback">Please select at least one store for distribution.</div>
                         </div>
 
                         <div class="mb-4">
@@ -526,14 +556,20 @@
                             <div class="col-md-4 mb-3">
                                 <label for="releaseDate" class="form-label required-field">Release Date</label>
                                 <input type="date" class="form-control" id="releaseDate" name="release_date" required>
+                                <!-- Feedback Div -->
+                                <div class="invalid-feedback">Please select a valid release date.</div>
                             </div>
                             <div class="col-md-4 mb-3">
                                 <label for="preSaleDate" class="form-label">Pre-Sale Date</label>
                                 <input type="date" class="form-control" id="preSaleDate" name="pre_sale_date">
+                                <!-- Feedback Div -->
+                                <div class="invalid-feedback">Pre-sale date must be before the release date.</div>
                             </div>
                             <div class="col-md-4 mb-3">
                                 <label for="originalReleaseDate" class="form-label required-field">Original Release Date</label>
                                 <input type="date" class="form-control" id="originalReleaseDate" name="original_release_date" required>
+                                <!-- Feedback Div -->
+                                <div class="invalid-feedback">Original release date is required and cannot be after the release date.</div>
                             </div>
                         </div>
                     </div>
@@ -551,6 +587,8 @@
                                     <option value="1.99">₹1.99</option>
                                     <option value="2.49">₹2.49</option>
                                 </select>
+                                <!-- Feedback Div -->
+                                <div class="invalid-feedback">Please select a release price.</div>
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label for="salePrice" class="form-label">Sale Price</label>
@@ -580,6 +618,7 @@
                                 <label class="form-check-label required-field" for="contentGuidelines">
                                     I agree and confirm that the song uploaded by me is 100% original and does not infringe on any copyrights or intellectual property rights of any third party.
                                 </label>
+                                <div class="invalid-feedback">You must agree to the content guidelines.</div>
                             </div>
                         </div>
                         <div class="mb-3">
@@ -588,6 +627,7 @@
                                 <label class="form-check-label required-field" for="isrcGuidelines">
                                     I understand and agree to the ISRC Terms & Conditions regarding the assignment and use of International Standard Recording Codes.
                                 </label>
+                                <div class="invalid-feedback">You must agree to the ISRC terms.</div>
                             </div>
                         </div>
                         <div class="mb-3">
@@ -596,14 +636,16 @@
                                 <label class="form-check-label required-field" for="youtubeGuidelines">
                                     I understand and agree to the YouTube Content Guidelines and confirm that I have all necessary rights to distribute this content on YouTube.
                                 </label>
+                                <div class="invalid-feedback">You must agree to the YouTube guidelines.</div>
                             </div>
                         </div>
                         <div class="mb-3">
                             <div class="form-check">
                                 <input class="form-check-input" type="checkbox" id="audioStoreGuidelines" name="audio_store_guidelines" required>
                                 <label class="form-check-label required-field" for="audioStoreGuidelines">
-                                    I understand and agree to the HarDan Content Delivery Guidelines for digital music distribution.
+                                    I understand and agree to the Gaana Distribution Content Delivery Guidelines for digital music distribution.
                                 </label>
+                                <div class="invalid-feedback">You must agree to the content delivery guidelines.</div>
                             </div>
                         </div>
                     </div>
