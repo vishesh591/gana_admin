@@ -18,15 +18,41 @@ class ReleaseController extends BaseController
     // Show all releases (paginated)
     public function index()
     {
-        $data['releases'] = $this->releaseRepo->findAll();
-        // return response()->setJSON($data);
+        if ($this->request->isAJAX()) {
+            $releases = $this->releaseRepo->findAll();
+
+            // Transform your DB status (int) into string form expected by frontend
+            $statusMap = [
+                1 => 'review',
+                2 => 'takedown',
+                3 => 'delivered',
+                4 => 'rejected',
+                5 => 'approved',
+            ];
+
+            $releasesData = array_map(function ($r) use ($statusMap) {
+                return [
+                    'id' => $r['id'],
+                    'title' => $r['title'],
+                    'artist' => $r['author'],
+                    'submittedDate' => date('jS F Y', strtotime($r['created_at'])),
+                    'upc' => $r['upc_ean'],
+                    'isrc' => $r['isrc'],
+                    'status' => $statusMap[$r['status']] ?? 'review',
+                    'albumArtwork' => '/images/rocket.png', // or from DB if you store it
+                ];
+            }, $releases);
+
+            return $this->response->setJSON(['data' => $releasesData]);
+        }
+
+        // normal page load
         $page_array = [
             'file_name' => 'releases',
-            'data' => $data
         ];
-
         return view('superadmin/index', $page_array);
     }
+
 
     public function show($id)
     {
