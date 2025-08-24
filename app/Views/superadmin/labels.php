@@ -1,27 +1,25 @@
 <div class="admin-labels-page content-page">
     <div class="content">
         <div class="container-xxl">
-            <div class="page-header pt-4 pb-2">
-                <h1 class="page-title">Labels</h1>
-                <p class="page-subtitle">Manage your labels and track their releases</p>
-            </div>
+            <!-- Page Header -->
+            <div class="page-header d-flex flex-column flex-md-row justify-content-between align-items-md-center pt-4 pb-3 border-bottom">
+                <div>
+                    <h1 class="page-title mb-1">Labels</h1>
+                    <p class="page-subtitle mb-0 text-muted">
+                        Manage your labels and track their releases
+                    </p>
+                </div>
 
-            <div class="header-controls">
-                <div class="d-flex justify-content-between align-items-center controls-row">
-                    <div class="search-container flex-grow-1 me-3">
-                        <input type="search" class="form-control search-input" placeholder="Search label..." id="searchInput">
-                    </div>
-
-                    <div class="button-group d-flex gap-2">
-                        <button class="btn btn-create" data-bs-toggle="modal" data-bs-target="#createlabelModal">
-                            <i data-feather="plus" class="me-1"></i>
-                            Create label Request
-                        </button>
-                    </div>
+                <!-- Action Buttons -->
+                <div class="button-group d-flex gap-2 mt-3 mt-md-0">
+                    <button class="btn btn-create d-flex align-items-center" data-bs-toggle="modal" data-bs-target="#createlabelModal">
+                        <i data-feather="plus" class="me-1"></i>
+                        Create Label Request
+                    </button>
                 </div>
             </div>
 
-            <div class="label-table">
+            <div class="label-table p-4">
                 <div class="table-responsive">
                     <table id="labelTable" class="table">
                         <thead>
@@ -39,7 +37,6 @@
                     </table>
                 </div>
             </div>
-
         </div>
     </div>
 </div>

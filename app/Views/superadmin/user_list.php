@@ -66,8 +66,17 @@
                     <div class="row">
                         <div class="col-md-12 mb-3">
                             <label for="basicName" class="form-label">Name</label>
-                            <input type="text" class="form-control rounded-pill p-3" id="basicName" name="name" placeholder="Enter full name" required>
+                            <input
+                                type="text"
+                                class="form-control rounded-pill p-3"
+                                id="basicName"
+                                name="name"
+                                placeholder="Enter full name"
+                                pattern="^[A-Za-z\s]+$"
+                                oninput="this.value = this.value.replace(/[0-9]/g, '')"
+                                required>
                         </div>
+
                         <div class="col-md-6 mb-3">
                             <label for="companyName" class="form-label">Company Name</label>
                             <input type="text" class="form-control rounded-pill p-3" id="companyName" name="company_name" placeholder="Enter company name">
@@ -76,14 +85,38 @@
                             <label for="labelName" class="form-label">Primary Label Name</label>
                             <input type="text" class="form-control rounded-pill p-3" id="labelName" name="primary_label_name" placeholder="Enter label name">
                         </div>
+                        <!-- <div class="col-md-12 mb-3">
+                            <label for="profileImage" class="form-label">Profile Image</label>
+                            <input
+                                type="file"
+                                class="form-control p-2 rounded-pill"
+                                id="profileImage"
+                                name="profile_image"
+                                accept="image/*">
+                            <div class="form-text">Upload JPG, PNG, or GIF (Max size 1MB).</div>
+                        </div> -->
+
                         <div class="col-md-6 mb-3">
                             <label for="emailId" class="form-label">Email Id</label>
                             <input type="email" class="form-control rounded-pill p-3" id="emailId" name="email" placeholder="example@email.com" required>
                         </div>
                         <div class="col-md-6 mb-3">
                             <label for="phoneNumber" class="form-label">Phone Number</label>
-                            <input type="tel" class="form-control rounded-pill p-3" id="phoneNumber" name="phone" placeholder="Enter phone number" required>
+                            <input
+                                type="tel"
+                                class="form-control rounded-pill p-3"
+                                id="phoneNumber"
+                                name="phone"
+                                placeholder="e.g. 9876543210"
+                                oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0,15)"
+                                required>
+                            <div class="invalid-feedback">
+                                Please enter a valid phone number (digits only).
+                            </div>
                         </div>
+
+
+
                         <div class="col-12 mb-4">
                             <label class="form-label mb-2">Which describes you best?</label>
                             <div>
@@ -113,9 +146,20 @@
                         <div class="col-md-6 mb-3">
                             <label for="password" class="form-label">Password</label>
                             <div class="input-group">
-                                <input type="password" class="form-control rounded-start-pill p-3" id="password" name="password" placeholder="Create a password" required style="border-right: none;">
-                                <button class="btn btn-outline-secondary rounded-end-pill" type="button" id="togglePassword" style="border-left: none;">
-                                    <i class="bi bi-eye-slash"></i>
+                                <input
+                                    type="password"
+                                    class="form-control rounded-start-pill p-3"
+                                    id="password"
+                                    name="password"
+                                    placeholder="Create a password"
+                                    required
+                                    style="border-right: none;">
+                                <button
+                                    class="btn btn-outline-secondary rounded-end-pill"
+                                    type="button"
+                                    id="togglePassword"
+                                    style="border-left: none;">
+                                    <i class="bi bi-eye-slash" id="toggleIcon"></i>
                                 </button>
                             </div>
                         </div>
@@ -130,7 +174,7 @@
                         </div>
                         <div class="col-md-6 mb-3">
                             <label for="accountNumber" class="form-label">Account Number</label>
-                            <input type="text" class="form-control rounded-pill p-3" id="accountNumber" name="account_number" placeholder="Enter bank account number" required>
+                            <input type="number" class="form-control rounded-pill p-3" id="accountNumber" name="account_number" placeholder="Enter bank account number" required>
                         </div>
                         <div class="col-md-6 mb-3">
                             <label for="ifscCode" class="form-label">IFSC Code</label>
@@ -145,15 +189,37 @@
                     <!-- Agreement Period -->
                     <h6 class="text-primary fw-bold mb-3 pt-2">Agreement Period</h6>
                     <div class="row">
+                        <!-- Agreement Start Date -->
                         <div class="col-md-6 mb-3">
                             <label for="startDate" class="form-label">Agreement Start Date</label>
                             <input type="date" class="form-control rounded-pill p-3" id="startDate" name="agreement_start_date" required>
+                            <div class="invalid-feedback" id="startDateFeedback">Start date must be before end date.</div>
                         </div>
+
+                        <!-- Agreement End Date -->
                         <div class="col-md-6 mb-3">
                             <label for="endDate" class="form-label">Agreement End Date</label>
                             <input type="date" class="form-control rounded-pill p-3" id="endDate" name="agreement_end_date" required>
+                            <div class="invalid-feedback" id="endDateFeedback">End date must be after start date.</div>
                         </div>
                     </div>
+
+                    <!-- Upload Agreement (optional) -->
+                    <div class="row">
+                        <div class="col-md-12 mb-3">
+                            <label for="agreementFile" class="form-label">Upload Agreement (if any)</label>
+                            <div class="input-group">
+                                <input
+                                    type="file"
+                                    class="form-control rounded-pill p-3"
+                                    id="agreementFile"
+                                    name="agreement_file"
+                                    accept=".pdf,.doc,.docx,.jpg,.png">
+                            </div>
+                            <small class="form-text text-muted">Allowed formats: PDF, DOC, DOCX, JPG, PNG</small>
+                        </div>
+                    </div>
+
                 </div>
                 <div id="labelAlertBox" class="mt-2 w-100"></div>
 

@@ -2,16 +2,16 @@ function _typeof(e) {
   return (_typeof =
     "function" == typeof Symbol && "symbol" == typeof Symbol.iterator
       ? function (e) {
-          return typeof e;
-        }
+        return typeof e;
+      }
       : function (e) {
-          return e &&
-            "function" == typeof Symbol &&
-            e.constructor === Symbol &&
-            e !== Symbol.prototype
-            ? "symbol"
-            : typeof e;
-        })(e);
+        return e &&
+          "function" == typeof Symbol &&
+          e.constructor === Symbol &&
+          e !== Symbol.prototype
+          ? "symbol"
+          : typeof e;
+      })(e);
 }
 function _classCallCheck(e, t) {
   if (!(e instanceof t))
@@ -38,11 +38,11 @@ function _defineProperty(e, t, n) {
   return (
     (t = _toPropertyKey(t)) in e
       ? Object.defineProperty(e, t, {
-          value: n,
-          enumerable: !0,
-          configurable: !0,
-          writable: !0,
-        })
+        value: n,
+        enumerable: !0,
+        configurable: !0,
+        writable: !0,
+      })
       : (e[t] = n),
     e
   );
@@ -74,22 +74,22 @@ var App = (() =>
             e.preventDefault(),
               $("body").toggleClass("fullscreen-enable"),
               document.fullscreenElement ||
-              document.mozFullScreenElement ||
-              document.webkitFullscreenElement
+                document.mozFullScreenElement ||
+                document.webkitFullscreenElement
                 ? document.cancelFullScreen
                   ? document.cancelFullScreen()
                   : document.mozCancelFullScreen
-                  ? document.mozCancelFullScreen()
-                  : document.webkitCancelFullScreen &&
+                    ? document.mozCancelFullScreen()
+                    : document.webkitCancelFullScreen &&
                     document.webkitCancelFullScreen()
                 : document.documentElement.requestFullscreen
-                ? document.documentElement.requestFullscreen()
-                : document.documentElement.mozRequestFullScreen
-                ? document.documentElement.mozRequestFullScreen()
-                : document.documentElement.webkitRequestFullscreen &&
-                  document.documentElement.webkitRequestFullscreen(
-                    Element.ALLOW_KEYBOARD_INPUT
-                  );
+                  ? document.documentElement.requestFullscreen()
+                  : document.documentElement.mozRequestFullScreen
+                    ? document.documentElement.mozRequestFullScreen()
+                    : document.documentElement.webkitRequestFullscreen &&
+                    document.documentElement.webkitRequestFullscreen(
+                      Element.ALLOW_KEYBOARD_INPUT
+                    );
           }),
             document.addEventListener("fullscreenchange", e),
             document.addEventListener("webkitfullscreenchange", e),
@@ -127,7 +127,7 @@ var App = (() =>
                       (e.className =
                         e.dataset.originalClass + " " + this.value);
                   }),
-              document.getElementById("liveAlertPlaceholder")),
+                document.getElementById("liveAlertPlaceholder")),
             t = document.getElementById("liveAlertBtn");
           t &&
             t.addEventListener("click", function () {
@@ -163,25 +163,25 @@ var App = (() =>
           e(),
             window.addEventListener("resize", e),
             $("#side-menu").length &&
-              ($("#side-menu li .collapse").on({
-                "show.bs.collapse": function (e) {
-                  e = $(e.target).parents(".collapse.show");
-                  $("#side-menu .collapse.show").not(e).collapse("hide");
-                },
-              }),
+            ($("#side-menu li .collapse").on({
+              "show.bs.collapse": function (e) {
+                e = $(e.target).parents(".collapse.show");
+                $("#side-menu .collapse.show").not(e).collapse("hide");
+              },
+            }),
               $("#side-menu a").each(function () {
                 var e = window.location.href.split(/[?#]/)[0];
                 this.href == e &&
                   ($(this).addClass("active"),
-                  $(this).parent().addClass("menuitem-active"),
-                  $(this).parent().parent().parent().addClass("show"),
-                  $(this)
-                    .parent()
-                    .parent()
-                    .parent()
-                    .parent()
-                    .addClass("menuitem-active"),
-                  "sidebar-menu" !==
+                    $(this).parent().addClass("menuitem-active"),
+                    $(this).parent().parent().parent().addClass("show"),
+                    $(this)
+                      .parent()
+                      .parent()
+                      .parent()
+                      .parent()
+                      .addClass("menuitem-active"),
+                    "sidebar-menu" !==
                     (e = $(this)
                       .parent()
                       .parent()
@@ -189,16 +189,16 @@ var App = (() =>
                       .parent()
                       .parent()
                       .parent()).attr("id") && e.addClass("show"),
-                  $(this)
-                    .parent()
-                    .parent()
-                    .parent()
-                    .parent()
-                    .parent()
-                    .parent()
-                    .parent()
-                    .addClass("menuitem-active"),
-                  "wrapper" !==
+                    $(this)
+                      .parent()
+                      .parent()
+                      .parent()
+                      .parent()
+                      .parent()
+                      .parent()
+                      .parent()
+                      .addClass("menuitem-active"),
+                    "wrapper" !==
                     (e = $(this)
                       .parent()
                       .parent()
@@ -209,17 +209,17 @@ var App = (() =>
                       .parent()
                       .parent()
                       .parent()).attr("id") && e.addClass("show"),
-                  (e = $(this)
-                    .parent()
-                    .parent()
-                    .parent()
-                    .parent()
-                    .parent()
-                    .parent()
-                    .parent()
-                    .parent()
-                    .parent()
-                    .parent()).is("body") || e.addClass("menuitem-active"));
+                    (e = $(this)
+                      .parent()
+                      .parent()
+                      .parent()
+                      .parent()
+                      .parent()
+                      .parent()
+                      .parent()
+                      .parent()
+                      .parent()
+                      .parent()).is("body") || e.addClass("menuitem-active"));
               }));
         },
       },
@@ -573,7 +573,7 @@ document.addEventListener("DOMContentLoaded", function () {
     typeof views !== "string"
       ? 0
       : parseFloat(views.toUpperCase()) *
-        (views.toUpperCase().includes("K") ? 1000 : 1);
+      (views.toUpperCase().includes("K") ? 1000 : 1);
   const parseExpiry = (expiry) =>
     typeof expiry !== "string" || expiry === "-" ? Infinity : parseInt(expiry);
   const getStatusBadge = (status) =>
@@ -742,22 +742,21 @@ document.addEventListener("DOMContentLoaded", function () {
                                 <input class="form-check-input region-checkbox" type="checkbox" id="region-${regionId}" data-region="${region}" checked>
                                 <label class="form-check-label fw-bold" for="region-${regionId}">${region}</label>
                             </div>
-                            <span class="text-muted small me-2">${
-                              countries.length
-                            } countries</span>
+                            <span class="text-muted small me-2">${countries.length
+            } countries</span>
                         </button>
                     </h2>
                     <div id="collapse-${regionId}" class="accordion-collapse collapse" data-bs-parent="#territoryAccordion">
                         <div class="accordion-body">
                             <div class="territory-list-inner">${countries
-                              .map(
-                                (c) => `
+              .map(
+                (c) => `
                                 <div class="form-check">
                                     <input class="form-check-input country-checkbox" type="checkbox" value="${c.code}" id="country-${c.code}" data-region="${region}" checked>
                                     <label class="form-check-label" for="country-${c.code}">${c.name}</label>
                                 </div>`
-                              )
-                              .join("")}
+              )
+              .join("")}
                             </div>
                         </div>
                     </div>
@@ -899,9 +898,8 @@ document.addEventListener("DOMContentLoaded", function () {
         pending: "text-warning",
         rejected: "text-danger",
       };
-      return `<i data-feather="${icons[status] || "help-circle"}" class="${
-        colors[status] || "text-muted"
-      }"></i>`;
+      return `<i data-feather="${icons[status] || "help-circle"}" class="${colors[status] || "text-muted"
+        }"></i>`;
     };
     const getStatusBadge = (status) => {
       const config = {
@@ -909,9 +907,8 @@ document.addEventListener("DOMContentLoaded", function () {
         pending: "status-pending",
         rejected: "status-rejected",
       };
-      return `<span class="badge status-badge ${
-        config[status] || "bg-secondary"
-      }">${status.toUpperCase()}</span>`;
+      return `<span class="badge status-badge ${config[status] || "bg-secondary"
+        }">${status.toUpperCase()}</span>`;
     };
     const createLink = (url, iconClass) =>
       url
@@ -1131,9 +1128,8 @@ document.addEventListener("DOMContentLoaded", function () {
         pending: "text-warning",
         rejected: "text-danger",
       };
-      return `<i data-feather="${icons[status] || "help-circle"}" class="${
-        colors[status] || "text-muted"
-      }"></i>`;
+      return `<i data-feather="${icons[status] || "help-circle"}" class="${colors[status] || "text-muted"
+        }"></i>`;
     };
     const getStatusBadge = (status) => {
       const config = {
@@ -1141,9 +1137,8 @@ document.addEventListener("DOMContentLoaded", function () {
         pending: "status-pending",
         rejected: "status-rejected",
       };
-      return `<span class="badge status-badge ${
-        config[status] || "bg-secondary"
-      }">${status.toUpperCase()}</span>`;
+      return `<span class="badge status-badge ${config[status] || "bg-secondary"
+        }">${status.toUpperCase()}</span>`;
     };
     const createLink = (url, iconClass) =>
       url
@@ -1417,9 +1412,8 @@ document.addEventListener("DOMContentLoaded", function () {
         pending: "text-warning",
         rejected: "text-danger",
       };
-      return `<i data-feather="${icons[status] || "help-circle"}" class="${
-        colors[status] || "text-muted"
-      }"></i>`;
+      return `<i data-feather="${icons[status] || "help-circle"}" class="${colors[status] || "text-muted"
+        }"></i>`;
     };
     const getStatusBadge = (status) => {
       const config = {
@@ -1427,9 +1421,8 @@ document.addEventListener("DOMContentLoaded", function () {
         pending: "status-pending",
         rejected: "status-rejected",
       };
-      return `<span class="badge status-badge ${
-        config[status] || "bg-secondary"
-      }">${status.toUpperCase()}</span>`;
+      return `<span class="badge status-badge ${config[status] || "bg-secondary"
+        }">${status.toUpperCase()}</span>`;
     };
     const createLink = (url, iconClass) =>
       url
@@ -1848,7 +1841,7 @@ $(document).ready(function () {
 // labels-page js
 $(document).ready(function () {
   let table = $("#labelTable").DataTable({
-    destroy:true,
+    destroy: true,
     ajax: "/superadmin/api/labels", // your controller endpoint
     columns: [
       {
@@ -2103,34 +2096,30 @@ document.addEventListener("DOMContentLoaded", function () {
             (request) => `
                     <tr>
                         <td class="text-center align-middle">${getStatusIcon(
-                          request.status
-                        )}</td>
+              request.status
+            )}</td>
                         <td class="align-middle">
                             <div>
-                                <div class="release-title">${
-                                  request.songName
-                                }</div>
-                                <div class="release-artist text-muted small">${
-                                  request.artistName
-                                }</div>
+                                <div class="release-title">${request.songName
+              }</div>
+                                <div class="release-artist text-muted small">${request.artistName
+              }</div>
                             </div>
                         </td>
                         <td class="align-middle">${request.isrc || "N/A"}</td>
                         <td class="align-middle">
-                            ${
-                              request.instagram
-                                ? `<a href="${request.instagram}" target="_blank" class="social-link me-2 fs-5"><i class="bi bi-instagram"></i></a>`
-                                : ""
-                            }
-                            ${
-                              request.facebook
-                                ? `<a href="${request.facebook}" target="_blank" class="social-link fs-5"><i class="bi bi-facebook"></i></a>`
-                                : ""
-                            }
+                            ${request.instagram
+                ? `<a href="${request.instagram}" target="_blank" class="social-link me-2 fs-5"><i class="bi bi-instagram"></i></a>`
+                : ""
+              }
+                            ${request.facebook
+                ? `<a href="${request.facebook}" target="_blank" class="social-link fs-5"><i class="bi bi-facebook"></i></a>`
+                : ""
+              }
                         </td>
                         <td class="align-middle">${getStatusBadge(
-                          request.status
-                        )}</td>
+                request.status
+              )}</td>
                     </tr>
                 `
           )
@@ -2150,9 +2139,8 @@ document.addEventListener("DOMContentLoaded", function () {
         Pending: "text-warning",
         Rejected: "text-danger",
       };
-      return `<i data-feather="${icons[status] || "help-circle"}" class="${
-        colors[status] || "text-muted"
-      }"></i>`;
+      return `<i data-feather="${icons[status] || "help-circle"}" class="${colors[status] || "text-muted"
+        }"></i>`;
     }
 
     function getStatusBadge(status) {
@@ -2161,9 +2149,8 @@ document.addEventListener("DOMContentLoaded", function () {
         Pending: "warning",
         Rejected: "danger",
       };
-      return `<span class="badge bg-${
-        badgeClasses[status] || "secondary"
-      }">${status}</span>`;
+      return `<span class="badge bg-${badgeClasses[status] || "secondary"
+        }">${status}</span>`;
     }
 
     // --- EVENT LISTENERS ---
@@ -2295,34 +2282,30 @@ document.addEventListener("DOMContentLoaded", function () {
             (request) => `
                     <tr>
                         <td class="text-center align-middle">${getStatusIcon(
-                          request.status
-                        )}</td>
+              request.status
+            )}</td>
                         <td class="align-middle">
                             <div>
-                                <div class="release-title">${
-                                  request.songName
-                                }</div>
-                                <div class="release-artist text-muted small">${
-                                  request.artistName
-                                }</div>
+                                <div class="release-title">${request.songName
+              }</div>
+                                <div class="release-artist text-muted small">${request.artistName
+              }</div>
                             </div>
                         </td>
                         <td class="align-middle">${request.isrc || "N/A"}</td>
                         <td class="align-middle">
-                            ${
-                              request.instagram
-                                ? `<a href="${request.instagram}" target="_blank" class="social-link me-2 fs-5"><i class="bi bi-instagram"></i></a>`
-                                : ""
-                            }
-                            ${
-                              request.facebook
-                                ? `<a href="${request.facebook}" target="_blank" class="social-link fs-5"><i class="bi bi-facebook"></i></a>`
-                                : ""
-                            }
+                            ${request.instagram
+                ? `<a href="${request.instagram}" target="_blank" class="social-link me-2 fs-5"><i class="bi bi-instagram"></i></a>`
+                : ""
+              }
+                            ${request.facebook
+                ? `<a href="${request.facebook}" target="_blank" class="social-link fs-5"><i class="bi bi-facebook"></i></a>`
+                : ""
+              }
                         </td>
                         <td class="align-middle">${getStatusBadge(
-                          request.status
-                        )}</td>
+                request.status
+              )}</td>
                     </tr>
                 `
           )
@@ -2342,9 +2325,8 @@ document.addEventListener("DOMContentLoaded", function () {
         Pending: "text-warning",
         Rejected: "text-danger",
       };
-      return `<i data-feather="${icons[status] || "help-circle"}" class="${
-        colors[status] || "text-muted"
-      }"></i>`;
+      return `<i data-feather="${icons[status] || "help-circle"}" class="${colors[status] || "text-muted"
+        }"></i>`;
     }
 
     function getStatusBadge(status) {
@@ -2353,9 +2335,8 @@ document.addEventListener("DOMContentLoaded", function () {
         Pending: "warning",
         Rejected: "danger",
       };
-      return `<span class="badge bg-${
-        badgeClasses[status] || "secondary"
-      }">${status}</span>`;
+      return `<span class="badge bg-${badgeClasses[status] || "secondary"
+        }">${status}</span>`;
     }
 
     // --- EVENT LISTENERS ---
@@ -2477,9 +2458,8 @@ document.addEventListener("DOMContentLoaded", function () {
         Pending: "text-warning",
         Rejected: "text-danger",
       };
-      return `<i data-feather="${icons[status] || "help-circle"}" class="${
-        colors[status] || "text-muted"
-      }"></i>`;
+      return `<i data-feather="${icons[status] || "help-circle"}" class="${colors[status] || "text-muted"
+        }"></i>`;
     }
 
     function getStatusBadge(status) {
@@ -2489,9 +2469,8 @@ document.addEventListener("DOMContentLoaded", function () {
         Rejected: "danger",
       };
       const textClass = status === "Pending" ? "text-dark" : "";
-      return `<span class="badge bg-${
-        badgeClasses[status] || "secondary"
-      } ${textClass}">${status}</span>`;
+      return `<span class="badge bg-${badgeClasses[status] || "secondary"
+        } ${textClass}">${status}</span>`;
     }
 
     function exportToCsv(filename, data) {
@@ -2563,8 +2542,8 @@ document.addEventListener("DOMContentLoaded", function () {
             (request) => `
                     <tr>
                         <td class="text-center">${getStatusIcon(
-                          request.status
-                        )}</td>
+              request.status
+            )}</td>
                         <td>
                             <div class="release-title">
                                 <a href="#">${request.songName}</a>
@@ -2572,18 +2551,16 @@ document.addEventListener("DOMContentLoaded", function () {
                         </td>
                         <td>${request.isrc || "N/A"}</td>
                         <td class="text-center">
-                            ${
-                              request.instagramAudio
-                                ? `<a href="${request.instagramAudio}" target="_blank" class="link-icon" title="Instagram Audio"><i class="bi bi-music-note-beamed"></i></a>`
-                                : "N/A"
-                            }
+                            ${request.instagramAudio
+                ? `<a href="${request.instagramAudio}" target="_blank" class="link-icon" title="Instagram Audio"><i class="bi bi-music-note-beamed"></i></a>`
+                : "N/A"
+              }
                         </td>
                         <td class="text-center">
-                            ${
-                              request.reelMerge
-                                ? `<a href="${request.reelMerge}" target="_blank" class="link-icon" title="Reel Merge"><i class="bi bi-camera-reels"></i></a>`
-                                : "N/A"
-                            }
+                            ${request.reelMerge
+                ? `<a href="${request.reelMerge}" target="_blank" class="link-icon" title="Reel Merge"><i class="bi bi-camera-reels"></i></a>`
+                : "N/A"
+              }
                         </td>
                         <td>${request.matchingTime || "N/A"}</td>
                         <td>${getStatusBadge(request.status)}</td>
@@ -3056,22 +3033,18 @@ document.addEventListener("DOMContentLoaded", function () {
         !data || data.length === 0
           ? `<tr><td colspan="10" class="text-center p-5"><h5>No matching conflicts found.</h5></td></tr>`
           : data
-              .map(
-                (req) => `
+            .map(
+              (req) => `
                 <tr style="cursor: pointer;" data-bs-toggle="offcanvas" data-bs-target="#conflictResolutionOffcanvas"
-                    data-song-name="${req.assetTitle}" data-artist-name="${
-                  req.artist
+                    data-song-name="${req.assetTitle}" data-artist-name="${req.artist
                 }" data-isrc="${req.isrc}" 
-                    data-cover-url="${req.albumCoverUrl}" data-category="${
-                  req.category
+                    data-cover-url="${req.albumCoverUrl}" data-category="${req.category
                 }" data-other-party="${req.otherParty}">
                     <td class="text-center"><i class="bi bi-youtube text-danger fs-5"></i></td>
                     <td>${req.category}</td>
                     <td>${req.assetTitle}</td>
-                    <td><div class="fw-bold">${
-                      req.artist
-                    }</div><small class="text-muted">Asset ID: ${
-                  req.assetId
+                    <td><div class="fw-bold">${req.artist
+                }</div><small class="text-muted">Asset ID: ${req.assetId
                 }</small></td>
                     <td>${req.upc}</td>
                     <td>${req.otherParty}</td>
@@ -3080,8 +3053,8 @@ document.addEventListener("DOMContentLoaded", function () {
                     <td>${getStatusBadge(req.status)}</td>
                     <td><i class="bi bi-chevron-right text-muted"></i></td>
                 </tr>`
-              )
-              .join("");
+            )
+            .join("");
       document.getElementById(
         "pagination-text"
       ).textContent = `${data.length} of ${conflictRequests.length} results`;
@@ -3098,18 +3071,17 @@ document.addEventListener("DOMContentLoaded", function () {
                     <h2 class="accordion-header" id="heading-${regionId}">
                         <button class="accordion-button collapsed d-flex align-items-center" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-${regionId}" aria-expanded="false">
                             <div class="form-check me-auto pe-2"><input class="form-check-input region-checkbox" type="checkbox" id="region-${regionId}" data-region="${region}" checked><label class="form-check-label fw-bold" for="region-${regionId}">${region}</label></div>
-                            <span class="text-muted small me-2">${
-                              countries.length
-                            } countries</span>
+                            <span class="text-muted small me-2">${countries.length
+            } countries</span>
                         </button>
                     </h2>
                     <div id="collapse-${regionId}" class="accordion-collapse collapse" data-bs-parent="#territoryAccordion">
                         <div class="accordion-body"><div class="territory-list-inner">${countries
-                          .map(
-                            (country) =>
-                              `<div class="form-check"><input class="form-check-input country-checkbox" type="checkbox" value="${country.code}" id="country-${country.code}" data-region="${region}" checked><label class="form-check-label" for="country-${country.code}">${country.name}</label></div>`
-                          )
-                          .join("")}</div></div>
+              .map(
+                (country) =>
+                  `<div class="form-check"><input class="form-check-input country-checkbox" type="checkbox" value="${country.code}" id="country-${country.code}" data-region="${region}" checked><label class="form-check-label" for="country-${country.code}">${country.name}</label></div>`
+              )
+              .join("")}</div></div>
                     </div>
                 </div>`;
         })
@@ -3590,7 +3562,7 @@ document.addEventListener("DOMContentLoaded", function () {
       typeof views !== "string"
         ? 0
         : parseFloat(views.toUpperCase()) *
-          (views.toUpperCase().includes("K") ? 1000 : 1);
+        (views.toUpperCase().includes("K") ? 1000 : 1);
     const parseExpiry = (expiry) =>
       typeof expiry !== "string" || expiry === "-"
         ? Infinity
@@ -3765,22 +3737,21 @@ document.addEventListener("DOMContentLoaded", function () {
                                     <input class="form-check-input region-checkbox" type="checkbox" id="region-fb-${regionId}" data-region="${region}" checked>
                                     <label class="form-check-label fw-bold" for="region-fb-${regionId}">${region}</label>
                                 </div>
-                                <span class="text-muted small me-2">${
-                                  countries.length
-                                } countries</span>
+                                <span class="text-muted small me-2">${countries.length
+              } countries</span>
                             </button>
                         </h2>
                         <div id="collapse-fb-${regionId}" class="accordion-collapse collapse" data-bs-parent="#territoryAccordion">
                             <div class="accordion-body">
                                 <div class="territory-list-inner">${countries
-                                  .map(
-                                    (c) => `
+                .map(
+                  (c) => `
                                     <div class="form-check">
                                         <input class="form-check-input country-checkbox" type="checkbox" value="${c.code}" id="country-fb-${c.code}" data-region="${region}" checked>
                                         <label class="form-check-label" for="country-fb-${c.code}">${c.name}</label>
                                     </div>`
-                                  )
-                                  .join("")}
+                )
+                .join("")}
                                 </div>
                             </div>
                         </div>
@@ -4942,3 +4913,75 @@ document.addEventListener("DOMContentLoaded", function () {
   updateStepIndicator(1);
 });
 
+//User Account Creation Js
+document.addEventListener("DOMContentLoaded", function () {
+  const start = document.getElementById("startDate");
+  const end = document.getElementById("endDate");
+  if (!start || !end) return;
+
+  const form = start.closest("form");
+
+  function syncMinMax() {
+    if (start.value) end.min = start.value; else end.removeAttribute("min");
+    if (end.value) start.max = end.value; else start.removeAttribute("max");
+  }
+
+  function validateDates(showBubble = false) {
+    let ok = true;
+
+    start.setCustomValidity("");
+    end.setCustomValidity("");
+
+    if (start.value && end.value) {
+      const s = new Date(start.value);
+      const e = new Date(end.value);
+
+      if (s >= e) {   // disallow equal OR greater
+        start.setCustomValidity("Start date must be before end date.");
+        end.setCustomValidity("End date must be after start date.");
+        ok = false;
+      }
+    }
+
+    syncMinMax();
+
+    if (showBubble) {
+      (document.activeElement === start ? start : end).reportValidity();
+    }
+
+    return ok;
+  }
+
+  ["input", "change", "blur"].forEach(evt => {
+    start.addEventListener(evt, () => validateDates(evt !== "blur"));
+    end.addEventListener(evt, () => validateDates(evt !== "blur"));
+  });
+
+  if (form) {
+    form.addEventListener("submit", function (e) {
+      const ok = validateDates(true) && form.checkValidity();
+      if (!ok) {
+        e.preventDefault();
+        e.stopPropagation();
+      }
+      form.classList.add("was-validated");
+    });
+  }
+
+  syncMinMax();
+});
+
+//Toggle Password  Functionlity
+const passwordInput = document.getElementById("password");
+const togglePassword = document.getElementById("togglePassword");
+const toggleIcon = document.getElementById("toggleIcon");
+
+togglePassword.addEventListener("click", function () {
+  // toggle input type
+  const isPassword = passwordInput.type === "password";
+  passwordInput.type = isPassword ? "text" : "password";
+
+  // toggle icon
+  toggleIcon.classList.toggle("bi-eye");
+  toggleIcon.classList.toggle("bi-eye-slash");
+});
