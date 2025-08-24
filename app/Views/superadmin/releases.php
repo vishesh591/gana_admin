@@ -78,7 +78,7 @@
 
                 <div class="card-body p-4">
                     <div class="table-responsive">
-                        <table class="table table-hover mb-0 align-middle" id="datatable" style="width:100%;">
+                        <table class="table table-hover mb-0 align-middle" id="datatableRelease" style="width:100%;">
                             <thead class="table-light">
                                 <tr>
                                     <th width="60" class="text-center"></th>
@@ -89,55 +89,8 @@
                                     <th class="ps-3">Status</th>
                                 </tr>
                             </thead>
-                            <tbody id="tableBody">
-                                        <?php foreach ($data['releases'] as $release): ?>
-                                            <tr>
-                                                <td class="text-center">
-                                                    <?php if ($release['status'] == 3): ?>
-                                                        <i class="bi bi-check-circle-fill text-success" title="Delivered"></i>
-                                                    <?php elseif ($release['status'] == 1): ?>
-                                                        <i class="bi bi-hourglass-split text-warning" title="In Review"></i>
-                                                    <?php elseif ($release['status'] == 5): ?>
-                                                        <i class="bi bi-check-circle-fill text-primary" title="Approved"></i>
-                                                    <?php elseif ($release['status'] == 2): ?>
-                                                        <i class="bi bi-x-circle-fill text-danger" title="Takedown"></i>
-                                                    <?php elseif ($release['status'] == 4): ?>
-                                                        <i class="bi bi-slash-circle text-danger" title="Rejected"></i>
-                                                    <?php endif; ?>
-                                                </td>
-                                                <td>
-                                                    <div>
-                                                        <a href="#"
-                                                            class="release-link"
-                                                            data-id="<?= $release['id'] ?>"
-                                                            data-bs-toggle="modal"
-                                                            data-bs-target="#releaseModal">
-                                                            <?= esc($release['title']) ?>
-                                                        </a>
+                            <tbody id="tableBody"></tbody>
 
-                                                        <div class="release-artist"><?= esc($release['author']) ?></div>
-                                                    </div>
-
-                                                </td>
-                                                <td><?= date('jS F Y', strtotime($release['created_at'])) ?></td>
-                                                <td><?= esc($release['upc_ean']) ?></td>
-                                                <td><?= esc($release['isrc']) ?></td>
-                                                <td>
-                                                    <?php if ($release['status'] == 1): ?>
-                                                        <span class="badge status-badge status-review">IN REVIEW</span>
-                                                    <?php elseif ($release['status'] == 2): ?>
-                                                        <span class="badge status-badge status-takedown">TAKEDOWN</span>
-                                                    <?php elseif ($release['status'] == 3): ?>
-                                                        <span class="badge status-badge status-delivered">DELIVERED</span>
-                                                    <?php elseif ($release['status'] == 4): ?>
-                                                        <span class="badge status-badge status-rejected">REJECTED</span>
-                                                    <?php elseif ($release['status'] == 5): ?>
-                                                        <span class="badge status-badge status-approved">APPROVED</span>
-                                                    <?php endif; ?>
-                                                </td>
-                                            </tr>
-                                        <?php endforeach; ?>
-                                    </tbody>
                         </table>
                     </div>
                 </div>

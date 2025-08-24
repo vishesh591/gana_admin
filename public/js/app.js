@@ -2,16 +2,16 @@ function _typeof(e) {
   return (_typeof =
     "function" == typeof Symbol && "symbol" == typeof Symbol.iterator
       ? function (e) {
-        return typeof e;
-      }
+          return typeof e;
+        }
       : function (e) {
-        return e &&
-          "function" == typeof Symbol &&
-          e.constructor === Symbol &&
-          e !== Symbol.prototype
-          ? "symbol"
-          : typeof e;
-      })(e);
+          return e &&
+            "function" == typeof Symbol &&
+            e.constructor === Symbol &&
+            e !== Symbol.prototype
+            ? "symbol"
+            : typeof e;
+        })(e);
 }
 function _classCallCheck(e, t) {
   if (!(e instanceof t))
@@ -38,11 +38,11 @@ function _defineProperty(e, t, n) {
   return (
     (t = _toPropertyKey(t)) in e
       ? Object.defineProperty(e, t, {
-        value: n,
-        enumerable: !0,
-        configurable: !0,
-        writable: !0,
-      })
+          value: n,
+          enumerable: !0,
+          configurable: !0,
+          writable: !0,
+        })
       : (e[t] = n),
     e
   );
@@ -74,22 +74,22 @@ var App = (() =>
             e.preventDefault(),
               $("body").toggleClass("fullscreen-enable"),
               document.fullscreenElement ||
-                document.mozFullScreenElement ||
-                document.webkitFullscreenElement
+              document.mozFullScreenElement ||
+              document.webkitFullscreenElement
                 ? document.cancelFullScreen
                   ? document.cancelFullScreen()
                   : document.mozCancelFullScreen
-                    ? document.mozCancelFullScreen()
-                    : document.webkitCancelFullScreen &&
+                  ? document.mozCancelFullScreen()
+                  : document.webkitCancelFullScreen &&
                     document.webkitCancelFullScreen()
                 : document.documentElement.requestFullscreen
-                  ? document.documentElement.requestFullscreen()
-                  : document.documentElement.mozRequestFullScreen
-                    ? document.documentElement.mozRequestFullScreen()
-                    : document.documentElement.webkitRequestFullscreen &&
-                    document.documentElement.webkitRequestFullscreen(
-                      Element.ALLOW_KEYBOARD_INPUT
-                    );
+                ? document.documentElement.requestFullscreen()
+                : document.documentElement.mozRequestFullScreen
+                ? document.documentElement.mozRequestFullScreen()
+                : document.documentElement.webkitRequestFullscreen &&
+                  document.documentElement.webkitRequestFullscreen(
+                    Element.ALLOW_KEYBOARD_INPUT
+                  );
           }),
             document.addEventListener("fullscreenchange", e),
             document.addEventListener("webkitfullscreenchange", e),
@@ -127,7 +127,7 @@ var App = (() =>
                       (e.className =
                         e.dataset.originalClass + " " + this.value);
                   }),
-                document.getElementById("liveAlertPlaceholder")),
+              document.getElementById("liveAlertPlaceholder")),
             t = document.getElementById("liveAlertBtn");
           t &&
             t.addEventListener("click", function () {
@@ -163,25 +163,25 @@ var App = (() =>
           e(),
             window.addEventListener("resize", e),
             $("#side-menu").length &&
-            ($("#side-menu li .collapse").on({
-              "show.bs.collapse": function (e) {
-                e = $(e.target).parents(".collapse.show");
-                $("#side-menu .collapse.show").not(e).collapse("hide");
-              },
-            }),
+              ($("#side-menu li .collapse").on({
+                "show.bs.collapse": function (e) {
+                  e = $(e.target).parents(".collapse.show");
+                  $("#side-menu .collapse.show").not(e).collapse("hide");
+                },
+              }),
               $("#side-menu a").each(function () {
                 var e = window.location.href.split(/[?#]/)[0];
                 this.href == e &&
                   ($(this).addClass("active"),
-                    $(this).parent().addClass("menuitem-active"),
-                    $(this).parent().parent().parent().addClass("show"),
-                    $(this)
-                      .parent()
-                      .parent()
-                      .parent()
-                      .parent()
-                      .addClass("menuitem-active"),
-                    "sidebar-menu" !==
+                  $(this).parent().addClass("menuitem-active"),
+                  $(this).parent().parent().parent().addClass("show"),
+                  $(this)
+                    .parent()
+                    .parent()
+                    .parent()
+                    .parent()
+                    .addClass("menuitem-active"),
+                  "sidebar-menu" !==
                     (e = $(this)
                       .parent()
                       .parent()
@@ -189,16 +189,16 @@ var App = (() =>
                       .parent()
                       .parent()
                       .parent()).attr("id") && e.addClass("show"),
-                    $(this)
-                      .parent()
-                      .parent()
-                      .parent()
-                      .parent()
-                      .parent()
-                      .parent()
-                      .parent()
-                      .addClass("menuitem-active"),
-                    "wrapper" !==
+                  $(this)
+                    .parent()
+                    .parent()
+                    .parent()
+                    .parent()
+                    .parent()
+                    .parent()
+                    .parent()
+                    .addClass("menuitem-active"),
+                  "wrapper" !==
                     (e = $(this)
                       .parent()
                       .parent()
@@ -209,17 +209,17 @@ var App = (() =>
                       .parent()
                       .parent()
                       .parent()).attr("id") && e.addClass("show"),
-                    (e = $(this)
-                      .parent()
-                      .parent()
-                      .parent()
-                      .parent()
-                      .parent()
-                      .parent()
-                      .parent()
-                      .parent()
-                      .parent()
-                      .parent()).is("body") || e.addClass("menuitem-active"));
+                  (e = $(this)
+                    .parent()
+                    .parent()
+                    .parent()
+                    .parent()
+                    .parent()
+                    .parent()
+                    .parent()
+                    .parent()
+                    .parent()
+                    .parent()).is("body") || e.addClass("menuitem-active"));
               }));
         },
       },
@@ -573,7 +573,7 @@ document.addEventListener("DOMContentLoaded", function () {
     typeof views !== "string"
       ? 0
       : parseFloat(views.toUpperCase()) *
-      (views.toUpperCase().includes("K") ? 1000 : 1);
+        (views.toUpperCase().includes("K") ? 1000 : 1);
   const parseExpiry = (expiry) =>
     typeof expiry !== "string" || expiry === "-" ? Infinity : parseInt(expiry);
   const getStatusBadge = (status) =>
@@ -742,21 +742,22 @@ document.addEventListener("DOMContentLoaded", function () {
                                 <input class="form-check-input region-checkbox" type="checkbox" id="region-${regionId}" data-region="${region}" checked>
                                 <label class="form-check-label fw-bold" for="region-${regionId}">${region}</label>
                             </div>
-                            <span class="text-muted small me-2">${countries.length
-            } countries</span>
+                            <span class="text-muted small me-2">${
+                              countries.length
+                            } countries</span>
                         </button>
                     </h2>
                     <div id="collapse-${regionId}" class="accordion-collapse collapse" data-bs-parent="#territoryAccordion">
                         <div class="accordion-body">
                             <div class="territory-list-inner">${countries
-              .map(
-                (c) => `
+                              .map(
+                                (c) => `
                                 <div class="form-check">
                                     <input class="form-check-input country-checkbox" type="checkbox" value="${c.code}" id="country-${c.code}" data-region="${region}" checked>
                                     <label class="form-check-label" for="country-${c.code}">${c.name}</label>
                                 </div>`
-              )
-              .join("")}
+                              )
+                              .join("")}
                             </div>
                         </div>
                     </div>
@@ -898,8 +899,9 @@ document.addEventListener("DOMContentLoaded", function () {
         pending: "text-warning",
         rejected: "text-danger",
       };
-      return `<i data-feather="${icons[status] || "help-circle"}" class="${colors[status] || "text-muted"
-        }"></i>`;
+      return `<i data-feather="${icons[status] || "help-circle"}" class="${
+        colors[status] || "text-muted"
+      }"></i>`;
     };
     const getStatusBadge = (status) => {
       const config = {
@@ -907,8 +909,9 @@ document.addEventListener("DOMContentLoaded", function () {
         pending: "status-pending",
         rejected: "status-rejected",
       };
-      return `<span class="badge status-badge ${config[status] || "bg-secondary"
-        }">${status.toUpperCase()}</span>`;
+      return `<span class="badge status-badge ${
+        config[status] || "bg-secondary"
+      }">${status.toUpperCase()}</span>`;
     };
     const createLink = (url, iconClass) =>
       url
@@ -1128,8 +1131,9 @@ document.addEventListener("DOMContentLoaded", function () {
         pending: "text-warning",
         rejected: "text-danger",
       };
-      return `<i data-feather="${icons[status] || "help-circle"}" class="${colors[status] || "text-muted"
-        }"></i>`;
+      return `<i data-feather="${icons[status] || "help-circle"}" class="${
+        colors[status] || "text-muted"
+      }"></i>`;
     };
     const getStatusBadge = (status) => {
       const config = {
@@ -1137,8 +1141,9 @@ document.addEventListener("DOMContentLoaded", function () {
         pending: "status-pending",
         rejected: "status-rejected",
       };
-      return `<span class="badge status-badge ${config[status] || "bg-secondary"
-        }">${status.toUpperCase()}</span>`;
+      return `<span class="badge status-badge ${
+        config[status] || "bg-secondary"
+      }">${status.toUpperCase()}</span>`;
     };
     const createLink = (url, iconClass) =>
       url
@@ -1412,8 +1417,9 @@ document.addEventListener("DOMContentLoaded", function () {
         pending: "text-warning",
         rejected: "text-danger",
       };
-      return `<i data-feather="${icons[status] || "help-circle"}" class="${colors[status] || "text-muted"
-        }"></i>`;
+      return `<i data-feather="${icons[status] || "help-circle"}" class="${
+        colors[status] || "text-muted"
+      }"></i>`;
     };
     const getStatusBadge = (status) => {
       const config = {
@@ -1421,8 +1427,9 @@ document.addEventListener("DOMContentLoaded", function () {
         pending: "status-pending",
         rejected: "status-rejected",
       };
-      return `<span class="badge status-badge ${config[status] || "bg-secondary"
-        }">${status.toUpperCase()}</span>`;
+      return `<span class="badge status-badge ${
+        config[status] || "bg-secondary"
+      }">${status.toUpperCase()}</span>`;
     };
     const createLink = (url, iconClass) =>
       url
@@ -1629,210 +1636,10 @@ document.addEventListener("DOMContentLoaded", function () {
   const releasesPageContainer = document.querySelector(".admin-releases-page");
 
   if (releasesPageContainer) {
-    // --- DATA ---
-    const releasesData = [
-      {
-        id: 1,
-        title: "Swapnil Dada Kartoy Raj",
-        artist: "Mohit Jadhav",
-        submittedDate: "7th July 2025",
-        upc: "5863544729375",
-        isrc: "INH722302515",
-        status: "delivered",
-        isTakedown: false,
-        catNo: "MJ-001",
-        recordLabel: "Music Dreams",
-        featuringArtist: "None",
-        lyricists: ["Mohit Jadhav", "Priya Sharma"],
-        albumArtwork: "/images/rocket.png",
-        stores: ["Spotify", "Apple Music", "Amazon Music", "JioSaavn", "Gaana"],
-        copyrightStores: ["Facebook Rights Manager", "YouTube Content ID"],
-        tracks: [
-          {
-            trackNo: 1,
-            title: "Swapnil Dada Kartoy Raj",
-            duration: "3:45",
-            isrc: "INH722302515",
-            language: "Marathi",
-            explicit: false,
-          },
-          {
-            trackNo: 2,
-            title: "Jai Maharashtra",
-            duration: "4:10",
-            isrc: "INH722302516",
-            language: "Marathi",
-            explicit: false,
-          },
-        ],
-      },
-      {
-        id: 2,
-        title: "Dream Chaser",
-        artist: "Sarah Johnson",
-        submittedDate: "5th July 2025",
-        upc: "5863544729376",
-        isrc: "INH722302516",
-        status: "review",
-        isTakedown: false,
-        catNo: "SJ-002",
-        recordLabel: "Indie Sounds",
-        featuringArtist: "The Harmonizers",
-        lyricists: ["Sarah Johnson"],
-        albumArtwork: "/images/rocket.png",
-        stores: ["Spotify", "Apple Music", "Amazon Music"],
-        copyrightStores: [],
-        tracks: [
-          {
-            trackNo: 1,
-            title: "Stardust",
-            duration: "3:20",
-            isrc: "US-SJ-25-001",
-            language: "English",
-            explicit: false,
-          },
-          {
-            trackNo: 2,
-            title: "Open Road",
-            duration: "4:00",
-            isrc: "US-SJ-25-002",
-            language: "English",
-            explicit: false,
-          },
-          {
-            trackNo: 3,
-            title: "City Echoes",
-            duration: "2:55",
-            isrc: "US-SJ-25-003",
-            language: "English",
-            explicit: true,
-          },
-        ],
-      },
-      {
-        id: 3,
-        title: "Midnight Blues",
-        artist: "Alex Rodriguez",
-        submittedDate: "3rd July 2025",
-        upc: "5863544729377",
-        isrc: "INH722302517",
-        status: "delivered",
-        isTakedown: false,
-        catNo: "AR-003",
-        recordLabel: "Jazz Groove",
-        featuringArtist: "Smooth Sax Sam",
-        lyricists: ["Alex Rodriguez"],
-        albumArtwork: "/images/rocket.png",
-        stores: ["Spotify", "Apple Music", "Bandcamp"],
-        copyrightStores: ["YouTube Content ID"],
-        tracks: [
-          {
-            trackNo: 1,
-            title: "Blue Moon Serenade",
-            duration: "5:15",
-            isrc: "US-AR-25-004",
-            language: "English",
-            explicit: false,
-          },
-        ],
-      },
-      {
-        id: 4,
-        title: "Summer Vibes",
-        artist: "Emma Thompson",
-        submittedDate: "1st July 2025",
-        upc: "5863544729378",
-        isrc: "INH722302518",
-        status: "rejected",
-        isTakedown: false,
-        catNo: "ET-004",
-        recordLabel: "Pop Hits Inc.",
-        featuringArtist: "None",
-        lyricists: ["Emma Thompson", "Ben Carter"],
-        albumArtwork: "/images/rocket.png",
-        stores: [],
-        copyrightStores: [],
-        tracks: [
-          {
-            trackNo: 1,
-            title: "Beach Day",
-            duration: "3:05",
-            isrc: "US-ET-25-005",
-            language: "English",
-            explicit: false,
-          },
-        ],
-      },
-      {
-        id: 5,
-        title: "Electronic Dreams",
-        artist: "DJ Mike",
-        submittedDate: "28th June 2025",
-        upc: "5863544729379",
-        isrc: "INH722302519",
-        status: "review",
-        isTakedown: false,
-        catNo: "DJM-005",
-        recordLabel: "Techno Beat",
-        featuringArtist: "Synth Master",
-        lyricists: ["DJ Mike"],
-        albumArtwork: "/images/rocket.png",
-        stores: ["Beatport", "SoundCloud"],
-        copyrightStores: [],
-        tracks: [
-          {
-            trackNo: 1,
-            title: "Circuit Breaker",
-            duration: "6:00",
-            isrc: "US-DJM-25-006",
-            language: "Instrumental",
-            explicit: false,
-          },
-          {
-            trackNo: 2,
-            title: "Digital Love",
-            duration: "5:30",
-            isrc: "US-DJM-25-007",
-            language: "English",
-            explicit: false,
-          },
-        ],
-      },
-      {
-        id: 6,
-        title: "Midnight Blues",
-        artist: "Alex Rodriguez",
-        submittedDate: "3rd July 2025",
-        upc: "5863544729377",
-        isrc: "INH722302517",
-        status: "approved",
-        isTakedown: false,
-        catNo: "AR-003",
-        recordLabel: "Jazz Groove",
-        featuringArtist: "Smooth Sax Sam",
-        lyricists: ["Alex Rodriguez"],
-        albumArtwork: "/images/rocket.png",
-        stores: ["Spotify", "Apple Music", "Bandcamp"],
-        copyrightStores: ["YouTube Content ID"],
-        tracks: [
-          {
-            trackNo: 1,
-            title: "Blue Moon Serenade",
-            duration: "5:15",
-            isrc: "US-AR-25-004",
-            language: "English",
-            explicit: false,
-          },
-        ],
-      },
-    ];
     let currentFilter = "all";
-
-    // --- DOM ELEMENTS ---
-    const table = $("#datatable");
+    const table = $("#datatableRelease");
     const filterTabs = document.querySelector(".nav-pills");
 
-    // --- HELPER FUNCTIONS ---
     function getStatusIcon(status) {
       const icons = {
         delivered: "bi-check-circle-fill text-success",
@@ -1841,8 +1648,7 @@ document.addEventListener("DOMContentLoaded", function () {
         review: "bi-hourglass-split text-warning",
         takedown: "bi-exclamation-circle-fill text-secondary",
       };
-      return `<i class="bi ${icons[status] || "bi-question-circle-fill text-muted"
-        }" title="${status}"></i>`;
+      return `<i class="bi ${icons[status] || "bi-question-circle-fill text-muted"}" title="${status}"></i>`;
     }
 
     function getStatusBadge(status) {
@@ -1853,17 +1659,17 @@ document.addEventListener("DOMContentLoaded", function () {
         rejected: { class: "status-rejected", text: "REJECTED" },
         takedown: { class: "status-takedown-table", text: "TAKEDOWN" },
       };
-      const statusInfo = config[status] || {
-        class: "status-review",
-        text: status.toUpperCase(),
-      };
+      const statusInfo = config[status] || { class: "status-review", text: status.toUpperCase() };
       return `<span class="badge status-badge ${statusInfo.class}">${statusInfo.text}</span>`;
     }
 
-    // --- DATATABLE INITIALIZATION ---
     const dataTableInstance = table.DataTable({
       destroy: true,
-      data: releasesData,
+      ajax: {
+        url: "/superadmin/releases", // adjust route as needed
+        type: "GET",
+        dataSrc: "data",
+      },
       paging: true,
       searching: true,
       info: true,
@@ -1878,12 +1684,13 @@ document.addEventListener("DOMContentLoaded", function () {
         },
         {
           data: null,
-          orderable: true,
           render: (data, type, row) => `
-                        <div>
-                            <div class="release-title"><a href="#" class="view-details-link" data-id="${row.id}">${row.title}</a></div>
-                            <div class="release-artist">${row.artist}</div>
-                        </div>`,
+            <div>
+              <div class="release-title">
+                <a href="#" class="view-details-link" data-id="${row.id}">${row.title}</a>
+              </div>
+              <div class="release-artist">${row.artist}</div>
+            </div>`,
         },
         { data: "submittedDate", defaultContent: "N/A" },
         { data: "upc", defaultContent: "N/A" },
@@ -1893,65 +1700,24 @@ document.addEventListener("DOMContentLoaded", function () {
       drawCallback: () => {
         feather.replace();
       },
-      language: {
-        info: "Showing _START_ to _END_ of _TOTAL_ entries",
-        infoEmpty: "Showing 0 to 0 of 0 entries",
-        infoFiltered: "(filtered from _MAX_ total entries)",
-        zeroRecords: "No matching releases found",
-        emptyTable: "No releases available",
-        search: "_INPUT_",
-        searchPlaceholder: "Search records...",
-      },
     });
 
-    // --- RENDER & UPDATE FUNCTIONS ---
+    // --- FILTERS ---
     function applyFiltersAndDraw() {
-      $.fn.dataTable.ext.search.pop(); // Clear previous custom filters
-      $.fn.dataTable.ext.search.push(function (settings, data, dataIndex) {
-        if (currentFilter === "all") {
-          return true;
-        }
-        const rowStatus = releasesData[dataIndex].status;
-        return rowStatus === currentFilter;
+      $.fn.dataTable.ext.search.pop();
+      $.fn.dataTable.ext.search.push(function (settings, data, dataIndex, rowData) {
+        if (currentFilter === "all") return true;
+        return rowData.status === currentFilter;
       });
       dataTableInstance.draw();
     }
 
-    window.openReleaseModal = function (id) {
-      const release = releasesData.find((r) => r.id === id);
-      if (!release) return;
-
-      document
-        .getElementById("releaseModalHeader")
-        .querySelector(
-          ".bg-image-blurred"
-        ).style.backgroundImage = `url('${release.albumArtwork}')`;
-      document.getElementById("releaseAlbumArtwork").src = release.albumArtwork;
-      document.getElementById("releaseTitle").textContent = release.title;
-      document.getElementById("releaseArtist").textContent = release.artist;
-
-      const releaseModalInstance = new bootstrap.Modal(
-        document.getElementById("releaseModal")
-      );
-      releaseModalInstance.show();
-    };
-
-    // --- EVENT LISTENERS ---
     filterTabs.addEventListener("click", (e) => {
       if (e.target.matches("a.nav-link[data-filter]")) {
         e.preventDefault();
         currentFilter = e.target.dataset.filter;
-
-        document
-          .querySelectorAll(".nav-pills .nav-link")
-          .forEach((tab) => tab.classList.remove("active"));
+        document.querySelectorAll(".nav-pills .nav-link").forEach((tab) => tab.classList.remove("active"));
         e.target.classList.add("active");
-
-        // Update URL for state persistence
-        const url = new URL(window.location);
-        url.searchParams.set("filter", currentFilter);
-        window.history.pushState({}, "", url);
-
         applyFiltersAndDraw();
       }
     });
@@ -1959,39 +1725,9 @@ document.addEventListener("DOMContentLoaded", function () {
     $("#datatable tbody").on("click", ".view-details-link", function (e) {
       e.preventDefault();
       const id = parseInt($(this).data("id"), 10);
-      openReleaseModal(id);
+      // fetch full details by id if needed
+      console.log("Open modal for ID:", id);
     });
-
-    const destinationLabelSelect = document.getElementById(
-      "destinationLabelSelect"
-    );
-    const createAlbumBtn = document.getElementById("createAlbumBtn");
-    if (destinationLabelSelect && createAlbumBtn) {
-      destinationLabelSelect.addEventListener("change", function () {
-        createAlbumBtn.disabled = !this.value;
-      });
-      createAlbumBtn.addEventListener("click", function () {
-        window.location.href = "add-release";
-      });
-    }
-
-    // --- INITIAL RENDER ---
-    const urlParams = new URLSearchParams(window.location.search);
-    const initialFilter = urlParams.get("filter") || "all";
-    currentFilter = initialFilter;
-
-    const activeLink = document.querySelector(
-      `.nav-pills .nav-link[data-filter="${initialFilter}"]`
-    );
-    if (activeLink) {
-      document
-        .querySelectorAll(".nav-pills .nav-link")
-        .forEach((tab) => tab.classList.remove("active"));
-      activeLink.classList.add("active");
-    }
-
-    applyFiltersAndDraw();
-    feather.replace();
   }
 });
 
@@ -2112,7 +1848,7 @@ $(document).ready(function () {
 // labels-page js
 $(document).ready(function () {
   let table = $("#labelTable").DataTable({
-    destroy: true,
+    destroy:true,
     ajax: "/superadmin/api/labels", // your controller endpoint
     columns: [
       {
@@ -2367,30 +2103,34 @@ document.addEventListener("DOMContentLoaded", function () {
             (request) => `
                     <tr>
                         <td class="text-center align-middle">${getStatusIcon(
-              request.status
-            )}</td>
+                          request.status
+                        )}</td>
                         <td class="align-middle">
                             <div>
-                                <div class="release-title">${request.songName
-              }</div>
-                                <div class="release-artist text-muted small">${request.artistName
-              }</div>
+                                <div class="release-title">${
+                                  request.songName
+                                }</div>
+                                <div class="release-artist text-muted small">${
+                                  request.artistName
+                                }</div>
                             </div>
                         </td>
                         <td class="align-middle">${request.isrc || "N/A"}</td>
                         <td class="align-middle">
-                            ${request.instagram
-                ? `<a href="${request.instagram}" target="_blank" class="social-link me-2 fs-5"><i class="bi bi-instagram"></i></a>`
-                : ""
-              }
-                            ${request.facebook
-                ? `<a href="${request.facebook}" target="_blank" class="social-link fs-5"><i class="bi bi-facebook"></i></a>`
-                : ""
-              }
+                            ${
+                              request.instagram
+                                ? `<a href="${request.instagram}" target="_blank" class="social-link me-2 fs-5"><i class="bi bi-instagram"></i></a>`
+                                : ""
+                            }
+                            ${
+                              request.facebook
+                                ? `<a href="${request.facebook}" target="_blank" class="social-link fs-5"><i class="bi bi-facebook"></i></a>`
+                                : ""
+                            }
                         </td>
                         <td class="align-middle">${getStatusBadge(
-                request.status
-              )}</td>
+                          request.status
+                        )}</td>
                     </tr>
                 `
           )
@@ -2410,8 +2150,9 @@ document.addEventListener("DOMContentLoaded", function () {
         Pending: "text-warning",
         Rejected: "text-danger",
       };
-      return `<i data-feather="${icons[status] || "help-circle"}" class="${colors[status] || "text-muted"
-        }"></i>`;
+      return `<i data-feather="${icons[status] || "help-circle"}" class="${
+        colors[status] || "text-muted"
+      }"></i>`;
     }
 
     function getStatusBadge(status) {
@@ -2420,8 +2161,9 @@ document.addEventListener("DOMContentLoaded", function () {
         Pending: "warning",
         Rejected: "danger",
       };
-      return `<span class="badge bg-${badgeClasses[status] || "secondary"
-        }">${status}</span>`;
+      return `<span class="badge bg-${
+        badgeClasses[status] || "secondary"
+      }">${status}</span>`;
     }
 
     // --- EVENT LISTENERS ---
@@ -2553,30 +2295,34 @@ document.addEventListener("DOMContentLoaded", function () {
             (request) => `
                     <tr>
                         <td class="text-center align-middle">${getStatusIcon(
-              request.status
-            )}</td>
+                          request.status
+                        )}</td>
                         <td class="align-middle">
                             <div>
-                                <div class="release-title">${request.songName
-              }</div>
-                                <div class="release-artist text-muted small">${request.artistName
-              }</div>
+                                <div class="release-title">${
+                                  request.songName
+                                }</div>
+                                <div class="release-artist text-muted small">${
+                                  request.artistName
+                                }</div>
                             </div>
                         </td>
                         <td class="align-middle">${request.isrc || "N/A"}</td>
                         <td class="align-middle">
-                            ${request.instagram
-                ? `<a href="${request.instagram}" target="_blank" class="social-link me-2 fs-5"><i class="bi bi-instagram"></i></a>`
-                : ""
-              }
-                            ${request.facebook
-                ? `<a href="${request.facebook}" target="_blank" class="social-link fs-5"><i class="bi bi-facebook"></i></a>`
-                : ""
-              }
+                            ${
+                              request.instagram
+                                ? `<a href="${request.instagram}" target="_blank" class="social-link me-2 fs-5"><i class="bi bi-instagram"></i></a>`
+                                : ""
+                            }
+                            ${
+                              request.facebook
+                                ? `<a href="${request.facebook}" target="_blank" class="social-link fs-5"><i class="bi bi-facebook"></i></a>`
+                                : ""
+                            }
                         </td>
                         <td class="align-middle">${getStatusBadge(
-                request.status
-              )}</td>
+                          request.status
+                        )}</td>
                     </tr>
                 `
           )
@@ -2596,8 +2342,9 @@ document.addEventListener("DOMContentLoaded", function () {
         Pending: "text-warning",
         Rejected: "text-danger",
       };
-      return `<i data-feather="${icons[status] || "help-circle"}" class="${colors[status] || "text-muted"
-        }"></i>`;
+      return `<i data-feather="${icons[status] || "help-circle"}" class="${
+        colors[status] || "text-muted"
+      }"></i>`;
     }
 
     function getStatusBadge(status) {
@@ -2606,8 +2353,9 @@ document.addEventListener("DOMContentLoaded", function () {
         Pending: "warning",
         Rejected: "danger",
       };
-      return `<span class="badge bg-${badgeClasses[status] || "secondary"
-        }">${status}</span>`;
+      return `<span class="badge bg-${
+        badgeClasses[status] || "secondary"
+      }">${status}</span>`;
     }
 
     // --- EVENT LISTENERS ---
@@ -2729,8 +2477,9 @@ document.addEventListener("DOMContentLoaded", function () {
         Pending: "text-warning",
         Rejected: "text-danger",
       };
-      return `<i data-feather="${icons[status] || "help-circle"}" class="${colors[status] || "text-muted"
-        }"></i>`;
+      return `<i data-feather="${icons[status] || "help-circle"}" class="${
+        colors[status] || "text-muted"
+      }"></i>`;
     }
 
     function getStatusBadge(status) {
@@ -2740,8 +2489,9 @@ document.addEventListener("DOMContentLoaded", function () {
         Rejected: "danger",
       };
       const textClass = status === "Pending" ? "text-dark" : "";
-      return `<span class="badge bg-${badgeClasses[status] || "secondary"
-        } ${textClass}">${status}</span>`;
+      return `<span class="badge bg-${
+        badgeClasses[status] || "secondary"
+      } ${textClass}">${status}</span>`;
     }
 
     function exportToCsv(filename, data) {
@@ -2813,8 +2563,8 @@ document.addEventListener("DOMContentLoaded", function () {
             (request) => `
                     <tr>
                         <td class="text-center">${getStatusIcon(
-              request.status
-            )}</td>
+                          request.status
+                        )}</td>
                         <td>
                             <div class="release-title">
                                 <a href="#">${request.songName}</a>
@@ -2822,16 +2572,18 @@ document.addEventListener("DOMContentLoaded", function () {
                         </td>
                         <td>${request.isrc || "N/A"}</td>
                         <td class="text-center">
-                            ${request.instagramAudio
-                ? `<a href="${request.instagramAudio}" target="_blank" class="link-icon" title="Instagram Audio"><i class="bi bi-music-note-beamed"></i></a>`
-                : "N/A"
-              }
+                            ${
+                              request.instagramAudio
+                                ? `<a href="${request.instagramAudio}" target="_blank" class="link-icon" title="Instagram Audio"><i class="bi bi-music-note-beamed"></i></a>`
+                                : "N/A"
+                            }
                         </td>
                         <td class="text-center">
-                            ${request.reelMerge
-                ? `<a href="${request.reelMerge}" target="_blank" class="link-icon" title="Reel Merge"><i class="bi bi-camera-reels"></i></a>`
-                : "N/A"
-              }
+                            ${
+                              request.reelMerge
+                                ? `<a href="${request.reelMerge}" target="_blank" class="link-icon" title="Reel Merge"><i class="bi bi-camera-reels"></i></a>`
+                                : "N/A"
+                            }
                         </td>
                         <td>${request.matchingTime || "N/A"}</td>
                         <td>${getStatusBadge(request.status)}</td>
@@ -3304,18 +3056,22 @@ document.addEventListener("DOMContentLoaded", function () {
         !data || data.length === 0
           ? `<tr><td colspan="10" class="text-center p-5"><h5>No matching conflicts found.</h5></td></tr>`
           : data
-            .map(
-              (req) => `
+              .map(
+                (req) => `
                 <tr style="cursor: pointer;" data-bs-toggle="offcanvas" data-bs-target="#conflictResolutionOffcanvas"
-                    data-song-name="${req.assetTitle}" data-artist-name="${req.artist
+                    data-song-name="${req.assetTitle}" data-artist-name="${
+                  req.artist
                 }" data-isrc="${req.isrc}" 
-                    data-cover-url="${req.albumCoverUrl}" data-category="${req.category
+                    data-cover-url="${req.albumCoverUrl}" data-category="${
+                  req.category
                 }" data-other-party="${req.otherParty}">
                     <td class="text-center"><i class="bi bi-youtube text-danger fs-5"></i></td>
                     <td>${req.category}</td>
                     <td>${req.assetTitle}</td>
-                    <td><div class="fw-bold">${req.artist
-                }</div><small class="text-muted">Asset ID: ${req.assetId
+                    <td><div class="fw-bold">${
+                      req.artist
+                    }</div><small class="text-muted">Asset ID: ${
+                  req.assetId
                 }</small></td>
                     <td>${req.upc}</td>
                     <td>${req.otherParty}</td>
@@ -3324,8 +3080,8 @@ document.addEventListener("DOMContentLoaded", function () {
                     <td>${getStatusBadge(req.status)}</td>
                     <td><i class="bi bi-chevron-right text-muted"></i></td>
                 </tr>`
-            )
-            .join("");
+              )
+              .join("");
       document.getElementById(
         "pagination-text"
       ).textContent = `${data.length} of ${conflictRequests.length} results`;
@@ -3342,17 +3098,18 @@ document.addEventListener("DOMContentLoaded", function () {
                     <h2 class="accordion-header" id="heading-${regionId}">
                         <button class="accordion-button collapsed d-flex align-items-center" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-${regionId}" aria-expanded="false">
                             <div class="form-check me-auto pe-2"><input class="form-check-input region-checkbox" type="checkbox" id="region-${regionId}" data-region="${region}" checked><label class="form-check-label fw-bold" for="region-${regionId}">${region}</label></div>
-                            <span class="text-muted small me-2">${countries.length
-            } countries</span>
+                            <span class="text-muted small me-2">${
+                              countries.length
+                            } countries</span>
                         </button>
                     </h2>
                     <div id="collapse-${regionId}" class="accordion-collapse collapse" data-bs-parent="#territoryAccordion">
                         <div class="accordion-body"><div class="territory-list-inner">${countries
-              .map(
-                (country) =>
-                  `<div class="form-check"><input class="form-check-input country-checkbox" type="checkbox" value="${country.code}" id="country-${country.code}" data-region="${region}" checked><label class="form-check-label" for="country-${country.code}">${country.name}</label></div>`
-              )
-              .join("")}</div></div>
+                          .map(
+                            (country) =>
+                              `<div class="form-check"><input class="form-check-input country-checkbox" type="checkbox" value="${country.code}" id="country-${country.code}" data-region="${region}" checked><label class="form-check-label" for="country-${country.code}">${country.name}</label></div>`
+                          )
+                          .join("")}</div></div>
                     </div>
                 </div>`;
         })
@@ -3833,7 +3590,7 @@ document.addEventListener("DOMContentLoaded", function () {
       typeof views !== "string"
         ? 0
         : parseFloat(views.toUpperCase()) *
-        (views.toUpperCase().includes("K") ? 1000 : 1);
+          (views.toUpperCase().includes("K") ? 1000 : 1);
     const parseExpiry = (expiry) =>
       typeof expiry !== "string" || expiry === "-"
         ? Infinity
@@ -4008,21 +3765,22 @@ document.addEventListener("DOMContentLoaded", function () {
                                     <input class="form-check-input region-checkbox" type="checkbox" id="region-fb-${regionId}" data-region="${region}" checked>
                                     <label class="form-check-label fw-bold" for="region-fb-${regionId}">${region}</label>
                                 </div>
-                                <span class="text-muted small me-2">${countries.length
-              } countries</span>
+                                <span class="text-muted small me-2">${
+                                  countries.length
+                                } countries</span>
                             </button>
                         </h2>
                         <div id="collapse-fb-${regionId}" class="accordion-collapse collapse" data-bs-parent="#territoryAccordion">
                             <div class="accordion-body">
                                 <div class="territory-list-inner">${countries
-                .map(
-                  (c) => `
+                                  .map(
+                                    (c) => `
                                     <div class="form-check">
                                         <input class="form-check-input country-checkbox" type="checkbox" value="${c.code}" id="country-fb-${c.code}" data-region="${region}" checked>
                                         <label class="form-check-label" for="country-fb-${c.code}">${c.name}</label>
                                     </div>`
-                )
-                .join("")}
+                                  )
+                                  .join("")}
                                 </div>
                             </div>
                         </div>
@@ -4220,6 +3978,7 @@ $(document).ready(function () {
   });
 });
 
+// Add Releases Multi-Step Form JavaScript
 // Enhanced Multi-Step Form Validation System
 const FormValidator = {
   // Common validation rules that can be reused
@@ -5182,3 +4941,4 @@ document.addEventListener("DOMContentLoaded", function () {
   // --- INITIALIZATION ---
   updateStepIndicator(1);
 });
+

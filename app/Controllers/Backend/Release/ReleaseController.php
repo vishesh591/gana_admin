@@ -18,15 +18,41 @@ class ReleaseController extends BaseController
     // Show all releases (paginated)
     public function index()
     {
-        $data['releases'] = $this->releaseRepo->findAll();
-        // return response()->setJSON($data);
+        if ($this->request->isAJAX()) {
+            $releases = $this->releaseRepo->findAll();
+
+            // Transform your DB status (int) into string form expected by frontend
+            $statusMap = [
+                1 => 'review',
+                2 => 'takedown',
+                3 => 'delivered',
+                4 => 'rejected',
+                5 => 'approved',
+            ];
+
+            $releasesData = array_map(function ($r) use ($statusMap) {
+                return [
+                    'id' => $r['id'],
+                    'title' => $r['title'],
+                    'artist' => $r['author'],
+                    'submittedDate' => date('jS F Y', strtotime($r['created_at'])),
+                    'upc' => $r['upc_ean'],
+                    'isrc' => $r['isrc'],
+                    'status' => $statusMap[$r['status']] ?? 'review',
+                    'albumArtwork' => '/images/rocket.png', // or from DB if you store it
+                ];
+            }, $releases);
+
+            return $this->response->setJSON(['data' => $releasesData]);
+        }
+
+        // normal page load
         $page_array = [
             'file_name' => 'releases',
-            'data' => $data
         ];
-
         return view('superadmin/index', $page_array);
     }
+
 
     public function show($id)
     {
@@ -66,24 +92,27 @@ class ReleaseController extends BaseController
         return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
     }
     */
-
+        $artworkPath = null;
         $artworkFile = $this->request->getFile('artworkFile');
         $artworkName = null;
         if ($artworkFile && $artworkFile->isValid()) {
             $artworkName = $artworkFile->getRandomName();
             $artworkFile->move(FCPATH . 'uploads/artworks', $artworkName);
+            $artworkPath = 'uploads/artworks/' . $artworkName;
         }
 
+        $audioPath = null;
         $audioFile = $this->request->getFile('audioFile');
         $audioName = null;
         if ($audioFile && $audioFile->isValid()) {
             $audioName = $audioFile->getRandomName();
             $audioFile->move(FCPATH . 'uploads/audio', $audioName);
+            $audioPath = 'uploads/audio/' . $audioName;
         }
 
         $releaseData = [
             'title'                     => $this->request->getPost('releaseTitle'),
-            'label_id'                  => $this->request->getPost('labelName'),
+            'label_id'                  => $this->request->getPost('label_id'),
             'artist_id'                 => $this->request->getPost('artist'),
             'featured_artists'         => $this->request->getPost('featured_artists'),
             'release_type'              => $this->request->getPost('releaseType'),
@@ -91,7 +120,7 @@ class ReleaseController extends BaseController
             'genre_type'                => $this->request->getPost('genre'),
             'upc_ean'                   => $this->request->getPost('upcEan'),
             'language'                  => $this->request->getPost('language'),
-            'artwork'                   => $artworkName,
+            'artwork'                   => $artworkPath,
             'track_title'               => $this->request->getPost('trackTitle'),
             'secondary_track_type'      => $this->request->getPost('secondaryTrackType'),
             'instrumental'              => $this->request->getPost('instrumental'),
@@ -110,7 +139,7 @@ class ReleaseController extends BaseController
             'track_title_language'      => $this->request->getPost('trackLanguage'),
             'explicit_song'             => $this->request->getPost('explicit'),
             'lyrics'                    => $this->request->getPost('lyrics'),
-            'audio_file'                => $audioName,
+            'audio_file'                => $audioPath,
             'release_date' => $this->request->getPost('release_date'),
             'stores_ids' => json_encode($this->request->getPost('stores') ?? []),
             'rights_management_options' => json_encode($this->request->getPost('rights') ?? []),

@@ -23,7 +23,7 @@
 
             <div class="label-table">
                 <div class="table-responsive">
-                    <table class="table">
+                    <table id="labelTable" class="table">
                         <thead>
                             <tr>
                                 <th width="40">
@@ -33,21 +33,13 @@
                                 <th class="text-center">Releases</th>
                             </tr>
                         </thead>
-                        <tbody id="labelTableBody">
-                            <!-- Rows will be inserted by JS -->
+                        <tbody>
+                            <!-- DataTables will handle rows -->
                         </tbody>
                     </table>
                 </div>
-
-                <div class="pagination-wrapper d-flex justify-content-between align-items-center">
-                    <span class="text-muted" id="paginationInfo">Showing 0-0 of 0 labels</span>
-                    <nav>
-                        <ul class="pagination pagination-sm mb-0" id="paginationLinks">
-                            <!-- Pagination injected by JS -->
-                        </ul>
-                    </nav>
-                </div>
             </div>
+
         </div>
     </div>
 </div>
