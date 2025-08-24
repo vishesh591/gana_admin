@@ -3980,15 +3980,9 @@ $(document).ready(function () {
 
 // Add Releases Multi-Step Form JavaScript
 document.addEventListener("DOMContentLoaded", function () {
-  // --- Page-Specific Guard Clause for the Add Release Page ---
-  const addReleasePageContainer = document.querySelector(
-    ".admin-add-releases-form"
-  );
-
-  // If this container doesn't exist, stop executing the rest of the script.
-  if (!addReleasePageContainer) {
-    return;
-  }
+  // --- Page-Specific Guard Clause ---
+  const addReleasePageContainer = document.querySelector(".admin-add-releases-form");
+  if (!addReleasePageContainer) return;
 
   // --- Configuration ---
   const totalSteps = 5;
@@ -4002,13 +3996,10 @@ document.addEventListener("DOMContentLoaded", function () {
 
   let currentStep = 1;
 
-  // --- Initialize feather icons ---
-  if (typeof feather !== "undefined") {
-    feather.replace();
-  }
+  // --- Feather Icons ---
+  if (typeof feather !== "undefined") feather.replace();
 
   // --- STEP NAVIGATION FUNCTIONS ---
-
   function updateStepIndicator(step) {
     const steps = document.querySelectorAll(".step");
     const progressLine = document.getElementById("progressLine");
@@ -4017,14 +4008,10 @@ document.addEventListener("DOMContentLoaded", function () {
       const stepNum = index + 1;
       stepEl.classList.remove("active", "completed");
 
-      if (stepNum < step) {
-        stepEl.classList.add("completed");
-      } else if (stepNum === step) {
-        stepEl.classList.add("active");
-      }
+      if (stepNum < step) stepEl.classList.add("completed");
+      else if (stepNum === step) stepEl.classList.add("active");
     });
 
-    // Update progress line width
     if (progressLine) {
       const progressWidth = ((step - 1) / (totalSteps - 1)) * 100;
       progressLine.style.width = progressWidth + "%";
@@ -4032,35 +4019,25 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   function showStep(step) {
-    // Hide all step contents
     document.querySelectorAll(".step-content").forEach((content) => {
       content.classList.remove("active");
     });
 
-    // Show the target step with slight delay for smooth transition
     setTimeout(() => {
       const targetStep = document.getElementById(`step-${step}`);
-      if (targetStep) {
-        targetStep.classList.add("active");
-      }
+      if (targetStep) targetStep.classList.add("active");
     }, 150);
 
-    // Update step indicator
     updateStepIndicator(step);
 
-    // Update page title
     const currentStepTitleEl = document.querySelector(".current-step-title");
-    if (currentStepTitleEl) {
-      currentStepTitleEl.textContent = stepTitles[step];
-    }
+    if (currentStepTitleEl) currentStepTitleEl.textContent = stepTitles[step];
 
     currentStep = step;
   }
 
-  // --- STEP 1 VALIDATION (Basic Information + Artwork) ---
-
+  // --- STEP 1 VALIDATION ---
   function initializeStep1Validation() {
-    // Validation rules for each field
     const rules = {
       releaseTitle: { required: true, minLength: 2, maxLength: 100 },
       labelName: { required: true },
@@ -4077,15 +4054,12 @@ document.addEventListener("DOMContentLoaded", function () {
       artworkFile: { required: true, type: "file" },
     };
 
-    // Generic validation function
     function validateField(fieldId) {
-      const field = document.getElementById(fieldId);
+      let field = document.getElementById(fieldId);
       const error = document.getElementById(fieldId + "Error");
       const rule = rules[fieldId];
-
       if (!field || !rule) return true;
 
-      // Clear previous validation
       field.classList.remove("is-invalid", "is-valid");
       if (error) {
         error.textContent = "";
@@ -4096,7 +4070,6 @@ document.addEventListener("DOMContentLoaded", function () {
       let isValid = true;
       let errorMsg = "";
 
-      // Handle different field types
       if (rule.type === "radio") {
         const radios = document.querySelectorAll(`input[name="${fieldId}"]`);
         isValid = Array.from(radios).some((r) => r.checked);
@@ -4106,15 +4079,11 @@ document.addEventListener("DOMContentLoaded", function () {
         isValid = value !== "" && value !== null;
         errorMsg = `Please select a ${fieldId}.`;
       } else if (rule.type === "file") {
-        // File validation for artwork
         return validateArtworkFile();
       } else {
-        // Text inputs
         if (rule.required && !value) {
           isValid = false;
-          errorMsg = `${fieldId
-            .replace(/([A-Z])/g, " $1")
-            .toLowerCase()} is required.`;
+          errorMsg = `${fieldId.replace(/([A-Z])/g, " $1").toLowerCase()} is required.`;
         } else if (value && rule.minLength && value.length < rule.minLength) {
           isValid = false;
           errorMsg = `Must be at least ${rule.minLength} characters long.`;
@@ -4127,7 +4096,6 @@ document.addEventListener("DOMContentLoaded", function () {
         }
       }
 
-      // Apply validation styling
       if ((!isValid && rule.required) || (!isValid && value)) {
         field.classList.add("is-invalid");
         if (error) {
@@ -4141,7 +4109,6 @@ document.addEventListener("DOMContentLoaded", function () {
       return isValid || (!rule.required && !value);
     }
 
-    // Artwork file validation (integrated)
     function validateArtworkFile() {
       const artworkFile = document.getElementById("artworkFile");
       const artworkFileError = document.getElementById("artworkFileError");
@@ -4149,7 +4116,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
       if (!artworkFile || !artworkFileError || !artworkUpload) return true;
 
-      // Reset validation state
       artworkUpload.classList.remove("is-invalid", "is-valid");
       artworkFileError.textContent = "";
       artworkFileError.style.display = "none";
@@ -4163,12 +4129,11 @@ document.addEventListener("DOMContentLoaded", function () {
 
       const file = artworkFile.files[0];
       const allowedTypes = ["image/jpeg", "image/jpg", "image/png"];
-      const maxSize = 10 * 1024 * 1024; // 10MB
+      const maxSize = 10 * 1024 * 1024;
 
       if (!allowedTypes.includes(file.type)) {
         artworkUpload.classList.add("is-invalid");
-        artworkFileError.textContent =
-          "Please select a valid image file (JPG, JPEG, or PNG).";
+        artworkFileError.textContent = "Please select a valid JPG, JPEG, or PNG file.";
         artworkFileError.style.display = "block";
         return false;
       }
@@ -4180,23 +4145,19 @@ document.addEventListener("DOMContentLoaded", function () {
         return false;
       }
 
-      // Valid file
       artworkUpload.classList.add("is-valid");
       artworkFileError.style.display = "none";
       return true;
     }
 
-    // Add event listeners
     Object.keys(rules).forEach((fieldId) => {
       const field = document.getElementById(fieldId);
       if (!field) return;
 
       if (rules[fieldId].type === "radio") {
-        document
-          .querySelectorAll(`input[name="${fieldId}"]`)
-          .forEach((radio) => {
-            radio.addEventListener("change", () => validateField(fieldId));
-          });
+        document.querySelectorAll(`input[name="${fieldId}"]`).forEach((radio) => {
+          radio.addEventListener("change", () => validateField(fieldId));
+        });
       } else if (rules[fieldId].type === "file") {
         field.addEventListener("change", () => validateField(fieldId));
       } else {
@@ -4206,115 +4167,91 @@ document.addEventListener("DOMContentLoaded", function () {
       }
     });
 
-    // Return validation function for the entire step 1
     return function validateStep1() {
       return Object.keys(rules).every((fieldId) => validateField(fieldId));
     };
   }
 
-  // Initialize Step 1 validation
   const validateStep1 = initializeStep1Validation();
 
-  // --- EVENT LISTENERS ---
-
-  // Step navigation - Next buttons
+  // --- STEP NAVIGATION BUTTONS ---
   document.querySelectorAll(".next-step").forEach((btn) => {
     btn.addEventListener("click", function () {
       const nextStep = parseInt(this.dataset.next, 10);
-
-      // Validate current step before proceeding
-      if (currentStep === 1 && !validateStep1()) {
-        return; // Stay on step 1, validation errors will show
-      }
-
-      if (nextStep <= totalSteps) {
-        showStep(nextStep);
-      }
+      if (currentStep === 1 && !validateStep1()) return;
+      if (nextStep <= totalSteps) showStep(nextStep);
     });
   });
 
-  // Step navigation - Previous buttons
   document.querySelectorAll(".prev-step").forEach((btn) => {
     btn.addEventListener("click", function () {
       const prevStep = parseInt(this.dataset.prev, 10);
-      if (prevStep >= 1) {
-        showStep(prevStep);
-      }
+      if (prevStep >= 1) showStep(prevStep);
     });
   });
 
-  // Step navigation - Click on step indicators
   document.querySelectorAll(".step").forEach((step) => {
     step.addEventListener("click", function () {
       const stepNum = parseInt(this.dataset.step, 10);
-      if (stepNum >= 1 && stepNum <= totalSteps) {
-        showStep(stepNum);
-      }
+      if (stepNum >= 1 && stepNum <= totalSteps) showStep(stepNum);
     });
   });
 
-  // --- FILE UPLOAD FUNCTIONALITY ---
-
-  // Audio file upload
+  // --- FILE UPLOADS ---
   const audioUpload = document.getElementById("audioUpload");
   const audioFile = document.getElementById("audioFile");
-
   if (audioUpload && audioFile) {
-    audioUpload.addEventListener("click", function () {
-      audioFile.click();
-    });
+    audioUpload.addEventListener("click", () => audioFile.click());
   }
 
-  // Artwork file upload
   const artworkUpload = document.getElementById("artworkUpload");
   const artworkFile = document.getElementById("artworkFile");
-
   if (artworkUpload && artworkFile) {
-    artworkUpload.addEventListener("click", function () {
-      artworkFile.click();
-    });
+    artworkUpload.addEventListener("click", () => artworkFile.click());
 
-    // Artwork file change handler with preview
     artworkFile.addEventListener("change", function (e) {
       const file = e.target.files[0];
-      if (file) {
-        // Show preview (validation happens automatically via event listener)
+      validateStep1(); // trigger validation
+      const preview = document.getElementById("artworkPreview");
+      if (file && preview) {
         const reader = new FileReader();
-        reader.onload = function (event) {
-          const preview = document.getElementById("artworkPreview");
-          if (preview) {
-            preview.src = event.target.result;
-            preview.classList.remove("d-none");
-          }
+        reader.onload = (event) => {
+          preview.src = event.target.result;
+          preview.classList.remove("d-none");
         };
         reader.readAsDataURL(file);
+      } else if (preview) {
+        preview.classList.add("d-none");
       }
     });
   }
 
   // --- FORM SUBMISSION ---
+  const releaseForm = document.getElementById("releaseForm");
+  if (releaseForm) {
+    releaseForm.addEventListener("submit", function (e) {
+      e.preventDefault();
+      if (!validateStep1()) {
+        showStep(1);
+        return;
+      }
 
-document.getElementById("releaseForm").addEventListener("submit", function (e) {
-    e.preventDefault();
-
-    const form = e.target;
-    const formData = new FormData(form);
-
-    fetch(form.action, {
+      const formData = new FormData(releaseForm);
+      fetch(releaseForm.action, {
         method: "POST",
-        body: formData
-    })
-    .then(response => response.json()) // or .text()
-    .then(data => {
-        console.log(data);
-        alert("Release submitted successfully!");
-        // reset form or close modal
-    })
-    .catch(err => {
-        console.error("Upload failed", err);
-        alert("Something went wrong!");
+        body: formData,
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          console.log(data);
+          alert("Release submitted successfully!");
+        })
+        .catch((err) => {
+          console.error("Upload failed", err);
+          alert("Something went wrong!");
+        });
     });
-});
+  }
 
   // --- INITIALIZATION ---
   updateStepIndicator(1);
