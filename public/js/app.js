@@ -4508,13 +4508,18 @@ document.addEventListener("DOMContentLoaded", function () {
           radio.addEventListener('change', () => validateField(fieldId));
         });
       } else if (rules[fieldId].type === 'file') {
-        field.addEventListener('change', () => validateField(fieldId));
+        // Skip adding event listener here - handled separately in file upload section
+        // to avoid duplicate listeners
+        return;
       } else {
         field.addEventListener('input', () => validateField(fieldId));
         field.addEventListener('change', () => validateField(fieldId));
         field.addEventListener('blur', () => validateField(fieldId));
       }
     });
+
+    // Expose validateField function for use in file upload handlers
+    window.validateArtworkField = () => validateField('artworkFile');
 
     // Return validation function for the entire step 1
     return function validateStep1() {
@@ -4575,7 +4580,7 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   }
 
-  // Artwork file upload
+  // Artwork file upload - FIXED VERSION
   const artworkUpload = document.getElementById("artworkUpload");
   const artworkFile = document.getElementById("artworkFile");
 
@@ -4584,11 +4589,17 @@ document.addEventListener("DOMContentLoaded", function () {
       artworkFile.click();
     });
 
-    // Artwork file change handler with preview
+    // Combined artwork file change handler with validation AND preview
     artworkFile.addEventListener("change", function (e) {
       const file = e.target.files[0];
+
+      // Trigger validation first
+      if (window.validateArtworkField) {
+        window.validateArtworkField();
+      }
+
+      // Then show preview if file exists and is valid
       if (file) {
-        // Show preview (validation happens automatically via event listener)
         const reader = new FileReader();
         reader.onload = function (event) {
           const preview = document.getElementById("artworkPreview");
@@ -4598,6 +4609,12 @@ document.addEventListener("DOMContentLoaded", function () {
           }
         };
         reader.readAsDataURL(file);
+      } else {
+        // Hide preview if no file selected
+        const preview = document.getElementById("artworkPreview");
+        if (preview) {
+          preview.classList.add("d-none");
+        }
       }
     });
   }
