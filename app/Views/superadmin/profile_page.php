@@ -262,6 +262,5 @@
     </div>
     <!-- content -->
 
-    <?= $this->include('partials/footer') ?>
 
 </div>

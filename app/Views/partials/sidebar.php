@@ -155,6 +155,13 @@
                     </a>
                 </li>
 
+                <li>
+                    <a href="<?= base_url() . getUserRoleSlug() ?>/view_release" class="tp-link">
+                        <i data-feather="help-circle"></i>
+                        <span> View Release </span>
+                    </a>
+                </li>
+
             </ul>
 
         </div>

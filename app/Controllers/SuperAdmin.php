@@ -133,6 +133,12 @@ class SuperAdmin extends BaseController
     {
         $page_array = [];
         $page_array['file_name'] = 'support_user';
-        return view('superadmin/index', $page_array); 
+        return view('superadmin/index', $page_array);
+    }
+    public function view_release()
+    {
+        $page_array = [];
+        $page_array['file_name'] = 'view_release';
+        return view('superadmin/index', $page_array);
     }
 }

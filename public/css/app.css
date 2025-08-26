@@ -20308,4 +20308,151 @@ body {
   border-top: 1px solid #e9ecef;
 }
 
+/* View Release Page Specific Styles */
+.view-release-page .page-title-box {
+  background: transparent !important;
+  padding: 1.5rem 0 !important;
+  margin-bottom: 1.5rem !important;
+  border-bottom: 1px solid #f0f0f0 !important;
+}
 
+.view-release-page .card {
+  border: none !important;
+  box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075) !important;
+  border-radius: 0.5rem !important;
+  margin-bottom: 1.5rem !important;
+  transition: box-shadow 0.15s ease-in-out !important;
+}
+
+.view-release-page .card:hover {
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+}
+
+.view-release-page .card-header {
+  background: #f8f9fa !important;
+  border-bottom: 1px solid #eaeff4 !important;
+  padding: 1.25rem 1.5rem !important;
+  border-radius: 0.5rem 0.5rem 0 0 !important;
+}
+
+.view-release-page .card-body {
+  padding: 1.5rem !important;
+}
+
+.view-release-page .card-title {
+  color: #495057 !important;
+  font-weight: 600 !important;
+  font-size: 1.1rem !important;
+}
+
+.view-release-page .form-label {
+  font-size: 0.875rem !important;
+  font-weight: 500 !important;
+  margin-bottom: 0.25rem !important;
+}
+
+.view-release-page .store-badges-container .badge {
+  font-weight: 500 !important;
+  border-radius: 0.375rem !important;
+  text-transform: none !important;
+}
+
+.view-release-page .table th {
+  border-top: none !important;
+  font-weight: 600 !important;
+  font-size: 0.875rem !important;
+  color: #495057 !important;
+  background-color: #f8f9fa !important;
+  padding: 1rem 1.5rem !important;
+}
+
+.view-release-page .table td {
+  padding: 1rem 1.5rem !important;
+  border-top: 1px solid #f0f0f0 !important;
+  vertical-align: middle !important;
+}
+
+.view-release-page .track-row:hover {
+  background-color: #f8f9fa !important;
+}
+
+.view-release-page .track-row h6 {
+  color: #343a40 !important;
+  font-weight: 600 !important;
+}
+
+.view-release-page .badge {
+  font-size: 0.75rem !important;
+  font-weight: 500 !important;
+  padding: 0.375rem 0.75rem !important;
+}
+
+.view-release-page .btn {
+  padding: 0.5rem 1rem !important;
+  font-weight: 500 !important;
+  border-radius: 0.375rem !important;
+  transition: all 0.15s ease-in-out !important;
+}
+
+.view-release-page .btn i {
+  font-size: 0.875rem !important;
+}
+
+.view-release-page .breadcrumb-item+.breadcrumb-item::before {
+  color: #6c757d !important;
+}
+
+.view-release-page .breadcrumb-item a {
+  color: #6c757d !important;
+  text-decoration: none !important;
+}
+
+.view-release-page .breadcrumb-item a:hover {
+  color: #495057 !important;
+}
+
+.view-release-page .breadcrumb-item.active {
+  color: #495057 !important;
+  font-weight: 500 !important;
+}
+
+/* Responsive adjustments for view release page */
+@media (max-width: 768px) {
+  .view-release-page .page-title-box {
+    text-align: center !important;
+  }
+
+  .view-release-page .page-title-right {
+    margin-top: 1rem !important;
+  }
+
+  .view-release-page .card-body {
+    padding: 1rem !important;
+  }
+
+  .view-release-page .table th,
+  .view-release-page .table td {
+    padding: 0.75rem 1rem !important;
+    font-size: 0.875rem !important;
+  }
+
+  .view-release-page .d-flex.gap-2 {
+    justify-content: center !important;
+  }
+
+  .view-release-page .btn {
+    flex: 1 !important;
+    min-width: 140px !important;
+  }
+}
+
+@media (max-width: 576px) {
+  .view-release-page .store-badges-container .badge {
+    font-size: 0.75rem !important;
+    padding: 0.375rem 0.75rem !important;
+  }
+
+  .view-release-page .table-responsive {
+    font-size: 0.8rem !important;
+  }
+}

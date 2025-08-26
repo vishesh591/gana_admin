@@ -57,6 +57,7 @@ $routes->group('superadmin', ['filter' => 'role:superadmin'], function ($routes)
     $routes->get('api/labels', 'Backend\Label\LabelController::getLabelsJson');
     $routes->get('api/accounts', 'RegisterController::getAccountsJson');
     $routes->get('pages-profile', 'RegisterController::index');
+    $routes->get('view_release', 'SuperAdmin::view_release');
     $routes->get('support', 'Backend\Support\SupportController::index');
     $routes->post('support/store', 'Backend\Support\SupportController::store');
     $routes->get('support/data', 'Backend\Support\SupportController::data');
