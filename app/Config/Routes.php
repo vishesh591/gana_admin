@@ -9,7 +9,7 @@ use CodeIgniter\Router\RouteCollection;
 $routes->get('/login', 'Auth::index');
 $routes->post('/loginCheck', 'Auth::loginCheck');
 $routes->get('auth-logout', 'Auth::logout');
-
+$routes->post('profile/changePassword', 'Auth::changePasswordAjax');
 // Filter on route group
 $routes->group('', ['filter' => 'auth'], function ($routes) {
     /**
@@ -53,7 +53,8 @@ $routes->group('superadmin', ['filter' => 'role:superadmin'], function ($routes)
     $routes->get('releases', 'Backend\Release\ReleaseController::index');
     $routes->get('releases/create', 'Backend\Release\ReleaseController::create');
     $routes->post('releases/store', 'Backend\Release\ReleaseController::store');
-    $routes->get('api/releases/(:num)', 'Backend\Release\ReleaseController::show/$1');
+    $routes->get('releases/edit/(:num)', 'Backend\Release\ReleaseController::edit/$1');
+    $routes->post('releases/update/(:num)', 'Backend\Release\ReleaseController::update/$1');
     $routes->get('api/labels', 'Backend\Label\LabelController::getLabelsJson');
     $routes->get('api/accounts', 'RegisterController::getAccountsJson');
     $routes->get('pages-profile', 'RegisterController::index');

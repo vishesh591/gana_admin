@@ -42,8 +42,10 @@ class UserModel extends Model
     public function getUserWithRoleByEmail(string $email)
     {
         return $this->select('users.*, roles.role_name as role_name')
-                    ->join('roles', 'roles.id = users.role_id', 'left')
-                    ->where('users.email', $email)
-                    ->first();
+            ->join('roles', 'roles.id = users.role_id', 'left')
+            ->where('users.email', $email)
+            ->where('users.agreement_end_date >=', date('Y-m-d'))
+            ->first();
+
     }
 }

@@ -41,4 +41,8 @@ class ReleaseRepository
             ->where('g_release.id', $id)
             ->first();
     }
+
+    public function find($id){
+        return $this->model->find($id);
+    }
 }
