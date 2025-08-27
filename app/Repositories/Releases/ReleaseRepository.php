@@ -42,7 +42,16 @@ class ReleaseRepository
             ->first();
     }
 
-    public function find($id){
+    public function find($id)
+    {
         return $this->model->find($id);
+    }
+
+    public function getLabelName()
+    {
+        return $this->model
+            ->select('g_release.*, g_labels.label_name, g_labels.primary_label_name')
+            ->join('g_labels', 'g_labels.id = g_release.label_id')
+            ->findAll();
     }
 }

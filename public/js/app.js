@@ -5241,3 +5241,8 @@ $(document).on("click", "#changePasswordBtn", function () {
       },
     });
   });
+
+//export releases
+  document.getElementById("exportCsvBtn").addEventListener("click", function () {
+    window.location.href = "/superadmin/releases/export-csv";
+});

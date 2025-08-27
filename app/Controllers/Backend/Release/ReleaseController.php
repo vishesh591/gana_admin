@@ -508,4 +508,87 @@ class ReleaseController extends BaseController
 
         return view('superadmin/index', $page_array);
     }
+
+    public function exportCsv()
+    {
+        $releases = $this->releaseRepo->getLabelName();
+        $filename = 'releases_' . date('YmdHis') . '.csv';
+
+        header('Content-Type: text/csv');
+        header('Content-Disposition: attachment; filename="' . $filename . '"');
+
+        $file = fopen('php://output', 'w');
+
+        fputcsv($file, [
+            'ID',
+            'Title',
+            'Label ID',
+            'Release Type',
+            'Mood Type',
+            'Genre Type',
+            'UPC/EAN',
+            'Language',
+            'Track Title',
+            'ISRC',
+            'Author',
+            'Composer',
+            'Publisher',
+            'Production Year',
+            'Release Date',
+            'Stores',
+            'Rights Management'
+        ]);
+
+        foreach ($releases as $release) {
+            $labelName = '';
+            if (!empty($release['label_name']) && !empty($release['primary_label_name'])) {
+                $labelName = $release['label_name'] . ' (' . $release['primary_label_name'] . ')';
+            } elseif (!empty($release['label_name'])) {
+                $labelName = $release['label_name'];
+            }
+
+            $stores = '';
+            if (!empty($release['stores_ids'])) {
+                $decodedStores = json_decode($release['stores_ids'], true);
+                if (is_array($decodedStores)) {
+                    $stores = implode(', ', $decodedStores);
+                } else {
+                    $stores = $release['stores_ids'];
+                }
+            }
+
+            $rights = '';
+            if (!empty($release['rights_management_options'])) {
+                $decodedRights = json_decode($release['rights_management_options'], true);
+                if (is_array($decodedRights)) {
+                    $rights = implode(', ', $decodedRights);
+                } else {
+                    $rights = $release['rights_management_options'];
+                }
+            }
+
+            fputcsv($file, [
+                $release['id'],
+                $release['title'],
+                $labelName,
+                $release['release_type'],
+                $release['mood_type'],
+                $release['genre_type'],
+                $release['upc_ean'],
+                $release['language'],
+                $release['track_title'],
+                $release['isrc'],
+                $release['author'],
+                $release['composer'],
+                $release['publisher'],
+                $release['production_year'],
+                $release['release_date'],
+                $stores,
+                $rights
+            ]);
+        }
+
+        fclose($file);
+        exit;
+    }
 }

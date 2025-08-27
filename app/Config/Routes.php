@@ -63,6 +63,8 @@ $routes->group('superadmin', ['filter' => 'role:superadmin'], function ($routes)
     $routes->post('support/store', 'Backend\Support\SupportController::store');
     $routes->get('support/data', 'Backend\Support\SupportController::data');
     $routes->post('support/update-status/(:num)', 'Backend\Support\SupportController::updateStatus/$1');
+    $routes->get('releases/export-csv', 'Backend\Release\ReleaseController::exportCsv');
+
 });
 
 // Routes only for artists
