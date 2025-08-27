@@ -338,9 +338,20 @@ class ReleaseController extends BaseController
                 'status'                    => $status, // Use the processed status
             ];
 
+            // Add rejection message if status is rejected
             if ($status == 4 && !empty($rejectionMessage)) {
-                $releaseData['message'] = $rejectionMessage;
-                log_message('debug', 'Added rejection message to release data: ' . $rejectionMessage);
+                $releaseData['rejected_at'] = date('Y-m-d H:i:s');
+                log_message('debug', 'Marking release as Rejected at: ' . $releaseData['rejected_at']);
+            }
+
+            if ($status == 3) {
+                $releaseData['delivered_at'] = date('Y-m-d H:i:s');
+                log_message('debug', 'Marking release as delivered at: ' . $releaseData['delivered_at']);
+            }
+
+            if ($status == 5) {
+                $releaseData['approved_at'] = date('Y-m-d H:i:s');
+                log_message('debug', 'Marking Approved as delivered at: ' . $releaseData['approved_at']);
             }
 
             log_message('debug', 'Final release data status: ' . $releaseData['status']);
@@ -356,15 +367,12 @@ class ReleaseController extends BaseController
             // Determine success message based on status
             $statusMessages = [
                 1 => 'Release submitted successfully',
+                3 => 'Release marked as delivered successfully',
                 4 => 'Release rejected successfully' . (!empty($rejectionMessage) ? ' with message' : ''),
                 5 => 'Release approved successfully'
             ];
 
             $message = $statusMessages[$status] ?? 'Release updated successfully';
-
-            if ($status == 4 && !empty($rejectionMessage)) {
-                $this->sendRejectionNotification($release, $rejectionMessage);
-            }
 
             if ($this->request->isAJAX()) {
                 if (ob_get_length()) ob_clean();
@@ -396,56 +404,6 @@ class ReleaseController extends BaseController
             return redirect()->back()
                 ->withInput()
                 ->with('error', 'Failed to update release: ' . $e->getMessage());
-        }
-    }
-
-    /**
-     * Send rejection notification email to the user
-     */
-    private function sendRejectionNotification($release, $rejectionMessage)
-    {
-        try {
-            // Load email library if available
-            $email = \Config\Services::email();
-
-            // Get user/artist details for the release
-            // Assuming you have a method to get user email from release data
-            $userEmail = $this->getUserEmailFromRelease($release);
-
-            if (!$userEmail) {
-                log_message('warning', 'Could not find user email for release rejection notification');
-                return false;
-            }
-
-            $email->setTo($userEmail);
-            $email->setFrom('noreply@yoursite.com', 'Music Distribution Platform');
-            $email->setSubject('Release Rejected: ' . $release['title']);
-
-            $emailBody = "
-        <h2>Release Rejection Notice</h2>
-        <p>Hello,</p>
-        <p>Your release '<strong>{$release['title']}</strong>' has been rejected for the following reason:</p>
-        <div style='background-color: #f8f9fa; padding: 15px; border-left: 4px solid #dc3545; margin: 20px 0;'>
-            <p><strong>Rejection Reason:</strong></p>
-            <p>" . nl2br(htmlspecialchars($rejectionMessage)) . "</p>
-        </div>
-        <p>Please review the feedback and make the necessary changes before resubmitting your release.</p>
-        <p>If you have any questions, please contact our support team.</p>
-        <p>Best regards,<br>Music Distribution Team</p>
-        ";
-
-            $email->setMessage($emailBody);
-
-            if ($email->send()) {
-                log_message('info', 'Rejection notification sent successfully for release ID: ' . $release['id']);
-                return true;
-            } else {
-                log_message('error', 'Failed to send rejection notification: ' . $email->printDebugger());
-                return false;
-            }
-        } catch (\Exception $e) {
-            log_message('error', 'Exception in sendRejectionNotification: ' . $e->getMessage());
-            return false;
         }
     }
 

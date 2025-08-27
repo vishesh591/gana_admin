@@ -49,6 +49,9 @@ class UpdateReleaseTable extends Migration
             't_and_c'             => ['type' => 'TEXT','null' => true],
             'created_at'          => ['type' => 'DATETIME','null' => true],
             'updated_at'          => ['type' => 'DATETIME','null' => true],
+            'delivered_at'        => ['type' => 'DATETIME','null' => true],
+            'rejected_at'         => ['type' => 'DATETIME','null' => true],
+            'approved_at'         => ['type' => 'DATETIME','null' => true],
         ]);
         $this->forge->addKey('id', true);
         $this->forge->addForeignKey('label_id', 'labels', 'id', 'CASCADE', 'CASCADE');

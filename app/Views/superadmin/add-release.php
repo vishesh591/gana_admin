@@ -628,14 +628,27 @@
                         <button type="button" class="btn btn-outline-secondary prev-step" data-prev="4">Previous</button>
 
                         <?php if (isset($isEdit) && $isEdit): ?>
-                            <div>
-                                <button type="submit" name="status" value="5" class="btn btn-success me-2">
-                                    <i data-feather="check" class="me-1"></i> Approve
-                                </button>
-                                <button type="button" class="btn btn-danger" id="rejectBtn">
-                                    <i data-feather="x" class="me-1"></i> Reject
-                                </button>
-                            </div>
+                            <?php if (isset($release) && $release['status'] == 5): ?>
+                                <!-- Approved status: Show Delivered and Reject buttons -->
+                                <div>
+                                    <button type="submit" name="status" value="3" class="btn btn-success me-2">
+                                        <i data-feather="truck" class="me-1"></i> Mark as Delivered
+                                    </button>
+                                    <button type="button" class="btn btn-danger" id="rejectBtn">
+                                        <i data-feather="x" class="me-1"></i> Reject
+                                    </button>
+                                </div>
+                            <?php else: ?>
+                                <!-- Other statuses: Show Approve and Reject buttons -->
+                                <div>
+                                    <button type="submit" name="status" value="5" class="btn btn-success me-2">
+                                        <i data-feather="check" class="me-1"></i> Approve
+                                    </button>
+                                    <button type="button" class="btn btn-danger" id="rejectBtn">
+                                        <i data-feather="x" class="me-1"></i> Reject
+                                    </button>
+                                </div>
+                            <?php endif; ?>
                         <?php else: ?>
                             <button type="submit" name="status" value="1" class="btn btn-success">
                                 <i data-feather="check" class="me-1"></i> Submit Release

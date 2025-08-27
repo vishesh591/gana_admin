@@ -16,5 +16,6 @@ class ReleaseModel extends Model
         'track_title_language','explicit_song','lyrics','audio_file','stores_ids',
         'rights_management_options','release_date','pre_sale_date','original_release_date',
         'release_price','sale_price','t_and_c','created_at','updated_at','status', 'message',
+        'delivered_at','rejected_at','approved_at'
     ];
 }
