@@ -27,8 +27,8 @@
                                     <img src="/images/users/user-11.jpg" class="rounded-circle avatar-xxl img-thumbnail float-start" alt="image profile">
 
                                     <div class="overflow-hidden ms-4">
-                                        <h4 class="m-0 text-dark fs-20">Vishesh</h4>
-                                        <p class="my-1 text-muted fs-16">Vishesh Music</p>
+                                        <h4 class="m-0 text-dark fs-20"><?= esc($user['name']) ?></h4>
+                                        <p class="my-1 text-muted fs-16"><?= esc($user['user_name']) ?></p>
                                     </div>
                                 </div>
                             </div>
@@ -71,37 +71,37 @@
                                                     <div class="col-md-6 col-sm-6 col-lg-6">
                                                         <div class="profile-email">
                                                             <h6 class="text-uppercase fs-13">Full Name</h6>
-                                                            <p class="fs-14">[name]</p>
+                                                            <p class="fs-14"><?= esc($user['name']) ?></p>
                                                         </div>
                                                     </div>
                                                     <div class="col-md-6 col-sm-6 col-lg-6">
                                                         <div class="profile-email">
                                                             <h6 class="text-uppercase fs-13">Company Name</h6>
-                                                            <p class="fs-14">[company_name]</p>
+                                                            <p class="fs-14"><?= esc($user['company_name']) ?></p>
                                                         </div>
                                                     </div>
                                                     <div class="col-md-6 col-sm-6 col-lg-6">
                                                         <div class="profile-email">
                                                             <h6 class="text-uppercase fs-13">Primary Label Name</h6>
-                                                            <p class="fs-14">[primary_label_name]</p>
+                                                            <p class="fs-14"><?= esc($user['primary_label_name']) ?></p>
                                                         </div>
                                                     </div>
                                                     <div class="col-md-6 col-sm-6 col-lg-6">
                                                         <div class="profile-email">
                                                             <h6 class="text-uppercase fs-13">Email Address</h6>
-                                                            <a href="mailto:[email]" class="text-primary fs-14 text-decoration-underline">[email]</a>
+                                                            <a href="mailto:[email]" class="text-primary fs-14 text-decoration-underline"><?= esc($user['email']) ?></a>
                                                         </div>
                                                     </div>
                                                     <div class="col-md-6 col-sm-6 col-lg-6">
                                                         <div class="profile-email">
                                                             <h6 class="text-uppercase fs-13">Phone Number</h6>
-                                                            <p class="fs-14">[phone]</p>
+                                                            <p class="fs-14"><?= esc($user['phone']) ?></p>
                                                         </div>
                                                     </div>
                                                     <div class="col-md-6 col-sm-6 col-lg-6">
                                                         <div class="profile-email">
                                                             <h6 class="text-uppercase fs-13">Role</h6>
-                                                            <span class="badge bg-light px-3 text-dark py-2 fw-semibold text-capitalize">[role]</span>
+                                                            <span class="badge bg-light px-3 text-dark py-2 fw-semibold text-capitalize"><?= esc($user['role_name']) ?></span>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -111,7 +111,9 @@
                                 </div>
 
                                 <!-- Login Credentials Tab -->
+
                                 <div class="tab-pane pt-4" id="login_credentials" role="tabpanel">
+
                                     <div class="row">
                                         <div class="col-lg-6 col-xl-6">
                                             <div class="card border mb-0">
@@ -126,7 +128,7 @@
                                                     <div class="form-group mb-3 row">
                                                         <label class="form-label">Username</label>
                                                         <div class="col-lg-12 col-xl-12">
-                                                            <input class="form-control" type="text" value="[user_name]" readonly>
+                                                            <input class="form-control" type="text" value="<?= esc($user['user_name']) ?>" readonly>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -143,33 +145,36 @@
                                                     </div>
                                                 </div>
                                                 <div class="card-body mb-0">
+                                                    <div id="passwordAlert"></div> <!-- success/error messages -->
+
                                                     <div class="form-group mb-3 row">
                                                         <label class="form-label">Old Password</label>
                                                         <div class="col-lg-12 col-xl-12">
-                                                            <input class="form-control" type="password" placeholder="Old Password">
+                                                            <input class="form-control" id="old_password" type="password" placeholder="Old Password">
                                                         </div>
                                                     </div>
                                                     <div class="form-group mb-3 row">
                                                         <label class="form-label">New Password</label>
                                                         <div class="col-lg-12 col-xl-12">
-                                                            <input class="form-control" type="password" placeholder="New Password">
+                                                            <input class="form-control" id="new_password" type="password" placeholder="New Password">
                                                         </div>
                                                     </div>
                                                     <div class="form-group mb-3 row">
                                                         <label class="form-label">Confirm Password</label>
                                                         <div class="col-lg-12 col-xl-12">
-                                                            <input class="form-control" type="password" placeholder="Confirm Password">
+                                                            <input class="form-control" id="confirm_password" type="password" placeholder="Confirm Password">
                                                         </div>
                                                     </div>
                                                     <div class="form-group row">
                                                         <div class="col-lg-12 col-xl-12">
-                                                            <button type="submit" class="btn btn-primary">Change Password</button>
+                                                            <button type="button" id="changePasswordBtn" class="btn btn-primary">Change Password</button>
                                                             <button type="button" class="btn btn-danger">Cancel</button>
                                                         </div>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
+
                                     </div>
                                 </div>
 
@@ -184,25 +189,25 @@
                                             <div class="col-md-6 col-sm-6 col-lg-6">
                                                 <div class="profile-email mb-3">
                                                     <h6 class="text-uppercase fs-13">Account Holder Name</h6>
-                                                    <p class="fs-14">[holder_name]</p>
+                                                    <p class="fs-14"><?= esc($user['holder_name']) ?></p>
                                                 </div>
                                             </div>
                                             <div class="col-md-6 col-sm-6 col-lg-6">
                                                 <div class="profile-email mb-3">
                                                     <h6 class="text-uppercase fs-13">Account Number</h6>
-                                                    <p class="fs-14">[account_number]</p>
+                                                    <p class="fs-14"><?= esc($user['account_number']) ?></p>
                                                 </div>
                                             </div>
                                             <div class="col-md-6 col-sm-6 col-lg-6">
                                                 <div class="profile-email mb-3">
                                                     <h6 class="text-uppercase fs-13">IFSC Code</h6>
-                                                    <p class="fs-14">[ifsc_code]</p>
+                                                    <p class="fs-14"><?= esc($user['ifsc_code']) ?></p>
                                                 </div>
                                             </div>
                                             <div class="col-md-6 col-sm-6 col-lg-6">
                                                 <div class="profile-email mb-3">
                                                     <h6 class="text-uppercase fs-13">Branch Name</h6>
-                                                    <p class="fs-14">[branch_name]</p>
+                                                    <p class="fs-14"><?= esc($user['branch_name']) ?></p>
                                                 </div>
                                             </div>
                                         </div>
@@ -220,13 +225,13 @@
                                             <div class="col-md-6 col-sm-6 col-lg-6">
                                                 <div class="profile-email mb-3">
                                                     <h6 class="text-uppercase fs-13">Agreement Start Date</h6>
-                                                    <p class="fs-14">[agreement_start_date]</p>
+                                                    <p class="fs-14"><?= esc($user['agreement_start_date']) ?></p>
                                                 </div>
                                             </div>
                                             <div class="col-md-6 col-sm-6 col-lg-6">
                                                 <div class="profile-email mb-3">
                                                     <h6 class="text-uppercase fs-13">Agreement End Date</h6>
-                                                    <p class="fs-14">[agreement_end_date]</p>
+                                                    <p class="fs-14"><?= esc($user['agreement_end_date']) ?></p>
                                                 </div>
                                             </div>
                                         </div>

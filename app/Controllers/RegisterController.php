@@ -126,17 +126,16 @@ class RegisterController extends BaseController
         ]);
     }
 
-    public function index(){
-
-        $user = $this->userModel->findAll();
-
-        // return response()->setJson($user);
+    public function index()
+    {
+        $userId = session()->get('user')['email'];
+        $user   = $this->userModel->getUserWithRoleByEmail($userId);
+        // return response()->setJSON($user);
         $page_array = [
             'file_name' => 'profile_page',
-            'users' => $user
+            'user' => $user
         ];
 
         return view('superadmin/index', $page_array);
-
     }
 }

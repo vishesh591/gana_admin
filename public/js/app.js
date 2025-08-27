@@ -1648,7 +1648,9 @@ document.addEventListener("DOMContentLoaded", function () {
         review: "bi-hourglass-split text-warning",
         takedown: "bi-exclamation-circle-fill text-secondary",
       };
-      return `<i class="bi ${icons[status] || "bi-question-circle-fill text-muted"}" title="${status}"></i>`;
+      return `<i class="bi ${
+        icons[status] || "bi-question-circle-fill text-muted"
+      }" title="${status}"></i>`;
     }
 
     function getStatusBadge(status) {
@@ -1659,7 +1661,10 @@ document.addEventListener("DOMContentLoaded", function () {
         rejected: { class: "status-rejected", text: "REJECTED" },
         takedown: { class: "status-takedown-table", text: "TAKEDOWN" },
       };
-      const statusInfo = config[status] || { class: "status-review", text: status.toUpperCase() };
+      const statusInfo = config[status] || {
+        class: "status-review",
+        text: status.toUpperCase(),
+      };
       return `<span class="badge status-badge ${statusInfo.class}">${statusInfo.text}</span>`;
     }
 
@@ -1685,12 +1690,13 @@ document.addEventListener("DOMContentLoaded", function () {
         {
           data: null,
           render: (data, type, row) => `
-            <div>
-              <div class="release-title">
-                <a href="#" class="view-details-link" data-id="${row.id}">${row.title}</a>
-              </div>
-              <div class="release-artist">${row.artist}</div>
-            </div>`,
+                        <div>     
+                            <div class="release-title">       
+                                <a href="/superadmin/releases/edit/${row.id}" class="view-details-link" data-id="${row.id}">${row.title}</a>     
+                            </div>     
+                            <div class="release-artist">${row.artist}</div>   
+                        </div>
+                    `,
         },
         { data: "submittedDate", defaultContent: "N/A" },
         { data: "upc", defaultContent: "N/A" },
@@ -1705,28 +1711,60 @@ document.addEventListener("DOMContentLoaded", function () {
     // --- FILTERS ---
     function applyFiltersAndDraw() {
       $.fn.dataTable.ext.search.pop();
-      $.fn.dataTable.ext.search.push(function (settings, data, dataIndex, rowData) {
+      $.fn.dataTable.ext.search.push(function (
+        settings,
+        data,
+        dataIndex,
+        rowData
+      ) {
         if (currentFilter === "all") return true;
         return rowData.status === currentFilter;
       });
       dataTableInstance.draw();
     }
 
-    filterTabs.addEventListener("click", (e) => {
-      if (e.target.matches("a.nav-link[data-filter]")) {
-        e.preventDefault();
-        currentFilter = e.target.dataset.filter;
-        document.querySelectorAll(".nav-pills .nav-link").forEach((tab) => tab.classList.remove("active"));
-        e.target.classList.add("active");
-        applyFiltersAndDraw();
-      }
-    });
+    // Handle filter tab clicks
+    if (filterTabs) {
+      filterTabs.addEventListener("click", (e) => {
+        if (e.target.matches("a.nav-link[data-filter]")) {
+          e.preventDefault();
+          currentFilter = e.target.dataset.filter;
+          document
+            .querySelectorAll(".nav-pills .nav-link")
+            .forEach((tab) => tab.classList.remove("active"));
+          e.target.classList.add("active");
+          applyFiltersAndDraw();
+        }
+      });
+    }
 
-    $("#datatable tbody").on("click", ".view-details-link", function (e) {
-      e.preventDefault();
-      const id = parseInt($(this).data("id"), 10);
-      // fetch full details by id if needed
-      console.log("Open modal for ID:", id);
+    // Handle edit link clicks - Updated to navigate to edit page
+    $("#datatableRelease tbody").on(
+      "click",
+      ".view-details-link",
+      function (e) {
+        // Let the default link behavior happen (navigate to edit page)
+        // Remove e.preventDefault() to allow navigation
+        const id = parseInt($(this).data("id"), 10);
+        console.log("Navigating to edit page for ID:", id);
+
+        // Optional: Add loading state or other UI feedback here
+        $(this).addClass("loading");
+      }
+    );
+  }
+
+  // Handle form submission on the add-release page
+  const releaseForm = document.getElementById("releaseForm");
+  if (releaseForm) {
+    releaseForm.addEventListener("submit", function (e) {
+      // Add any form validation or loading states here
+      const submitBtn = this.querySelector('button[type="submit"]');
+      if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.innerHTML =
+          '<i class="spinner-border spinner-border-sm me-1"></i> Processing...';
+      }
     });
   }
 });
@@ -1848,7 +1886,7 @@ $(document).ready(function () {
 // labels-page js
 $(document).ready(function () {
   let table = $("#labelTable").DataTable({
-    destroy:true,
+    destroy: true,
     ajax: "/superadmin/api/labels", // your controller endpoint
     columns: [
       {
@@ -3978,14 +4016,13 @@ $(document).ready(function () {
   });
 });
 
-// Add Releases Multi-Step Form JavaScript
 // Enhanced Multi-Step Form Validation System
 const FormValidator = {
-  // Common validation rules that can be reused
   rules: {
-    required: (value) => value && value.trim() !== '',
+    required: (value) => value && value.trim() !== "",
     email: (value) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value),
-    phone: (value) => /^[\+]?[1-9][\d]{0,15}$/.test(value.replace(/[\s\-\(\)]/g, '')),
+    phone: (value) =>
+      /^[\+]?[1-9][\d]{0,15}$/.test(value.replace(/[\s\-\(\)]/g, "")),
     url: (value) => /^https?:\/\/.+\..+/.test(value),
     number: (value) => !isNaN(value) && !isNaN(parseFloat(value)),
     positiveNumber: (value) => !isNaN(value) && parseFloat(value) > 0,
@@ -3997,17 +4034,16 @@ const FormValidator = {
     maxValue: (value, max) => parseFloat(value) <= max,
     upcEan: (value) => /^\d{12,13}$/.test(value),
     isrc: (value) => /^[A-Z]{2}[A-Z0-9]{3}\d{7}$/.test(value),
-    percentage: (value) => !isNaN(value) && parseFloat(value) >= 0 && parseFloat(value) <= 100
+    percentage: (value) =>
+      !isNaN(value) && parseFloat(value) >= 0 && parseFloat(value) <= 100,
   },
 
-  // Generic field validation function
   validateField(fieldId, validationRules, customMessages = {}) {
     const field = document.getElementById(fieldId);
     const error = document.getElementById(fieldId + "Error");
 
     if (!field) return true;
 
-    // Clear previous validation
     field.classList.remove("is-invalid", "is-valid");
     if (error) {
       error.textContent = "";
@@ -4018,7 +4054,6 @@ const FormValidator = {
     let isValid = true;
     let errorMsg = "";
 
-    // Handle different field types
     if (field.type === "radio" || field.type === "checkbox") {
       if (validationRules.required) {
         const radios = document.querySelectorAll(`input[name="${field.name}"]`);
@@ -4031,100 +4066,122 @@ const FormValidator = {
         errorMsg = customMessages.required || `Please select a ${fieldId}.`;
       }
     } else {
-      // Text inputs and other input types
       for (const [rule, ruleValue] of Object.entries(validationRules)) {
         if (!isValid) break;
 
         switch (rule) {
-          case 'required':
+          case "required":
             if (ruleValue && !value) {
               isValid = false;
-              errorMsg = customMessages.required || `${fieldId.replace(/([A-Z])/g, " $1").toLowerCase()} is required.`;
+              errorMsg =
+                customMessages.required ||
+                `${fieldId
+                  .replace(/([A-Z])/g, " $1")
+                  .toLowerCase()} is required.`;
             }
             break;
-          case 'minLength':
+          case "minLength":
             if (value && value.length < ruleValue) {
               isValid = false;
-              errorMsg = customMessages.minLength || `Must be at least ${ruleValue} characters long.`;
+              errorMsg =
+                customMessages.minLength ||
+                `Must be at least ${ruleValue} characters long.`;
             }
             break;
-          case 'maxLength':
+          case "maxLength":
             if (value && value.length > ruleValue) {
               isValid = false;
-              errorMsg = customMessages.maxLength || `Cannot exceed ${ruleValue} characters.`;
+              errorMsg =
+                customMessages.maxLength ||
+                `Cannot exceed ${ruleValue} characters.`;
             }
             break;
-          case 'pattern':
+          case "pattern":
             if (value && !ruleValue.test(value)) {
               isValid = false;
               errorMsg = customMessages.pattern || "Invalid format.";
             }
             break;
-          case 'email':
+          case "email":
             if (value && !this.rules.email(value)) {
               isValid = false;
-              errorMsg = customMessages.email || "Please enter a valid email address.";
+              errorMsg =
+                customMessages.email || "Please enter a valid email address.";
             }
             break;
-          case 'url':
+          case "url":
             if (value && !this.rules.url(value)) {
               isValid = false;
-              errorMsg = customMessages.url || "Please enter a valid URL (e.g., https://example.com).";
+              errorMsg =
+                customMessages.url ||
+                "Please enter a valid URL (e.g., https://example.com).";
             }
             break;
-          case 'phone':
+          case "phone":
             if (value && !this.rules.phone(value)) {
               isValid = false;
-              errorMsg = customMessages.phone || "Please enter a valid phone number.";
+              errorMsg =
+                customMessages.phone || "Please enter a valid phone number.";
             }
             break;
-          case 'number':
+          case "number":
             if (value && !this.rules.number(value)) {
               isValid = false;
-              errorMsg = customMessages.number || "Please enter a valid number.";
+              errorMsg =
+                customMessages.number || "Please enter a valid number.";
             }
             break;
-          case 'positiveNumber':
+          case "positiveNumber":
             if (value && !this.rules.positiveNumber(value)) {
               isValid = false;
-              errorMsg = customMessages.positiveNumber || "Please enter a positive number.";
+              errorMsg =
+                customMessages.positiveNumber ||
+                "Please enter a positive number.";
             }
             break;
-          case 'minValue':
+          case "minValue":
             if (value && parseFloat(value) < ruleValue) {
               isValid = false;
-              errorMsg = customMessages.minValue || `Value must be at least ${ruleValue}.`;
+              errorMsg =
+                customMessages.minValue ||
+                `Value must be at least ${ruleValue}.`;
             }
             break;
-          case 'maxValue':
+          case "maxValue":
             if (value && parseFloat(value) > ruleValue) {
               isValid = false;
-              errorMsg = customMessages.maxValue || `Value cannot exceed ${ruleValue}.`;
+              errorMsg =
+                customMessages.maxValue || `Value cannot exceed ${ruleValue}.`;
             }
             break;
-          case 'upcEan':
+          case "upcEan":
             if (value && !this.rules.upcEan(value)) {
               isValid = false;
-              errorMsg = customMessages.upcEan || "UPC/EAN must be 12 or 13 digits only.";
+              errorMsg =
+                customMessages.upcEan ||
+                "UPC/EAN must be 12 or 13 digits only.";
             }
             break;
-          case 'isrc':
+          case "isrc":
             if (value && !this.rules.isrc(value)) {
               isValid = false;
-              errorMsg = customMessages.isrc || "ISRC must be in format: CC-XXX-YY-NNNNN (e.g., US-ABC-12-34567).";
+              errorMsg =
+                customMessages.isrc ||
+                "ISRC must be in format: CC-XXX-YY-NNNNN (e.g., US-ABC-12-34567).";
             }
             break;
-          case 'percentage':
+          case "percentage":
             if (value && !this.rules.percentage(value)) {
               isValid = false;
-              errorMsg = customMessages.percentage || "Please enter a percentage between 0 and 100.";
+              errorMsg =
+                customMessages.percentage ||
+                "Please enter a percentage between 0 and 100.";
             }
             break;
         }
       }
     }
 
-    // Apply validation styling
     if (!isValid) {
       field.classList.add("is-invalid");
       if (error) {
@@ -4136,10 +4193,28 @@ const FormValidator = {
     }
 
     return isValid || (!validationRules.required && !value);
-  }
+  },
+
+  // Add helper methods for errors
+  showError: (field, message) => {
+    field.classList.add("is-invalid");
+    const errorDiv = field.nextElementSibling;
+    if (errorDiv && errorDiv.classList.contains("invalid-feedback")) {
+      errorDiv.textContent = message;
+      errorDiv.style.display = "block";
+    }
+  },
+
+  hideError: (field) => {
+    field.classList.remove("is-invalid");
+    const errorDiv = field.nextElementSibling;
+    if (errorDiv && errorDiv.classList.contains("invalid-feedback")) {
+      errorDiv.style.display = "none";
+    }
+  },
 };
 
-// Step-specific validation configurations
+// Step validation rules
 const step1ValidationRules = {
   releaseTitle: { required: true, minLength: 2, maxLength: 100 },
   labelName: { required: true },
@@ -4150,53 +4225,46 @@ const step1ValidationRules = {
   genre: { required: true, type: "select" },
   language: { required: true, type: "select" },
   upcEan: { upcEan: true },
-  artworkFile: { required: true, type: "file" }
+  artworkFile: { required: true, type: "file" },
 };
 
 const step2ValidationRules = {
-  audioFile: { required: true, type: "file" },
   trackTitle: { required: true, minLength: 1, maxLength: 100 },
-  isrc: { isrc: true },
-  trackDuration: {
-    required: true,
-    pattern: /^\d{1,2}:\d{2}$/
-  }
+  secondaryTrackType: { required: true, type: "select" },
+  instrumental: { required: true, type: "radio" },
+  author: { required: true, minLength: 1, maxLength: 100 },
+  composer: { required: true, minLength: 1, maxLength: 100 },
+  cLineYear: { required: true, type: "select" },
+  pLineYear: { required: true, type: "select" },
+  productionYear: { required: true, type: "select" },
+  trackLanguage: { required: true, type: "select" },
+  explicit: { required: true, type: "select" },
+  audioFile: { required: true, type: "file" },
 };
 
 const step3ValidationRules = {
-  territories: { required: true, type: "select" },
-  customStoreUrl: { url: true }
+  freeStores: { required: true },
 };
 
 const step4ValidationRules = {
   releaseDate: { required: true, date: true },
-  presaleDate: { date: true },
-  price: { required: true, positiveNumber: true, minValue: 0.99, maxValue: 999.99 },
-  currency: { required: true, type: "select" },
-  royaltyPercentage: { percentage: true, minValue: 0, maxValue: 100 }
+  originalReleaseDate: { required: true, date: true },
+  releasePrice: { required: true, type: "select" },
 };
 
 const step5ValidationRules = {
-  termsAccepted: { required: true, type: "checkbox" },
-  distributionAgreement: { required: true, type: "checkbox" },
-  copyrightConfirmation: { required: true, type: "checkbox" },
-  contactEmail: { required: true, email: true },
-  contactPhone: { phone: true }
+  contentGuidelines: { required: true, type: "checkbox" },
+  isrcGuidelines: { required: true, type: "checkbox" },
+  youtubeGuidelines: { required: true, type: "checkbox" },
+  audioStoreGuidelines: { required: true, type: "checkbox" },
 };
 
-// Add Releases Multi-Step Form JavaScript
 document.addEventListener("DOMContentLoaded", function () {
-  // --- Page-Specific Guard Clause for the Add Release Page ---
   const addReleasePageContainer = document.querySelector(
     ".admin-add-releases-form"
   );
+  if (!addReleasePageContainer) return;
 
-  // If this container doesn't exist, stop executing the rest of the script.
-  if (!addReleasePageContainer) {
-    return;
-  }
-
-  // --- Configuration ---
   const totalSteps = 5;
   const stepTitles = {
     1: "Metadata",
@@ -4205,15 +4273,18 @@ document.addEventListener("DOMContentLoaded", function () {
     4: "Date & Price",
     5: "Terms",
   };
-
   let currentStep = 1;
 
-  // --- Initialize feather icons ---
+  // CRITICAL FIX: Track which button was clicked
+  let submittingButton = null;
+
   if (typeof feather !== "undefined") {
     feather.replace();
   }
 
-  // --- STEP NAVIGATION FUNCTIONS ---
+  // FIXED: Initialize form data for edit mode
+  const isEditMode =
+    document.querySelector('input[name="releaseTitle"]')?.value !== "";
 
   function updateStepIndicator(step) {
     const steps = document.querySelectorAll(".step");
@@ -4230,7 +4301,6 @@ document.addEventListener("DOMContentLoaded", function () {
       }
     });
 
-    // Update progress line width
     if (progressLine) {
       const progressWidth = ((step - 1) / (totalSteps - 1)) * 100;
       progressLine.style.width = progressWidth + "%";
@@ -4238,12 +4308,10 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   function showStep(step) {
-    // Hide all step contents
     document.querySelectorAll(".step-content").forEach((content) => {
       content.classList.remove("active");
     });
 
-    // Show the target step with slight delay for smooth transition
     setTimeout(() => {
       const targetStep = document.getElementById(`step-${step}`);
       if (targetStep) {
@@ -4251,10 +4319,8 @@ document.addEventListener("DOMContentLoaded", function () {
       }
     }, 150);
 
-    // Update step indicator
     updateStepIndicator(step);
 
-    // Update page title
     const currentStepTitleEl = document.querySelector(".current-step-title");
     if (currentStepTitleEl) {
       currentStepTitleEl.textContent = stepTitles[step];
@@ -4263,10 +4329,7 @@ document.addEventListener("DOMContentLoaded", function () {
     currentStep = step;
   }
 
-  // --- ENHANCED VALIDATION SYSTEM ---
-
   function createStepValidator(stepRules, stepNumber) {
-    // Add event listeners for real-time validation
     Object.keys(stepRules).forEach((fieldId) => {
       const field = document.getElementById(fieldId);
       if (!field) return;
@@ -4274,39 +4337,56 @@ document.addEventListener("DOMContentLoaded", function () {
       const rule = stepRules[fieldId];
 
       if (rule.type === "radio") {
-        document.querySelectorAll(`input[name="${fieldId}"]`).forEach((radio) => {
-          radio.addEventListener("change", () => validateStepField(fieldId, stepRules[fieldId]));
-        });
-      } else if (rule.type === "checkbox") {
-        if (field.name && document.querySelectorAll(`input[name="${field.name}"]`).length > 1) {
-          // Multiple checkboxes with same name
-          document.querySelectorAll(`input[name="${field.name}"]`).forEach((checkbox) => {
-            checkbox.addEventListener("change", () => validateStepField(fieldId, stepRules[fieldId]));
+        document
+          .querySelectorAll(`input[name="${field.name}"]`)
+          .forEach((radio) => {
+            radio.addEventListener("change", () =>
+              validateStepField(fieldId, stepRules[fieldId])
+            );
           });
+      } else if (rule.type === "checkbox") {
+        if (
+          field.name &&
+          document.querySelectorAll(`input[name="${field.name}"]`).length > 1
+        ) {
+          document
+            .querySelectorAll(`input[name="${field.name}"]`)
+            .forEach((checkbox) => {
+              checkbox.addEventListener("change", () =>
+                validateStepField(fieldId, stepRules[fieldId])
+              );
+            });
         } else {
-          // Single checkbox
-          field.addEventListener("change", () => validateStepField(fieldId, stepRules[fieldId]));
+          field.addEventListener("change", () =>
+            validateStepField(fieldId, stepRules[fieldId])
+          );
         }
       } else if (rule.type === "file") {
-        field.addEventListener("change", () => validateStepField(fieldId, stepRules[fieldId]));
+        field.addEventListener("change", () =>
+          validateStepField(fieldId, stepRules[fieldId])
+        );
       } else {
-        field.addEventListener("input", () => validateStepField(fieldId, stepRules[fieldId]));
-        field.addEventListener("change", () => validateStepField(fieldId, stepRules[fieldId]));
-        field.addEventListener("blur", () => validateStepField(fieldId, stepRules[fieldId]));
+        field.addEventListener("input", () =>
+          validateStepField(fieldId, stepRules[fieldId])
+        );
+        field.addEventListener("change", () =>
+          validateStepField(fieldId, stepRules[fieldId])
+        );
+        field.addEventListener("blur", () =>
+          validateStepField(fieldId, stepRules[fieldId])
+        );
       }
     });
 
-    // ** ADDED: Special real-time validation for Step 4 dates **
     if (stepNumber === 4) {
-      ['releaseDate', 'preSaleDate', 'originalReleaseDate'].forEach(id => {
+      ["releaseDate", "preSaleDate", "originalReleaseDate"].forEach((id) => {
         const field = document.getElementById(id);
         if (field) {
-          field.addEventListener('change', validateStep4Dates);
+          field.addEventListener("change", validateStep4Dates);
         }
       });
     }
 
-    // Return validation function for the entire step
     return function validateStep() {
       let allValid = true;
       Object.keys(stepRules).forEach((fieldId) => {
@@ -4324,46 +4404,57 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   function validateStepField(fieldId, rules) {
-    // Handle special file validation cases
-    if (fieldId === 'artworkFile') {
-      return validateArtworkFile(); // Use existing function
+    if (fieldId === "artworkFile") {
+      return validateArtworkFile();
     }
-    if (fieldId === 'audioFile') {
-      return validateAudioFile(); // Use existing function
+    if (fieldId === "audioFile") {
+      return validateAudioFile();
     }
-    if (fieldId === 'freeStores') {
+    if (fieldId === "freeStores") {
       return validateStoreSelection();
     }
 
-    // Use generic validation for other fields
     return FormValidator.validateField(fieldId, rules);
   }
 
-  // --- STEP 1 VALIDATION (Enhanced from existing) ---
-
-  // Artwork file validation (integrated)
+  // FIXED: Artwork validation for edit mode
   function validateArtworkFile() {
     const artworkFile = document.getElementById("artworkFile");
     const artworkFileError = document.getElementById("artworkFileError");
     const artworkUpload = document.getElementById("artworkUpload");
+    const artworkPreview = document.getElementById("artworkPreview");
 
     if (!artworkFile || !artworkFileError || !artworkUpload) return true;
 
-    // Reset validation state
     artworkUpload.classList.remove("is-invalid", "is-valid");
     artworkFileError.textContent = "";
     artworkFileError.style.display = "none";
 
+    // FIXED: In edit mode, if preview exists and no new file selected, it's valid
+    if (
+      isEditMode &&
+      artworkPreview &&
+      !artworkPreview.classList.contains("d-none") &&
+      (!artworkFile.files || artworkFile.files.length === 0)
+    ) {
+      artworkUpload.classList.add("is-valid");
+      return true;
+    }
+
     if (!artworkFile.files || artworkFile.files.length === 0) {
-      artworkUpload.classList.add("is-invalid");
-      artworkFileError.textContent = "Please select an artwork file.";
-      artworkFileError.style.display = "block";
-      return false;
+      if (!isEditMode) {
+        // Only show error for new forms
+        artworkUpload.classList.add("is-invalid");
+        artworkFileError.textContent = "Please select an artwork file.";
+        artworkFileError.style.display = "block";
+        return false;
+      }
+      return true; // Valid for edit mode without new file
     }
 
     const file = artworkFile.files[0];
     const allowedTypes = ["image/jpeg", "image/jpg", "image/png"];
-    const maxSize = 10 * 1024 * 1024; // 10MB
+    const maxSize = 10 * 1024 * 1024;
 
     if (!allowedTypes.includes(file.type)) {
       artworkUpload.classList.add("is-invalid");
@@ -4380,38 +4471,52 @@ document.addEventListener("DOMContentLoaded", function () {
       return false;
     }
 
-    // Valid file
     artworkUpload.classList.add("is-valid");
-    artworkFileError.style.display = "none";
     return true;
   }
 
-  // Audio file validation
+  // FIXED: Audio validation for edit mode
   function validateAudioFile() {
     const audioFile = document.getElementById("audioFile");
     const audioFileError = document.getElementById("audioFileError");
     const audioUpload = document.getElementById("audioUpload");
+    const audioPreviewContainer = document.getElementById(
+      "audioPreviewContainer"
+    );
 
     if (!audioFile || !audioUpload) return true;
 
-    // Reset validation state
     audioUpload.classList.remove("is-invalid", "is-valid");
     if (audioFileError) {
       audioFileError.textContent = "";
       audioFileError.style.display = "none";
     }
 
-    if (!audioFile.files || audioFile.files.length === 0) {
-      audioUpload.classList.add("is-invalid");
-      if (audioFileError) {
-        audioFileError.textContent = "Please select an audio file.";
-        audioFileError.style.display = "block";
-      }
-      return false;
+    // FIXED: In edit mode, if preview exists and no new file selected, it's valid
+    if (
+      isEditMode &&
+      audioPreviewContainer &&
+      !audioPreviewContainer.classList.contains("d-none") &&
+      (!audioFile.files || audioFile.files.length === 0)
+    ) {
+      audioUpload.classList.add("is-valid");
+      return true;
     }
 
-    // Use existing validateAudioFileInternal function
-    if (typeof validateAudioFileInternal === 'function') {
+    if (!audioFile.files || audioFile.files.length === 0) {
+      if (!isEditMode) {
+        // Only show error for new forms
+        audioUpload.classList.add("is-invalid");
+        if (audioFileError) {
+          audioFileError.textContent = "Please select an audio file.";
+          audioFileError.style.display = "block";
+        }
+        return false;
+      }
+      return true; // Valid for edit mode without new file
+    }
+
+    if (typeof validateAudioFileInternal === "function") {
       const isValid = validateAudioFileInternal(audioFile.files[0]);
       if (isValid) {
         audioUpload.classList.add("is-valid");
@@ -4424,152 +4529,72 @@ document.addEventListener("DOMContentLoaded", function () {
     return true;
   }
 
-  // ** ADDED: Custom validation logic for Step 4 dates **
   function validateStep4Dates() {
-    const releaseDate = document.getElementById('releaseDate');
-    const preSaleDate = document.getElementById('preSaleDate');
-    const originalReleaseDate = document.getElementById('originalReleaseDate');
+    const releaseDate = document.getElementById("releaseDate");
+    const preSaleDate = document.getElementById("preSaleDate");
+    const originalReleaseDate = document.getElementById("originalReleaseDate");
 
     let isValid = true;
 
-    // These checks require the FormValidator object to have showError and hideError methods
-    // I am assuming it exists based on your existing code calling FormValidator.validateField
-    const FormValidator = window.FormValidator || {
-      showError: (field, message) => {
-        field.classList.add('is-invalid');
-        const errorDiv = field.nextElementSibling;
-        if (errorDiv && errorDiv.classList.contains('invalid-feedback')) {
-          errorDiv.textContent = message;
-        }
-      },
-      hideError: (field) => {
-        field.classList.remove('is-invalid');
-      }
-    };
+    const rdValue = releaseDate?.value ? new Date(releaseDate.value) : null;
+    const psdValue = preSaleDate?.value ? new Date(preSaleDate.value) : null;
+    const ordValue = originalReleaseDate?.value
+      ? new Date(originalReleaseDate.value)
+      : null;
 
-    const rdValue = releaseDate.value ? new Date(releaseDate.value) : null;
-    const psdValue = preSaleDate.value ? new Date(preSaleDate.value) : null;
-    const ordValue = originalReleaseDate.value ? new Date(originalReleaseDate.value) : null;
-
-    // Reset previous errors first
     FormValidator.hideError(preSaleDate);
     FormValidator.hideError(originalReleaseDate);
 
-    // Rule 1: Original Release Date cannot be after Release Date
     if (rdValue && ordValue && ordValue > rdValue) {
-      FormValidator.showError(originalReleaseDate, 'Original release date cannot be after the release date.');
+      FormValidator.showError(
+        originalReleaseDate,
+        "Original release date cannot be after the release date."
+      );
       isValid = false;
     }
 
-    // Rule 2: Pre-Sale Date must be before Release Date
     if (psdValue && rdValue && psdValue >= rdValue) {
-      FormValidator.showError(preSaleDate, 'Pre-sale date must be before the release date.');
+      FormValidator.showError(
+        preSaleDate,
+        "Pre-sale date must be before the release date."
+      );
       isValid = false;
     }
 
     return isValid;
   }
 
-  const step2ValidationRules = {
-    trackTitle: {
-      type: 'text',
-      required: true
-    },
-    secondaryTrackType: {
-      type: 'select',
-      required: true
-    },
-    instrumental: {
-      type: 'radio',
-      required: true
-    },
-    author: {
-      type: 'text',
-      required: true
-    },
-    composer: {
-      type: 'text',
-      required: true
-    },
-    cLineYear: {
-      type: 'select',
-      required: true
-    },
-    pLineYear: {
-      type: 'select',
-      required: true
-    },
-    productionYear: {
-      type: 'select',
-      required: true
-    },
-    trackLanguage: {
-      type: 'select',
-      required: true
-    },
-    explicit: {
-      type: 'select',
-      required: true
-    },
-    audioFile: {
-      type: 'file',
-      required: true
-    }
-  };
-
-  const step3ValidationRules = {
-    'freeStores': { required: true } // Key is the ID of the container
-  };
-
-  const step4ValidationRules = {
-    releaseDate: { type: 'date', required: true },
-    originalReleaseDate: { type: 'date', required: true },
-    releasePrice: { type: 'select', required: true }
-  };
-
-  const step5ValidationRules = {
-    contentGuidelines: { type: 'checkbox', required: true },
-    isrcGuidelines: { type: 'checkbox', required: true },
-    youtubeGuidelines: { type: 'checkbox', required: true },
-    audioStoreGuidelines: { type: 'checkbox', required: true }
-  };
-
-
-  // ** ADDED: Step 3 store selection validation **
   function validateStoreSelection() {
-    const checkedCount = document.querySelectorAll('input[name="stores[]"]:checked').length;
-    const errorDiv = document.getElementById('storesError');
+    const checkedCount = document.querySelectorAll(
+      'input[name="stores[]"]:checked'
+    ).length;
+    const errorDiv = document.getElementById("storesError");
 
     if (checkedCount === 0) {
-      errorDiv.style.display = 'block';
+      if (errorDiv) errorDiv.style.display = "block";
       return false;
     } else {
-      errorDiv.style.display = 'none';
+      if (errorDiv) errorDiv.style.display = "none";
       return true;
     }
   }
 
-
-  // Initialize all step validations
   const stepValidators = {
     1: createStepValidator(step1ValidationRules, 1),
     2: createStepValidator(step2ValidationRules, 2),
     3: createStepValidator(step3ValidationRules, 3),
     4: createStepValidator(step4ValidationRules, 4),
-    5: createStepValidator(step5ValidationRules, 5)
+    5: createStepValidator(step5ValidationRules, 5),
   };
 
-  // --- EVENT LISTENERS ---
-
-  // Step navigation - Next buttons
+  // Navigation event listeners
   document.querySelectorAll(".next-step").forEach((btn) => {
     btn.addEventListener("click", function () {
       const nextStep = parseInt(this.dataset.next, 10);
 
-      // Validate current step before proceeding
       if (stepValidators[currentStep] && !stepValidators[currentStep]()) {
         console.log(`Step ${currentStep} validation failed`);
-        return; // Stay on current step, validation errors will show
+        return;
       }
 
       if (nextStep <= totalSteps) {
@@ -4578,7 +4603,6 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   });
 
-  // Step navigation - Previous buttons
   document.querySelectorAll(".prev-step").forEach((btn) => {
     btn.addEventListener("click", function () {
       const prevStep = parseInt(this.dataset.prev, 10);
@@ -4588,7 +4612,6 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   });
 
-  // Step navigation - Click on step indicators
   document.querySelectorAll(".step").forEach((step) => {
     step.addEventListener("click", function () {
       const stepNum = parseInt(this.dataset.step, 10);
@@ -4598,92 +4621,64 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   });
 
-  // --- FILE UPLOAD FUNCTIONALITY ---
+  // CRITICAL FIX: Capture submit button clicks BEFORE form submission
+  document.addEventListener('click', function(e) {
+    if (e.target.type === 'submit' && e.target.form && e.target.form.id === 'releaseForm') {
+      submittingButton = e.target;
+      console.log('CAPTURED SUBMIT BUTTON:', {
+        name: submittingButton.name,
+        value: submittingButton.value,
+        innerHTML: submittingButton.innerHTML.substring(0, 50)
+      });
+    }
+  });
 
-  // Fixed Audio file upload handler with preview
+  // File upload handlers
   const audioUpload = document.getElementById("audioUpload");
   const audioFile = document.getElementById("audioFile");
 
   if (audioUpload && audioFile) {
-    // SOLUTION 1: Remove any existing event listeners first
     const newAudioUpload = audioUpload.cloneNode(true);
     audioUpload.parentNode.replaceChild(newAudioUpload, audioUpload);
-
-    // SOLUTION 2: Add debounce mechanism
     let isAudioProcessing = false;
 
-    // Now add the event listener to the clean element
     newAudioUpload.addEventListener("click", function (e) {
-      console.log("=== AUDIO UPLOAD BUTTON CLICKED ===");
-
-      // Debounce: Prevent multiple rapid clicks
-      if (isAudioProcessing) {
-        console.log("Already processing audio, ignoring this click");
-        return false;
-      }
-
+      if (isAudioProcessing) return false;
       isAudioProcessing = true;
-
-      // Prevent any default behavior that might cause page reload
       e.preventDefault();
       e.stopPropagation();
-      e.stopImmediatePropagation();
-
-      console.log("Triggering audio file input click...");
       audioFile.click();
-
-      // Reset the processing flag after a short delay
       setTimeout(() => {
         isAudioProcessing = false;
       }, 1000);
-
       return false;
     });
 
-    // Audio file change handler with preview
     audioFile.addEventListener("change", function (e) {
-      console.log("=== AUDIO FILE CHANGE DEBUG ===");
-      console.log("Event target:", e.target);
-      console.log("Files array:", e.target.files);
-      console.log("Files length:", e.target.files ? e.target.files.length : 0);
-
       if (e.target.files && e.target.files.length > 0) {
         const file = e.target.files[0];
-        console.log("First audio file:", file);
-        console.log("Audio file name:", file.name);
-
-        // Validate the audio file first
         if (validateAudioFileInternal(file)) {
-          console.log("Audio file accepted:", file.name);
-
-          // Show audio preview
           const reader = new FileReader();
           reader.onload = function (event) {
             const audioPreview = document.getElementById("audioPreview");
-            const audioPreviewContainer = document.getElementById("audioPreviewContainer");
+            const audioPreviewContainer = document.getElementById(
+              "audioPreviewContainer"
+            );
             const audioFileName = document.getElementById("audioFileName");
             const audioFileSize = document.getElementById("audioFileSize");
 
             if (audioPreview && audioPreviewContainer) {
-              // Set the audio source
               audioPreview.src = event.target.result;
-
-              // Show the preview container
               audioPreviewContainer.classList.remove("d-none");
 
-              // Update file info
               if (audioFileName) {
                 audioFileName.textContent = file.name;
               }
-
               if (audioFileSize) {
                 const sizeInMB = (file.size / (1024 * 1024)).toFixed(2);
                 audioFileSize.textContent = `Size: ${sizeInMB} MB`;
               }
 
-              console.log("Audio preview updated successfully");
-
-              // Re-initialize feather icons for the check circle
               if (typeof feather !== "undefined") {
                 feather.replace();
               }
@@ -4691,190 +4686,116 @@ document.addEventListener("DOMContentLoaded", function () {
           };
           reader.readAsDataURL(file);
         } else {
-          // Hide preview if validation fails
-          const audioPreviewContainer = document.getElementById("audioPreviewContainer");
+          const audioPreviewContainer = document.getElementById(
+            "audioPreviewContainer"
+          );
           if (audioPreviewContainer) {
             audioPreviewContainer.classList.add("d-none");
           }
         }
-      } else {
-        console.log("No audio files selected");
-        // Hide preview when no file is selected
-        const audioPreviewContainer = document.getElementById("audioPreviewContainer");
-        if (audioPreviewContainer) {
-          audioPreviewContainer.classList.add("d-none");
-        }
       }
     });
   }
 
-  // Internal audio file validation function - WAV FILES ONLY
   function validateAudioFileInternal(file) {
-    console.log("=== INTERNAL AUDIO FILE VALIDATION ===");
-    console.log("Validating audio file:", file);
+    if (!file) return false;
 
-    if (!file) {
-      console.error("No audio file provided");
-      return false;
-    }
+    const allowedAudioTypes = ["audio/wav", "audio/wave", "audio/x-wav"];
+    const maxAudioSize = 50 * 1024 * 1024;
 
-    // UPDATED: Only allow WAV files
-    const allowedAudioTypes = [
-      "audio/wav",
-      "audio/wave",
-      "audio/x-wav"
-    ];
-    const maxAudioSize = 50 * 1024 * 1024; // 50MB for audio files
-
-    console.log("Audio file type:", file.type);
-    console.log("Audio file size:", file.size);
-    console.log("Allowed audio types:", allowedAudioTypes);
-    console.log("File extension:", file.name.split('.').pop().toLowerCase());
-
-    // Check file type and extension
-    const fileExtension = file.name.split('.').pop().toLowerCase();
+    const fileExtension = file.name.split(".").pop().toLowerCase();
     const isValidType = allowedAudioTypes.includes(file.type);
-    const isValidExtension = fileExtension === 'wav';
+    const isValidExtension = fileExtension === "wav";
 
     if (!isValidType && !isValidExtension) {
-      console.error("Invalid audio file type:", file.type);
-      alert("Only WAV files are accepted!\n\nPlease upload a WAV audio file. Other formats like MP3, AAC, FLAC are not supported.");
+      alert("Only WAV files are accepted!\n\nPlease upload a WAV audio file.");
       return false;
     }
 
-    // Additional check for file extension even if MIME type is correct
     if (!isValidExtension) {
-      console.error("Invalid file extension:", fileExtension);
-      alert("Only .wav files are accepted!\n\nPlease make sure your file has a .wav extension.");
+      alert(
+        "Only .wav files are accepted!\n\nPlease make sure your file has a .wav extension."
+      );
       return false;
     }
 
     if (file.size > maxAudioSize) {
-      console.error("Audio file too large:", file.size, "bytes. Max allowed:", maxAudioSize);
-      alert("File size too large!\n\nYour WAV file should not exceed 50MB. Please compress or use a shorter audio file.");
+      alert("File size too large!\n\nYour WAV file should not exceed 50MB.");
       return false;
     }
 
-    // Check minimum file size (to avoid empty files)
-    const minAudioSize = 1024; // 1KB minimum
+    const minAudioSize = 1024;
     if (file.size < minAudioSize) {
-      console.error("Audio file too small:", file.size, "bytes");
-      alert("File appears to be empty or corrupted!\n\nPlease select a valid WAV audio file.");
+      alert(
+        "File appears to be empty or corrupted!\n\nPlease select a valid WAV audio file."
+      );
       return false;
     }
 
-    console.log("WAV file validation passed");
     return true;
   }
 
-  // Fixed Artwork file upload handler with debounce
+  // Artwork upload handler
   const artworkUpload = document.getElementById("artworkUpload");
   const artworkFile = document.getElementById("artworkFile");
 
   if (artworkUpload && artworkFile) {
-    // SOLUTION 1: Remove any existing event listeners first
     const newArtworkUpload = artworkUpload.cloneNode(true);
     artworkUpload.parentNode.replaceChild(newArtworkUpload, artworkUpload);
-
-    // SOLUTION 2: Add debounce mechanism
     let isProcessing = false;
 
-    // Now add the event listener to the clean element
     newArtworkUpload.addEventListener("click", function (e) {
-      console.log("=== ARTWORK UPLOAD BUTTON CLICKED ===");
-
-      // Debounce: Prevent multiple rapid clicks
-      if (isProcessing) {
-        console.log("Already processing, ignoring this click");
-        return false;
-      }
-
+      if (isProcessing) return false;
       isProcessing = true;
-
-      // Prevent any default behavior that might cause page reload
       e.preventDefault();
       e.stopPropagation();
-      e.stopImmediatePropagation();
-
-      console.log("Triggering file input click...");
       artworkFile.click();
-
-      // Reset the processing flag after a short delay
       setTimeout(() => {
         isProcessing = false;
       }, 1000);
-
       return false;
     });
 
-    // Artwork file change handler with enhanced debugging
     artworkFile.addEventListener("change", function (e) {
-      console.log("=== FILE CHANGE DEBUG ===");
-      console.log("Event target:", e.target);
-      console.log("Files array:", e.target.files);
-      console.log("Files length:", e.target.files ? e.target.files.length : 0);
-
       if (e.target.files && e.target.files.length > 0) {
         const file = e.target.files[0];
-        console.log("First file:", file);
-        console.log("File name:", file.name);
-
-        // Validate the file first
         if (validateArtworkFileInternal(file)) {
-          // Show preview only after validation passes
           const reader = new FileReader();
           reader.onload = function (event) {
             const preview = document.getElementById("artworkPreview");
             if (preview) {
               preview.src = event.target.result;
               preview.classList.remove("d-none");
-              console.log("Preview updated successfully");
             }
           };
           reader.readAsDataURL(file);
         }
-      } else {
-        console.log("No files selected");
       }
     });
   }
 
-  // Internal artwork file validation function (separate from form validation)
   function validateArtworkFileInternal(file) {
-    console.log("=== INTERNAL ARTWORK FILE VALIDATION ===");
-    console.log("Validating artwork file:", file);
-
-    if (!file) {
-      console.error("No artwork file provided");
-      return false;
-    }
+    if (!file) return false;
 
     const allowedTypes = ["image/jpeg", "image/jpg", "image/png"];
-    const maxSize = 10 * 1024 * 1024; // 10MB
-
-    console.log("Artwork file type:", file.type);
-    console.log("Artwork file size:", file.size);
-    console.log("Allowed types:", allowedTypes);
+    const maxSize = 10 * 1024 * 1024;
 
     if (!allowedTypes.includes(file.type)) {
-      console.error("Invalid artwork file type:", file.type);
       alert("Please select a valid image file (JPG, JPEG, or PNG).");
       return false;
     }
 
     if (file.size > maxSize) {
-      console.error("Artwork file too large:", file.size, "bytes. Max allowed:", maxSize);
       alert("File size should not exceed 10MB.");
       return false;
     }
 
-    console.log("Artwork file validation passed");
     return true;
   }
 
-  // ** ADDED: Toggle All Stores functionality **
-  document.querySelectorAll('.toggle-all').forEach(button => {
-    button.addEventListener('click', function () {
+  // Toggle all stores
+  document.querySelectorAll(".toggle-all").forEach((button) => {
+    button.addEventListener("click", function () {
       const targetId = this.dataset.target;
       const container = document.getElementById(targetId);
       if (!container) return;
@@ -4882,63 +4803,212 @@ document.addEventListener("DOMContentLoaded", function () {
       const checkboxes = container.querySelectorAll('input[type="checkbox"]');
       if (checkboxes.length === 0) return;
 
-      const allChecked = Array.from(checkboxes).every(cb => cb.checked);
-
-      checkboxes.forEach(cb => {
+      const allChecked = Array.from(checkboxes).every((cb) => cb.checked);
+      checkboxes.forEach((cb) => {
         cb.checked = !allChecked;
       });
 
-      // Trigger validation check after toggling
-      if (targetId === 'freeStores') {
+      if (targetId === "freeStores") {
         validateStoreSelection();
       }
     });
   });
 
+  // FIXED: Form submission with proper button capture
+  document
+    .getElementById("releaseForm")
+    .addEventListener("submit", function (e) {
+      e.preventDefault();
 
-  // --- FORM SUBMISSION ---
+      console.log('Form submission started');
+      console.log('Submitting button:', submittingButton ? {
+        name: submittingButton.name,
+        value: submittingButton.value
+      } : 'NONE');
 
-  document.getElementById("releaseForm").addEventListener("submit", function (e) {
-    e.preventDefault();
-
-    // Validate all steps before submission
-    let allStepsValid = true;
-    for (let step = 1; step <= totalSteps; step++) {
-      if (stepValidators[step] && !stepValidators[step]()) {
-        allStepsValid = false;
-        console.log(`Step ${step} validation failed during submission`);
-        showStep(step); // Jump to first invalid step
-        break;
+      // Validate all steps first
+      let allStepsValid = true;
+      for (let step = 1; step <= totalSteps; step++) {
+        if (stepValidators[step] && !stepValidators[step]()) {
+          allStepsValid = false;
+          showStep(step);
+          break;
+        }
       }
-    }
 
-    if (!allStepsValid) {
-      alert("Please complete all required fields before submitting.");
-      return;
-    }
+      if (!allStepsValid) {
+        alert("Please complete all required fields before submitting.");
+        submittingButton = null; // Reset
+        return;
+      }
 
-    const form = e.target;
-    const formData = new FormData(form);
+      const form = e.target;
+      const formData = new FormData(form);
 
-    console.log("Submitting form with valid data...");
+      // CRITICAL FIX: Use the captured button data
+      if (submittingButton && submittingButton.name && submittingButton.value) {
+        // Remove any existing status fields first
+        formData.delete('status');
+        // Add the clicked button's status
+        formData.set(submittingButton.name, submittingButton.value);
+        console.log('ADDED BUTTON STATUS:', submittingButton.name, '=', submittingButton.value);
+      } else {
+        // Fallback: try activeElement
+        const activeBtn = document.activeElement;
+        if (activeBtn && activeBtn.type === 'submit' && activeBtn.name && activeBtn.value) {
+          formData.delete('status');
+          formData.set(activeBtn.name, activeBtn.value);
+          console.log('FALLBACK - ADDED ACTIVE BUTTON:', activeBtn.name, '=', activeBtn.value);
+        } else {
+          // Last resort: default status
+          console.log('NO BUTTON CAPTURED - USING DEFAULT STATUS 1');
+          formData.set('status', '1');
+        }
+      }
 
-    fetch(form.action, {
-      method: "POST",
-      body: formData
-    })
-      .then(response => response.json())
-      .then(data => {
-        console.log(data);
-        alert("Release submitted successfully!");
-        // reset form or redirect
-      })
-      .catch(err => {
-        console.error("Upload failed", err);
-        alert("Something went wrong!");
+      // Debug: Log all FormData contents
+      console.log("=== FINAL FORMDATA CONTENTS ===");
+      for (let [key, value] of formData.entries()) {
+        if (key === 'status' || key.includes('status')) {
+          console.log('🔴 ' + key + ": " + value);
+        } else {
+          console.log(key + ": " + value);
+        }
+      }
+
+      // Show loading state
+      const submitBtns = form.querySelectorAll('button[type="submit"]');
+      const originalButtonContent = new Map();
+
+      submitBtns.forEach((btn) => {
+        originalButtonContent.set(btn, btn.innerHTML);
+        btn.disabled = true;
+        btn.innerHTML =
+          '<i class="spinner-border spinner-border-sm me-1"></i> Processing...';
       });
-  });
 
-  // --- INITIALIZATION ---
-  updateStepIndicator(1);
+      fetch(form.action, {
+        method: "POST",
+        body: formData,
+        headers: {
+          "X-Requested-With": "XMLHttpRequest",
+        },
+      })
+        .then((response) => {
+          console.log("Response status:", response.status);
+
+          if (!response.ok) {
+            throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+          }
+
+          return response.text();
+        })
+        .then((text) => {
+          console.log("Raw response:", text);
+
+          if (!text || text.trim() === "") {
+            return {
+              success: true,
+              message: "Release processed successfully!",
+            };
+          }
+
+          try {
+            const parsed = JSON.parse(text);
+            console.log("Parsed JSON:", parsed);
+            return parsed;
+          } catch (parseError) {
+            console.log("JSON parse failed:", parseError.message);
+            throw new Error("Invalid JSON response from server");
+          }
+        })
+        .then((data) => {
+          console.log("Processing response data:", data);
+
+          if (!data) {
+            throw new Error("No response data received from server");
+          }
+
+          if (data.success === true) {
+            const message = data.message || "Release processed successfully!";
+            alert(message);
+            window.location.href = data.redirect || "/superadmin/releases";
+          } else if (data.success === false) {
+            throw new Error(data.error || data.message || "Processing failed");
+          } else if (data.message && !data.hasOwnProperty("success")) {
+            alert(data.message);
+            window.location.href = data.redirect || "/superadmin/releases";
+          } else {
+            console.warn("Unexpected response format:", data);
+            throw new Error("Unexpected response format from server");
+          }
+        })
+        .catch((error) => {
+          console.error("Submission error:", error);
+          alert("Error: " + error.message);
+
+          // Restore buttons
+          submitBtns.forEach((btn) => {
+            btn.disabled = false;
+            const originalContent = originalButtonContent.get(btn);
+            if (originalContent) {
+              btn.innerHTML = originalContent;
+            } else {
+              // Fallback restoration
+              if (btn.innerHTML.includes("Approve") || btn.name === 'status' && btn.value === '5') {
+                btn.innerHTML = '<i data-feather="check" class="me-1"></i> Approve';
+              } else if (btn.innerHTML.includes("Reject") || btn.name === 'status' && btn.value === '4') {
+                btn.innerHTML = '<i data-feather="x" class="me-1"></i> Reject';
+              } else {
+                btn.innerHTML = '<i data-feather="check" class="me-1"></i> Submit Release';
+              }
+            }
+          });
+
+          // Re-initialize feather icons
+          if (typeof feather !== "undefined") {
+            feather.replace();
+          }
+        })
+        .finally(() => {
+          // Reset the captured button
+          submittingButton = null;
+        });
+    });
 });
 
+  //change password js
+ $(document).on("click", "#changePasswordBtn", function () {
+    let oldPass = $("#old_password").val();
+    let newPass = $("#new_password").val();
+    let confirmPass = $("#confirm_password").val();
+
+    $.ajax({
+      url: "/profile/changePassword",
+      method: "POST",
+      data: {
+        old_password: oldPass,
+        new_password: newPass,
+        confirm_password: confirmPass,
+      },
+      dataType: "json",
+      success: function (response) {
+        let alertBox = $("#passwordAlert");
+        if (response.status === "success") {
+          alertBox.html(
+            '<div class="alert alert-success">' + response.message + "</div>"
+          );
+          $("#old_password, #new_password, #confirm_password").val("");
+        } else {
+          alertBox.html(
+            '<div class="alert alert-danger">' + response.message + "</div>"
+          );
+        }
+      },
+      error: function () {
+        $("#passwordAlert").html(
+          '<div class="alert alert-danger">Something went wrong.</div>'
+        );
+      },
+    });
+  });

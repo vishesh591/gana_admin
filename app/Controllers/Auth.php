@@ -67,4 +67,33 @@ class Auth extends BaseController
         session()->destroy();
         return redirect()->to('/login')->with('success', 'You have been logged out.');
     }
+
+    public function changePasswordAjax()
+    {
+        if ($this->request->isAJAX()) {
+            $session = session();
+            $userId  = $session->get('user.id');
+
+            $userModel = new \App\Models\UserModel();
+            $user      = $userModel->find($userId);
+
+            $oldPassword     = $this->request->getPost('old_password');
+            $newPassword     = $this->request->getPost('new_password');
+            $confirmPassword = $this->request->getPost('confirm_password');
+
+            if (!password_verify($oldPassword, $user['password'])) {
+                return $this->response->setJSON(['status' => 'error', 'message' => 'Old password is incorrect.']);
+            }
+
+            if ($newPassword !== $confirmPassword) {
+                return $this->response->setJSON(['status' => 'error', 'message' => 'Passwords do not match.']);
+            }
+
+            $hashedPassword = password_hash($newPassword, PASSWORD_DEFAULT);
+
+            $userModel->update($userId, ['password' => $hashedPassword]);
+
+            return $this->response->setJSON(['status' => 'success', 'message' => 'Password updated successfully!']);
+        }
+    }
 }
