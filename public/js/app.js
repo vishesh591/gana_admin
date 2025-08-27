@@ -4248,6 +4248,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // CRITICAL FIX: Track which button was clicked
   let submittingButton = null;
+  let rejectionMessage = null; // Track rejection message
 
   if (typeof feather !== "undefined") {
     feather.replace();
@@ -4256,6 +4257,10 @@ document.addEventListener("DOMContentLoaded", function () {
   // FIXED: Initialize form data for edit mode
   const isEditMode =
     document.querySelector('input[name="releaseTitle"]')?.value !== "";
+
+  // Initialize rejection modal
+  const rejectionModal = document.getElementById('rejectionModal') ? 
+    new bootstrap.Modal(document.getElementById('rejectionModal')) : null;
 
   function updateStepIndicator(step) {
     const steps = document.querySelectorAll(".step");
@@ -4592,15 +4597,81 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   });
 
+  // REJECTION MODAL HANDLERS
+  const rejectBtn = document.getElementById('rejectBtn');
+  const confirmRejectBtn = document.getElementById('confirmRejectBtn');
+  const rejectionMessageInput = document.getElementById('rejectionMessage');
+  const rejectionMessageError = document.getElementById('rejectionMessageError');
+
+  // Open rejection modal
+  if (rejectBtn) {
+    rejectBtn.addEventListener('click', function(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      
+      if (rejectionModal) {
+        rejectionModal.show();
+      }
+    });
+  }
+
+  // Handle rejection confirmation
+  if (confirmRejectBtn) {
+    confirmRejectBtn.addEventListener('click', function() {
+      const message = rejectionMessageInput.value.trim();
+      
+      // Validate message
+      if (!message) {
+        rejectionMessageInput.classList.add('is-invalid');
+        rejectionMessageError.style.display = 'block';
+        return;
+      }
+      
+      // Clear validation
+      rejectionMessageInput.classList.remove('is-invalid');
+      rejectionMessageError.style.display = 'none';
+      
+      // Store rejection message
+      rejectionMessage = message;
+      
+      // Set submitting button data for rejection
+      submittingButton = {
+        name: 'status',
+        value: '4'
+      };
+      
+      // Close modal
+      if (rejectionModal) {
+        rejectionModal.hide();
+      }
+      
+      // Trigger form submission
+      const form = document.getElementById('releaseForm');
+      if (form) {
+        const submitEvent = new Event('submit');
+        form.dispatchEvent(submitEvent);
+      }
+    });
+  }
+
+  // Clear validation when user types
+  if (rejectionMessageInput) {
+    rejectionMessageInput.addEventListener('input', function() {
+      if (this.value.trim()) {
+        this.classList.remove('is-invalid');
+        rejectionMessageError.style.display = 'none';
+      }
+    });
+  }
+
   // CRITICAL FIX: Capture submit button clicks BEFORE form submission
   document.addEventListener('click', function(e) {
     if (e.target.type === 'submit' && e.target.form && e.target.form.id === 'releaseForm') {
-      submittingButton = e.target;
-      console.log('CAPTURED SUBMIT BUTTON:', {
-        name: submittingButton.name,
-        value: submittingButton.value,
-        innerHTML: submittingButton.innerHTML.substring(0, 50)
-      });
+      submittingButton = {
+        name: e.target.name,
+        value: e.target.value
+      };
+      console.log('CAPTURED SUBMIT BUTTON:', submittingButton);
     }
   });
 
@@ -4785,32 +4856,32 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   });
 
-  // FIXED: Form submission with proper button capture
+  // FIXED: Form submission with proper button capture and rejection message handling
   document
     .getElementById("releaseForm")
     .addEventListener("submit", function (e) {
       e.preventDefault();
 
       console.log('Form submission started');
-      console.log('Submitting button:', submittingButton ? {
-        name: submittingButton.name,
-        value: submittingButton.value
-      } : 'NONE');
+      console.log('Submitting button:', submittingButton);
+      console.log('Rejection message:', rejectionMessage);
 
-      // Validate all steps first
-      let allStepsValid = true;
-      for (let step = 1; step <= totalSteps; step++) {
-        if (stepValidators[step] && !stepValidators[step]()) {
-          allStepsValid = false;
-          showStep(step);
-          break;
+      // Validate all steps first (skip for rejection)
+      if (!submittingButton || submittingButton.value !== '4') {
+        let allStepsValid = true;
+        for (let step = 1; step <= totalSteps; step++) {
+          if (stepValidators[step] && !stepValidators[step]()) {
+            allStepsValid = false;
+            showStep(step);
+            break;
+          }
         }
-      }
 
-      if (!allStepsValid) {
-        alert("Please complete all required fields before submitting.");
-        submittingButton = null; // Reset
-        return;
+        if (!allStepsValid) {
+          alert("Please complete all required fields before submitting.");
+          submittingButton = null;
+          return;
+        }
       }
 
       const form = e.target;
@@ -4823,6 +4894,12 @@ document.addEventListener("DOMContentLoaded", function () {
         // Add the clicked button's status
         formData.set(submittingButton.name, submittingButton.value);
         console.log('ADDED BUTTON STATUS:', submittingButton.name, '=', submittingButton.value);
+        
+        // Add rejection message if this is a rejection
+        if (submittingButton.value === '4' && rejectionMessage) {
+          formData.set('message', rejectionMessage);
+          console.log('ADDED REJECTION MESSAGE:', rejectionMessage);
+        }
       } else {
         // Fallback: try activeElement
         const activeBtn = document.activeElement;
@@ -4840,7 +4917,7 @@ document.addEventListener("DOMContentLoaded", function () {
       // Debug: Log all FormData contents
       console.log("=== FINAL FORMDATA CONTENTS ===");
       for (let [key, value] of formData.entries()) {
-        if (key === 'status' || key.includes('status')) {
+        if (key === 'status' || key.includes('status') || key === 'message') {
           console.log('🔴 ' + key + ": " + value);
         } else {
           console.log(key + ": " + value);
@@ -4848,7 +4925,7 @@ document.addEventListener("DOMContentLoaded", function () {
       }
 
       // Show loading state
-      const submitBtns = form.querySelectorAll('button[type="submit"]');
+      const submitBtns = form.querySelectorAll('button[type="submit"], button#rejectBtn');
       const originalButtonContent = new Map();
 
       submitBtns.forEach((btn) => {
@@ -4928,7 +5005,7 @@ document.addEventListener("DOMContentLoaded", function () {
               // Fallback restoration
               if (btn.innerHTML.includes("Approve") || btn.name === 'status' && btn.value === '5') {
                 btn.innerHTML = '<i data-feather="check" class="me-1"></i> Approve';
-              } else if (btn.innerHTML.includes("Reject") || btn.name === 'status' && btn.value === '4') {
+              } else if (btn.innerHTML.includes("Reject") || btn.id === 'rejectBtn') {
                 btn.innerHTML = '<i data-feather="x" class="me-1"></i> Reject';
               } else {
                 btn.innerHTML = '<i data-feather="check" class="me-1"></i> Submit Release';
@@ -4942,11 +5019,116 @@ document.addEventListener("DOMContentLoaded", function () {
           }
         })
         .finally(() => {
-          // Reset the captured button
+          // Reset the captured button and rejection message
           submittingButton = null;
+          rejectionMessage = null;
         });
     });
 });
+
+//release page reject modal code 
+document.addEventListener("DOMContentLoaded", function () {
+    const rejectionMessageInput = document.getElementById('rejectionMessage');
+    const charCount = document.getElementById('charCount');
+    const confirmRejectBtn = document.getElementById('confirmRejectBtn');
+    const rejectionMessageError = document.getElementById('rejectionMessageError');
+    const rejectionModal = document.getElementById('rejectionModal');
+    const rejectBtn = document.getElementById('rejectBtn'); // reject button on page
+
+    // Character counter
+    if (rejectionMessageInput && charCount) {
+        rejectionMessageInput.addEventListener('input', function() {
+            const currentLength = this.value.length;
+            charCount.textContent = currentLength;
+            
+            if (confirmRejectBtn) {
+                if (currentLength >= 10) {
+                    confirmRejectBtn.disabled = false;
+                    this.classList.remove('is-invalid');
+                    rejectionMessageError.style.display = 'none';
+                } else {
+                    confirmRejectBtn.disabled = true;
+                }
+            }
+        });
+    }
+
+    // Enhanced validation for rejection confirmation
+    if (confirmRejectBtn) {
+        confirmRejectBtn.addEventListener('click', function() {
+            const message = rejectionMessageInput.value.trim();
+            
+            if (!message || message.length < 10) {
+                rejectionMessageInput.classList.add('is-invalid');
+                rejectionMessageError.textContent = 'Please provide a rejection reason (minimum 10 characters).';
+                rejectionMessageError.style.display = 'block';
+                rejectionMessageInput.focus();
+                return;
+            }
+            
+            rejectionMessageInput.classList.remove('is-invalid');
+            rejectionMessageError.style.display = 'none';
+            
+            window.rejectionMessage = message;
+            window.submittingButton = {
+                name: 'status',
+                value: '4'
+            };
+            
+            // Close modal
+            const modal = bootstrap.Modal.getInstance(rejectionModal);
+            if (modal) {
+                modal.hide();
+            }
+            
+            // Trigger form submission
+            const form = document.getElementById('releaseForm');
+            if (form) {
+                const submitEvent = new Event('submit');
+                form.dispatchEvent(submitEvent);
+            }
+        });
+        
+        confirmRejectBtn.disabled = true;
+    }
+
+    // Reset modal when closed
+    if (rejectionModal) {
+        rejectionModal.addEventListener('hidden.bs.modal', function () {
+            if (rejectionMessageInput) {
+                rejectionMessageInput.value = '';
+                rejectionMessageInput.classList.remove('is-invalid');
+            }
+            if (rejectionMessageError) {
+                rejectionMessageError.style.display = 'none';
+            }
+            if (charCount) {
+                charCount.textContent = '0';
+            }
+            if (confirmRejectBtn) {
+                confirmRejectBtn.disabled = true;
+            }
+        });
+
+        rejectionModal.addEventListener('shown.bs.modal', function () {
+            if (typeof feather !== "undefined") {
+                feather.replace();
+            }
+            if (rejectionMessageInput) {
+                rejectionMessageInput.focus();
+            }
+        });
+    }
+
+    // ✅ OPEN modal when Reject button is clicked
+    if (rejectBtn) {
+        rejectBtn.addEventListener('click', function () {
+            const modal = new bootstrap.Modal(rejectionModal);
+            modal.show();
+        });
+    }
+});
+
 
 //User Account Creation Js
 document.addEventListener("DOMContentLoaded", function () {
@@ -5007,18 +5189,21 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 //Toggle Password  Functionlity
-const passwordInput = document.getElementById("password");
-const togglePassword = document.getElementById("togglePassword");
-const toggleIcon = document.getElementById("toggleIcon");
+document.addEventListener("DOMContentLoaded", () => {
+  const passwordInput = document.getElementById("password");
+  const togglePassword = document.getElementById("togglePassword");
+  const toggleIcon = document.getElementById("toggleIcon");
 
-togglePassword.addEventListener("click", function () {
-  // toggle input type
-  const isPassword = passwordInput.type === "password";
-  passwordInput.type = isPassword ? "text" : "password";
+  // run only if all elements exist
+  if (passwordInput && togglePassword && toggleIcon) {
+    togglePassword.addEventListener("click", function () {
+      const isPassword = passwordInput.type === "password";
+      passwordInput.type = isPassword ? "text" : "password";
 
-  // toggle icon
-  toggleIcon.classList.toggle("bi-eye");
-  toggleIcon.classList.toggle("bi-eye-slash");
+      toggleIcon.classList.toggle("bi-eye");
+      toggleIcon.classList.toggle("bi-eye-slash");
+    });
+  }
 });
 
   //change password js

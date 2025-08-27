@@ -37,6 +37,7 @@ class UpdateReleaseTable extends Migration
             'track_title_language'=> ['type' => 'VARCHAR','constraint' => 255,'null' => true],
             'explicit_song'       => ['type' => "ENUM('NA','Yes','No')",'null' => true],
             'lyrics'              => ['type' => 'TEXT','null' => true],
+            'message'             => ['type' => 'TEXT','null' => true],
             'audio_file'          => ['type' => 'VARCHAR','constraint' => 255,'null' => true],
             'stores_ids'          => ['type' => 'VARCHAR','constraint' => 255,'null' => true],
             'rights_management_options' => ['type' => 'VARCHAR','constraint' => 255,'null' => true],

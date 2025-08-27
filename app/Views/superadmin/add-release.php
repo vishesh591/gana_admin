@@ -632,7 +632,7 @@
                                 <button type="submit" name="status" value="5" class="btn btn-success me-2">
                                     <i data-feather="check" class="me-1"></i> Approve
                                 </button>
-                                <button type="submit" name="status" value="4" class="btn btn-danger">
+                                <button type="button" class="btn btn-danger" id="rejectBtn">
                                     <i data-feather="x" class="me-1"></i> Reject
                                 </button>
                             </div>
@@ -644,6 +644,63 @@
                     </div>
                 </div>
             </form>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal fade" id="rejectionModal" tabindex="-1" aria-labelledby="rejectionModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title" id="rejectionModalLabel">
+                    <i data-feather="x-circle" class="me-2"></i>Reject Release
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-3">
+                    <label for="rejectionMessage" class="form-label fw-bold">
+                        Rejection Reason <span class="text-danger">*</span>
+                    </label>
+                    <textarea
+                        class="form-control"
+                        id="rejectionMessage"
+                        name="rejectionMessage"
+                        rows="5"
+                        placeholder="Please provide a detailed reason for rejecting this release. This message will be sent to the user."
+                        maxlength="1000"
+                        required></textarea>
+                    <div class="form-text">
+                        <small class="text-muted">
+                            <span id="charCount">0</span>/1000 characters
+                        </small>
+                    </div>
+                    <div class="invalid-feedback" id="rejectionMessageError">
+                        Please provide a rejection reason (minimum 10 characters).
+                    </div>
+                </div>
+
+                <div class="alert alert-warning d-flex align-items-start" role="alert">
+                    <i data-feather="alert-triangle" class="me-2 mt-1 flex-shrink-0"></i>
+                    <div>
+                        <strong>Important:</strong> This action will:
+                        <ul class="mb-0 mt-2">
+                            <li>Set the release status to "Rejected"</li>
+                            <li>Send an email notification to the user</li>
+                            <li>Include your message in the notification</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+                    <i data-feather="arrow-left" class="me-1"></i> Cancel
+                </button>
+                <button type="button" class="btn btn-danger" id="confirmRejectBtn">
+                    <i data-feather="x" class="me-1"></i> Confirm Rejection
+                </button>
+            </div>
         </div>
     </div>
 </div>

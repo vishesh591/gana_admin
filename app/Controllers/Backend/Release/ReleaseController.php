@@ -247,11 +247,9 @@ class ReleaseController extends BaseController
         }
     }
 
-    // FIXED: Update method with proper JSON handling
     public function update($id)
     {
         try {
-            // Debug: Log all POST data
             log_message('debug', 'POST data received: ' . json_encode($this->request->getPost()));
 
             $release = $this->releaseRepo->find($id);
@@ -266,15 +264,16 @@ class ReleaseController extends BaseController
                     ->with('error', 'Release not found');
             }
 
-            // FIXED: Get status with proper fallback
             $status = (int)$this->request->getPost('status');
             if (!$status) {
                 $status = (int)$release['status']; // Keep existing status if not provided
             }
 
-            log_message('debug', 'Status value: ' . $status);
+            $rejectionMessage = $this->request->getPost('message');
 
-            // Handle artwork upload (only if new file is uploaded)
+            log_message('debug', 'Status value: ' . $status);
+            log_message('debug', 'Rejection message: ' . $rejectionMessage);
+
             $artworkPath = $release['artwork']; // Keep existing artwork by default
             $artworkFile = $this->request->getFile('artworkFile');
             if ($artworkFile && $artworkFile->isValid() && !$artworkFile->hasMoved()) {
@@ -284,7 +283,6 @@ class ReleaseController extends BaseController
                 }
             }
 
-            // Handle audio upload (only if new file is uploaded)
             $audioPath = $release['audio_file']; // Keep existing audio by default
             $audioFile = $this->request->getFile('audioFile');
             if ($audioFile && $audioFile->isValid() && !$audioFile->hasMoved()) {
@@ -294,7 +292,6 @@ class ReleaseController extends BaseController
                 }
             }
 
-            // FIXED: Proper JSON encoding for stores and rights
             $stores = $this->request->getPost('stores') ?? [];
             $rights = $this->request->getPost('rights') ?? [];
 
@@ -341,6 +338,11 @@ class ReleaseController extends BaseController
                 'status'                    => $status, // Use the processed status
             ];
 
+            if ($status == 4 && !empty($rejectionMessage)) {
+                $releaseData['message'] = $rejectionMessage;
+                log_message('debug', 'Added rejection message to release data: ' . $rejectionMessage);
+            }
+
             log_message('debug', 'Final release data status: ' . $releaseData['status']);
 
             // Use model's save method
@@ -354,15 +356,17 @@ class ReleaseController extends BaseController
             // Determine success message based on status
             $statusMessages = [
                 1 => 'Release submitted successfully',
-                4 => 'Release rejected successfully',
+                4 => 'Release rejected successfully' . (!empty($rejectionMessage) ? ' with message' : ''),
                 5 => 'Release approved successfully'
             ];
 
             $message = $statusMessages[$status] ?? 'Release updated successfully';
 
-            // ALWAYS return JSON for AJAX requests
+            if ($status == 4 && !empty($rejectionMessage)) {
+                $this->sendRejectionNotification($release, $rejectionMessage);
+            }
+
             if ($this->request->isAJAX()) {
-                // Clear any output buffer to prevent HTML from interfering
                 if (ob_get_length()) ob_clean();
 
                 return $this->response->setJSON([
@@ -392,6 +396,91 @@ class ReleaseController extends BaseController
             return redirect()->back()
                 ->withInput()
                 ->with('error', 'Failed to update release: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Send rejection notification email to the user
+     */
+    private function sendRejectionNotification($release, $rejectionMessage)
+    {
+        try {
+            // Load email library if available
+            $email = \Config\Services::email();
+
+            // Get user/artist details for the release
+            // Assuming you have a method to get user email from release data
+            $userEmail = $this->getUserEmailFromRelease($release);
+
+            if (!$userEmail) {
+                log_message('warning', 'Could not find user email for release rejection notification');
+                return false;
+            }
+
+            $email->setTo($userEmail);
+            $email->setFrom('noreply@yoursite.com', 'Music Distribution Platform');
+            $email->setSubject('Release Rejected: ' . $release['title']);
+
+            $emailBody = "
+        <h2>Release Rejection Notice</h2>
+        <p>Hello,</p>
+        <p>Your release '<strong>{$release['title']}</strong>' has been rejected for the following reason:</p>
+        <div style='background-color: #f8f9fa; padding: 15px; border-left: 4px solid #dc3545; margin: 20px 0;'>
+            <p><strong>Rejection Reason:</strong></p>
+            <p>" . nl2br(htmlspecialchars($rejectionMessage)) . "</p>
+        </div>
+        <p>Please review the feedback and make the necessary changes before resubmitting your release.</p>
+        <p>If you have any questions, please contact our support team.</p>
+        <p>Best regards,<br>Music Distribution Team</p>
+        ";
+
+            $email->setMessage($emailBody);
+
+            if ($email->send()) {
+                log_message('info', 'Rejection notification sent successfully for release ID: ' . $release['id']);
+                return true;
+            } else {
+                log_message('error', 'Failed to send rejection notification: ' . $email->printDebugger());
+                return false;
+            }
+        } catch (\Exception $e) {
+            log_message('error', 'Exception in sendRejectionNotification: ' . $e->getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Get user email from release data
+     * Adjust this method based on your database structure
+     */
+    private function getUserEmailFromRelease($release)
+    {
+        try {
+            // Example: If you have artist_id, get email from artists table
+            if (!empty($release['artist_id'])) {
+                $artistModel = new \App\Models\Backend\ArtistModel(); // Adjust model name
+                $artist = $artistModel->find($release['artist_id']);
+
+                if ($artist && !empty($artist['email'])) {
+                    return $artist['email'];
+                }
+            }
+
+            // Example: If you have label_id, get email from labels table
+            if (!empty($release['label_id'])) {
+                $labelModel = new \App\Models\Backend\LabelModel(); // Adjust model name
+                $label = $labelModel->find($release['label_id']);
+
+                if ($label && !empty($label['email'])) {
+                    return $label['email'];
+                }
+            }
+
+            // Add more logic based on your data structure
+            return null;
+        } catch (\Exception $e) {
+            log_message('error', 'Error getting user email from release: ' . $e->getMessage());
+            return null;
         }
     }
 
