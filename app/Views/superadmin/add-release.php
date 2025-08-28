@@ -88,8 +88,9 @@
                                 <label for="labelName" class="form-label required-field">Label Name</label>
 
                                 <?php if (in_array($user['role_id'], [1, 2])): ?>
-                                    <!-- Admin/Superadmin: Dropdown -->
-                                    <select class="form-select" id="labelName" name="label_id" required>
+                                    <!-- Admin/Superadmin: Searchable Dropdown -->
+                                    <select class="form-select searchable-select" id="labelName" name="label_id" required
+                                        data-placeholder="Search and select a label...">
                                         <option value="">Select Label</option>
                                         <?php foreach ($labels as $label): ?>
                                             <option value="<?= esc($label['id']) ?>"
@@ -117,14 +118,30 @@
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <label for="artist" class="form-label required-field">Artist</label>
-                                <input type="text" class="form-control" id="artist" name="artist"
-                                    value="<?= isset($release) ? esc($release['author']) : '' ?>" required>
+                                <select class="form-select searchable-select" id="artist" name="artist" required
+                                    data-placeholder="Search and select a label...">
+                                    <option value="">Select Artist</option>
+                                    <?php foreach ($artists as $artist): ?>
+                                        <option value="<?= esc($artist['id']) ?>"
+                                            <?= (isset($release) && $release['artist_id'] == $artist['id']) ? 'selected' : '' ?>>
+                                            <?= esc($artist['name']) ?>
+                                        </option>
+                                    <?php endforeach; ?>
+                                </select>
                                 <div class="invalid-feedback" id="artistError"></div>
                             </div>
                             <div class="col-md-6 mb-3">
-                                <label for="featuringArtist" class="form-label">Featuring Artist</label>
-                                <input type="text" class="form-control" id="featuringArtist" name="featuringArtist"
-                                    value="<?= isset($release) ? esc($release['author']) : '' ?>">
+                                <label for="featuringArtist" class="form-label required-field">Artist</label>
+                                <select class="form-select searchable-select" id="featuringArtist" name="featuringArtist" required
+                                    data-placeholder="Search and select a label...">
+                                    <option value="">Featuring Artist</option>
+                                    <?php foreach ($artists as $artist): ?>
+                                        <option value="<?= esc($artist['id']) ?>"
+                                            <?= (isset($release) && $release['artist_id'] == $artist['id']) ? 'selected' : '' ?>>
+                                            <?= esc($artist['name']) ?>
+                                        </option>
+                                    <?php endforeach; ?>
+                                </select>
                                 <div class="invalid-feedback" id="featuringArtistError"></div>
                             </div>
                         </div>

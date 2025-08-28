@@ -5246,3 +5246,83 @@ $(document).on("click", "#changePasswordBtn", function () {
   document.getElementById("exportCsvBtn").addEventListener("click", function () {
     window.location.href = "/superadmin/releases/export-csv";
 });
+
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialize Select2 only for admin/superadmin dropdown
+    if (document.querySelector('.searchable-select')) {
+        $('.searchable-select').select2({
+            placeholder: 'Search and select...',
+            allowClear: true,
+            width: '100%',
+            theme: 'default',
+            minimumInputLength: 0,
+            matcher: function(params, data) {
+                if ($.trim(params.term) === '') {
+                    return data;
+                }
+                if (typeof data.text === 'undefined') {
+                    return null;
+                }
+                var searchTerm = params.term.toLowerCase();
+                var optionText = data.text.toLowerCase();
+                if (optionText.indexOf(searchTerm) > -1) {
+                    return $.extend({}, data, true);
+                }
+                return null;
+            },
+            templateResult: function(data) {
+                if (!data.id) return data.text;
+                return $('<span></span>').text(data.text);
+            },
+            templateSelection: function(data) {
+                return data.text || data.placeholder;
+            }
+        });
+
+        // Remove invalid style when user opens dropdown
+        $('.searchable-select').on('select2:open', function() {
+            $(this).removeClass('is-invalid');
+            $(this).next('.select2-container').find('.select2-selection').removeClass('is-invalid');
+        });
+
+        // Validate each select on change
+        $('.searchable-select').on('change', function() {
+            validateSelect($(this));
+        });
+
+        // Function to validate a select2 element and show error message
+        function validateSelect($select) {
+            var value = $select.val();
+            var id = $select.attr('id'); // e.g., labelName, artist, featuringArtist
+            var errorId = '#' + id + 'Error';
+
+            if ($select.prop('required') && (!value || value === '')) {
+                $select.addClass('is-invalid');
+                $select.next('.select2-container').find('.select2-selection').addClass('is-invalid');
+                $(errorId).show().text('Please select a ' + id.replace(/([A-Z])/g, ' $1').toLowerCase() + '.');
+                return false;
+            } else {
+                $select.removeClass('is-invalid');
+                $select.next('.select2-container').find('.select2-selection').removeClass('is-invalid');
+                $(errorId).hide().text('');
+                return true;
+            }
+        }
+
+        // Validate all required select2 fields on form submit
+        $('form').on('submit', function(e) {
+            var isValid = true;
+
+            $('.searchable-select[required]').each(function() {
+                if (!validateSelect($(this))) {
+                    isValid = false;
+                }
+            });
+
+            if (!isValid) {
+                e.preventDefault();
+                return false;
+            }
+        });
+    }
+});

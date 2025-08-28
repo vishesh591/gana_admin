@@ -100,6 +100,7 @@ class ReleaseController extends BaseController
         // Get labels (same logic as addRelease)
         $labels = [];
         $labelModel = new \App\Models\Backend\LabelModel();
+        $artistModel = new \App\Models\Backend\ArtistModel();
 
         if (in_array($user['role_id'], [1, 2])) {
             // Admins: all labels
@@ -108,7 +109,7 @@ class ReleaseController extends BaseController
             // Normal users: only their labels
             $labels = $labelModel->getLabelsByUser($user['id']);
         }
-
+        $artists = $artistModel->findAll();
         // FIXED: Decode JSON fields properly
         if (!empty($release['stores_ids'])) {
             $storesDecoded = json_decode($release['stores_ids'], true);
@@ -140,6 +141,7 @@ class ReleaseController extends BaseController
             'labels'         => $labels,
             'release'        => $release,
             'isEdit'         => true,
+            'artists'         => $artists
         ];
 
         return view('superadmin/index', $page_array);
@@ -411,36 +413,36 @@ class ReleaseController extends BaseController
      * Get user email from release data
      * Adjust this method based on your database structure
      */
-    private function getUserEmailFromRelease($release)
-    {
-        try {
-            // Example: If you have artist_id, get email from artists table
-            if (!empty($release['artist_id'])) {
-                $artistModel = new \App\Models\Backend\ArtistModel(); // Adjust model name
-                $artist = $artistModel->find($release['artist_id']);
+    // private function getUserEmailFromRelease($release)
+    // {
+    //     try {
+    //         // Example: If you have artist_id, get email from artists table
+    //         if (!empty($release['artist_id'])) {
+    //             $artistModel = new \App\Models\Backend\ArtistModel(); // Adjust model name
+    //             $artist = $artistModel->find($release['artist_id']);
 
-                if ($artist && !empty($artist['email'])) {
-                    return $artist['email'];
-                }
-            }
+    //             if ($artist && !empty($artist['email'])) {
+    //                 return $artist['email'];
+    //             }
+    //         }
 
-            // Example: If you have label_id, get email from labels table
-            if (!empty($release['label_id'])) {
-                $labelModel = new \App\Models\Backend\LabelModel(); // Adjust model name
-                $label = $labelModel->find($release['label_id']);
+    //         // Example: If you have label_id, get email from labels table
+    //         if (!empty($release['label_id'])) {
+    //             $labelModel = new \App\Models\Backend\LabelModel(); // Adjust model name
+    //             $label = $labelModel->find($release['label_id']);
 
-                if ($label && !empty($label['email'])) {
-                    return $label['email'];
-                }
-            }
+    //             if ($label && !empty($label['email'])) {
+    //                 return $label['email'];
+    //             }
+    //         }
 
-            // Add more logic based on your data structure
-            return null;
-        } catch (\Exception $e) {
-            log_message('error', 'Error getting user email from release: ' . $e->getMessage());
-            return null;
-        }
-    }
+    //         // Add more logic based on your data structure
+    //         return null;
+    //     } catch (\Exception $e) {
+    //         log_message('error', 'Error getting user email from release: ' . $e->getMessage());
+    //         return null;
+    //     }
+    // }
 
     public function addRelease()
     {

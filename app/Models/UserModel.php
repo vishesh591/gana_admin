@@ -44,8 +44,12 @@ class UserModel extends Model
         return $this->select('users.*, roles.role_name as role_name')
             ->join('roles', 'roles.id = users.role_id', 'left')
             ->where('users.email', $email)
+            ->groupStart()
+            ->whereIn('users.role_id', [1, 2])
+            ->orGroupStart()
             ->where('users.agreement_end_date >=', date('Y-m-d'))
+            ->groupEnd()
+            ->groupEnd()
             ->first();
-
     }
 }
