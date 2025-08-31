@@ -1639,7 +1639,7 @@ document.addEventListener("DOMContentLoaded", function () {
         approved: "bi-check-circle-fill text-success",
         rejected: "bi-x-circle-fill text-danger",
         review: "bi-hourglass-split text-warning",
-        takedown: "bi-exclamation-circle-fill text-secondary",
+        takedown: "bi-x-circle-fill text-secondary", // Updated icon for takedown
       };
       return `<i class="bi ${
         icons[status] || "bi-question-circle-fill text-muted"
@@ -1682,14 +1682,23 @@ document.addEventListener("DOMContentLoaded", function () {
         },
         {
           data: null,
-          render: (data, type, row) => `
-                        <div>     
-                            <div class="release-title">       
-                                <a href="/superadmin/releases/edit/${row.id}" class="view-details-link" data-id="${row.id}">${row.title}</a>     
-                            </div>     
-                            <div class="release-artist">${row.artist}</div>   
-                        </div>
-                    `,
+          render: (data, type, row) => {
+            // Numeric status mapping: 1=Review, 2=Takedown, 3=Delivered, 4=Rejected, 5=Approved
+            // For Delivered (3) and Takedown (2), show view page
+            // For others, show edit page
+            const url = (row.status_numeric == 3 || row.status_numeric == 2)
+              ? `/superadmin/releases/view/${row.id}` 
+              : `/superadmin/releases/edit/${row.id}`;
+            
+            return `
+              <div>     
+                  <div class="release-title">       
+                      <a href="${url}" class="view-details-link" data-id="${row.id}" data-status="${row.status_numeric}">${row.title}</a>     
+                  </div>     
+                  <div class="release-artist">${row.artist}</div>   
+              </div>
+            `;
+          },
         },
         { data: "submittedDate", defaultContent: "N/A" },
         { data: "upc", defaultContent: "N/A" },
@@ -1731,17 +1740,24 @@ document.addEventListener("DOMContentLoaded", function () {
       });
     }
 
-    // Handle edit link clicks - Updated to navigate to edit page
+    // Handle link clicks - Conditional navigation based on status
     $("#datatableRelease tbody").on(
       "click",
       ".view-details-link",
       function (e) {
-        // Let the default link behavior happen (navigate to edit page)
-        // Remove e.preventDefault() to allow navigation
         const id = parseInt($(this).data("id"), 10);
-        console.log("Navigating to edit page for ID:", id);
+        const status = $(this).data("status");
+        
+        // Log for debugging
+        console.log("Navigating for ID:", id, "Status:", status);
+        
+        if (status === 3 || status === 2) {
+          console.log("Navigating to view page - Status:", status === 3 ? "Delivered" : "Takedown");
+        } else {
+          console.log("Navigating to edit page");
+        }
 
-        // Optional: Add loading state or other UI feedback here
+        // Optional: Add loading state
         $(this).addClass("loading");
       }
     );
@@ -5238,6 +5254,8 @@ $(document).on("click", "#changePasswordBtn", function () {
         $("#passwordAlert").html(
           '<div class="alert alert-danger">Something went wrong.</div>'
         );
+
+
       },
     });
   });

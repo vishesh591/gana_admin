@@ -27,21 +27,32 @@
                         </div>
                         <div class="card-body text-center">
                             <div class="artwork-container mb-4">
-                                <img src="../public/images/gallery/3.jpg"
-                                    alt="Release Artwork"
-                                    class="artwork-image img-fluid rounded">
+                                <?php if (!empty($release['artwork'])): ?>
+                                    <img src="<?= base_url($release['artwork']) ?>"
+                                        alt="Release Artwork"
+                                        class="artwork-image img-fluid rounded">
+                                <?php else: ?>
+                                    <img src="<?= base_url('public/images/gallery/3.jpg') ?>"
+                                        alt="Default Artwork"
+                                        class="artwork-image img-fluid rounded">
+                                <?php endif; ?>
                             </div>
                             <div class="audio-preview-section">
                                 <h6 class="mb-3">Audio Preview</h6>
-                                <audio controls class="w-100 mb-3 audio-player">
-                                    <source src="#" type="audio/wav">
-                                    Your browser does not support the audio element.
-                                </audio>
-                                <small class="text-muted">WAV Audio File</small>
+                                <?php if (!empty($release['audio_file'])): ?>
+                                    <audio controls class="w-100 mb-3 audio-player">
+                                        <source src="<?= base_url($release['audio_file']) ?>" type="audio/wav">
+                                        Your browser does not support the audio element.
+                                    </audio>
+                                    <small class="text-muted">WAV Audio File</small>
+                                <?php else: ?>
+                                    <p class="text-muted">No audio preview available</p>
+                                <?php endif; ?>
                             </div>
                         </div>
                     </div>
                 </div>
+
 
                 <!-- Basic Information Card -->
                 <div class="col-lg-8 col-md-12">
@@ -53,39 +64,47 @@
                             <div class="row">
                                 <div class="col-lg-12 col-md-12 mb-3">
                                     <label class="form-label text-muted">Release Title</label>
-                                    <p class="fw-semibold mb-0">Midnight Dreams</p>
+                                    <p class="fw-semibold mb-0"><?= esc($release['title'] ?? 'N/A') ?></p>
                                 </div>
                                 <div class="col-lg-6 col-md-6 mb-3">
                                     <label class="form-label text-muted">Artist</label>
-                                    <p class="fw-semibold mb-0">The Midnight Express</p>
+                                    <p class="fw-semibold mb-0"><?= esc($artist['name'] ?? 'N/A') ?></p>
                                 </div>
                                 <div class="col-lg-6 col-md-6 mb-3">
                                     <label class="form-label text-muted">Featuring Artist</label>
-                                    <p class="mb-0">Sarah Johnson</p>
+                                    <p class="mb-0"><?= esc($artist['name'] ?? '-') ?></p>
                                 </div>
                                 <div class="col-lg-6 col-md-6 mb-3">
                                     <label class="form-label text-muted">Label Name</label>
-                                    <p class="mb-0">Midnight Records (Primary Label)</p>
+                                    <p class="mb-0"><?= esc($label['label_name'] ?? 'N/A') ?></p>
                                 </div>
                                 <div class="col-lg-6 col-md-6 mb-3">
                                     <label class="form-label text-muted">Release Type</label>
-                                    <p class="mb-0">Single</p>
+                                    <p class="mb-0"><?= esc($release['release_type'] ?? 'N/A') ?></p>
                                 </div>
                                 <div class="col-lg-6 col-md-6 mb-3">
                                     <label class="form-label text-muted">Genre</label>
-                                    <p class="mb-0">Pop</p>
+                                    <p class="mb-0"><?= esc($release['genre_type'] ?? 'N/A') ?></p>
                                 </div>
                                 <div class="col-lg-6 col-md-6 mb-3">
                                     <label class="form-label text-muted">Mood</label>
-                                    <p class="mb-0">Romantic</p>
+                                    <p class="mb-0"><?= esc($release['mood_type'] ?? 'N/A') ?></p>
                                 </div>
                                 <div class="col-lg-6 col-md-6 mb-3">
                                     <label class="form-label text-muted">Language</label>
-                                    <p class="mb-0">English</p>
+                                    <p class="mb-0"><?= esc($release['language'] ?? 'N/A') ?></p>
                                 </div>
                                 <div class="col-lg-6 col-md-6 mb-3">
                                     <label class="form-label text-muted">UPC/EAN</label>
-                                    <p class="mb-0">123456789012</p>
+                                    <p class="mb-0"><?= esc($release['upc_ean'] ?? 'N/A') ?></p>
+                                </div>
+                                <div class="col-lg-6 col-md-6 mb-3">
+                                    <label class="form-label text-muted">Status</label>
+                                    <p class="mb-0">
+                                        <span class="badge bg-<?= $release['status'] == 5 ? 'success' : ($release['status'] == 4 ? 'danger' : 'warning') ?>">
+                                            <?= esc($statusText) ?>
+                                        </span>
+                                    </p>
                                 </div>
                             </div>
                         </div>
@@ -105,23 +124,23 @@
                             <div class="row">
                                 <div class="col-12 mb-3">
                                     <label class="form-label text-muted">Track Title</label>
-                                    <p class="fw-semibold mb-0">Midnight Dreams</p>
+                                    <p class="fw-semibold mb-0"><?= esc($release['track_title'] ?? $release['title'] ?? 'N/A') ?></p>
                                 </div>
                                 <div class="col-12 mb-3">
                                     <label class="form-label text-muted">Secondary Track Type</label>
-                                    <p class="mb-0">Original</p>
+                                    <p class="mb-0"><?= esc($release['secondary_track_type'] ?? 'Original') ?></p>
                                 </div>
                                 <div class="col-6 mb-3">
                                     <label class="form-label text-muted">Instrumental</label>
-                                    <p class="mb-0">No</p>
+                                    <p class="mb-0"><?= isset($release['is_instrumental']) && $release['is_instrumental'] ? 'Yes' : 'No' ?></p>
                                 </div>
                                 <div class="col-6 mb-3">
                                     <label class="form-label text-muted">ISRC</label>
-                                    <p class="mb-0">USRC17607839</p>
+                                    <p class="mb-0"><?= esc($release['isrc'] ?? 'N/A') ?></p>
                                 </div>
                                 <div class="col-12 mb-0">
                                     <label class="form-label text-muted">Track Title Language</label>
-                                    <p class="mb-0">English</p>
+                                    <p class="mb-0"><?= esc($release['track_language'] ?? $release['language'] ?? 'N/A') ?></p>
                                 </div>
                             </div>
                         </div>
@@ -138,27 +157,27 @@
                             <div class="row">
                                 <div class="col-12 mb-3">
                                     <label class="form-label text-muted">Author</label>
-                                    <p class="mb-0">John Smith, Mike Davis</p>
+                                    <p class="mb-0"><?= esc($release['author'] ?? '-') ?></p>
                                 </div>
                                 <div class="col-12 mb-3">
                                     <label class="form-label text-muted">Composer</label>
-                                    <p class="mb-0">John Smith, Sarah Johnson</p>
+                                    <p class="mb-0"><?= esc($release['composer'] ?? '-') ?></p>
                                 </div>
                                 <div class="col-12 mb-3">
                                     <label class="form-label text-muted">Remixer</label>
-                                    <p class="mb-0">-</p>
+                                    <p class="mb-0"><?= esc($release['remixer'] ?? '-') ?></p>
                                 </div>
                                 <div class="col-12 mb-3">
                                     <label class="form-label text-muted">Arranger</label>
-                                    <p class="mb-0">Mike Davis</p>
+                                    <p class="mb-0"><?= esc($release['arranger'] ?? '-') ?></p>
                                 </div>
                                 <div class="col-12 mb-3">
                                     <label class="form-label text-muted">Music Producer</label>
-                                    <p class="mb-0">The Sound Studio</p>
+                                    <p class="mb-0"><?= esc($release['music_producer'] ?? '-') ?></p>
                                 </div>
                                 <div class="col-12 mb-0">
                                     <label class="form-label text-muted">Publisher</label>
-                                    <p class="mb-0">Midnight Publishing</p>
+                                    <p class="mb-0"><?= esc($release['publisher'] ?? '-') ?></p>
                                 </div>
                             </div>
                         </div>
@@ -177,39 +196,42 @@
                             <div class="row">
                                 <div class="col-lg-3 col-md-6 mb-3">
                                     <label class="form-label text-muted">© Line Year</label>
-                                    <p class="mb-0">2024</p>
+                                    <p class="mb-0"><?= esc($release['c_line_year'] ?? date('Y')) ?></p>
                                 </div>
                                 <div class="col-lg-3 col-md-6 mb-3">
                                     <label class="form-label text-muted">© Line</label>
-                                    <p class="mb-0">Midnight Records</p>
+                                    <p class="mb-0"><?= esc($release['c_line'] ?? ($label['name'] ?? 'N/A')) ?></p>
                                 </div>
                                 <div class="col-lg-3 col-md-6 mb-3">
                                     <label class="form-label text-muted">℗ Line Year</label>
-                                    <p class="mb-0">2024</p>
+                                    <p class="mb-0"><?= esc($release['p_line_year'] ?? $release['copyright_year'] ?? date('Y')) ?></p>
                                 </div>
                                 <div class="col-lg-3 col-md-6 mb-3">
                                     <label class="form-label text-muted">℗ Line</label>
-                                    <p class="mb-0">Midnight Records</p>
+                                    <p class="mb-0"><?= esc($release['p_line'] ?? $release['copyright_line'] ?? ($label['name'] ?? 'N/A')) ?></p>
                                 </div>
                                 <div class="col-lg-6 col-md-6 mb-3">
                                     <label class="form-label text-muted">Production Year</label>
-                                    <p class="mb-0">2024</p>
+                                    <p class="mb-0"><?= esc($release['production_year'] ?? $release['copyright_year'] ?? date('Y')) ?></p>
                                 </div>
                                 <div class="col-lg-6 col-md-6 mb-3">
                                     <label class="form-label text-muted">Explicit Song</label>
                                     <p class="mb-0">
-                                        <span class="badge bg-success">No</span>
+
+                                        <span class="badge bg-<?= ($release['explicit_song'] === 'yes') ? 'danger' : 'success' ?>">
+                                            <?= ucfirst($release['explicit_song']) ?>
+                                        </span>
+
                                     </p>
                                 </div>
                                 <div class="col-12 mb-0">
                                     <label class="form-label text-muted">Lyrics</label>
                                     <div class="bg-light p-3 rounded">
-                                        <p class="mb-0 text-muted small">
-                                            In the midnight hour, when the stars align<br>
-                                            Dreams come alive, everything's fine<br>
-                                            Dancing through the shadows of time<br>
-                                            Your heart beats with mine...
-                                        </p>
+                                        <?php if (!empty($release['lyrics'])): ?>
+                                            <p class="mb-0 text-muted small"><?= nl2br(esc($release['lyrics'])) ?></p>
+                                        <?php else: ?>
+                                            <p class="mb-0 text-muted small">No lyrics available</p>
+                                        <?php endif; ?>
                                     </div>
                                 </div>
                             </div>
@@ -229,15 +251,15 @@
                             <div class="row">
                                 <div class="col-12 mb-3">
                                     <label class="form-label text-muted">Release Date</label>
-                                    <p class="fw-semibold mb-0">2024-03-15</p>
+                                    <p class="fw-semibold mb-0"><?= esc($release['release_date'] ?? 'N/A') ?></p>
                                 </div>
                                 <div class="col-12 mb-3">
                                     <label class="form-label text-muted">Pre-Sale Date</label>
-                                    <p class="mb-0">2024-03-10</p>
+                                    <p class="mb-0"><?= esc($release['pre_sale_date'] ?? '-') ?></p>
                                 </div>
                                 <div class="col-12 mb-0">
                                     <label class="form-label text-muted">Original Release Date</label>
-                                    <p class="mb-0">2024-03-15</p>
+                                    <p class="mb-0"><?= esc($release['original_release_date'] ?? $release['release_date'] ?? 'N/A') ?></p>
                                 </div>
                             </div>
                         </div>
@@ -253,11 +275,23 @@
                             <div class="row">
                                 <div class="col-12 mb-3">
                                     <label class="form-label text-muted">Release Price</label>
-                                    <p class="fw-semibold mb-0">₹1.99</p>
+                                    <p class="fw-semibold mb-0">
+                                        <?php if (isset($release['release_price'])): ?>
+                                            ₹<?= number_format($release['release_price'], 2) ?>
+                                        <?php else: ?>
+                                            N/A
+                                        <?php endif; ?>
+                                    </p>
                                 </div>
                                 <div class="col-12 mb-0">
                                     <label class="form-label text-muted">Sale Price</label>
-                                    <p class="mb-0">₹1.29</p>
+                                    <p class="mb-0">
+                                        <?php if (isset($release['sale_price'])): ?>
+                                            ₹<?= number_format($release['sale_price'], 2) ?>
+                                        <?php else: ?>
+                                            -
+                                        <?php endif; ?>
+                                    </p>
                                 </div>
                             </div>
                         </div>
@@ -276,26 +310,25 @@
                             <div class="mb-4">
                                 <label class="form-label text-muted mb-3">Free Stores</label>
                                 <div class="store-badges-container">
-                                    <span class="badge bg-primary me-2 mb-2 px-3 py-2 fs-6">Spotify</span>
-                                    <span class="badge bg-primary me-2 mb-2 px-3 py-2 fs-6">Apple Music</span>
-                                    <span class="badge bg-primary me-2 mb-2 px-3 py-2 fs-6">Amazon Music</span>
-                                    <span class="badge bg-primary me-2 mb-2 px-3 py-2 fs-6">YouTube Music</span>
-                                    <span class="badge bg-primary me-2 mb-2 px-3 py-2 fs-6">Deezer</span>
-                                    <span class="badge bg-primary me-2 mb-2 px-3 py-2 fs-6">JioSaavn</span>
-                                    <span class="badge bg-primary me-2 mb-2 px-3 py-2 fs-6">Gaana</span>
-                                    <span class="badge bg-primary me-2 mb-2 px-3 py-2 fs-6">Anghami</span>
-                                    <span class="badge bg-primary me-2 mb-2 px-3 py-2 fs-6">Boomplay</span>
-                                    <span class="badge bg-primary me-2 mb-2 px-3 py-2 fs-6">TikTok</span>
-                                    <span class="badge bg-primary me-2 mb-2 px-3 py-2 fs-6">Facebook</span>
-                                    <span class="badge bg-primary me-2 mb-2 px-3 py-2 fs-6">SoundCloud Go</span>
-                                    <span class="badge bg-primary me-2 mb-2 px-3 py-2 fs-6">Audiomack</span>
+                                    <?php if (!empty($storeNames)): ?>
+                                        <?php foreach ($storeNames as $store): ?>
+                                            <span class="badge bg-primary me-2 mb-2 px-3 py-2 fs-6"><?= esc($store) ?></span>
+                                        <?php endforeach; ?>
+                                    <?php else: ?>
+                                        <p class="text-muted">No stores selected</p>
+                                    <?php endif; ?>
                                 </div>
                             </div>
                             <div class="mb-0">
                                 <label class="form-label text-muted mb-3">Rights Management Stores</label>
                                 <div class="store-badges-container">
-                                    <span class="badge bg-info me-2 mb-2 px-3 py-2 fs-6">YouTube Content ID</span>
-                                    <span class="badge bg-info me-2 mb-2 px-3 py-2 fs-6">Facebook Rights Manager</span>
+                                    <?php if (!empty($rightsNames)): ?>
+                                        <?php foreach ($rightsNames as $right): ?>
+                                            <span class="badge bg-info me-2 mb-2 px-3 py-2 fs-6"><?= esc($right) ?></span>
+                                        <?php endforeach; ?>
+                                    <?php else: ?>
+                                        <p class="text-muted">No rights management options selected</p>
+                                    <?php endif; ?>
                                 </div>
                             </div>
                         </div>
@@ -308,22 +341,58 @@
                 <div class="col-12">
                     <div class="card">
                         <div class="card-header">
-                            <h4 class="card-title mb-0">Distribution Information</h4>
+                            <h4 class="card-title mb-0">Actions</h4>
                         </div>
                         <div class="card-body">
                             <div class="d-flex flex-wrap gap-2">
-                                <button type="button" class="btn btn-primary">
+                                <a href="<?= base_url('superadmin/releases/edit/' . $release['id']) ?>" class="btn btn-primary">
                                     <i data-feather="edit-3" class="me-2"></i>Edit Release
-                                </button>
-                                <button type="button" class="btn btn-outline-danger">
-                                    <i data-feather="trash-2" class="me-2"></i>Delete Release
-                                </button>
+                                </a>
+                                <?php if ($release['status'] != 2): ?>
+                                    <button type="button" class="btn btn-outline-danger" onclick="confirmTakedown(<?= $release['id'] ?>)">
+                                        <i data-feather="x-circle" class="me-2"></i>Takedown Release
+                                    </button>
+                                <?php else: ?>
+                                    <span class="badge bg-danger fs-6 px-3 py-2">
+                                        <i data-feather="x-circle" class="me-2"></i>Already Taken Down
+                                    </span>
+                                <?php endif; ?>
+                                <a href="<?= base_url('superadmin/releases') ?>" class="btn btn-outline-secondary">
+                                    <i data-feather="arrow-left" class="me-2"></i>Back to Releases
+                                </a>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
+        <!-- content -->
     </div>
-    <!-- content -->
-</div>
+
+    <script>
+        function confirmTakedown(releaseId) {
+            if (confirm('Are you sure you want to takedown this release? This will change the status to "Takedown" and remove it from distribution.')) {
+                // Create a form and submit it for takedown request
+                const form = document.createElement('form');
+                form.method = 'POST';
+                form.action = '<?= base_url('superadmin/releases/takedown/') ?>' + releaseId;
+
+                // Add CSRF token if needed
+                const csrfInput = document.createElement('input');
+                csrfInput.type = 'hidden';
+                csrfInput.name = '<?= csrf_token() ?>';
+                csrfInput.value = '<?= csrf_hash() ?>';
+                form.appendChild(csrfInput);
+
+                // Add status value for takedown
+                const statusInput = document.createElement('input');
+                statusInput.type = 'hidden';
+                statusInput.name = 'status';
+                statusInput.value = '2'; // Takedown status
+                form.appendChild(statusInput);
+
+                document.body.appendChild(form);
+                form.submit();
+            }
+        }
+    </script>

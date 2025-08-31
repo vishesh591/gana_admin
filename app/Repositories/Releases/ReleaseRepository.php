@@ -54,4 +54,22 @@ class ReleaseRepository
             ->join('g_labels', 'g_labels.id = g_release.label_id')
             ->findAll();
     }
+
+    public function update($id, $data)
+    {
+        return $this->model->update($id, $data);
+    }
+
+    public function countAllData()
+    {
+        return $this->model->select("
+        COUNT(*) as total,
+        SUM(CASE WHEN status = 3 THEN 1 ELSE 0 END) as delivered,
+        SUM(CASE WHEN status = 1 THEN 1 ELSE 0 END) as in_review,
+        SUM(CASE WHEN status = 4 THEN 1 ELSE 0 END) as rejected,
+        SUM(CASE WHEN status = 2 THEN 1 ELSE 0 END) as takedown,
+        SUM(CASE WHEN status = 5 THEN 1 ELSE 0 END) as approved
+    ")
+            ->first();
+    }
 }

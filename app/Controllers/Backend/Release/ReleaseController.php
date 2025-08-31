@@ -15,13 +15,13 @@ class ReleaseController extends BaseController
         $this->releaseRepo = new ReleaseRepository();
     }
 
-    // Show all releases (paginated)
     public function index()
     {
+        $releaseCounts = $this->releaseRepo->countAllData();
+
         if ($this->request->isAJAX()) {
             $releases = $this->releaseRepo->findAll();
 
-            // Transform your DB status (int) into string form expected by frontend
             $statusMap = [
                 1 => 'review',
                 2 => 'takedown',
@@ -30,61 +30,65 @@ class ReleaseController extends BaseController
                 5 => 'approved',
             ];
 
-            $releasesData = array_map(function ($r) use ($statusMap) {
+            $artistModel = new \App\Models\Backend\ArtistModel();
+
+            $releasesData = array_map(function ($r) use ($statusMap, $artistModel) {
+                $artist = $artistModel->find($r['artist_id']);
+                $artistName = $artist ? $artist['name'] : $r['author'];
                 return [
                     'id' => $r['id'],
                     'title' => $r['title'],
-                    'artist' => $r['author'],
+                    'artist' => $artistName,
                     'submittedDate' => date('jS F Y', strtotime($r['created_at'])),
                     'upc' => $r['upc_ean'],
                     'isrc' => $r['isrc'],
                     'status' => $statusMap[$r['status']] ?? 'review',
-                    'albumArtwork' => '/images/rocket.png', // or from DB if you store it
+                    'status_numeric' => $r['status'],
+                    'albumArtwork' => '/images/rocket.png',
                 ];
             }, $releases);
 
             return $this->response->setJSON(['data' => $releasesData]);
         }
 
-        // normal page load
         $page_array = [
             'file_name' => 'releases',
+            'releaseCounts' => $releaseCounts,
         ];
         return view('superadmin/index', $page_array);
     }
 
-    public function show($id)
-    {
-        $release = $this->releaseRepo->find($id);
+    // public function show($id)
+    // {
+    //     $release = $this->releaseRepo->find($id);
 
-        if (!$release) {
-            return $this->response
-                ->setStatusCode(404)
-                ->setJSON(['error' => 'Release not found']);
-        }
+    //     if (!$release) {
+    //         return $this->response
+    //             ->setStatusCode(404)
+    //             ->setJSON(['error' => 'Release not found']);
+    //     }
 
-        // Map status integer to readable string
-        $statusMap = [
-            1 => 'review',
-            2 => 'takedown',
-            3 => 'delivered',
-            4 => 'rejected',
-            5 => 'approved',
-        ];
+    //     // Map status integer to readable string
+    //     $statusMap = [
+    //         1 => 'review',
+    //         2 => 'takedown',
+    //         3 => 'delivered',
+    //         4 => 'rejected',
+    //         5 => 'approved',
+    //     ];
 
-        $release['status_text'] = isset($statusMap[$release['status']])
-            ? $statusMap[$release['status']]
-            : 'unknown';
+    //     $release['status_text'] = isset($statusMap[$release['status']])
+    //         ? $statusMap[$release['status']]
+    //         : 'unknown';
 
-        // Optional: include statusMap for frontend buttons
-        return $this->response
-            ->setJSON([
-                'release'   => $release,
-                'statusMap' => $statusMap
-            ]);
-    }
+    //     // Optional: include statusMap for frontend buttons
+    //     return $this->response
+    //         ->setJSON([
+    //             'release'   => $release,
+    //             'statusMap' => $statusMap
+    //         ]);
+    // }
 
-    // NEW: Edit method to show the form with pre-filled data
     public function edit($id)
     {
         $session = session();
@@ -101,7 +105,8 @@ class ReleaseController extends BaseController
         $labels = [];
         $labelModel = new \App\Models\Backend\LabelModel();
         $artistModel = new \App\Models\Backend\ArtistModel();
-
+        $genreModel = new \App\Models\Backend\GenreModel();
+        $languageModel = new \App\Models\Backend\LanguageModel();
         if (in_array($user['role_id'], [1, 2])) {
             // Admins: all labels
             $labels = $labelModel->findAll();
@@ -110,6 +115,8 @@ class ReleaseController extends BaseController
             $labels = $labelModel->getLabelsByUser($user['id']);
         }
         $artists = $artistModel->findAll();
+        $genres = $genreModel->findAll();
+        $languages = $languageModel->findAll();
         // FIXED: Decode JSON fields properly
         if (!empty($release['stores_ids'])) {
             $storesDecoded = json_decode($release['stores_ids'], true);
@@ -141,7 +148,9 @@ class ReleaseController extends BaseController
             'labels'         => $labels,
             'release'        => $release,
             'isEdit'         => true,
-            'artists'         => $artists
+            'artists'         => $artists,
+            'genres'          => $genres,
+            'languages'       => $languages
         ];
 
         return view('superadmin/index', $page_array);
@@ -180,7 +189,7 @@ class ReleaseController extends BaseController
                 'title'                     => $this->request->getPost('releaseTitle'),
                 'label_id'                  => $this->request->getPost('label_id'),
                 'artist_id'                 => $this->request->getPost('artist'),
-                'featured_artists'         => $this->request->getPost('featuringArtist'),
+                'featured_artist_id'        => $this->request->getPost('featuringArtist'),
                 'release_type'              => $this->request->getPost('releaseType'),
                 'mood_type'                 => $this->request->getPost('mood'),
                 'genre_type'                => $this->request->getPost('genre'),
@@ -302,7 +311,7 @@ class ReleaseController extends BaseController
                 'title'                     => $this->request->getPost('releaseTitle'),
                 'label_id'                  => $this->request->getPost('label_id'),
                 'artist_id'                 => $this->request->getPost('artist'),
-                'featured_artists'         => $this->request->getPost('featuringArtist'),
+                'featuring_artist_id'       => $this->request->getPost('featuringArtist'),
                 'release_type'              => $this->request->getPost('releaseType'),
                 'mood_type'                 => $this->request->getPost('mood'),
                 'genre_type'                => $this->request->getPost('genre'),
@@ -376,18 +385,24 @@ class ReleaseController extends BaseController
 
             $message = $statusMessages[$status] ?? 'Release updated successfully';
 
+            // Determine redirect URL based on status
+            $redirectUrl = '/superadmin/releases';
+            if ($status == 3) { // Only for delivered status
+                $redirectUrl = "/superadmin/releases/view/{$id}";
+            }
+
             if ($this->request->isAJAX()) {
                 if (ob_get_length()) ob_clean();
 
                 return $this->response->setJSON([
                     'success' => true,
                     'message' => $message,
-                    'redirect' => '/superadmin/releases',
+                    'redirect' => $redirectUrl,
                     'status' => $status
                 ]);
             }
 
-            return redirect()->to('/superadmin/releases')
+            return redirect()->to($redirectUrl)
                 ->with('success', $message);
         } catch (\Exception $e) {
             log_message('error', 'Release update failed: ' . $e->getMessage());
@@ -409,41 +424,6 @@ class ReleaseController extends BaseController
         }
     }
 
-    /**
-     * Get user email from release data
-     * Adjust this method based on your database structure
-     */
-    // private function getUserEmailFromRelease($release)
-    // {
-    //     try {
-    //         // Example: If you have artist_id, get email from artists table
-    //         if (!empty($release['artist_id'])) {
-    //             $artistModel = new \App\Models\Backend\ArtistModel(); // Adjust model name
-    //             $artist = $artistModel->find($release['artist_id']);
-
-    //             if ($artist && !empty($artist['email'])) {
-    //                 return $artist['email'];
-    //             }
-    //         }
-
-    //         // Example: If you have label_id, get email from labels table
-    //         if (!empty($release['label_id'])) {
-    //             $labelModel = new \App\Models\Backend\LabelModel(); // Adjust model name
-    //             $label = $labelModel->find($release['label_id']);
-
-    //             if ($label && !empty($label['email'])) {
-    //                 return $label['email'];
-    //             }
-    //         }
-
-    //         // Add more logic based on your data structure
-    //         return null;
-    //     } catch (\Exception $e) {
-    //         log_message('error', 'Error getting user email from release: ' . $e->getMessage());
-    //         return null;
-    //     }
-    // }
-
     public function addRelease()
     {
         $session = session();
@@ -451,22 +431,91 @@ class ReleaseController extends BaseController
 
         $labels = [];
         $labelModel = new \App\Models\Backend\LabelModel();
-
+        $artistModel = new \App\Models\Backend\ArtistModel();
+        $genreModel = new \App\Models\Backend\GenreModel();
+        $languageModel = new \App\Models\Backend\LanguageModel();
         if (in_array($user['role_id'], [1, 2])) {
             $labels = $labelModel->findAll();
         } else {
             $labels = $labelModel->getLabelsByUser($user['id']);
         }
-
+        $artists = $artistModel->findAll();
+        $genres = $genreModel->findAll();
+        $languages = $languageModel->findAll();
         $page_array = [
             'file_name'      => 'add-release',
             'user'           => $user,
             'labels'         => $labels,
             'release'        => null,
             'isEdit'         => false,
+            'artists'         => $artists,
+            'genres'          => $genres,
+            'languages'       => $languages
         ];
 
         return view('superadmin/index', $page_array);
+    }
+
+    public function view_release($id = null)
+    {
+        try {
+            if (!$id || !is_numeric($id)) {
+                return redirect()->to('/superadmin/releases')
+                    ->with('error', 'Invalid release ID');
+            }
+
+            // Get release data
+            $release = $this->releaseRepo->find($id);
+
+            if (!$release) {
+                return redirect()->to('/superadmin/releases')
+                    ->with('error', 'Release not found');
+            }
+
+            // Get artist data
+            $artistModel = new \App\Models\Backend\ArtistModel();
+            $artist = $artistModel->find($release['artist_id']);
+
+            // Get label data
+            $labelModel = new \App\Models\Backend\LabelModel();
+            $label = $labelModel->find($release['label_id']);
+
+            // Decode JSON fields
+            $stores = !empty($release['stores_ids']) ? json_decode($release['stores_ids'], true) : [];
+            $rights = !empty($release['rights_management_options']) ? json_decode($release['rights_management_options'], true) : [];
+
+            // Get store names (you might need to adjust this based on your stores table structure)
+            $storeNames = !empty($stores) ? $stores : [];
+
+            // Same for rights
+            $rightsNames = !empty($rights) ? $rights : [];
+
+            // Status mapping
+            $statusMap = [
+                1 => 'Review',
+                2 => 'Takedown',
+                3 => 'Delivered',
+                4 => 'Rejected',
+                5 => 'Approved',
+            ];
+
+            // Prepare data for view
+            $data = [
+                'file_name'      => 'view_release',
+                'release' => $release,
+                'artist' => $artist,
+                'label' => $label,
+                'storeNames' => $storeNames,
+                'rightsNames' => $rightsNames,
+                'statusText' => $statusMap[$release['status']] ?? 'Unknown',
+            ];
+
+            return view('superadmin/index', $data);
+        } catch (\Exception $e) {
+            log_message('error', 'View release failed: ' . $e->getMessage());
+            // return redirect()->to('/superadmin/releases')
+            //     ->with('error', 'Failed to load release details');
+        }
     }
 
     public function exportCsv()
@@ -496,7 +545,30 @@ class ReleaseController extends BaseController
             'Production Year',
             'Release Date',
             'Stores',
-            'Rights Management'
+            'Rights Management',
+
+            // Newly Added Fields
+            'Artist ID',
+            'Featuring Artist ID',
+            'Secondary Track Type',
+            'Instrumental',
+            'Remixer',
+            'Arranger',
+            'Music Producer',
+            'C Line Year',
+            'C Line',
+            'P Line Year',
+            'P Line',
+            'Track Title Language',
+            'Explicit Song',
+            'Lyrics',
+            'Pre-Sale Date',
+            'Original Release Date',
+            'Release Price',
+            'Sale Price',
+            'T&C',
+            'Updated At',
+            'Status'
         ]);
 
         foreach ($releases as $release) {
@@ -510,22 +582,24 @@ class ReleaseController extends BaseController
             $stores = '';
             if (!empty($release['stores_ids'])) {
                 $decodedStores = json_decode($release['stores_ids'], true);
-                if (is_array($decodedStores)) {
-                    $stores = implode(', ', $decodedStores);
-                } else {
-                    $stores = $release['stores_ids'];
-                }
+                $stores = is_array($decodedStores) ? implode(', ', $decodedStores) : $release['stores_ids'];
             }
 
             $rights = '';
             if (!empty($release['rights_management_options'])) {
                 $decodedRights = json_decode($release['rights_management_options'], true);
-                if (is_array($decodedRights)) {
-                    $rights = implode(', ', $decodedRights);
-                } else {
-                    $rights = $release['rights_management_options'];
-                }
+                $rights = is_array($decodedRights) ? implode(', ', $decodedRights) : $release['rights_management_options'];
             }
+
+            // Status Mapping
+            $statusMapping = [
+                1 => 'Review',
+                2 => 'Takedown',
+                3 => 'Delivered',
+                4 => 'Rejected',
+                5 => 'Approved',
+            ];
+            $status = $statusMapping[$release['status']] ?? $release['status'];
 
             fputcsv($file, [
                 $release['id'],
@@ -544,11 +618,78 @@ class ReleaseController extends BaseController
                 $release['production_year'],
                 $release['release_date'],
                 $stores,
-                $rights
+                $rights,
+
+                // Newly Added Fields
+                $release['artist_id'] ?? '',
+                $release['featuring_artist_id'] ?? '',
+                $release['secondary_track_type'] ?? '',
+                $release['instrumental'] ?? '',
+                $release['remixer'] ?? '',
+                $release['arranger'] ?? '',
+                $release['music_producer'] ?? '',
+                $release['c_line_year'] ?? '',
+                $release['c_line'] ?? '',
+                $release['p_line_year'] ?? '',
+                $release['p_line'] ?? '',
+                $release['track_title_language'] ?? '',
+                $release['explicit_song'] ?? '',
+                $release['lyrics'] ?? '',
+                $release['pre_sale_date'] ?? '',
+                $release['original_release_date'] ?? '',
+                $release['release_price'] ?? '',
+                $release['sale_price'] ?? '',
+                $release['t_and_c'] ?? '',
+                $release['updated_at'] ?? '',
+                $status
             ]);
         }
 
         fclose($file);
+
         exit;
+    }
+
+    public function takedown_release($id = null)
+    {
+        try {
+            if (!$id || !is_numeric($id)) {
+                return redirect()->to('/superadmin/releases')
+                    ->with('error', 'Invalid release ID');
+            }
+
+            $release = $this->releaseRepo->find($id);
+            if (!$release) {
+                return redirect()->to('/superadmin/releases')
+                    ->with('error', 'Release not found');
+            }
+
+            if ($release['status'] == 2) {
+                return redirect()->to('/superadmin/releases/view/' . $id)
+                    ->with('warning', 'Release is already taken down');
+            }
+
+            $updateData = [
+                'status' => 2,
+                'takedown_date' => date('Y-m-d H:i:s'),
+                'updated_at' => date('Y-m-d H:i:s')
+            ];
+
+            $result = $this->releaseRepo->update($id, $updateData);
+
+            if ($result) {
+                log_message('info', "Release ID {$id} has been taken down by admin");
+
+                return redirect()->to('/superadmin/releases/view/' . $id)
+                    ->with('success', 'Release has been successfully taken down from distribution');
+            } else {
+                return redirect()->to('/superadmin/releases/view/' . $id)
+                    ->with('error', 'Failed to takedown release. Please try again');
+            }
+        } catch (\Exception $e) {
+            log_message('error', 'Takedown release failed: ' . $e->getMessage());
+            // return redirect()->to('/superadmin/releases/view/' . $id)
+            //     ->with('error', 'An error occurred while taking down the release');
+        }
     }
 }

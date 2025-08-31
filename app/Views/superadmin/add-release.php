@@ -131,7 +131,7 @@
                                 <div class="invalid-feedback" id="artistError"></div>
                             </div>
                             <div class="col-md-6 mb-3">
-                                <label for="featuringArtist" class="form-label required-field">Artist</label>
+                                <label for="featuringArtist" class="form-label required-field">Featuring Artist</label>
                                 <select class="form-select searchable-select" id="featuringArtist" name="featuringArtist" required
                                     data-placeholder="Search and select a label...">
                                     <option value="">Featuring Artist</option>
@@ -187,15 +187,16 @@
                                 <label for="genre" class="form-label required-field">Genre</label>
                                 <select class="form-select" id="genre" name="genre" required>
                                     <option value="" <?= !isset($release) ? 'selected' : '' ?> disabled>Select genre</option>
-                                    <option value="pop" <?= (isset($release) && $release['genre_type'] == 'pop') ? 'selected' : '' ?>>Pop</option>
-                                    <option value="rock" <?= (isset($release) && $release['genre_type'] == 'rock') ? 'selected' : '' ?>>Rock</option>
-                                    <option value="hiphop" <?= (isset($release) && $release['genre_type'] == 'hiphop') ? 'selected' : '' ?>>Hip Hop</option>
-                                    <option value="electronic" <?= (isset($release) && $release['genre_type'] == 'electronic') ? 'selected' : '' ?>>Electronic</option>
-                                    <option value="jazz" <?= (isset($release) && $release['genre_type'] == 'jazz') ? 'selected' : '' ?>>Jazz</option>
-                                    <option value="classical" <?= (isset($release) && $release['genre_type'] == 'classical') ? 'selected' : '' ?>>Classical</option>
+                                    <?php foreach ($genres as $genre): ?>
+                                        <option value="<?= esc($genre['name']) ?>"
+                                            <?= (isset($release) && $release['genre_type'] == $genre['name']) ? 'selected' : '' ?>>
+                                            <?= esc($genre['name']) ?>
+                                        </option>
+                                    <?php endforeach; ?>
                                 </select>
                                 <div class="invalid-feedback" id="genreError"></div>
                             </div>
+
                             <div class="col-md-6 mb-3">
                                 <label for="upcEan" class="form-label mb-0">UPC/EAN</label>
                                 <input type="text" class="form-control" id="upcEan" name="upcEan"
@@ -209,14 +210,16 @@
                                 <label for="language" class="form-label required-field">Language</label>
                                 <select class="form-select" id="language" name="language" required>
                                     <option value="" <?= !isset($release) ? 'selected' : '' ?> disabled>Select language</option>
-                                    <option value="english" <?= (isset($release) && $release['language'] == 'english') ? 'selected' : '' ?>>English</option>
-                                    <option value="spanish" <?= (isset($release) && $release['language'] == 'spanish') ? 'selected' : '' ?>>Spanish</option>
-                                    <option value="french" <?= (isset($release) && $release['language'] == 'french') ? 'selected' : '' ?>>French</option>
-                                    <option value="german" <?= (isset($release) && $release['language'] == 'german') ? 'selected' : '' ?>>German</option>
-                                    <option value="hindi" <?= (isset($release) && $release['language'] == 'hindi') ? 'selected' : '' ?>>Hindi</option>
+                                    <?php foreach ($languages as $lang): ?>
+                                        <option value="<?= esc($lang['name']) ?>"
+                                            <?= (isset($release) && $release['language'] == $lang['name']) ? 'selected' : '' ?>>
+                                            <?= esc($lang['name']) ?>
+                                        </option>
+                                    <?php endforeach; ?>
                                 </select>
                                 <div class="invalid-feedback" id="languageError"></div>
                             </div>
+
                         </div>
                     </div>
 
@@ -646,7 +649,6 @@
 
                         <?php if (isset($isEdit) && $isEdit): ?>
                             <?php if (isset($release) && $release['status'] == 5): ?>
-                                <!-- Approved status: Show Delivered and Reject buttons -->
                                 <div>
                                     <button type="submit" name="status" value="3" class="btn btn-success me-2">
                                         <i data-feather="truck" class="me-1"></i> Mark as Delivered
@@ -655,8 +657,13 @@
                                         <i data-feather="x" class="me-1"></i> Reject
                                     </button>
                                 </div>
+                            <?php elseif (isset($release) && $release['status'] == 4): ?>
+                                <div>
+                                    <button type="submit" name="status" value="5" class="btn btn-success">
+                                        <i data-feather="check" class="me-1"></i> Approve
+                                    </button>
+                                </div>
                             <?php else: ?>
-                                <!-- Other statuses: Show Approve and Reject buttons -->
                                 <div>
                                     <button type="submit" name="status" value="5" class="btn btn-success me-2">
                                         <i data-feather="check" class="me-1"></i> Approve

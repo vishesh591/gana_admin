@@ -51,20 +51,20 @@ $routes->group('superadmin', ['filter' => 'role:superadmin'], function ($routes)
     $routes->get('accounts', 'RegisterController::accounts');
     $routes->get('auth-logout', 'Auth::logout');
     $routes->get('releases', 'Backend\Release\ReleaseController::index');
+    $routes->get('releases/view/(:num)', 'Backend\Release\ReleaseController::view_release/$1');
     $routes->get('releases/create', 'Backend\Release\ReleaseController::create');
     $routes->post('releases/store', 'Backend\Release\ReleaseController::store');
     $routes->get('releases/edit/(:num)', 'Backend\Release\ReleaseController::edit/$1');
     $routes->post('releases/update/(:num)', 'Backend\Release\ReleaseController::update/$1');
+    $routes->post('releases/takedown/(:num)', 'Backend\Release\ReleaseController::takedown_release/$1');
     $routes->get('api/labels', 'Backend\Label\LabelController::getLabelsJson');
     $routes->get('api/accounts', 'RegisterController::getAccountsJson');
     $routes->get('pages-profile', 'RegisterController::index');
-    $routes->get('view_release', 'SuperAdmin::view_release');
     $routes->get('support', 'Backend\Support\SupportController::index');
     $routes->post('support/store', 'Backend\Support\SupportController::store');
     $routes->get('support/data', 'Backend\Support\SupportController::data');
     $routes->post('support/update-status/(:num)', 'Backend\Support\SupportController::updateStatus/$1');
     $routes->get('releases/export-csv', 'Backend\Release\ReleaseController::exportCsv');
-
 });
 
 // Routes only for artists
