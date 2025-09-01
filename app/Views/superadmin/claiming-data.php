@@ -28,8 +28,8 @@
                                 <tr>
                                     <th width="60" class="text-center">#</th>
                                     <th>Song Name</th>
-                                    <th>Artist Name</th>
-                                    <th class="text-center">UPC</th>
+                                    <th>UPC</th>
+                                    <th class="text-center">ISRC</th>
                                     <th class="text-center">Status</th>
                                     <th class="text-center">Actions</th>
                                 </tr>
@@ -74,50 +74,52 @@
     </div>
 </div>
 
-<div class="modal fade" id="releaseModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-fullscreen">
-        <div class="modal-content shadow-lg">
-            <div class="modal-header-custom" id="releaseModalHeader">
-                <div class="bg-image-blurred"></div>
-                <div class="d-flex w-100">
-                    <img id="releaseAlbumArtwork" src="" alt="Album Artwork" class="me-4">
-                    <div class="flex-grow-1">
-                        <h2 id="releaseTitle"></h2>
-                        <p id="releaseArtistHeader"></p>
-                        <div id="releaseStatusBadges"></div>
-                    </div>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-            </div>
-            <div class="modal-body p-4 bg-light">
-                <div class="row justify-content-center">
-                    <div class="col-lg-8">
-                        <div class="card">
-                            <div class="card-body p-4">
-                                <h5 class="card-title mb-4">Request Details</h5>
-                                <div class="row">
-                                    <div class="col-md-6 mb-3"><label class="detail-label">ISRC</label>
-                                        <p class="detail-value" id="modal-isrc"></p>
-                                    </div>
-                                    <div class="col-md-6 mb-3"><label class="detail-label">Matching Time</label>
-                                        <p class="detail-value" id="modal-matchingTime"></p>
-                                    </div>
-                                    <div class="col-md-6 mb-3"><label class="detail-label">Instagram Audio</label>
-                                        <p class="detail-value" id="modal-instagramAudio"></p>
-                                    </div>
-                                    <div class="col-md-6 mb-3"><label class="detail-label">Reel Merge</label>
-                                        <p class="detail-value" id="modal-reelMerge"></p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="modal-footer border-0 justify-content-center bg-light py-3">
-                <button type="button" class="btn btn-danger rounded-pill px-4" id="rejectBtn">Reject</button>
-                <button type="button" class="btn btn-success rounded-pill px-4" id="approveBtn">Approve</button>
-            </div>
-        </div>
+<!-- Modal -->
+<div class="modal fade" id="claimingRequestModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Claiming Request</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form id="claimingRequestForm">
+          <input type="hidden" id="claimingRequestId">
+
+          <div class="mb-3">
+            <label class="form-label">Song</label>
+            <input type="text" class="form-control" id="songName" readonly>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Artist</label>
+            <input type="text" class="form-control" id="artistName" readonly>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">ISRC</label>
+            <input type="text" class="form-control" id="isrcCode" readonly>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">UPC</label>
+            <input type="text" class="form-control" id="upcCode" readonly>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Status</label>
+            <select class="form-select" id="statusDropdown">
+              <option value="Pending">Pending</option>
+              <option value="Approved">Approved</option>
+              <option value="Rejected">Rejected</option>
+            </select>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary" id="saveClaimingRequest">Save</button>
+      </div>
     </div>
+  </div>
 </div>

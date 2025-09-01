@@ -18,17 +18,19 @@
                     <div class="card shadow-sm mt-4 p-4">
                         <div class="card-body p-0">
                             <div class="table-responsive">
-                                <table class="table table-hover mb-0" id="datatable">
+                                <!-- ID should be on TABLE not TBODY -->
+                                <table class="table table-hover mb-0" id="claimingRequestTableBody">
                                     <thead class="table-light">
                                         <tr>
                                             <th width="60"></th>
                                             <th>Song / Artist</th>
                                             <th>ISRC</th>
-                                            <th>Social Profiles</th>
+                                            <th>UPC</th>
                                             <th>Status</th>
                                         </tr>
                                     </thead>
-                                    <tbody id="tableBody">
+                                    <tbody>
+                                        <!-- DataTables will auto-fill this -->
                                     </tbody>
                                 </table>
                             </div>
@@ -36,6 +38,7 @@
                     </div>
                 </div>
             </div>
+
         </div>
     </div>
 </div>
@@ -43,7 +46,7 @@
 <div class="modal fade" id="claimingRequestModal" tabindex="-1" aria-labelledby="claimingRequestModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg modal-dialog-centered">
         <div class="modal-content rounded-4">
-            <form action="#" method="POST">
+            <form id="claimRequestForm" action="<?= base_url('superadmin/claiming-requests') ?>" method="POST">
                 <div class="modal-header">
                     <h5 class="modal-title" id="claimingRequestModalLabel">Claim Removal Request</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -56,10 +59,15 @@
                             Song Name <span class="badge bg-danger ms-2">RE</span>
                         </label>
                         <select class="form-select rounded-pill p-3" id="songName" name="songName" required>
-                            <option value="">Select song</option>
-                            <option value="1" data-artist="Artist One" data-upc="123456789012" data-isrc="INH722300111">Song One</option>
-                            <option value="2" data-artist="Artist Two" data-upc="987654321098" data-isrc="INH722300222">Song Two</option>
-                            <option value="3" data-artist="Artist Three" data-upc="456123789456" data-isrc="INH722300333">Song Three</option>
+                            <option value="">-- Select Song --</option>
+                            <?php foreach ($releases as $release): ?>
+                                <option value="<?= esc($release['id']) ?>"
+                                    data-artist="<?= esc($release['artist_name']) ?>"
+                                    data-upc="<?= esc($release['upc_ean']) ?>"
+                                    data-isrc="<?= esc($release['isrc']) ?>">
+                                    <?= esc($release['title']) ?> (<?= esc($release['artist_name']) ?>)
+                                </option>
+                            <?php endforeach; ?>
                         </select>
                     </div>
 
@@ -90,7 +98,6 @@
                             placeholder="https://youtube.com/..., https://youtu.be/...">
                     </div>
 
-
                     <!-- Reason for Removing Claim -->
                     <div class="mb-4">
                         <label for="reason" class="form-label">Reason for Removing the Claim</label>
@@ -103,7 +110,21 @@
                     <button type="submit" class="btn btn-primary rounded-pill">Submit Request</button>
                 </div>
             </form>
-
         </div>
     </div>
 </div>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const songSelect = document.getElementById("songName");
+        const artistInput = document.getElementById("artistName");
+        const upcInput = document.getElementById("upc");
+        const isrcInput = document.getElementById("isrc");
+
+        songSelect.addEventListener("change", function() {
+            const option = this.options[this.selectedIndex];
+            artistInput.value = option.getAttribute("data-artist") || "";
+            upcInput.value = option.getAttribute("data-upc") || "";
+            isrcInput.value = option.getAttribute("data-isrc") || "";
+        });
+    });
+</script>

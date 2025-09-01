@@ -2,16 +2,16 @@ function _typeof(e) {
   return (_typeof =
     "function" == typeof Symbol && "symbol" == typeof Symbol.iterator
       ? function (e) {
-        return typeof e;
-      }
+          return typeof e;
+        }
       : function (e) {
-        return e &&
-          "function" == typeof Symbol &&
-          e.constructor === Symbol &&
-          e !== Symbol.prototype
-          ? "symbol"
-          : typeof e;
-      })(e);
+          return e &&
+            "function" == typeof Symbol &&
+            e.constructor === Symbol &&
+            e !== Symbol.prototype
+            ? "symbol"
+            : typeof e;
+        })(e);
 }
 function _classCallCheck(e, t) {
   if (!(e instanceof t))
@@ -38,11 +38,11 @@ function _defineProperty(e, t, n) {
   return (
     (t = _toPropertyKey(t)) in e
       ? Object.defineProperty(e, t, {
-        value: n,
-        enumerable: !0,
-        configurable: !0,
-        writable: !0,
-      })
+          value: n,
+          enumerable: !0,
+          configurable: !0,
+          writable: !0,
+        })
       : (e[t] = n),
     e
   );
@@ -74,22 +74,22 @@ var App = (() =>
             e.preventDefault(),
               $("body").toggleClass("fullscreen-enable"),
               document.fullscreenElement ||
-                document.mozFullScreenElement ||
-                document.webkitFullscreenElement
+              document.mozFullScreenElement ||
+              document.webkitFullscreenElement
                 ? document.cancelFullScreen
                   ? document.cancelFullScreen()
                   : document.mozCancelFullScreen
-                    ? document.mozCancelFullScreen()
-                    : document.webkitCancelFullScreen &&
+                  ? document.mozCancelFullScreen()
+                  : document.webkitCancelFullScreen &&
                     document.webkitCancelFullScreen()
                 : document.documentElement.requestFullscreen
-                  ? document.documentElement.requestFullscreen()
-                  : document.documentElement.mozRequestFullScreen
-                    ? document.documentElement.mozRequestFullScreen()
-                    : document.documentElement.webkitRequestFullscreen &&
-                    document.documentElement.webkitRequestFullscreen(
-                      Element.ALLOW_KEYBOARD_INPUT
-                    );
+                ? document.documentElement.requestFullscreen()
+                : document.documentElement.mozRequestFullScreen
+                ? document.documentElement.mozRequestFullScreen()
+                : document.documentElement.webkitRequestFullscreen &&
+                  document.documentElement.webkitRequestFullscreen(
+                    Element.ALLOW_KEYBOARD_INPUT
+                  );
           }),
             document.addEventListener("fullscreenchange", e),
             document.addEventListener("webkitfullscreenchange", e),
@@ -127,7 +127,7 @@ var App = (() =>
                       (e.className =
                         e.dataset.originalClass + " " + this.value);
                   }),
-                document.getElementById("liveAlertPlaceholder")),
+              document.getElementById("liveAlertPlaceholder")),
             t = document.getElementById("liveAlertBtn");
           t &&
             t.addEventListener("click", function () {
@@ -163,25 +163,25 @@ var App = (() =>
           e(),
             window.addEventListener("resize", e),
             $("#side-menu").length &&
-            ($("#side-menu li .collapse").on({
-              "show.bs.collapse": function (e) {
-                e = $(e.target).parents(".collapse.show");
-                $("#side-menu .collapse.show").not(e).collapse("hide");
-              },
-            }),
+              ($("#side-menu li .collapse").on({
+                "show.bs.collapse": function (e) {
+                  e = $(e.target).parents(".collapse.show");
+                  $("#side-menu .collapse.show").not(e).collapse("hide");
+                },
+              }),
               $("#side-menu a").each(function () {
                 var e = window.location.href.split(/[?#]/)[0];
                 this.href == e &&
                   ($(this).addClass("active"),
-                    $(this).parent().addClass("menuitem-active"),
-                    $(this).parent().parent().parent().addClass("show"),
-                    $(this)
-                      .parent()
-                      .parent()
-                      .parent()
-                      .parent()
-                      .addClass("menuitem-active"),
-                    "sidebar-menu" !==
+                  $(this).parent().addClass("menuitem-active"),
+                  $(this).parent().parent().parent().addClass("show"),
+                  $(this)
+                    .parent()
+                    .parent()
+                    .parent()
+                    .parent()
+                    .addClass("menuitem-active"),
+                  "sidebar-menu" !==
                     (e = $(this)
                       .parent()
                       .parent()
@@ -189,16 +189,16 @@ var App = (() =>
                       .parent()
                       .parent()
                       .parent()).attr("id") && e.addClass("show"),
-                    $(this)
-                      .parent()
-                      .parent()
-                      .parent()
-                      .parent()
-                      .parent()
-                      .parent()
-                      .parent()
-                      .addClass("menuitem-active"),
-                    "wrapper" !==
+                  $(this)
+                    .parent()
+                    .parent()
+                    .parent()
+                    .parent()
+                    .parent()
+                    .parent()
+                    .parent()
+                    .addClass("menuitem-active"),
+                  "wrapper" !==
                     (e = $(this)
                       .parent()
                       .parent()
@@ -209,17 +209,17 @@ var App = (() =>
                       .parent()
                       .parent()
                       .parent()).attr("id") && e.addClass("show"),
-                    (e = $(this)
-                      .parent()
-                      .parent()
-                      .parent()
-                      .parent()
-                      .parent()
-                      .parent()
-                      .parent()
-                      .parent()
-                      .parent()
-                      .parent()).is("body") || e.addClass("menuitem-active"));
+                  (e = $(this)
+                    .parent()
+                    .parent()
+                    .parent()
+                    .parent()
+                    .parent()
+                    .parent()
+                    .parent()
+                    .parent()
+                    .parent()
+                    .parent()).is("body") || e.addClass("menuitem-active"));
               }));
         },
       },
@@ -573,7 +573,7 @@ document.addEventListener("DOMContentLoaded", function () {
     typeof views !== "string"
       ? 0
       : parseFloat(views.toUpperCase()) *
-      (views.toUpperCase().includes("K") ? 1000 : 1);
+        (views.toUpperCase().includes("K") ? 1000 : 1);
   const parseExpiry = (expiry) =>
     typeof expiry !== "string" || expiry === "-" ? Infinity : parseInt(expiry);
   const getStatusBadge = (status) =>
@@ -742,21 +742,22 @@ document.addEventListener("DOMContentLoaded", function () {
                                 <input class="form-check-input region-checkbox" type="checkbox" id="region-${regionId}" data-region="${region}" checked>
                                 <label class="form-check-label fw-bold" for="region-${regionId}">${region}</label>
                             </div>
-                            <span class="text-muted small me-2">${countries.length
-            } countries</span>
+                            <span class="text-muted small me-2">${
+                              countries.length
+                            } countries</span>
                         </button>
                     </h2>
                     <div id="collapse-${regionId}" class="accordion-collapse collapse" data-bs-parent="#territoryAccordion">
                         <div class="accordion-body">
                             <div class="territory-list-inner">${countries
-              .map(
-                (c) => `
+                              .map(
+                                (c) => `
                                 <div class="form-check">
                                     <input class="form-check-input country-checkbox" type="checkbox" value="${c.code}" id="country-${c.code}" data-region="${region}" checked>
                                     <label class="form-check-label" for="country-${c.code}">${c.name}</label>
                                 </div>`
-              )
-              .join("")}
+                              )
+                              .join("")}
                             </div>
                         </div>
                     </div>
@@ -835,231 +836,184 @@ document.addEventListener("DOMContentLoaded", function () {
 // claim-data-page js
 // In your app.js, replace the entire .admin-claim-data-page block with this:
 document.addEventListener("DOMContentLoaded", function () {
-  const ownershipPageContainer = document.querySelector(
-    ".admin-claim-data-page"
-  );
+  const page = document.querySelector(".admin-claim-data-page");
+  if (!page) return;
 
-  if (ownershipPageContainer) {
-    // --- DATA ---
-    let claimingRequests = [
-      {
-        id: 1,
-        songName: "Cosmic Drift",
-        artist: "Orion Sun",
-        isrc: "US1232500004",
-        instagramAudio: "https://instagram.com/audio/123",
-        reelMerge: "https://instagram.com/reel/xyz",
-        status: "pending",
-        artwork:
-          "https://i.scdn.co/image/ab67616d0000b273e6f6a7f1b2b2b2b2b2b2b2b2",
-        matchingTime: "N/A",
-      },
-      {
-        id: 2,
-        songName: "Neon Tides",
-        artist: "Cyber Lazer",
-        isrc: "US1232500005",
-        instagramAudio: "https://instagram.com/audio/456",
-        reelMerge: "https://instagram.com/reel/abc",
-        matchingTime: "00:30-01:00",
-        status: "pending",
-        artwork:
-          "https://i.scdn.co/image/ab67616d0000b273f4f4f4f4f4f4f4f4f4f4f4f4",
-      },
-      {
-        id: 3,
-        songName: "Lost Signal",
-        artist: "Ghost FM",
-        isrc: "US1232500006",
-        instagramAudio: "https://instagram.com/audio/789",
-        reelMerge: "https://instagram.com/reel/def",
-        matchingTime: "01:00-01:15",
-        status: "rejected",
-        artwork:
-          "https://i.scdn.co/image/ab67616d0000b273a8a8a8a8a8a8a8a8a8a8a8a8",
-      },
-    ];
-    let currentFilter = "all";
+  let claimingRequests = [];
+  let currentFilter = "all";
+  const table = $("#datatable");
+  const releaseModalEl = document.getElementById("claimingRequestModal");
+  const releaseModal = new bootstrap.Modal(releaseModalEl);
 
-    // --- DOM ELEMENTS ---
-    const table = $("#datatable");
-    const releaseModalEl = document.getElementById("releaseModal");
-    const releaseModal = new bootstrap.Modal(releaseModalEl);
+  // Icons + Badge helpers
+  const getStatusIcon = (status) => {
+    const s = (status || "").toLowerCase();
+    const icons  = { approved: "check-circle", pending: "clock", rejected: "x-circle" };
+    const colors = { approved: "text-success", pending: "text-warning", rejected: "text-danger" };
+    return `<i data-feather="${icons[s] || "help-circle"}" class="${colors[s] || "text-muted"}"></i>`;
+  };
 
-    // --- HELPER FUNCTIONS ---
-    const getStatusIcon = (status) => {
-      const icons = {
-        approved: "check-circle",
-        pending: "clock",
-        rejected: "x-circle",
-      };
-      const colors = {
-        approved: "text-success",
-        pending: "text-warning",
-        rejected: "text-danger",
-      };
-      return `<i data-feather="${icons[status] || "help-circle"}" class="${colors[status] || "text-muted"
-        }"></i>`;
-    };
-    const getStatusBadge = (status) => {
-      const config = {
-        approved: "status-approved",
-        pending: "status-pending",
-        rejected: "status-rejected",
-      };
-      return `<span class="badge status-badge ${config[status] || "bg-secondary"
-        }">${status.toUpperCase()}</span>`;
-    };
-    const createLink = (url, iconClass) =>
-      url
-        ? `<a href="${url}" target="_blank" class="link-icon me-2"><i class="bi ${iconClass}"></i></a>`
-        : "";
+  const getStatusBadge = (status) => {
+    const s = (status || "").toLowerCase();
+    const cls = { approved: "status-approved", pending: "status-pending", rejected: "status-rejected" }[s] || "bg-secondary";
+    return `<span class="badge status-badge ${cls}">${s.toUpperCase()}</span>`;
+  };
 
-    // --- DATATABLE INITIALIZATION ---
-    const dataTableInstance = table.DataTable({
-      destroy: true,
-      data: [],
-      paging: true,
-      searching: true,
-      info: true,
-      lengthChange: true,
-      autoWidth: false,
-      columns: [
-        {
-          data: "status",
-          className: "text-center",
-          orderable: false,
-          render: (data) => getStatusIcon(data),
-        },
-        {
-          data: null,
-          orderable: true,
-          render: (data, type, row) => `
-                    <div class="release-title"><a href="#" class="view-details-link" data-id="${row.id}">${row.songName}</a></div>
-                    <div class="text-muted small">${row.artist}</div>`,
-        },
-        { data: "isrc", defaultContent: "N/A" },
-        {
-          data: null,
-          className: "text-center",
-          orderable: false,
-          render: (data, type, row) =>
-            createLink(row.instagramAudio, "bi-music-note-beamed") +
-            " " +
-            createLink(row.reelMerge, "bi-camera-reels"),
-        },
-        {
-          data: "status",
-          className: "text-center",
-          render: (data) =>
-            `<div class="d-flex justify-content-center">${getStatusBadge(
-              data
-            )}</div>`,
-        },
-      ],
-      drawCallback: () => {
-        feather.replace();
-      },
-      language: {
-        info: "Showing _START_ to _END_ of _TOTAL_ entries",
-        infoEmpty: "Showing 0 to 0 of 0 entries",
-        infoFiltered: "(filtered from _MAX_ total entries)",
-        zeroRecords: "No matching requests found",
-        emptyTable: "No requests available",
-        search: "_INPUT_",
-        searchPlaceholder: "Search records...",
-      },
-    });
+  const createLink = (url, iconClass) =>
+    url && url !== "N/A" ? `<a href="${url}" target="_blank" class="link-icon me-2"><i class="bi ${iconClass}"></i></a>` : "";
 
-    // --- RENDER & UPDATE FUNCTIONS ---
-
-    // This is the single source of truth for filtering and drawing the table
-    function applyFiltersAndDraw() {
-      // Define the custom filter function
-      $.fn.dataTable.ext.search.pop(); // Clear any previous custom filters
-      $.fn.dataTable.ext.search.push(function (settings, data, dataIndex) {
-        if (currentFilter === "all") {
-          return true; // Show all rows if filter is 'all'
-        }
-        // Compare the row's status with the current filter
-        const rowStatus = claimingRequests[dataIndex].status;
-        return rowStatus === currentFilter;
-      });
-
-      // Redraw the table to apply the filter
-      dataTableInstance.draw();
+  // Fetch data
+  async function fetchClaimingData() {
+    try {
+      const res = await fetch("/superadmin/api/claiming-data");
+      const json = await res.json();
+      if (!json.success) throw new Error(json.error || "Failed to fetch");
+      claimingRequests = json.data || [];
+      dataTableInstance.clear().rows.add(claimingRequests).draw();
+      applyFiltersAndDraw();
+    } catch (e) {
+      console.error(e);
+      alert("Failed to load claiming data");
     }
-
-    function openReleaseModal(id) {
-      const req = claimingRequests.find((r) => r.id === id);
-      if (!req) return;
-
-      document.getElementById("releaseTitle").textContent = req.songName;
-      document.getElementById("releaseArtistHeader").textContent = req.artist;
-      document.getElementById("releaseAlbumArtwork").src = req.artwork;
-      releaseModalEl.querySelector(
-        ".bg-image-blurred"
-      ).style.backgroundImage = `url('${req.artwork}')`;
-      document.getElementById("releaseStatusBadges").innerHTML = getStatusBadge(
-        req.status
-      );
-      document.getElementById("modal-isrc").textContent = req.isrc || "N/A";
-      document.getElementById("modal-matchingTime").textContent =
-        req.matchingTime || "N/A";
-      document.getElementById("modal-instagramAudio").innerHTML =
-        req.instagramAudio
-          ? `<a href="${req.instagramAudio}" target="_blank">${req.instagramAudio}</a>`
-          : "N/A";
-      document.getElementById("modal-reelMerge").innerHTML = req.reelMerge
-        ? `<a href="${req.reelMerge}" target="_blank">${req.reelMerge}</a>`
-        : "N/A";
-
-      releaseModalEl.dataset.currentId = req.id;
-      releaseModal.show();
-    }
-
-    function handleStatusUpdate(status) {
-      const requestId = parseInt(releaseModalEl.dataset.currentId, 10);
-      const request = claimingRequests.find((r) => r.id === requestId);
-      if (request) {
-        request.status = status;
-        applyFiltersAndDraw(); // Redraw table with updated data
-      }
-      releaseModal.hide();
-    }
-
-    // --- EVENT LISTENERS ---
-    document.getElementById("filterTabs").addEventListener("click", (e) => {
-      if (e.target.matches("a.nav-link[data-filter]")) {
-        e.preventDefault();
-        currentFilter = e.target.dataset.filter;
-        document
-          .querySelectorAll("#filterTabs .nav-link")
-          .forEach((tab) => tab.classList.remove("active"));
-        e.target.classList.add("active");
-        applyFiltersAndDraw(); // Apply the custom filter
-      }
-    });
-
-    $("#datatable tbody").on("click", ".view-details-link", function (e) {
-      e.preventDefault();
-      openReleaseModal(parseInt($(this).data("id"), 10));
-    });
-
-    document
-      .getElementById("approveBtn")
-      .addEventListener("click", () => handleStatusUpdate("approved"));
-    document
-      .getElementById("rejectBtn")
-      .addEventListener("click", () => handleStatusUpdate("rejected"));
-
-    // --- INITIAL RENDER ---
-    // Load all data into the table first
-    dataTableInstance.clear().rows.add(claimingRequests).draw();
-    // Then apply the initial filter (which is 'all')
-    applyFiltersAndDraw();
   }
+
+  // Update status
+  async function updateClaimingStatus(id, status) {
+    try {
+      const res = await fetch(`/superadmin/api/claiming-data/${id}/status`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "X-Requested-With": "XMLHttpRequest" },
+        body: JSON.stringify({ status }),
+      });
+      const json = await res.json();
+      if (!json.success) throw new Error(json.error || "Failed to update");
+
+      const idx = claimingRequests.findIndex((r) => r.id === id);
+      if (idx !== -1) claimingRequests[idx].status = status;
+      applyFiltersAndDraw();
+      return true;
+    } catch (e) {
+      console.error(e);
+      alert("Failed to update status");
+      return false;
+    }
+  }
+
+  // DataTable
+  const dataTableInstance = table.DataTable({
+    destroy: true,
+    data: [],
+    paging: true,
+    searching: true,
+    info: true,
+    lengthChange: true,
+    autoWidth: false,
+    columns: [
+      { data: "status", className: "text-center", orderable: false, render: (d) => getStatusIcon(d) },
+      {
+        data: null,
+        orderable: true,
+        render: (row) => `
+          <div class="release-title">
+            <a href="#" class="view-details-link" data-id="${row.id}">${row.songName}</a>
+          </div>
+          <div class="text-muted small">${row.artist}</div>`,
+      },
+      { data: "upc",  defaultContent: "N/A", render: (d) => d || "N/A" },
+      { data: "isrc", className: "text-center", defaultContent: "N/A", render: (d) => d || "N/A" },
+      { data: "status", className: "text-center", render: (d) => `<div class="d-flex justify-content-center">${getStatusBadge(d)}</div>` },
+      {
+        data: null,
+        className: "text-center",
+        orderable: false,
+        render: (row) => createLink(row.instagramAudio, "bi-music-note-beamed") + createLink(row.reelMerge, "bi-camera-reels"),
+      },
+    ],
+    drawCallback: () => feather.replace(),
+  });
+
+  // Filtering
+  function applyFiltersAndDraw() {
+    $.fn.dataTable.ext.search.pop();
+    $.fn.dataTable.ext.search.push(function (settings, data, dataIndex) {
+      if (currentFilter === "all") return true;
+      const row = dataTableInstance.row(dataIndex).data();
+      return (row?.status || "").toLowerCase() === currentFilter;
+    });
+    dataTableInstance.draw();
+  }
+
+  // Modal Open
+  function openReleaseModal(id) {
+    const r = claimingRequests.find((x) => x.id === id);
+    if (!r) return;
+    releaseModalEl.dataset.currentId = r.id;
+
+    // Fill modal with table data
+    document.getElementById("releaseTitle").textContent = r.songName;
+    document.getElementById("releaseArtistHeader").textContent = r.artist;
+    document.getElementById("releaseAlbumArtwork").src = r.artwork;
+    releaseModalEl.querySelector(".bg-image-blurred").style.backgroundImage = `url('${r.artwork}')`;
+
+    // Status dropdown inside modal
+    const statusDropdown = `
+      <select id="modal-status-dropdown" class="form-select form-select-sm w-auto">
+        <option value="pending" ${r.status === "pending" ? "selected" : ""}>Pending</option>
+        <option value="approved" ${r.status === "approved" ? "selected" : ""}>Approved</option>
+        <option value="rejected" ${r.status === "rejected" ? "selected" : ""}>Rejected</option>
+      </select>`;
+    document.getElementById("releaseStatusBadges").innerHTML = statusDropdown;
+
+    // Other fields
+    document.getElementById("modal-isrc").textContent = r.isrc || "N/A";
+    document.getElementById("modal-matchingTime").textContent = r.matchingTime || "N/A";
+    document.getElementById("modal-instagramAudio").innerHTML = r.instagramAudio ? `<a href="${r.instagramAudio}" target="_blank">${r.instagramAudio}</a>` : "N/A";
+    document.getElementById("modal-reelMerge").innerHTML = r.reelMerge ? `<a href="${r.reelMerge}" target="_blank">${r.reelMerge}</a>` : "N/A";
+
+    releaseModal.show();
+
+    // Status change handler
+    const dropdown = document.getElementById("modal-status-dropdown");
+    dropdown.addEventListener("change", async (e) => {
+      const newStatus = e.target.value;
+      const ok = await updateClaimingStatus(r.id, newStatus);
+      if (ok) {
+        e.target.value = newStatus;
+      } else {
+        e.target.value = r.status;
+      }
+    });
+  }
+
+  // Event: filter tabs
+  document.getElementById("filterTabs").addEventListener("click", (e) => {
+    if (e.target.matches("a.nav-link[data-filter]")) {
+      e.preventDefault();
+      currentFilter = e.target.dataset.filter;
+      document.querySelectorAll("#filterTabs .nav-link").forEach((t) => t.classList.remove("active"));
+      e.target.classList.add("active");
+      applyFiltersAndDraw();
+    }
+  });
+
+  // Event: row click -> open modal
+  $("#datatable tbody").on("click", ".view-details-link", function (e) {
+    e.preventDefault();
+    openReleaseModal(parseInt($(this).data("id"), 10));
+  });
+
+  // Export button
+  document.getElementById("exportCsvBtn").addEventListener("click", () => {
+    window.location.href = "/superadmin/claiming-data/export-csv";
+  });
+
+  fetchClaimingData();
 });
+
+
+
+
+
 // merge-data-page js
 // Add this entire new block to your app.js file
 document.addEventListener("DOMContentLoaded", function () {
@@ -1128,8 +1082,9 @@ document.addEventListener("DOMContentLoaded", function () {
         pending: "text-warning",
         rejected: "text-danger",
       };
-      return `<i data-feather="${icons[status] || "help-circle"}" class="${colors[status] || "text-muted"
-        }"></i>`;
+      return `<i data-feather="${icons[status] || "help-circle"}" class="${
+        colors[status] || "text-muted"
+      }"></i>`;
     };
     const getStatusBadge = (status) => {
       const config = {
@@ -1137,8 +1092,9 @@ document.addEventListener("DOMContentLoaded", function () {
         pending: "status-pending",
         rejected: "status-rejected",
       };
-      return `<span class="badge status-badge ${config[status] || "bg-secondary"
-        }">${status.toUpperCase()}</span>`;
+      return `<span class="badge status-badge ${
+        config[status] || "bg-secondary"
+      }">${status.toUpperCase()}</span>`;
     };
     const createLink = (url, iconClass) =>
       url
@@ -1412,8 +1368,9 @@ document.addEventListener("DOMContentLoaded", function () {
         pending: "text-warning",
         rejected: "text-danger",
       };
-      return `<i data-feather="${icons[status] || "help-circle"}" class="${colors[status] || "text-muted"
-        }"></i>`;
+      return `<i data-feather="${icons[status] || "help-circle"}" class="${
+        colors[status] || "text-muted"
+      }"></i>`;
     };
     const getStatusBadge = (status) => {
       const config = {
@@ -1421,8 +1378,9 @@ document.addEventListener("DOMContentLoaded", function () {
         pending: "status-pending",
         rejected: "status-rejected",
       };
-      return `<span class="badge status-badge ${config[status] || "bg-secondary"
-        }">${status.toUpperCase()}</span>`;
+      return `<span class="badge status-badge ${
+        config[status] || "bg-secondary"
+      }">${status.toUpperCase()}</span>`;
     };
     const createLink = (url, iconClass) =>
       url
@@ -1623,7 +1581,7 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 });
 
-// releases-page js
+// releases-page show and redirecting logic js
 
 document.addEventListener("DOMContentLoaded", function () {
   const releasesPageContainer = document.querySelector(".admin-releases-page");
@@ -1686,10 +1644,11 @@ document.addEventListener("DOMContentLoaded", function () {
             // Numeric status mapping: 1=Review, 2=Takedown, 3=Delivered, 4=Rejected, 5=Approved
             // For Delivered (3) and Takedown (2), show view page
             // For others, show edit page
-            const url = (row.status_numeric == 3 || row.status_numeric == 2)
-              ? `/superadmin/releases/view/${row.id}` 
-              : `/superadmin/releases/edit/${row.id}`;
-            
+            const url =
+              row.status_numeric == 3 || row.status_numeric == 2
+                ? `/superadmin/releases/view/${row.id}`
+                : `/superadmin/releases/edit/${row.id}`;
+
             return `
               <div>     
                   <div class="release-title">       
@@ -1747,12 +1706,15 @@ document.addEventListener("DOMContentLoaded", function () {
       function (e) {
         const id = parseInt($(this).data("id"), 10);
         const status = $(this).data("status");
-        
+
         // Log for debugging
         console.log("Navigating for ID:", id, "Status:", status);
-        
+
         if (status === 3 || status === 2) {
-          console.log("Navigating to view page - Status:", status === 3 ? "Delivered" : "Takedown");
+          console.log(
+            "Navigating to view page - Status:",
+            status === 3 ? "Delivered" : "Takedown"
+          );
         } else {
           console.log("Navigating to edit page");
         }
@@ -2084,189 +2046,84 @@ $(document).ready(function () {
   });
 });
 
-// claiming-req js
-document.addEventListener("DOMContentLoaded", function () {
-  // This is the unique container for your page
-  const claimReqPageContainer = document.querySelector(".admin-claim-req-page");
-
-  // By wrapping all the code in this 'if' block, it will ONLY run on the claiming request page.
-  if (claimReqPageContainer) {
-    // --- DATA ---
-    let claimingRequests = [
+// claiming-req.js
+$(document).ready(function () {
+  let table = $("#claimingRequestTableBody").DataTable({
+    destroy: true,
+    ajax: "/superadmin/api/claiming-req",
+    columns: [
       {
-        id: 1,
-        songName: "Cosmic Drift",
-        artistName: "Orion Sun",
-        isrc: "US1232500004",
-        instagram: "https://instagram.com/orionsun",
-        facebook: "https://facebook.com/orionsun",
-        status: "Pending",
+        data: "status",
+        render: function (data) {
+          let icons = {
+            Approved: "check-circle",
+            Pending: "clock",
+            Rejected: "x-circle",
+          };
+          let colors = {
+            Approved: "text-success",
+            Pending: "text-warning",
+            Rejected: "text-danger",
+          };
+          return `<i data-feather="${icons[data] || "help-circle"}" class="${
+            colors[data] || "text-muted"
+          }"></i>`;
+        },
+        orderable: false,
+        className: "text-center",
       },
       {
-        id: 2,
-        songName: "Neon Tides",
-        artistName: "Cyber Lazer",
-        isrc: "US1232500005",
-        instagram: "https://instagram.com/cyberlazer",
-        facebook: "",
-        status: "Pending",
-      },
-      {
-        id: 3,
-        songName: "Lost Signal",
-        artistName: "Ghost FM",
-        isrc: "US1232500006",
-        instagram: "",
-        facebook: "https://facebook.com/ghostfm",
-        status: "Rejected",
-      },
-    ];
-
-    // --- DOM ELEMENTS ---
-    const tableBody = document.getElementById("tableBody");
-    const exportCsvBtn = document.getElementById("exportCsvBtn");
-    const newClaimForm = document.querySelector("#claimingRequestModal form");
-    const newClaimModal = new bootstrap.Modal(
-      document.getElementById("claimingRequestModal")
-    );
-
-    // --- RENDER & UPDATE FUNCTIONS ---
-    function renderTable(data) {
-      if (!data || data.length === 0) {
-        // FIXED: colspan changed from 6 to 5 to match the table headers
-        tableBody.innerHTML = `
-                    <tr>
-                        <td colspan="5" class="empty-state">
-                            <i data-feather="inbox"></i>
-                            <div>
-                                <h5 class="mb-2">No Claiming Requests found</h5>
-                                <p class="mb-0">Click 'New Claiming Request' to get started.</p>
-                            </div>
-                        </td>
-                    </tr>`;
-      } else {
-        tableBody.innerHTML = data
-          .map(
-            (request) => `
-                    <tr>
-                        <td class="text-center align-middle">${getStatusIcon(
-              request.status
-            )}</td>
-                        <td class="align-middle">
-                            <div>
-                                <div class="release-title">${request.songName
+        data: null,
+        render: function (data) {
+          return `
+            <div>
+              <div class="release-title">${data.title || "Untitled"}</div>
+              <div class="release-artist text-muted small">${
+                data.artist || "Unknown"
               }</div>
-                                <div class="release-artist text-muted small">${request.artistName
-              }</div>
-                            </div>
-                        </td>
-                        <td class="align-middle">${request.isrc || "N/A"}</td>
-                        <td class="align-middle">
-                            ${request.instagram
-                ? `<a href="${request.instagram}" target="_blank" class="social-link me-2 fs-5"><i class="bi bi-instagram"></i></a>`
-                : ""
-              }
-                            ${request.facebook
-                ? `<a href="${request.facebook}" target="_blank" class="social-link fs-5"><i class="bi bi-facebook"></i></a>`
-                : ""
-              }
-                        </td>
-                        <td class="align-middle">${getStatusBadge(
-                request.status
-              )}</td>
-                    </tr>
-                `
-          )
-          .join("");
-      }
+            </div>`;
+        },
+      },
+      { data: "isrc", defaultContent: "N/A" },
+      { data: "upc", defaultContent: "N/A" },
+      {
+        data: "status",
+        render: function (data) {
+          let badgeClasses = {
+            Approved: "success",
+            Pending: "warning",
+            Rejected: "danger",
+          };
+          return `<span class="badge bg-${
+            badgeClasses[data] || "secondary"
+          }">${data}</span>`;
+        },
+        className: "text-center",
+      },
+    ],
+    drawCallback: function () {
       feather.replace();
-    }
+      let api = this.api();
+      if (api.rows({ page: "current" }).data().length === 0) {
+        $("#claimingRequestTableBody tbody").html(`
+          <tr>
+            <td colspan="5" class="empty-state text-center">
+              <i data-feather="inbox"></i>
+              <div>
+                <h5 class="mb-2">No Claiming Requests found</h5>
+                <p class="mb-0">Click 'New Claiming Request' to get started.</p>
+              </div>
+            </td>
+          </tr>
+        `);
+        feather.replace();
+      }
+    },
+  });
 
-    function getStatusIcon(status) {
-      const icons = {
-        Approved: "check-circle",
-        Pending: "clock",
-        Rejected: "x-circle",
-      };
-      const colors = {
-        Approved: "text-success",
-        Pending: "text-warning",
-        Rejected: "text-danger",
-      };
-      return `<i data-feather="${icons[status] || "help-circle"}" class="${colors[status] || "text-muted"
-        }"></i>`;
-    }
-
-    function getStatusBadge(status) {
-      const badgeClasses = {
-        Approved: "success",
-        Pending: "warning",
-        Rejected: "danger",
-      };
-      return `<span class="badge bg-${badgeClasses[status] || "secondary"
-        }">${status}</span>`;
-    }
-
-    // --- EVENT LISTENERS ---
-
-    // ADDED: Logic to handle new claim form submission
-    newClaimForm.addEventListener("submit", function (e) {
-      e.preventDefault();
-
-      const newRequest = {
-        id: Date.now(),
-        artistName: document.getElementById("artistName").value,
-        songName: document.getElementById("songName").value,
-        isrc: document.getElementById("upc").value, // Matches your HTML id="upc"
-        instagram: document.getElementById("instagramLink").value,
-        facebook: document.getElementById("facebookLink").value,
-        status: "Pending", // New requests are always pending
-      };
-
-      claimingRequests.unshift(newRequest); // Add to the beginning of the array
-      renderTable(claimingRequests); // Re-render the table
-      newClaimForm.reset(); // Clear the form
-      newClaimModal.hide(); // Hide the modal
-    });
-
-    // ADDED: Logic for CSV export
-    exportCsvBtn.addEventListener("click", function () {
-      const headers = [
-        "ID",
-        "Song Name",
-        "Artist Name",
-        "ISRC",
-        "Instagram",
-        "Facebook",
-        "Status",
-      ];
-      const rows = claimingRequests.map((req) => [
-        req.id,
-        req.songName,
-        req.artistName,
-        req.isrc,
-        req.instagram,
-        req.facebook,
-        req.status,
-      ]);
-
-      let csvContent =
-        "data:text/csv;charset=utf-8," +
-        headers.join(",") +
-        "\n" +
-        rows.map((e) => e.join(",")).join("\n");
-
-      const link = document.createElement("a");
-      link.setAttribute("href", encodeURI(csvContent));
-      link.setAttribute("download", "claiming-requests.csv");
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-    });
-
-    // --- INITIAL RENDER ---
-    renderTable(claimingRequests);
-  }
+  window.reloadClaimingRequests = function () {
+    table.ajax.reload(null, false);
+  };
 });
 
 // relocation-request js
@@ -2336,30 +2193,34 @@ document.addEventListener("DOMContentLoaded", function () {
             (request) => `
                     <tr>
                         <td class="text-center align-middle">${getStatusIcon(
-              request.status
-            )}</td>
+                          request.status
+                        )}</td>
                         <td class="align-middle">
                             <div>
-                                <div class="release-title">${request.songName
-              }</div>
-                                <div class="release-artist text-muted small">${request.artistName
-              }</div>
+                                <div class="release-title">${
+                                  request.songName
+                                }</div>
+                                <div class="release-artist text-muted small">${
+                                  request.artistName
+                                }</div>
                             </div>
                         </td>
                         <td class="align-middle">${request.isrc || "N/A"}</td>
                         <td class="align-middle">
-                            ${request.instagram
-                ? `<a href="${request.instagram}" target="_blank" class="social-link me-2 fs-5"><i class="bi bi-instagram"></i></a>`
-                : ""
-              }
-                            ${request.facebook
-                ? `<a href="${request.facebook}" target="_blank" class="social-link fs-5"><i class="bi bi-facebook"></i></a>`
-                : ""
-              }
+                            ${
+                              request.instagram
+                                ? `<a href="${request.instagram}" target="_blank" class="social-link me-2 fs-5"><i class="bi bi-instagram"></i></a>`
+                                : ""
+                            }
+                            ${
+                              request.facebook
+                                ? `<a href="${request.facebook}" target="_blank" class="social-link fs-5"><i class="bi bi-facebook"></i></a>`
+                                : ""
+                            }
                         </td>
                         <td class="align-middle">${getStatusBadge(
-                request.status
-              )}</td>
+                          request.status
+                        )}</td>
                     </tr>
                 `
           )
@@ -2379,8 +2240,9 @@ document.addEventListener("DOMContentLoaded", function () {
         Pending: "text-warning",
         Rejected: "text-danger",
       };
-      return `<i data-feather="${icons[status] || "help-circle"}" class="${colors[status] || "text-muted"
-        }"></i>`;
+      return `<i data-feather="${icons[status] || "help-circle"}" class="${
+        colors[status] || "text-muted"
+      }"></i>`;
     }
 
     function getStatusBadge(status) {
@@ -2389,8 +2251,9 @@ document.addEventListener("DOMContentLoaded", function () {
         Pending: "warning",
         Rejected: "danger",
       };
-      return `<span class="badge bg-${badgeClasses[status] || "secondary"
-        }">${status}</span>`;
+      return `<span class="badge bg-${
+        badgeClasses[status] || "secondary"
+      }">${status}</span>`;
     }
 
     // --- EVENT LISTENERS ---
@@ -2512,8 +2375,9 @@ document.addEventListener("DOMContentLoaded", function () {
         Pending: "text-warning",
         Rejected: "text-danger",
       };
-      return `<i data-feather="${icons[status] || "help-circle"}" class="${colors[status] || "text-muted"
-        }"></i>`;
+      return `<i data-feather="${icons[status] || "help-circle"}" class="${
+        colors[status] || "text-muted"
+      }"></i>`;
     }
 
     function getStatusBadge(status) {
@@ -2523,8 +2387,9 @@ document.addEventListener("DOMContentLoaded", function () {
         Rejected: "danger",
       };
       const textClass = status === "Pending" ? "text-dark" : "";
-      return `<span class="badge bg-${badgeClasses[status] || "secondary"
-        } ${textClass}">${status}</span>`;
+      return `<span class="badge bg-${
+        badgeClasses[status] || "secondary"
+      } ${textClass}">${status}</span>`;
     }
 
     function exportToCsv(filename, data) {
@@ -2596,8 +2461,8 @@ document.addEventListener("DOMContentLoaded", function () {
             (request) => `
                     <tr>
                         <td class="text-center">${getStatusIcon(
-              request.status
-            )}</td>
+                          request.status
+                        )}</td>
                         <td>
                             <div class="release-title">
                                 <a href="#">${request.songName}</a>
@@ -2605,16 +2470,18 @@ document.addEventListener("DOMContentLoaded", function () {
                         </td>
                         <td>${request.isrc || "N/A"}</td>
                         <td class="text-center">
-                            ${request.instagramAudio
-                ? `<a href="${request.instagramAudio}" target="_blank" class="link-icon" title="Instagram Audio"><i class="bi bi-music-note-beamed"></i></a>`
-                : "N/A"
-              }
+                            ${
+                              request.instagramAudio
+                                ? `<a href="${request.instagramAudio}" target="_blank" class="link-icon" title="Instagram Audio"><i class="bi bi-music-note-beamed"></i></a>`
+                                : "N/A"
+                            }
                         </td>
                         <td class="text-center">
-                            ${request.reelMerge
-                ? `<a href="${request.reelMerge}" target="_blank" class="link-icon" title="Reel Merge"><i class="bi bi-camera-reels"></i></a>`
-                : "N/A"
-              }
+                            ${
+                              request.reelMerge
+                                ? `<a href="${request.reelMerge}" target="_blank" class="link-icon" title="Reel Merge"><i class="bi bi-camera-reels"></i></a>`
+                                : "N/A"
+                            }
                         </td>
                         <td>${request.matchingTime || "N/A"}</td>
                         <td>${getStatusBadge(request.status)}</td>
@@ -3087,18 +2954,22 @@ document.addEventListener("DOMContentLoaded", function () {
         !data || data.length === 0
           ? `<tr><td colspan="10" class="text-center p-5"><h5>No matching conflicts found.</h5></td></tr>`
           : data
-            .map(
-              (req) => `
+              .map(
+                (req) => `
                 <tr style="cursor: pointer;" data-bs-toggle="offcanvas" data-bs-target="#conflictResolutionOffcanvas"
-                    data-song-name="${req.assetTitle}" data-artist-name="${req.artist
+                    data-song-name="${req.assetTitle}" data-artist-name="${
+                  req.artist
                 }" data-isrc="${req.isrc}" 
-                    data-cover-url="${req.albumCoverUrl}" data-category="${req.category
+                    data-cover-url="${req.albumCoverUrl}" data-category="${
+                  req.category
                 }" data-other-party="${req.otherParty}">
                     <td class="text-center"><i class="bi bi-youtube text-danger fs-5"></i></td>
                     <td>${req.category}</td>
                     <td>${req.assetTitle}</td>
-                    <td><div class="fw-bold">${req.artist
-                }</div><small class="text-muted">Asset ID: ${req.assetId
+                    <td><div class="fw-bold">${
+                      req.artist
+                    }</div><small class="text-muted">Asset ID: ${
+                  req.assetId
                 }</small></td>
                     <td>${req.upc}</td>
                     <td>${req.otherParty}</td>
@@ -3107,8 +2978,8 @@ document.addEventListener("DOMContentLoaded", function () {
                     <td>${getStatusBadge(req.status)}</td>
                     <td><i class="bi bi-chevron-right text-muted"></i></td>
                 </tr>`
-            )
-            .join("");
+              )
+              .join("");
       document.getElementById(
         "pagination-text"
       ).textContent = `${data.length} of ${conflictRequests.length} results`;
@@ -3125,17 +2996,18 @@ document.addEventListener("DOMContentLoaded", function () {
                     <h2 class="accordion-header" id="heading-${regionId}">
                         <button class="accordion-button collapsed d-flex align-items-center" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-${regionId}" aria-expanded="false">
                             <div class="form-check me-auto pe-2"><input class="form-check-input region-checkbox" type="checkbox" id="region-${regionId}" data-region="${region}" checked><label class="form-check-label fw-bold" for="region-${regionId}">${region}</label></div>
-                            <span class="text-muted small me-2">${countries.length
-            } countries</span>
+                            <span class="text-muted small me-2">${
+                              countries.length
+                            } countries</span>
                         </button>
                     </h2>
                     <div id="collapse-${regionId}" class="accordion-collapse collapse" data-bs-parent="#territoryAccordion">
                         <div class="accordion-body"><div class="territory-list-inner">${countries
-              .map(
-                (country) =>
-                  `<div class="form-check"><input class="form-check-input country-checkbox" type="checkbox" value="${country.code}" id="country-${country.code}" data-region="${region}" checked><label class="form-check-label" for="country-${country.code}">${country.name}</label></div>`
-              )
-              .join("")}</div></div>
+                          .map(
+                            (country) =>
+                              `<div class="form-check"><input class="form-check-input country-checkbox" type="checkbox" value="${country.code}" id="country-${country.code}" data-region="${region}" checked><label class="form-check-label" for="country-${country.code}">${country.name}</label></div>`
+                          )
+                          .join("")}</div></div>
                     </div>
                 </div>`;
         })
@@ -3616,7 +3488,7 @@ document.addEventListener("DOMContentLoaded", function () {
       typeof views !== "string"
         ? 0
         : parseFloat(views.toUpperCase()) *
-        (views.toUpperCase().includes("K") ? 1000 : 1);
+          (views.toUpperCase().includes("K") ? 1000 : 1);
     const parseExpiry = (expiry) =>
       typeof expiry !== "string" || expiry === "-"
         ? Infinity
@@ -3791,21 +3663,22 @@ document.addEventListener("DOMContentLoaded", function () {
                                     <input class="form-check-input region-checkbox" type="checkbox" id="region-fb-${regionId}" data-region="${region}" checked>
                                     <label class="form-check-label fw-bold" for="region-fb-${regionId}">${region}</label>
                                 </div>
-                                <span class="text-muted small me-2">${countries.length
-              } countries</span>
+                                <span class="text-muted small me-2">${
+                                  countries.length
+                                } countries</span>
                             </button>
                         </h2>
                         <div id="collapse-fb-${regionId}" class="accordion-collapse collapse" data-bs-parent="#territoryAccordion">
                             <div class="accordion-body">
                                 <div class="territory-list-inner">${countries
-                .map(
-                  (c) => `
+                                  .map(
+                                    (c) => `
                                     <div class="form-check">
                                         <input class="form-check-input country-checkbox" type="checkbox" value="${c.code}" id="country-fb-${c.code}" data-region="${region}" checked>
                                         <label class="form-check-label" for="country-fb-${c.code}">${c.name}</label>
                                     </div>`
-                )
-                .join("")}
+                                  )
+                                  .join("")}
                                 </div>
                             </div>
                         </div>
@@ -4212,7 +4085,7 @@ const step1ValidationRules = {
   genre: { required: true, type: "select" },
   language: { required: true, type: "select" },
   upcEan: { upcEan: true },
-  artworkFile: { required: true, type: "file" },
+  artworkFile: { required: true, type: "file"},
 };
 
 const step2ValidationRules = {
@@ -4275,8 +4148,9 @@ document.addEventListener("DOMContentLoaded", function () {
     document.querySelector('input[name="releaseTitle"]')?.value !== "";
 
   // Initialize rejection modal
-  const rejectionModal = document.getElementById('rejectionModal') ? 
-    new bootstrap.Modal(document.getElementById('rejectionModal')) : null;
+  const rejectionModal = document.getElementById("rejectionModal")
+    ? new bootstrap.Modal(document.getElementById("rejectionModal"))
+    : null;
 
   function updateStepIndicator(step) {
     const steps = document.querySelectorAll(".step");
@@ -4422,7 +4296,7 @@ document.addEventListener("DOMContentLoaded", function () {
     artworkFileError.textContent = "";
     artworkFileError.style.display = "none";
 
-    // FIXED: In edit mode, if preview exists and no new file selected, it's valid
+    // In edit mode: valid if preview exists and no new file selected
     if (
       isEditMode &&
       artworkPreview &&
@@ -4435,13 +4309,12 @@ document.addEventListener("DOMContentLoaded", function () {
 
     if (!artworkFile.files || artworkFile.files.length === 0) {
       if (!isEditMode) {
-        // Only show error for new forms
         artworkUpload.classList.add("is-invalid");
         artworkFileError.textContent = "Please select an artwork file.";
         artworkFileError.style.display = "block";
         return false;
       }
-      return true; // Valid for edit mode without new file
+      return true;
     }
 
     const file = artworkFile.files[0];
@@ -4463,8 +4336,28 @@ document.addEventListener("DOMContentLoaded", function () {
       return false;
     }
 
-    artworkUpload.classList.add("is-valid");
-    return true;
+    return new Promise((resolve) => {
+      const img = new Image();
+      img.onload = function () {
+        if (this.width !== 3000 || this.height !== 3000) {
+          artworkUpload.classList.add("is-invalid");
+          artworkFileError.textContent =
+            "Artwork must be exactly 3000 x 3000 pixels.";
+          artworkFileError.style.display = "block";
+          resolve(false);
+        } else {
+          artworkUpload.classList.add("is-valid");
+          resolve(true);
+        }
+      };
+      img.onerror = function () {
+        artworkUpload.classList.add("is-invalid");
+        artworkFileError.textContent = "Invalid image file.";
+        artworkFileError.style.display = "block";
+        resolve(false);
+      };
+      img.src = URL.createObjectURL(file);
+    });
   }
 
   // FIXED: Audio validation for edit mode
@@ -4614,17 +4507,19 @@ document.addEventListener("DOMContentLoaded", function () {
   });
 
   // REJECTION MODAL HANDLERS
-  const rejectBtn = document.getElementById('rejectBtn');
-  const confirmRejectBtn = document.getElementById('confirmRejectBtn');
-  const rejectionMessageInput = document.getElementById('rejectionMessage');
-  const rejectionMessageError = document.getElementById('rejectionMessageError');
+  const rejectBtn = document.getElementById("rejectBtn");
+  const confirmRejectBtn = document.getElementById("confirmRejectBtn");
+  const rejectionMessageInput = document.getElementById("rejectionMessage");
+  const rejectionMessageError = document.getElementById(
+    "rejectionMessageError"
+  );
 
   // Open rejection modal
   if (rejectBtn) {
-    rejectBtn.addEventListener('click', function(e) {
+    rejectBtn.addEventListener("click", function (e) {
       e.preventDefault();
       e.stopPropagation();
-      
+
       if (rejectionModal) {
         rejectionModal.show();
       }
@@ -4633,38 +4528,38 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // Handle rejection confirmation
   if (confirmRejectBtn) {
-    confirmRejectBtn.addEventListener('click', function() {
+    confirmRejectBtn.addEventListener("click", function () {
       const message = rejectionMessageInput.value.trim();
-      
+
       // Validate message
       if (!message) {
-        rejectionMessageInput.classList.add('is-invalid');
-        rejectionMessageError.style.display = 'block';
+        rejectionMessageInput.classList.add("is-invalid");
+        rejectionMessageError.style.display = "block";
         return;
       }
-      
+
       // Clear validation
-      rejectionMessageInput.classList.remove('is-invalid');
-      rejectionMessageError.style.display = 'none';
-      
+      rejectionMessageInput.classList.remove("is-invalid");
+      rejectionMessageError.style.display = "none";
+
       // Store rejection message
       rejectionMessage = message;
-      
+
       // Set submitting button data for rejection
       submittingButton = {
-        name: 'status',
-        value: '4'
+        name: "status",
+        value: "4",
       };
-      
+
       // Close modal
       if (rejectionModal) {
         rejectionModal.hide();
       }
-      
+
       // Trigger form submission
-      const form = document.getElementById('releaseForm');
+      const form = document.getElementById("releaseForm");
       if (form) {
-        const submitEvent = new Event('submit');
+        const submitEvent = new Event("submit");
         form.dispatchEvent(submitEvent);
       }
     });
@@ -4672,22 +4567,26 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // Clear validation when user types
   if (rejectionMessageInput) {
-    rejectionMessageInput.addEventListener('input', function() {
+    rejectionMessageInput.addEventListener("input", function () {
       if (this.value.trim()) {
-        this.classList.remove('is-invalid');
-        rejectionMessageError.style.display = 'none';
+        this.classList.remove("is-invalid");
+        rejectionMessageError.style.display = "none";
       }
     });
   }
 
   // CRITICAL FIX: Capture submit button clicks BEFORE form submission
-  document.addEventListener('click', function(e) {
-    if (e.target.type === 'submit' && e.target.form && e.target.form.id === 'releaseForm') {
+  document.addEventListener("click", function (e) {
+    if (
+      e.target.type === "submit" &&
+      e.target.form &&
+      e.target.form.id === "releaseForm"
+    ) {
       submittingButton = {
         name: e.target.name,
-        value: e.target.value
+        value: e.target.value,
       };
-      console.log('CAPTURED SUBMIT BUTTON:', submittingButton);
+      console.log("CAPTURED SUBMIT BUTTON:", submittingButton);
     }
   });
 
@@ -4878,12 +4777,12 @@ document.addEventListener("DOMContentLoaded", function () {
     .addEventListener("submit", function (e) {
       e.preventDefault();
 
-      console.log('Form submission started');
-      console.log('Submitting button:', submittingButton);
-      console.log('Rejection message:', rejectionMessage);
+      console.log("Form submission started");
+      console.log("Submitting button:", submittingButton);
+      console.log("Rejection message:", rejectionMessage);
 
       // Validate all steps first (skip for rejection)
-      if (!submittingButton || submittingButton.value !== '4') {
+      if (!submittingButton || submittingButton.value !== "4") {
         let allStepsValid = true;
         for (let step = 1; step <= totalSteps; step++) {
           if (stepValidators[step] && !stepValidators[step]()) {
@@ -4906,42 +4805,59 @@ document.addEventListener("DOMContentLoaded", function () {
       // CRITICAL FIX: Use the captured button data
       if (submittingButton && submittingButton.name && submittingButton.value) {
         // Remove any existing status fields first
-        formData.delete('status');
+        formData.delete("status");
         // Add the clicked button's status
         formData.set(submittingButton.name, submittingButton.value);
-        console.log('ADDED BUTTON STATUS:', submittingButton.name, '=', submittingButton.value);
-        
+        console.log(
+          "ADDED BUTTON STATUS:",
+          submittingButton.name,
+          "=",
+          submittingButton.value
+        );
+
         // Add rejection message if this is a rejection
-        if (submittingButton.value === '4' && rejectionMessage) {
-          formData.set('message', rejectionMessage);
-          console.log('ADDED REJECTION MESSAGE:', rejectionMessage);
+        if (submittingButton.value === "4" && rejectionMessage) {
+          formData.set("message", rejectionMessage);
+          console.log("ADDED REJECTION MESSAGE:", rejectionMessage);
         }
       } else {
         // Fallback: try activeElement
         const activeBtn = document.activeElement;
-        if (activeBtn && activeBtn.type === 'submit' && activeBtn.name && activeBtn.value) {
-          formData.delete('status');
+        if (
+          activeBtn &&
+          activeBtn.type === "submit" &&
+          activeBtn.name &&
+          activeBtn.value
+        ) {
+          formData.delete("status");
           formData.set(activeBtn.name, activeBtn.value);
-          console.log('FALLBACK - ADDED ACTIVE BUTTON:', activeBtn.name, '=', activeBtn.value);
+          console.log(
+            "FALLBACK - ADDED ACTIVE BUTTON:",
+            activeBtn.name,
+            "=",
+            activeBtn.value
+          );
         } else {
           // Last resort: default status
-          console.log('NO BUTTON CAPTURED - USING DEFAULT STATUS 1');
-          formData.set('status', '1');
+          console.log("NO BUTTON CAPTURED - USING DEFAULT STATUS 1");
+          formData.set("status", "1");
         }
       }
 
       // Debug: Log all FormData contents
       console.log("=== FINAL FORMDATA CONTENTS ===");
       for (let [key, value] of formData.entries()) {
-        if (key === 'status' || key.includes('status') || key === 'message') {
-          console.log('🔴 ' + key + ": " + value);
+        if (key === "status" || key.includes("status") || key === "message") {
+          console.log("🔴 " + key + ": " + value);
         } else {
           console.log(key + ": " + value);
         }
       }
 
       // Show loading state
-      const submitBtns = form.querySelectorAll('button[type="submit"], button#rejectBtn');
+      const submitBtns = form.querySelectorAll(
+        'button[type="submit"], button#rejectBtn'
+      );
       const originalButtonContent = new Map();
 
       submitBtns.forEach((btn) => {
@@ -5019,12 +4935,20 @@ document.addEventListener("DOMContentLoaded", function () {
               btn.innerHTML = originalContent;
             } else {
               // Fallback restoration
-              if (btn.innerHTML.includes("Approve") || btn.name === 'status' && btn.value === '5') {
-                btn.innerHTML = '<i data-feather="check" class="me-1"></i> Approve';
-              } else if (btn.innerHTML.includes("Reject") || btn.id === 'rejectBtn') {
+              if (
+                btn.innerHTML.includes("Approve") ||
+                (btn.name === "status" && btn.value === "5")
+              ) {
+                btn.innerHTML =
+                  '<i data-feather="check" class="me-1"></i> Approve';
+              } else if (
+                btn.innerHTML.includes("Reject") ||
+                btn.id === "rejectBtn"
+              ) {
                 btn.innerHTML = '<i data-feather="x" class="me-1"></i> Reject';
               } else {
-                btn.innerHTML = '<i data-feather="check" class="me-1"></i> Submit Release';
+                btn.innerHTML =
+                  '<i data-feather="check" class="me-1"></i> Submit Release';
               }
             }
           });
@@ -5042,109 +4966,111 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 });
 
-//release page reject modal code 
+//release page reject modal code
 document.addEventListener("DOMContentLoaded", function () {
-    const rejectionMessageInput = document.getElementById('rejectionMessage');
-    const charCount = document.getElementById('charCount');
-    const confirmRejectBtn = document.getElementById('confirmRejectBtn');
-    const rejectionMessageError = document.getElementById('rejectionMessageError');
-    const rejectionModal = document.getElementById('rejectionModal');
-    const rejectBtn = document.getElementById('rejectBtn'); // reject button on page
+  const rejectionMessageInput = document.getElementById("rejectionMessage");
+  const charCount = document.getElementById("charCount");
+  const confirmRejectBtn = document.getElementById("confirmRejectBtn");
+  const rejectionMessageError = document.getElementById(
+    "rejectionMessageError"
+  );
+  const rejectionModal = document.getElementById("rejectionModal");
+  const rejectBtn = document.getElementById("rejectBtn"); // reject button on page
 
-    // Character counter
-    if (rejectionMessageInput && charCount) {
-        rejectionMessageInput.addEventListener('input', function() {
-            const currentLength = this.value.length;
-            charCount.textContent = currentLength;
-            
-            if (confirmRejectBtn) {
-                if (currentLength >= 10) {
-                    confirmRejectBtn.disabled = false;
-                    this.classList.remove('is-invalid');
-                    rejectionMessageError.style.display = 'none';
-                } else {
-                    confirmRejectBtn.disabled = true;
-                }
-            }
-        });
-    }
+  // Character counter
+  if (rejectionMessageInput && charCount) {
+    rejectionMessageInput.addEventListener("input", function () {
+      const currentLength = this.value.length;
+      charCount.textContent = currentLength;
 
-    // Enhanced validation for rejection confirmation
-    if (confirmRejectBtn) {
-        confirmRejectBtn.addEventListener('click', function() {
-            const message = rejectionMessageInput.value.trim();
-            
-            if (!message || message.length < 10) {
-                rejectionMessageInput.classList.add('is-invalid');
-                rejectionMessageError.textContent = 'Please provide a rejection reason (minimum 10 characters).';
-                rejectionMessageError.style.display = 'block';
-                rejectionMessageInput.focus();
-                return;
-            }
-            
-            rejectionMessageInput.classList.remove('is-invalid');
-            rejectionMessageError.style.display = 'none';
-            
-            window.rejectionMessage = message;
-            window.submittingButton = {
-                name: 'status',
-                value: '4'
-            };
-            
-            // Close modal
-            const modal = bootstrap.Modal.getInstance(rejectionModal);
-            if (modal) {
-                modal.hide();
-            }
-            
-            // Trigger form submission
-            const form = document.getElementById('releaseForm');
-            if (form) {
-                const submitEvent = new Event('submit');
-                form.dispatchEvent(submitEvent);
-            }
-        });
-        
+      if (confirmRejectBtn) {
+        if (currentLength >= 10) {
+          confirmRejectBtn.disabled = false;
+          this.classList.remove("is-invalid");
+          rejectionMessageError.style.display = "none";
+        } else {
+          confirmRejectBtn.disabled = true;
+        }
+      }
+    });
+  }
+
+  // Enhanced validation for rejection confirmation
+  if (confirmRejectBtn) {
+    confirmRejectBtn.addEventListener("click", function () {
+      const message = rejectionMessageInput.value.trim();
+
+      if (!message || message.length < 10) {
+        rejectionMessageInput.classList.add("is-invalid");
+        rejectionMessageError.textContent =
+          "Please provide a rejection reason (minimum 10 characters).";
+        rejectionMessageError.style.display = "block";
+        rejectionMessageInput.focus();
+        return;
+      }
+
+      rejectionMessageInput.classList.remove("is-invalid");
+      rejectionMessageError.style.display = "none";
+
+      window.rejectionMessage = message;
+      window.submittingButton = {
+        name: "status",
+        value: "4",
+      };
+
+      // Close modal
+      const modal = bootstrap.Modal.getInstance(rejectionModal);
+      if (modal) {
+        modal.hide();
+      }
+
+      // Trigger form submission
+      const form = document.getElementById("releaseForm");
+      if (form) {
+        const submitEvent = new Event("submit");
+        form.dispatchEvent(submitEvent);
+      }
+    });
+
+    confirmRejectBtn.disabled = true;
+  }
+
+  // Reset modal when closed
+  if (rejectionModal) {
+    rejectionModal.addEventListener("hidden.bs.modal", function () {
+      if (rejectionMessageInput) {
+        rejectionMessageInput.value = "";
+        rejectionMessageInput.classList.remove("is-invalid");
+      }
+      if (rejectionMessageError) {
+        rejectionMessageError.style.display = "none";
+      }
+      if (charCount) {
+        charCount.textContent = "0";
+      }
+      if (confirmRejectBtn) {
         confirmRejectBtn.disabled = true;
-    }
+      }
+    });
 
-    // Reset modal when closed
-    if (rejectionModal) {
-        rejectionModal.addEventListener('hidden.bs.modal', function () {
-            if (rejectionMessageInput) {
-                rejectionMessageInput.value = '';
-                rejectionMessageInput.classList.remove('is-invalid');
-            }
-            if (rejectionMessageError) {
-                rejectionMessageError.style.display = 'none';
-            }
-            if (charCount) {
-                charCount.textContent = '0';
-            }
-            if (confirmRejectBtn) {
-                confirmRejectBtn.disabled = true;
-            }
-        });
+    rejectionModal.addEventListener("shown.bs.modal", function () {
+      if (typeof feather !== "undefined") {
+        feather.replace();
+      }
+      if (rejectionMessageInput) {
+        rejectionMessageInput.focus();
+      }
+    });
+  }
 
-        rejectionModal.addEventListener('shown.bs.modal', function () {
-            if (typeof feather !== "undefined") {
-                feather.replace();
-            }
-            if (rejectionMessageInput) {
-                rejectionMessageInput.focus();
-            }
-        });
-    }
-
-    // ✅ OPEN modal when Reject button is clicked
-    if (rejectBtn) {
-        rejectBtn.addEventListener('click', function () {
-            const modal = new bootstrap.Modal(rejectionModal);
-            modal.show();
-        });
-    }
+  // ✅ OPEN modal when Reject button is clicked
+  if (rejectBtn) {
+    rejectBtn.addEventListener("click", function () {
+      const modal = new bootstrap.Modal(rejectionModal);
+      modal.show();
+    });
+  }
 });
-
 
 //User Account Creation Js
 document.addEventListener("DOMContentLoaded", function () {
@@ -5155,8 +5081,10 @@ document.addEventListener("DOMContentLoaded", function () {
   const form = start.closest("form");
 
   function syncMinMax() {
-    if (start.value) end.min = start.value; else end.removeAttribute("min");
-    if (end.value) start.max = end.value; else start.removeAttribute("max");
+    if (start.value) end.min = start.value;
+    else end.removeAttribute("min");
+    if (end.value) start.max = end.value;
+    else start.removeAttribute("max");
   }
 
   function validateDates(showBubble = false) {
@@ -5169,7 +5097,8 @@ document.addEventListener("DOMContentLoaded", function () {
       const s = new Date(start.value);
       const e = new Date(end.value);
 
-      if (s >= e) {   // disallow equal OR greater
+      if (s >= e) {
+        // disallow equal OR greater
         start.setCustomValidity("Start date must be before end date.");
         end.setCustomValidity("End date must be after start date.");
         ok = false;
@@ -5185,7 +5114,7 @@ document.addEventListener("DOMContentLoaded", function () {
     return ok;
   }
 
-  ["input", "change", "blur"].forEach(evt => {
+  ["input", "change", "blur"].forEach((evt) => {
     start.addEventListener(evt, () => validateDates(evt !== "blur"));
     end.addEventListener(evt, () => validateDates(evt !== "blur"));
   });
@@ -5222,125 +5151,138 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 });
 
-  //change password js
+//change password js
 $(document).on("click", "#changePasswordBtn", function () {
-    let oldPass = $("#old_password").val();
-    let newPass = $("#new_password").val();
-    let confirmPass = $("#confirm_password").val();
+  let oldPass = $("#old_password").val();
+  let newPass = $("#new_password").val();
+  let confirmPass = $("#confirm_password").val();
 
-    $.ajax({
-      url: "/profile/changePassword",
-      method: "POST",
-      data: {
-        old_password: oldPass,
-        new_password: newPass,
-        confirm_password: confirmPass,
-      },
-      dataType: "json",
-      success: function (response) {
-        let alertBox = $("#passwordAlert");
-        if (response.status === "success") {
-          alertBox.html(
-            '<div class="alert alert-success">' + response.message + "</div>"
-          );
-          $("#old_password, #new_password, #confirm_password").val("");
-        } else {
-          alertBox.html(
-            '<div class="alert alert-danger">' + response.message + "</div>"
-          );
-        }
-      },
-      error: function () {
-        $("#passwordAlert").html(
-          '<div class="alert alert-danger">Something went wrong.</div>'
+  $.ajax({
+    url: "/profile/changePassword",
+    method: "POST",
+    data: {
+      old_password: oldPass,
+      new_password: newPass,
+      confirm_password: confirmPass,
+    },
+    dataType: "json",
+    success: function (response) {
+      let alertBox = $("#passwordAlert");
+      if (response.status === "success") {
+        alertBox.html(
+          '<div class="alert alert-success">' + response.message + "</div>"
         );
-
-
-      },
-    });
+        $("#old_password, #new_password, #confirm_password").val("");
+      } else {
+        alertBox.html(
+          '<div class="alert alert-danger">' + response.message + "</div>"
+        );
+      }
+    },
+    error: function () {
+      $("#passwordAlert").html(
+        '<div class="alert alert-danger">Something went wrong.</div>'
+      );
+    },
   });
-
-//export releases
-  document.getElementById("exportCsvBtn").addEventListener("click", function () {
-    window.location.href = "/superadmin/releases/export-csv";
 });
 
-document.addEventListener('DOMContentLoaded', function() {
-    // Initialize Select2 only for admin/superadmin dropdown
-    if (document.querySelector('.searchable-select')) {
-        $('.searchable-select').select2({
-            placeholder: 'Search and select...',
-            allowClear: true,
-            width: '100%',
-            theme: 'default',
-            minimumInputLength: 0,
-            matcher: function(params, data) {
-                if ($.trim(params.term) === '') {
-                    return data;
-                }
-                if (typeof data.text === 'undefined') {
-                    return null;
-                }
-                var searchTerm = params.term.toLowerCase();
-                var optionText = data.text.toLowerCase();
-                if (optionText.indexOf(searchTerm) > -1) {
-                    return $.extend({}, data, true);
-                }
-                return null;
-            },
-            templateResult: function(data) {
-                if (!data.id) return data.text;
-                return $('<span></span>').text(data.text);
-            },
-            templateSelection: function(data) {
-                return data.text || data.placeholder;
-            }
-        });
+//export releases
+document.getElementById("exportCsvBtn").addEventListener("click", function () {
+  window.location.href = "/superadmin/releases/export-csv";
+});
 
-        // Remove invalid style when user opens dropdown
-        $('.searchable-select').on('select2:open', function() {
-            $(this).removeClass('is-invalid');
-            $(this).next('.select2-container').find('.select2-selection').removeClass('is-invalid');
-        });
-
-        // Validate each select on change
-        $('.searchable-select').on('change', function() {
-            validateSelect($(this));
-        });
-
-        // Function to validate a select2 element and show error message
-        function validateSelect($select) {
-            var value = $select.val();
-            var id = $select.attr('id'); // e.g., labelName, artist, featuringArtist
-            var errorId = '#' + id + 'Error';
-
-            if ($select.prop('required') && (!value || value === '')) {
-                $select.addClass('is-invalid');
-                $select.next('.select2-container').find('.select2-selection').addClass('is-invalid');
-                $(errorId).show().text('Please select a ' + id.replace(/([A-Z])/g, ' $1').toLowerCase() + '.');
-                return false;
-            } else {
-                $select.removeClass('is-invalid');
-                $select.next('.select2-container').find('.select2-selection').removeClass('is-invalid');
-                $(errorId).hide().text('');
-                return true;
-            }
+document.addEventListener("DOMContentLoaded", function () {
+  // Initialize Select2 only for admin/superadmin dropdown
+  if (document.querySelector(".searchable-select")) {
+    $(".searchable-select").select2({
+      placeholder: "Search and select...",
+      allowClear: true,
+      width: "100%",
+      theme: "default",
+      minimumInputLength: 0,
+      matcher: function (params, data) {
+        if ($.trim(params.term) === "") {
+          return data;
         }
+        if (typeof data.text === "undefined") {
+          return null;
+        }
+        var searchTerm = params.term.toLowerCase();
+        var optionText = data.text.toLowerCase();
+        if (optionText.indexOf(searchTerm) > -1) {
+          return $.extend({}, data, true);
+        }
+        return null;
+      },
+      templateResult: function (data) {
+        if (!data.id) return data.text;
+        return $("<span></span>").text(data.text);
+      },
+      templateSelection: function (data) {
+        return data.text || data.placeholder;
+      },
+    });
 
-        // Validate all required select2 fields on form submit
-        $('form').on('submit', function(e) {
-            var isValid = true;
+    // Remove invalid style when user opens dropdown
+    $(".searchable-select").on("select2:open", function () {
+      $(this).removeClass("is-invalid");
+      $(this)
+        .next(".select2-container")
+        .find(".select2-selection")
+        .removeClass("is-invalid");
+    });
 
-            $('.searchable-select[required]').each(function() {
-                if (!validateSelect($(this))) {
-                    isValid = false;
-                }
-            });
+    // Validate each select on change
+    $(".searchable-select").on("change", function () {
+      validateSelect($(this));
+    });
 
-            if (!isValid) {
-                e.preventDefault();
-                return false;
-            }
-        });
+    // Function to validate a select2 element and show error message
+    function validateSelect($select) {
+      var value = $select.val();
+      var id = $select.attr("id"); // e.g., labelName, artist, featuringArtist
+      var errorId = "#" + id + "Error";
+
+      if ($select.prop("required") && (!value || value === "")) {
+        $select.addClass("is-invalid");
+        $select
+          .next(".select2-container")
+          .find(".select2-selection")
+          .addClass("is-invalid");
+        $(errorId)
+          .show()
+          .text(
+            "Please select a " +
+              id.replace(/([A-Z])/g, " $1").toLowerCase() +
+              "."
+          );
+        return false;
+      } else {
+        $select.removeClass("is-invalid");
+        $select
+          .next(".select2-container")
+          .find(".select2-selection")
+          .removeClass("is-invalid");
+        $(errorId).hide().text("");
+        return true;
+      }
     }
+
+    // Validate all required select2 fields on form submit
+    $("form").on("submit", function (e) {
+      var isValid = true;
+
+      $(".searchable-select[required]").each(function () {
+        if (!validateSelect($(this))) {
+          isValid = false;
+        }
+      });
+
+      if (!isValid) {
+        e.preventDefault();
+        return false;
+      }
+    });
+  }
 });

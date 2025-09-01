@@ -1,0 +1,223 @@
+<?php
+
+namespace App\Controllers\Backend\ClaimingRequest;
+
+use App\Controllers\BaseController;
+use App\Repositories\ClaimingRequest\ClaimingRequestRepository;
+use App\Models\Backend\ClaimingRequestModel;   // <-- add
+use App\Models\Backend\ReleaseModel;
+use CodeIgniter\HTTP\ResponseInterface;
+
+class ClaimingRequestController extends BaseController
+{
+    protected $claimingRequestRepo;
+    protected $releaseModel;
+
+    // ADD: strongly-typed model so we don't call undefined property
+    protected $claimingRequestModel;
+
+    public function __construct()
+    {
+        $this->claimingRequestRepo  = new ClaimingRequestRepository();
+        $this->releaseModel         = new ReleaseModel();
+        $this->claimingRequestModel = new ClaimingRequestModel(); // <-- init it
+    }
+
+    public function index()
+    {
+        // if you really need releases for the request form dropdown:
+        $releases = $this->releaseModel
+            ->select('g_release.id, g_release.title, g_release.upc_ean, g_release.isrc, g_artists.name as artist_name')
+            ->join('g_artists', 'g_artists.id = g_release.artist_id', 'left')
+            ->findAll();
+
+        return view('superadmin/index', [
+            'file_name' => 'claiming-req',
+            'releases'  => $releases,
+        ]);
+    }
+
+    // DataTable for the “Claiming Request” page (simple list)
+    public function getClaimingRequestJson()
+    {
+        $rows = $this->claimingRequestModel
+            ->select('id, song_name, artist_name, upc, isrc, status')
+            ->orderBy('created_at', 'DESC')
+            ->findAll();
+
+        $data = array_map(function ($r) {
+            return [
+                'id'     => (string) $r['id'],
+                'title'  => $r['song_name'] ?? null,
+                'artist' => $r['artist_name'] ?? null,
+                'isrc'   => $r['isrc'] ?? 'N/A',
+                'upc'    => $r['upc'] ?? 'N/A',
+                'status' => $r['status'] ?? 'Pending',
+            ];
+        }, $rows);
+
+        return $this->response->setJSON(['data' => $data]);
+    }
+
+    public function store()
+    {
+        $validation = \Config\Services::validation();
+
+        $rules = [
+            'songName'  => 'required',
+            'videoLink' => 'permit_empty',
+            'reason'    => 'permit_empty'
+        ];
+
+        if (!$this->validate($rules)) {
+            return $this->response->setJSON([
+                'success' => false,
+                'message' => 'Validation failed',
+                'errors'  => $validation->getErrors()
+            ]);
+        }
+
+        // You were treating "songName" as release_id; keeping that, but fetch actual cols
+        $releaseId = $this->request->getPost('songName');
+        $release   = $this->releaseModel
+            ->select('g_release.title, g_release.upc_ean, g_release.isrc, g_artists.name as artist_name')
+            ->join('g_artists', 'g_artists.id = g_release.artist_id', 'left')
+            ->find($releaseId);
+
+        if (!$release) {
+            return $this->response->setJSON([
+                'success' => false,
+                'message' => 'Selected song not found'
+            ]);
+        }
+
+        $data = [
+            'song_name'      => $release['title'] ?? '',
+            'artist_name'    => $release['artist_name'] ?? '',
+            'upc'            => $release['upc_ean'] ?? '',
+            'isrc'           => $release['isrc'] ?? '',
+            'video_links'    => $this->request->getPost('videoLink'),
+            'removal_reason' => $this->request->getPost('reason'),
+            'status'         => 'Pending'
+        ];
+
+        $this->claimingRequestRepo->create($data);
+
+        return redirect()->to('/superadmin/claiming-request')
+            ->with('success', 'Claiming Request created successfully');
+    }
+
+    public function claimData()
+    {
+        // page scaffold for the DataTable + modal
+        return view('superadmin/index', [
+            'file_name' => 'claiming-data',
+            'title'     => 'Claiming Data Management'
+        ]);
+    }
+
+    // Data for the “Claiming Data” page (no joins; use your claiming_requests schema)
+    public function getClaimingDataJson()
+    {
+        try {
+            $rows = $this->claimingRequestModel
+                ->select('id, song_name, artist_name, upc, isrc, instagram_link, facebook_link, video_links, status, created_at, updated_at')
+                ->orderBy('created_at', 'DESC')
+                ->findAll();
+
+            $data = array_map(function ($r) {
+                return [
+                    'id'              => (int) $r['id'],
+                    'songName'        => $r['song_name'] ?? 'Unknown Song',
+                    'artist'          => $r['artist_name'] ?? 'Unknown Artist',
+                    'upc'             => $r['upc'] ?? 'N/A',
+                    'isrc'            => $r['isrc'] ?? 'N/A',
+                    'instagramAudio'  => $r['instagram_link'] ?? '',
+                    'reelMerge'       => $r['facebook_link'] ?? '',
+                    'matchingTime'    => $r['video_links'] ?? 'N/A', // reuse if you want to show something
+                    'status'          => $this->getStatusText($r['status']),
+                    'artwork'         => base_url('assets/images/default-artwork.jpg'),
+                    'created_at'      => $r['created_at'],
+                    'updated_at'      => $r['updated_at'],
+                ];
+            }, $rows);
+
+            return $this->response->setJSON([
+                'success' => true,
+                'data'    => $data,
+            ]);
+        } catch (\Throwable $e) {
+            log_message('error', 'getClaimingDataJson error: ' . $e->getMessage());
+            return $this->response->setStatusCode(500)->setJSON([
+                'success' => false,
+                'error'   => 'Failed to fetch claiming data',
+            ]);
+        }
+    }
+
+    public function updateStatus($id)
+    {
+        try {
+            $claim = $this->claimingRequestModel->find($id);
+            if (!$claim) {
+                return $this->response->setStatusCode(404)->setJSON([
+                    'success' => false,
+                    'error'   => 'Claiming request not found',
+                ]);
+            }
+
+            // Accept JSON or form
+            $payload   = $this->request->getJSON(true) ?? $this->request->getPost();
+            $newStatus = $payload['status'] ?? null;
+
+            // Your DB enum uses capitalized: Pending / Approved / Rejected
+            $map = [
+                'pending'  => 'Pending',
+                'approved' => 'Approved',
+                'rejected' => 'Rejected',
+                'Pending'  => 'Pending',
+                'Approved' => 'Approved',
+                'Rejected' => 'Rejected',
+            ];
+            if (!isset($map[$newStatus])) {
+                return $this->response->setStatusCode(400)->setJSON([
+                    'success' => false,
+                    'error'   => 'Invalid status value',
+                ]);
+            }
+
+            $this->claimingRequestModel->update($id, [
+                'status'     => $map[$newStatus],
+                'updated_at' => date('Y-m-d H:i:s'),
+            ]);
+
+            return $this->response->setJSON([
+                'success' => true,
+                'message' => 'Status updated',
+                'status'  => $map[$newStatus],
+            ]);
+        } catch (\Throwable $e) {
+            log_message('error', 'updateStatus error: ' . $e->getMessage());
+            return $this->response->setStatusCode(500)->setJSON([
+                'success' => false,
+                'error'   => 'Failed to update status',
+            ]);
+        }
+    }
+
+    private function getStatusText($status)
+    {
+        $map = [
+            'Pending'  => 'pending',
+            'Approved' => 'approved',
+            'Rejected' => 'rejected',
+            'pending'  => 'pending',
+            'approved' => 'approved',
+            'rejected' => 'rejected',
+            1          => 'pending',
+            2          => 'approved',
+            3          => 'rejected',
+        ];
+        return $map[$status] ?? 'pending';
+    }
+}

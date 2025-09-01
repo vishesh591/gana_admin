@@ -648,7 +648,11 @@
                         <button type="button" class="btn btn-outline-secondary prev-step" data-prev="4">Previous</button>
 
                         <?php if (isset($isEdit) && $isEdit): ?>
-                            <?php if (isset($release) && $release['status'] == 5): ?>
+                            <?php if (isset($release) && $release['status'] == 3): ?>
+                                <button type="submit" name="status" value="1" class="btn btn-success">
+                                    <i data-feather="send" class="me-1"></i> Submit
+                                </button>
+                            <?php elseif (isset($release) && $release['status'] == 5): ?>
                                 <div>
                                     <button type="submit" name="status" value="3" class="btn btn-success me-2">
                                         <i data-feather="truck" class="me-1"></i> Mark as Delivered

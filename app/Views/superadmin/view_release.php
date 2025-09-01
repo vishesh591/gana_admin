@@ -348,15 +348,30 @@
                                 <a href="<?= base_url('superadmin/releases/edit/' . $release['id']) ?>" class="btn btn-primary">
                                     <i data-feather="edit-3" class="me-2"></i>Edit Release
                                 </a>
-                                <?php if ($release['status'] != 2): ?>
-                                    <button type="button" class="btn btn-outline-danger" onclick="confirmTakedown(<?= $release['id'] ?>)">
-                                        <i data-feather="x-circle" class="me-2"></i>Takedown Release
-                                    </button>
-                                <?php else: ?>
+
+                                <?php if ($release['status'] == 2): ?>
+                                    <!-- Already taken down -->
                                     <span class="badge bg-danger fs-6 px-3 py-2">
                                         <i data-feather="x-circle" class="me-2"></i>Already Taken Down
                                     </span>
+                                <?php elseif ($release['status'] == 6): ?>
+                                    <!-- Takedown requested -->
+                                    <span class="badge bg-warning fs-6 px-3 py-2">
+                                        <i data-feather="clock" class="me-2"></i>Takedown Requested
+                                    </span>
+                                <?php else: ?>
+                                    <!-- Show takedown button based on role -->
+                                    <?php if ($canTakedown): ?>
+                                        <button type="button" class="btn btn-outline-danger" onclick="confirmTakedown(<?= $release['id'] ?>)">
+                                            <i data-feather="x-circle" class="me-2"></i>Takedown Release
+                                        </button>
+                                    <?php else: ?>
+                                        <button type="button" class="btn btn-outline-warning" onclick="confirmTakedownRequest(<?= $release['id'] ?>)">
+                                            <i data-feather="alert-triangle" class="me-2"></i>Request Takedown
+                                        </button>
+                                    <?php endif; ?>
                                 <?php endif; ?>
+
                                 <a href="<?= base_url('superadmin/releases') ?>" class="btn btn-outline-secondary">
                                     <i data-feather="arrow-left" class="me-2"></i>Back to Releases
                                 </a>
@@ -372,27 +387,30 @@
     <script>
         function confirmTakedown(releaseId) {
             if (confirm('Are you sure you want to takedown this release? This will change the status to "Takedown" and remove it from distribution.')) {
-                // Create a form and submit it for takedown request
-                const form = document.createElement('form');
-                form.method = 'POST';
-                form.action = '<?= base_url('superadmin/releases/takedown/') ?>' + releaseId;
-
-                // Add CSRF token if needed
-                const csrfInput = document.createElement('input');
-                csrfInput.type = 'hidden';
-                csrfInput.name = '<?= csrf_token() ?>';
-                csrfInput.value = '<?= csrf_hash() ?>';
-                form.appendChild(csrfInput);
-
-                // Add status value for takedown
-                const statusInput = document.createElement('input');
-                statusInput.type = 'hidden';
-                statusInput.name = 'status';
-                statusInput.value = '2'; // Takedown status
-                form.appendChild(statusInput);
-
-                document.body.appendChild(form);
-                form.submit();
+                submitTakedownForm(releaseId);
             }
+        }
+
+        function confirmTakedownRequest(releaseId) {
+            if (confirm('Are you sure you want to request takedown for this release? This will submit a takedown request for admin approval.')) {
+                submitTakedownForm(releaseId);
+            }
+        }
+
+        function submitTakedownForm(releaseId) {
+            // Create a form and submit it for takedown request
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = '<?= base_url('superadmin/releases/takedown/') ?>' + releaseId;
+
+            // Add CSRF token
+            const csrfInput = document.createElement('input');
+            csrfInput.type = 'hidden';
+            csrfInput.name = '<?= csrf_token() ?>';
+            csrfInput.value = '<?= csrf_hash() ?>';
+            form.appendChild(csrfInput);
+
+            document.body.appendChild(form);
+            form.submit();
         }
     </script>

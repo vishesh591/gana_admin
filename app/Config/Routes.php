@@ -25,7 +25,7 @@ $routes->group('superadmin', ['filter' => 'role:superadmin'], function ($routes)
     $routes->get('/', 'SuperAdmin::dashboard');
     $routes->get('dashboard', 'SuperAdmin::dashboard');
     // $routes->get('accounts', 'SuperAdmin::accounts');
-    $routes->get('claiming-data', 'SuperAdmin::claiming_data');
+    // $routes->get('claiming-data', 'SuperAdmin::claiming_data');
     $routes->get('relocation-data', 'SuperAdmin::relocation_data');
     $routes->get('merge-data', 'SuperAdmin::merge_data');
     $routes->get('ownership-data', 'SuperAdmin::ownership_data');
@@ -33,7 +33,7 @@ $routes->group('superadmin', ['filter' => 'role:superadmin'], function ($routes)
     // $routes->get('artists', 'SuperAdmin::artists');
     // $routes->get('labels', 'SuperAdmin::labels');
     $routes->get('sales-report', 'SuperAdmin::sales_report');
-    $routes->get('claiming-request', 'SuperAdmin::claiming_request');
+    // $routes->get('claiming-request', 'SuperAdmin::claiming_request');
     $routes->get('relocation-request', 'SuperAdmin::relocation_request');
     $routes->get('merge-request', 'SuperAdmin::merge_request');
     $routes->get('youtube', 'SuperAdmin::youtube');
@@ -65,6 +65,17 @@ $routes->group('superadmin', ['filter' => 'role:superadmin'], function ($routes)
     $routes->get('support/data', 'Backend\Support\SupportController::data');
     $routes->post('support/update-status/(:num)', 'Backend\Support\SupportController::updateStatus/$1');
     $routes->get('releases/export-csv', 'Backend\Release\ReleaseController::exportCsv');
+
+    $routes->get('claiming-request', 'Backend\ClaimingRequest\ClaimingRequestController::index', ['as' => 'admin.claiming_requests.index']);
+    $routes->post('claiming-requests', 'Backend\ClaimingRequest\ClaimingRequestController::store', ['as' => 'admin.claiming_requests.store']);
+
+    // Data pages / APIs
+    $routes->get('claiming-data', 'Backend\ClaimingRequest\ClaimingRequestController::claimData', ['as' => 'admin.claiming_requests.claimingData']);
+    $routes->get('api/claiming-req', 'Backend\ClaimingRequest\ClaimingRequestController::getClaimingRequestJson');
+    $routes->get('api/claiming-data', 'Backend\ClaimingRequest\ClaimingRequestController::getClaimingDataJson');
+
+    // NEW: update status endpoint used by your modal approve/reject
+    $routes->post('api/claiming-data/(:num)/status', 'Backend\ClaimingRequest\ClaimingRequestController::updateStatus/$1');
 });
 
 // Routes only for artists
