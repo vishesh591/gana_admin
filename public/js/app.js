@@ -841,9 +841,16 @@ document.addEventListener("DOMContentLoaded", function () {
 
   let claimingRequests = [];
   let currentFilter = "all";
-  const table = $("#datatable");
+  let filteredData = []; // Store filtered data separately
+  const table = $("#claimDatatable");
   const releaseModalEl = document.getElementById("claimingRequestModal");
   const releaseModal = new bootstrap.Modal(releaseModalEl);
+
+  // Check if table element exists
+  if (table.length === 0) {
+    console.error("DataTable element #datatable not found");
+    return;
+  }
 
   // Icons + Badge helpers
   const getStatusIcon = (status) => {
@@ -860,24 +867,49 @@ document.addEventListener("DOMContentLoaded", function () {
   };
 
   const createLink = (url, iconClass) =>
-    url && url !== "N/A" ? `<a href="${url}" target="_blank" class="link-icon me-2"><i class="bi ${iconClass}"></i></a>` : "";
+    url && url !== "N/A" && url !== "" ? `<a href="${url}" target="_blank" class="link-icon me-2"><i class="bi ${iconClass}"></i></a>` : "";
+
+  // Filter data based on status
+  function getFilteredData() {
+    if (currentFilter === "all") {
+      return claimingRequests;
+    }
+    return claimingRequests.filter(item => 
+      (item.status || "").toLowerCase() === currentFilter
+    );
+  }
 
   // Fetch data
   async function fetchClaimingData() {
     try {
       const res = await fetch("/superadmin/api/claiming-data");
+      if (!res.ok) {
+        throw new Error(`HTTP ${res.status}: ${res.statusText}`);
+      }
       const json = await res.json();
       if (!json.success) throw new Error(json.error || "Failed to fetch");
+      
       claimingRequests = json.data || [];
-      dataTableInstance.clear().rows.add(claimingRequests).draw();
-      applyFiltersAndDraw();
+      console.log("Fetched data:", claimingRequests); // Debug log
+      updateTableData();
     } catch (e) {
-      console.error(e);
-      alert("Failed to load claiming data");
+      console.error("Fetch error:", e);
+      alert("Failed to load claiming data: " + e.message);
     }
   }
 
-  // Update status
+  // Update table with filtered data
+  function updateTableData() {
+    try {
+      filteredData = getFilteredData();
+      console.log("Filtered data:", filteredData); // Debug log
+      dataTableInstance.clear().rows.add(filteredData).draw();
+    } catch (e) {
+      console.error("Update table error:", e);
+    }
+  }
+
+  // Update status (Approve/Reject/Pending)
   async function updateClaimingStatus(id, status) {
     try {
       const res = await fetch(`/superadmin/api/claiming-data/${id}/status`, {
@@ -888,131 +920,223 @@ document.addEventListener("DOMContentLoaded", function () {
       const json = await res.json();
       if (!json.success) throw new Error(json.error || "Failed to update");
 
+      // Update the status in our data
       const idx = claimingRequests.findIndex((r) => r.id === id);
-      if (idx !== -1) claimingRequests[idx].status = status;
-      applyFiltersAndDraw();
+      if (idx !== -1) {
+        claimingRequests[idx].status = status;
+      }
+      
+      // Refresh table with updated data
+      updateTableData();
       return true;
     } catch (e) {
-      console.error(e);
-      alert("Failed to update status");
+      console.error("Update status error:", e);
+      alert("Failed to update status: " + e.message);
       return false;
     }
   }
 
-  // DataTable
-  const dataTableInstance = table.DataTable({
-    destroy: true,
-    data: [],
-    paging: true,
-    searching: true,
-    info: true,
-    lengthChange: true,
-    autoWidth: false,
-    columns: [
-      { data: "status", className: "text-center", orderable: false, render: (d) => getStatusIcon(d) },
-      {
-        data: null,
-        orderable: true,
-        render: (row) => `
-          <div class="release-title">
-            <a href="#" class="view-details-link" data-id="${row.id}">${row.songName}</a>
-          </div>
-          <div class="text-muted small">${row.artist}</div>`,
+  // Initialize DataTable
+  let dataTableInstance;
+  try {
+    dataTableInstance = table.DataTable({
+      destroy: true,
+      data: [],
+      paging: true,
+      searching: true,
+      info: true,
+      lengthChange: true,
+      autoWidth: false,
+      pageLength: 10,
+      processing: true,
+      language: {
+        search: "Search records:",
+        searchPlaceholder: "Search by song name, artist, UPC, ISRC...",
+        emptyTable: "No claiming requests found",
+        zeroRecords: "No matching records found",
+        processing: "Loading..."
       },
-      { data: "upc",  defaultContent: "N/A", render: (d) => d || "N/A" },
-      { data: "isrc", className: "text-center", defaultContent: "N/A", render: (d) => d || "N/A" },
-      { data: "status", className: "text-center", render: (d) => `<div class="d-flex justify-content-center">${getStatusBadge(d)}</div>` },
-      {
-        data: null,
-        className: "text-center",
-        orderable: false,
-        render: (row) => createLink(row.instagramAudio, "bi-music-note-beamed") + createLink(row.reelMerge, "bi-camera-reels"),
+      columns: [
+        { 
+          data: "status", 
+          className: "text-center", 
+          orderable: false, 
+          searchable: false,
+          width: "60px",
+          render: (data, type, row) => {
+            if (type === 'display') {
+              return getStatusIcon(data);
+            }
+            return data || '';
+          }
+        },
+        {
+          data: "songName", // Fixed: Use correct field name
+          orderable: true,
+          searchable: true,
+          render: (data, type, row) => {
+            if (type === 'display') {
+              return `
+                <div>
+                  <div class="release-title">${row.songName || "Untitled"}</div>
+                  <div class="release-artist text-muted small">${row.artist || "Unknown"}</div>
+                </div>`;
+            }
+            // For search, return searchable text
+            return `${row.songName || ''} ${row.artist || ''}`;
+          }
+        },
+        { 
+          data: "upc", 
+          searchable: true,
+          className: "text-center",
+          render: (data, type, row) => {
+            if (type === 'display') {
+              return data || "N/A";
+            }
+            return data || '';
+          }
+        },
+        { 
+          data: "isrc", 
+          className: "text-center", 
+          searchable: true,
+          render: (data, type, row) => {
+            if (type === 'display') {
+              return data || "N/A";
+            }
+            return data || '';
+          }
+        },
+        { 
+          data: "status", 
+          className: "text-center", 
+          searchable: true,
+          width: "120px",
+          render: (data, type, row) => {
+            if (type === 'display') {
+              return `<div class="d-flex justify-content-center">${getStatusBadge(data)}</div>`;
+            }
+            // For search, return plain status text
+            return data || '';
+          }
+        },
+        {
+          data: null,
+          className: "text-center",
+          orderable: false,
+          searchable: false,
+          width: "150px",
+          render: (data, type, row) => {
+            if (type === 'display') {
+              return `
+                ${createLink(row.instagramAudio, "bi-music-note-beamed")}
+                ${createLink(row.reelMerge, "bi-camera-reels")}
+                <button class="btn btn-sm btn-primary view-btn" data-id="${row.id}">View</button>
+              `;
+            }
+            return '';
+          }
+        },
+      ],
+      drawCallback: function() {
+        // Replace feather icons after each draw
+        if (typeof feather !== 'undefined') {
+          feather.replace();
+        }
       },
-    ],
-    drawCallback: () => feather.replace(),
-  });
-
-  // Filtering
-  function applyFiltersAndDraw() {
-    $.fn.dataTable.ext.search.pop();
-    $.fn.dataTable.ext.search.push(function (settings, data, dataIndex) {
-      if (currentFilter === "all") return true;
-      const row = dataTableInstance.row(dataIndex).data();
-      return (row?.status || "").toLowerCase() === currentFilter;
+      initComplete: function() {
+        console.log("DataTable initialized successfully");
+      }
     });
-    dataTableInstance.draw();
+  } catch (e) {
+    console.error("DataTable initialization error:", e);
+    alert("Failed to initialize table: " + e.message);
+    return;
   }
 
   // Modal Open
   function openReleaseModal(id) {
     const r = claimingRequests.find((x) => x.id === id);
-    if (!r) return;
+    if (!r) {
+      console.error("Record not found for ID:", id);
+      return;
+    }
+
     releaseModalEl.dataset.currentId = r.id;
 
-    // Fill modal with table data
-    document.getElementById("releaseTitle").textContent = r.songName;
-    document.getElementById("releaseArtistHeader").textContent = r.artist;
-    document.getElementById("releaseAlbumArtwork").src = r.artwork;
-    releaseModalEl.querySelector(".bg-image-blurred").style.backgroundImage = `url('${r.artwork}')`;
-
-    // Status dropdown inside modal
-    const statusDropdown = `
-      <select id="modal-status-dropdown" class="form-select form-select-sm w-auto">
-        <option value="pending" ${r.status === "pending" ? "selected" : ""}>Pending</option>
-        <option value="approved" ${r.status === "approved" ? "selected" : ""}>Approved</option>
-        <option value="rejected" ${r.status === "rejected" ? "selected" : ""}>Rejected</option>
-      </select>`;
-    document.getElementById("releaseStatusBadges").innerHTML = statusDropdown;
-
-    // Other fields
-    document.getElementById("modal-isrc").textContent = r.isrc || "N/A";
-    document.getElementById("modal-matchingTime").textContent = r.matchingTime || "N/A";
-    document.getElementById("modal-instagramAudio").innerHTML = r.instagramAudio ? `<a href="${r.instagramAudio}" target="_blank">${r.instagramAudio}</a>` : "N/A";
-    document.getElementById("modal-reelMerge").innerHTML = r.reelMerge ? `<a href="${r.reelMerge}" target="_blank">${r.reelMerge}</a>` : "N/A";
+    // Fill modal inputs - Use correct field names
+    document.getElementById("songName").value = r.songName || "N/A";
+    document.getElementById("artistName").value = r.artist || "N/A";
+    document.getElementById("isrcCode").value = r.isrc || "N/A";
+    document.getElementById("upcCode").value = r.upc || "N/A";
+    document.getElementById("statusDropdown").value = r.status || "Pending";
 
     releaseModal.show();
-
-    // Status change handler
-    const dropdown = document.getElementById("modal-status-dropdown");
-    dropdown.addEventListener("change", async (e) => {
-      const newStatus = e.target.value;
-      const ok = await updateClaimingStatus(r.id, newStatus);
-      if (ok) {
-        e.target.value = newStatus;
-      } else {
-        e.target.value = r.status;
-      }
-    });
   }
 
-  // Event: filter tabs
-  document.getElementById("filterTabs").addEventListener("click", (e) => {
-    if (e.target.matches("a.nav-link[data-filter]")) {
-      e.preventDefault();
-      currentFilter = e.target.dataset.filter;
-      document.querySelectorAll("#filterTabs .nav-link").forEach((t) => t.classList.remove("active"));
-      e.target.classList.add("active");
-      applyFiltersAndDraw();
+  // Save button handler (Approve/Reject/Pending)
+  document.getElementById("saveClaimingRequest")?.addEventListener("click", async () => {
+    const id = parseInt(releaseModalEl.dataset.currentId, 10);
+    const newStatus = document.getElementById("statusDropdown").value;
+
+    if (!id || !newStatus) {
+      alert("Invalid data");
+      return;
+    }
+
+    const ok = await updateClaimingStatus(id, newStatus);
+    if (ok) {
+      releaseModal.hide();
     }
   });
 
-  // Event: row click -> open modal
-  $("#datatable tbody").on("click", ".view-details-link", function (e) {
+  // Event: filter tabs
+  document.getElementById("filterTabs")?.addEventListener("click", (e) => {
+    if (e.target.matches("a.nav-link[data-filter]")) {
+      e.preventDefault();
+      const newFilter = e.target.dataset.filter;
+      
+      // Only update if filter actually changed
+      if (currentFilter !== newFilter) {
+        currentFilter = newFilter;
+        
+        // Update active tab
+        document.querySelectorAll("#filterTabs .nav-link").forEach((t) => t.classList.remove("active"));
+        e.target.classList.add("active");
+        
+        // Clear search and update table
+        if (dataTableInstance) {
+          dataTableInstance.search('');
+          updateTableData();
+        }
+      }
+    }
+  });
+
+  // Event: "View" button in Action column
+  $("#datatable tbody").on("click", ".view-btn", function (e) {
     e.preventDefault();
-    openReleaseModal(parseInt($(this).data("id"), 10));
+    const id = parseInt($(this).data("id"), 10);
+    if (id) {
+      openReleaseModal(id);
+    }
   });
 
   // Export button
-  document.getElementById("exportCsvBtn").addEventListener("click", () => {
+  document.getElementById("exportCsvBtn")?.addEventListener("click", () => {
     window.location.href = "/superadmin/claiming-data/export-csv";
   });
 
+  // Debug function to check if search is working
+  table.on('search.dt', function() {
+    console.log('Search triggered:', dataTableInstance.search());
+  });
+
+  // Initialize - Add error handling
+  console.log("Starting to fetch claiming data...");
   fetchClaimingData();
 });
-
-
-
-
 
 // merge-data-page js
 // Add this entire new block to your app.js file
@@ -2129,114 +2253,67 @@ $(document).ready(function () {
 // relocation-request js
 
 document.addEventListener("DOMContentLoaded", function () {
-  // This is the unique container for your relocation page
   const relocReqPageContainer = document.querySelector(".admin-reloc-req-page");
 
-  // This ensures the code ONLY runs on the relocation request page
   if (relocReqPageContainer) {
-    // --- DATA ---
-    const relocationRequests = [
-      {
-        id: 1,
-        songName: "Cosmic Drift",
-        artistName: "Orion Sun",
-        isrc: "US1232500004",
-        instagram: "https://instagram.com/orionsun",
-        facebook: "https://facebook.com/orionsun",
-        status: "Done",
-      },
-      {
-        id: 2,
-        songName: "Neon Tides",
-        artistName: "Cyber Lazer",
-        isrc: "US1232500005",
-        instagram: "https://instagram.com/cyberlazer",
-        facebook: "",
-        status: "Pending",
-      },
-      {
-        id: 3,
-        songName: "Lost Signal",
-        artistName: "Ghost FM",
-        isrc: "US1232500006",
-        instagram: "",
-        facebook: "https://facebook.com/ghostfm",
-        status: "Rejected",
-      },
-    ];
-
-    // --- DOM ELEMENTS ---
-    const tableBody = document.getElementById("relocationTableBody"); // FIXED: Using unique ID
     const exportCsvBtn = document.getElementById("exportCsvBtn");
-    const newRelocForm = document.querySelector("#relocationRequestModal form");
-    const newRelocModal = new bootstrap.Modal(
-      document.getElementById("relocationRequestModal")
-    );
 
-    // --- RENDER & UPDATE FUNCTIONS ---
-    function renderTable(data) {
-      if (!data || data.length === 0) {
-        // FIXED: colspan changed from 6 to 5
-        tableBody.innerHTML = `
-                    <tr>
-                        <td colspan="5" class="empty-state">
-                            <i data-feather="inbox"></i>
-                            <div>
-                                <h5 class="mb-2">No relocation requests found</h5>
-                                <p class="mb-0">Click 'New Relocation Request' to get started.</p>
-                            </div>
-                        </td>
-                    </tr>`;
-      } else {
-        tableBody.innerHTML = data
-          .map(
-            (request) => `
-                    <tr>
-                        <td class="text-center align-middle">${getStatusIcon(
-                          request.status
-                        )}</td>
-                        <td class="align-middle">
-                            <div>
-                                <div class="release-title">${
-                                  request.songName
-                                }</div>
-                                <div class="release-artist text-muted small">${
-                                  request.artistName
-                                }</div>
-                            </div>
-                        </td>
-                        <td class="align-middle">${request.isrc || "N/A"}</td>
-                        <td class="align-middle">
-                            ${
-                              request.instagram
-                                ? `<a href="${request.instagram}" target="_blank" class="social-link me-2 fs-5"><i class="bi bi-instagram"></i></a>`
-                                : ""
-                            }
-                            ${
-                              request.facebook
-                                ? `<a href="${request.facebook}" target="_blank" class="social-link fs-5"><i class="bi bi-facebook"></i></a>`
-                                : ""
-                            }
-                        </td>
-                        <td class="align-middle">${getStatusBadge(
-                          request.status
-                        )}</td>
-                    </tr>
-                `
-          )
-          .join("");
-      }
-      feather.replace();
-    }
+    // Initialize DataTable with server JSON
+    const table = $("#relocationDatatable").DataTable({
+      ajax: "/superadmin/relocation-requests/data",
+      processing: true,
+      serverSide: false, // you can enable true if you want server pagination
+      paging: true,
+      searching: true,
+      info: true,
+      autoWidth: false,
+      columns: [
+        {
+          data: "status",
+          className: "text-center",
+          render: function (data) {
+            return getStatusIcon(data);
+          },
+        },
+        {
+          data: "title",
+          render: function (data, type, row) {
+            return `
+              <div class="release-title">${row.title}</div>
+              <div class="release-artist text-muted small">${row.artist}</div>
+            `;
+          },
+        },
+        { data: "isrc", defaultContent: "N/A" },
+        { data: "upc", defaultContent: "N/A" },
+        {
+          data: "status",
+          className: "text-center",
+          render: function (data) {
+            return getStatusBadge(data);
+          },
+        },
+      ],
+      language: {
+        search: "_INPUT_",
+        searchPlaceholder: "Search relocation requests...",
+        zeroRecords: "No matching relocation requests found",
+        emptyTable: "No relocation requests available",
+      },
+      drawCallback: function () {
+        feather.replace();
+      },
+    });
 
+    // --- Helpers ---
     function getStatusIcon(status) {
       const icons = {
-        Done: "check-circle",
+        Approved: "check-circle",
         Pending: "clock",
         Rejected: "x-circle",
       };
       const colors = {
-        Done: "text-success",
+        Approved: "text-success",
         Pending: "text-warning",
         Rejected: "text-danger",
       };
@@ -2247,7 +2324,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     function getStatusBadge(status) {
       const badgeClasses = {
-        Done: "success",
+        Approved: "success",
         Pending: "warning",
         Rejected: "danger",
       };
@@ -2256,47 +2333,21 @@ document.addEventListener("DOMContentLoaded", function () {
       }">${status}</span>`;
     }
 
-    // --- EVENT LISTENERS ---
-
-    // ADDED: Form submission logic
-    newRelocForm.addEventListener("submit", function (e) {
-      e.preventDefault();
-      const newRequest = {
-        id: Date.now(),
-        artistName: this.querySelector("#artistName").value,
-        songName: this.querySelector("#songName").value,
-        isrc: this.querySelector("#ISRC").value,
-        instagram: this.querySelector("#instagramLink").value,
-        facebook: this.querySelector("#facebookLink").value,
-        status: "Pending",
-      };
-      relocationRequests.unshift(newRequest);
-      renderTable(relocationRequests);
-      newRelocForm.reset();
-      newRelocModal.hide();
-    });
-
-    // ADDED: CSV export logic
+    // --- CSV Export ---
     exportCsvBtn.addEventListener("click", function () {
-      const headers = [
-        "ID",
-        "Song Name",
-        "Artist Name",
-        "ISRC",
-        "Instagram",
-        "Facebook",
-        "Status",
-      ];
-      const rows = relocationRequests.map((req) => [
-        req.id,
-        req.songName,
-        req.artistName,
-        req.isrc,
-        req.instagram,
-        req.facebook,
-        req.status,
+      const headers = ["ID", "Song Name", "Artist", "ISRC", "UPC", "Status"];
+      const data = table.rows({ search: "applied" }).data().toArray();
+
+      const rows = data.map((r) => [
+        r.id,
+        r.title,
+        r.artist,
+        r.isrc,
+        r.upc,
+        r.status,
       ]);
-      let csvContent =
+
+      const csvContent =
         "data:text/csv;charset=utf-8," +
         headers.join(",") +
         "\n" +
@@ -2309,11 +2360,9 @@ document.addEventListener("DOMContentLoaded", function () {
       link.click();
       document.body.removeChild(link);
     });
-
-    // --- INITIAL RENDER ---
-    renderTable(relocationRequests);
   }
 });
+
 
 // merge-request js
 

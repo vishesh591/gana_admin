@@ -18,7 +18,7 @@
                     <div class="card shadow-sm mt-4 p-4">
                         <div class="card-body p-0">
                             <div class="table-responsive">
-                                <table class="table table-hover mb-0" id="datatable">
+                                <table class="table table-hover mb-0" id="relocationDatatable">
                                     <thead class="table-light">
                                         <tr>
                                             <th width="60"></th>
@@ -43,49 +43,50 @@
 <div class="modal fade" id="relocationRequestModal" tabindex="-1" aria-labelledby="relocationRequestModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg modal-dialog-centered">
         <div class="modal-content rounded-4">
-            <form action="#" method="POST">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="relocationRequestModalLabel">Relocation Request Form</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
+            <form action="<?= site_url('superadmin/relocation-request/store') ?>" method="POST">
                 <div class="modal-body p-4">
                     <div class="mb-4">
-                        <label for="songName" class="form-label d-flex align-items-center">
+                        <label for="releaseSelect" class="form-label d-flex align-items-center">
                             Song Name <span class="badge bg-danger ms-2">RE</span>
                         </label>
-                        <select class="form-select rounded-pill p-3" id="songName" name="songName" required>
+                        <select class="form-select rounded-pill p-3" id="releaseSelect" name="release_id" required>
                             <option value="" selected disabled>Select song</option>
-                            <option value="1" data-artist="Artist One" data-isrc="INH722302515">Song One</option>
-                            <option value="2" data-artist="Artist Two" data-isrc="INH722302516">Song Two</option>
-                            <option value="3" data-artist="Artist Three" data-isrc="INH722302517">Song Three</option>
+                            <?php foreach ($releases as $release): ?>
+                                <option
+                                    value="<?= esc($release['id']) ?>"
+                                    data-artist="<?= esc($release['artist_name']) ?>"
+                                    data-isrc="<?= esc($release['isrc']) ?>">
+                                    <?= esc($release['title']) ?>
+                                </option>
+                            <?php endforeach; ?>
                         </select>
                     </div>
 
                     <div class="mb-4">
                         <label for="artistName" class="form-label d-flex align-items-center">
-                            Artist Name <span class="badge bg-danger ms-2">RE</span>
+                            Artist Name
                         </label>
-                        <input type="text" class="form-control rounded-pill p-3" id="artistName" name="artistName" placeholder="Artist name will auto-fill" readonly required>
+                        <input type="text" class="form-control rounded-pill p-3" id="artistName" readonly>
                     </div>
 
                     <div class="mb-4">
                         <label for="ISRC" class="form-label d-flex align-items-center">
-                            ISRC <span class="badge bg-danger ms-2">RE</span>
+                            ISRC
                         </label>
-                        <input type="text" class="form-control rounded-pill p-3" id="ISRC" name="isrc" placeholder="ISRC will auto-fill" readonly required>
+                        <input type="text" class="form-control rounded-pill p-3" id="ISRC" readonly>
                     </div>
 
                     <div class="mb-4">
                         <label for="instagramLink" class="form-label">Instagram Profile Link</label>
-                        <input type="url" class="form-control rounded-pill p-3" id="instagramLink" name="instagramLink" placeholder="https://instagram.com/username">
+                        <input type="url" class="form-control rounded-pill p-3" id="instagramLink" name="instagram_link">
                     </div>
                     <div class="mb-4">
                         <label for="instagramAudio" class="form-label">Instagram Audio Link</label>
-                        <input type="url" class="form-control rounded-pill p-3" id="instagramAudio" name="instagramAudio" placeholder="https://www.instagram.com/reels/audio/...">
+                        <input type="url" class="form-control rounded-pill p-3" id="instagramAudio" name="instagram_audio">
                     </div>
                     <div class="mb-4">
                         <label for="facebookLink" class="form-label">Facebook Profile Link</label>
-                        <input type="url" class="form-control rounded-pill p-3" id="facebookLink" name="facebookLink" placeholder="https://facebook.com/username">
+                        <input type="url" class="form-control rounded-pill p-3" id="facebookLink" name="facebook_link">
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -93,6 +94,24 @@
                     <button type="submit" class="btn btn-primary rounded-pill">Submit Request</button>
                 </div>
             </form>
+
         </div>
     </div>
 </div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+  const releaseSelect = document.getElementById("releaseSelect");
+  const artistInput = document.getElementById("artistName");
+  const isrcInput = document.getElementById("ISRC");
+
+  if (releaseSelect) {
+    releaseSelect.addEventListener("change", function () {
+      const selected = this.options[this.selectedIndex];
+      artistInput.value = selected.getAttribute("data-artist") || "";
+      isrcInput.value = selected.getAttribute("data-isrc") || "";
+    });
+  }
+});
+
+</script>

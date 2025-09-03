@@ -17,13 +17,15 @@
                             <li class="nav-item"><a class="nav-link active" href="#" data-filter="all">All</a></li>
                             <li class="nav-item"><a class="nav-link" href="#" data-filter="pending">Pending</a></li>
                             <li class="nav-item"><a class="nav-link" href="#" data-filter="rejected">Rejected</a></li>
+                            <li class="nav-item"><a class="nav-link" href="#" data-filter="approved">Approved</a></li>
+
                         </ul>
                     </div>
                 </div>
 
                 <div class="card-body p-4">
                     <div class="table-responsive">
-                        <table class="table table-hover mb-0 align-middle" id="datatable" style="width:100%;">
+                        <table class="table table-hover mb-0 align-middle" id="claimDatatable" style="width:100%;">
                             <thead class="table-light">
                                 <tr>
                                     <th width="60" class="text-center">#</th>

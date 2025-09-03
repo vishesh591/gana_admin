@@ -34,7 +34,7 @@ $routes->group('superadmin', ['filter' => 'role:superadmin'], function ($routes)
     // $routes->get('labels', 'SuperAdmin::labels');
     $routes->get('sales-report', 'SuperAdmin::sales_report');
     // $routes->get('claiming-request', 'SuperAdmin::claiming_request');
-    $routes->get('relocation-request', 'SuperAdmin::relocation_request');
+    // $routes->get('relocation-request', 'SuperAdmin::relocation_request');
     $routes->get('merge-request', 'SuperAdmin::merge_request');
     $routes->get('youtube', 'SuperAdmin::youtube');
     $routes->get('facebook', 'SuperAdmin::facebook');
@@ -69,13 +69,18 @@ $routes->group('superadmin', ['filter' => 'role:superadmin'], function ($routes)
     $routes->get('claiming-request', 'Backend\ClaimingRequest\ClaimingRequestController::index', ['as' => 'admin.claiming_requests.index']);
     $routes->post('claiming-requests', 'Backend\ClaimingRequest\ClaimingRequestController::store', ['as' => 'admin.claiming_requests.store']);
 
-    // Data pages / APIs
     $routes->get('claiming-data', 'Backend\ClaimingRequest\ClaimingRequestController::claimData', ['as' => 'admin.claiming_requests.claimingData']);
     $routes->get('api/claiming-req', 'Backend\ClaimingRequest\ClaimingRequestController::getClaimingRequestJson');
     $routes->get('api/claiming-data', 'Backend\ClaimingRequest\ClaimingRequestController::getClaimingDataJson');
 
-    // NEW: update status endpoint used by your modal approve/reject
     $routes->post('api/claiming-data/(:num)/status', 'Backend\ClaimingRequest\ClaimingRequestController::updateStatus/$1');
+
+    $routes->get('relocation-request', 'Backend\RelocationRequest\RelocationRequestController::index');
+    $routes->get('relocation-request/list', 'Backend\RelocationRequest\RelocationRequestController::list');
+    $routes->post('relocation-request/store', 'Backend\RelocationRequest\RelocationRequestController::store');
+    $routes->post('relocation-request/update-status/(:num)', 'Backend\RelocationRequest\RelocationRequestController::updateStatus/$1');
+    $routes->get('relocation-requests/data', 'Backend\RelocationRequest\RelocationRequestController::getRelocationRequestJson');
+
 });
 
 // Routes only for artists
