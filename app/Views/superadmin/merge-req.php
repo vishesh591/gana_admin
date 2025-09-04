@@ -8,7 +8,7 @@
                         <i class="bi bi-download me-1"></i> Export to CSV
                     </button>
                     <button type="button" class="btn btn-primary rounded-pill px-4" data-bs-toggle="modal" data-bs-target="#newClaimRequestModal">
-                        <i class="bi bi-plus-lg me-1"></i> New Claiming Request
+                        <i class="bi bi-plus-lg me-1"></i> Create New Request
                     </button>
                 </div>
             </div>
@@ -47,7 +47,7 @@
         <div class="modal-content rounded-4">
             <form id="newClaimForm">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="newClaimRequestModalLabel">New Claiming Request Form</h5>
+                    <h5 class="modal-title" id="newClaimRequestModalLabel">New Claim/Reel Merge Form</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body p-4">
