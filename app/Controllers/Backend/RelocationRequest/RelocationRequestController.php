@@ -57,45 +57,169 @@ class RelocationRequestController extends BaseController
         return $this->response->setJSON(['data' => $data]);
     }
 
-public function store()
-{
-    $releaseId = $this->request->getPost('release_id');
+    public function store()
+    {
+        $releaseId = $this->request->getPost('release_id');
 
-    $release = $this->releaseModel
-        ->select('g_release.title, g_release.isrc, g_artists.name as artist_name')
-        ->join('g_artists', 'g_artists.id = g_release.artist_id', 'left')
-        ->find($releaseId);
+        $release = $this->releaseModel
+            ->select('g_release.title, g_release.isrc, g_artists.name as artist_name')
+            ->join('g_artists', 'g_artists.id = g_release.artist_id', 'left')
+            ->find($releaseId);
 
-    if (!$release) {
-        return $this->response->setJSON([
-            'success' => false,
-            'message' => 'Selected song not found'
+        if (!$release) {
+            return $this->response->setJSON([
+                'success' => false,
+                'message' => 'Selected song not found'
+            ]);
+        }
+
+        $data = [
+            'release_id'      => $releaseId,
+            'song_name'       => $release['title'],
+            'artist_name'     => $release['artist_name'],
+            'isrc'            => $release['isrc'],
+            'instagram_link'  => $this->request->getPost('instagram_link'),
+            'instagram_audio' => $this->request->getPost('instagram_audio'),
+            'facebook_link'   => $this->request->getPost('facebook_link'),
+            'status'          => 'Pending'
+        ];
+
+        $this->relocationModel->save($data);
+
+        return redirect()->back()->with('success', 'Relocation Request submitted successfully');
+    }
+
+
+    // public function updateStatus($id)
+    // {
+    //     $status = $this->request->getPost('status');
+
+    //     $this->relocationModel->update($id, ['status' => $status]);
+
+    //     return $this->response->setJSON(['message' => 'Status updated']);
+    // }
+
+    public function relocationData()
+    {
+        // Page scaffold for the Relocation Data table + modal
+        return view('superadmin/index', [
+            'file_name' => 'relocation-data',
+            'title'     => 'Relocation Data Management'
         ]);
     }
 
-    $data = [
-        'release_id'      => $releaseId,
-        'song_name'       => $release['title'],
-        'artist_name'     => $release['artist_name'],
-        'isrc'            => $release['isrc'],
-        'instagram_link'  => $this->request->getPost('instagram_link'),
-        'instagram_audio' => $this->request->getPost('instagram_audio'),
-        'facebook_link'   => $this->request->getPost('facebook_link'),
-        'status'          => 'Pending'
-    ];
-
-    $this->relocationModel->save($data);
-
-    return redirect()->back()->with('success', 'Relocation Request submitted successfully');
-}
-
-
-    public function updateStatus($id)
+    public function getRelocationDataJson()
     {
-        $status = $this->request->getPost('status');
+        try {
+            $rows = $this->relocationModel
+                ->select('id, song_name, artist_name, isrc, instagram_link, status, created_at, updated_at')
+                ->orderBy('created_at', 'DESC')
+                ->findAll();
 
-        $this->relocationModel->update($id, ['status' => $status]);
+            $data = array_map(function ($r) {
+                return [
+                    'id'             => (int) $r['id'],
+                    'songName'       => $r['song_name'] ?? 'Unknown Song',
+                    'artist'         => $r['artist_name'] ?? 'Unknown Artist',
+                    'isrc'           => $r['isrc'] ?? 'N/A',
+                    'instagramAudio' => $r['instagram_link'] ?? '',
+                    'status'         => $r['status'],
+                    'artwork'        => base_url('assets/images/default-artwork.jpg'),
+                    'created_at'     => $r['created_at'],
+                    'updated_at'     => $r['updated_at'],
+                ];
+            }, $rows);
 
-        return $this->response->setJSON(['message' => 'Status updated']);
+            return $this->response->setJSON([
+                'success' => true,
+                'data'    => $data,
+            ]);
+        } catch (\Throwable $e) {
+            log_message('error', 'getRelocationDataJson error: ' . $e->getMessage());
+            return $this->response->setStatusCode(500)->setJSON([
+                'success' => false,
+                'error'   => 'Failed to fetch relocation data',
+            ]);
+        }
+    }
+
+    // Add these methods to your existing controller
+
+    public function getRelocationDataDetail($id)
+    {
+        try {
+            $request = $this->relocationModel->find($id);
+
+            if (!$request) {
+                return $this->response->setStatusCode(404)->setJSON([
+                    'success' => false,
+                    'error'   => 'Request not found',
+                ]);
+            }
+
+            $data = [
+                'id'             => (int) $request['id'],
+                'songName'       => $request['song_name'] ?? 'Unknown Song',
+                'artist'         => $request['artist_name'] ?? 'Unknown Artist',
+                'isrc'           => $request['isrc'] ?? 'N/A',
+                'instagramAudio' => $request['instagram_link'] ?? '',
+                'reelMerge'      => $request['reel_merge_link'] ?? '',
+                'matchingTime'   => $request['matching_time'] ?? '',
+                'status'         => $request['status'],
+                'artwork'        => base_url('assets/images/default-artwork.jpg'),
+            ];
+
+            return $this->response->setJSON([
+                'success' => true,
+                'data'    => $data,
+            ]);
+        } catch (\Throwable $e) {
+            return $this->response->setStatusCode(500)->setJSON([
+                'success' => false,
+                'error'   => 'Failed to fetch request details',
+            ]);
+        }
+    }
+
+    public function updateRelocationStatus($id)
+    {
+        try {
+            $input = $this->request->getJSON();
+
+            if (!$input || !isset($input->status)) {
+                return $this->response->setStatusCode(400)->setJSON([
+                    'success' => false,
+                    'error'   => 'Status is required',
+                ]);
+            }
+
+            $status = strtolower(trim($input->status));
+
+            if (!in_array($status, ['pending', 'approved', 'rejected'])) {
+                return $this->response->setStatusCode(400)->setJSON([
+                    'success' => false,
+                    'error'   => 'Invalid status',
+                ]);
+            }
+
+            $updated = $this->relocationModel->update($id, [
+                'status' => $status,
+                'updated_at' => date('Y-m-d H:i:s'),
+            ]);
+
+            if (!$updated) {
+                throw new \Exception('Failed to update status');
+            }
+
+            return $this->response->setJSON([
+                'success' => true,
+                'message' => "Status updated to {$status} successfully",
+            ]);
+        } catch (\Throwable $e) {
+            return $this->response->setStatusCode(500)->setJSON([
+                'success' => false,
+                'error'   => 'Failed to update status',
+            ]);
+        }
     }
 }

@@ -27,7 +27,7 @@ $routes->group('superadmin', ['filter' => 'role:superadmin'], function ($routes)
     // $routes->get('accounts', 'SuperAdmin::accounts');
     // $routes->get('claiming-data', 'SuperAdmin::claiming_data');
     $routes->get('relocation-data', 'SuperAdmin::relocation_data');
-    $routes->get('merge-data', 'SuperAdmin::merge_data');
+    // $routes->get('merge-data', 'SuperAdmin::merge_data');
     $routes->get('ownership-data', 'SuperAdmin::ownership_data');
     // $routes->get('releases', 'SuperAdmin::releases');
     // $routes->get('artists', 'SuperAdmin::artists');
@@ -35,7 +35,7 @@ $routes->group('superadmin', ['filter' => 'role:superadmin'], function ($routes)
     $routes->get('sales-report', 'SuperAdmin::sales_report');
     // $routes->get('claiming-request', 'SuperAdmin::claiming_request');
     // $routes->get('relocation-request', 'SuperAdmin::relocation_request');
-    $routes->get('merge-request', 'SuperAdmin::merge_request');
+    // $routes->get('merge-request', 'SuperAdmin::merge_request');
     $routes->get('youtube', 'SuperAdmin::youtube');
     $routes->get('facebook', 'SuperAdmin::facebook');
 
@@ -80,8 +80,23 @@ $routes->group('superadmin', ['filter' => 'role:superadmin'], function ($routes)
     $routes->post('relocation-request/store', 'Backend\RelocationRequest\RelocationRequestController::store');
     $routes->post('relocation-request/update-status/(:num)', 'Backend\RelocationRequest\RelocationRequestController::updateStatus/$1');
     $routes->get('relocation-requests/data', 'Backend\RelocationRequest\RelocationRequestController::getRelocationRequestJson');
+    // Relocation Data Management page
+    $routes->get('relocation-data', 'Backend\RelocationRequest\RelocationRequestController::relocationData');
 
+    // API endpoint for DataTable
+    $routes->get('api/relocation-data', 'Backend\RelocationRequest\RelocationRequestController::getRelocationDataJson');
+    $routes->get('api/relocation-data/(:num)', 'Backend\RelocationRequest\RelocationRequestController::getRelocationDataDetail/$1');
+    $routes->post('api/relocation-data/(:num)/status', 'Backend\RelocationRequest\RelocationRequestController::updateRelocationStatus/$1');
+    $routes->post('claim-reel-merge/store', 'Backend\ClaimReelMerge\ClaimReelMergeController::store');
+    $routes->get('merge-request', 'Backend\ClaimReelMerge\ClaimReelMergeController::index');
+    $routes->get('claim-reel-merge/list', 'Backend\ClaimReelMerge\ClaimReelMergeController::list');
+
+    $routes->get('merge-data', 'Backend\ClaimReelMerge\ClaimReelMergeController::mergeData');
+    $routes->get('merge-data/list', 'Backend\ClaimReelMerge\ClaimReelMergeController::getMergeDataJson');
+    $routes->get('merge-data/detail/(:num)', 'Backend\ClaimReelMerge\ClaimReelMergeController::getMergeDataDetail/$1');
+    $routes->post('merge-data/update-status/(:num)', 'Backend\ClaimReelMerge\ClaimReelMergeController::updateMergeStatus/$1');
 });
+
 
 // Routes only for artists
 $routes->group('artist', ['filter' => 'role:artist'], function ($routes) {

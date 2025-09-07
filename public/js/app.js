@@ -1141,569 +1141,409 @@ document.addEventListener("DOMContentLoaded", function () {
 // merge-data-page js
 // Add this entire new block to your app.js file
 document.addEventListener("DOMContentLoaded", function () {
-  const mergePageContainer = document.querySelector(".admin-merge-data-page");
+  const mergePage = document.querySelector(".admin-merge-data-page");
 
-  if (mergePageContainer) {
-    // --- DATA ---
-    let mergeRequests = [
-      {
-        id: 1,
-        songName: "Cosmic Drift",
-        artist: "Orion Sun",
-        isrc: "US1232500004",
-        instagramAudio: "https://instagram.com/audio/123",
-        reelMerge: "https://instagram.com/reel/xyz",
-        matchingTime: "00:15-00:45",
-        status: "pending",
-        artwork:
-          "https://i.scdn.co/image/ab67616d0000b273e6f6a7f1b2b2b2b2b2b2b2b2",
-      },
-      {
-        id: 2,
-        songName: "Neon Tides",
-        artist: "Cyber Lazer",
-        isrc: "US1232500005",
-        instagramAudio: "https://instagram.com/audio/456",
-        reelMerge: "https://instagram.com/reel/abc",
-        matchingTime: "00:30-01:00",
-        status: "pending",
-        artwork:
-          "https://i.scdn.co/image/ab67616d0000b273f4f4f4f4f4f4f4f4f4f4f4f4",
-      },
-      {
-        id: 3,
-        songName: "Lost Signal",
-        artist: "Ghost FM",
-        isrc: "US1232500006",
-        instagramAudio: "https://instagram.com/audio/789",
-        reelMerge: "https://instagram.com/reel/def",
-        matchingTime: "01:00-01:15",
-        status: "rejected",
-        artwork:
-          "https://i.scdn.co/image/ab67616d0000b273a8a8a8a8a8a8a8a8a8a8a8a8",
-      },
-    ];
-    let currentFilter = "all";
+  if (mergePage) {
+    const mergeModalEl = document.getElementById("mergeDataModal");
+    const mergeModal = new bootstrap.Modal(mergeModalEl);
 
-    // --- DOM ELEMENTS ---
-    const table = $("#datatable");
-    const releaseModalEl = document.getElementById("releaseModal");
-    const releaseModal = new bootstrap.Modal(releaseModalEl);
-    const newRequestModalEl = document.getElementById("newRequestModal");
-    const newRequestModal = new bootstrap.Modal(newRequestModalEl);
-    const newRequestForm = document.getElementById("newRequestForm");
-    const exportCsvBtn = document.getElementById("exportCsvBtn");
-
-    // --- HELPER FUNCTIONS ---
-    const getStatusIcon = (status) => {
-      const icons = {
-        approved: "check-circle",
-        pending: "clock",
-        rejected: "x-circle",
-      };
-      const colors = {
-        approved: "text-success",
-        pending: "text-warning",
-        rejected: "text-danger",
-      };
-      return `<i data-feather="${icons[status] || "help-circle"}" class="${
-        colors[status] || "text-muted"
-      }"></i>`;
-    };
-    const getStatusBadge = (status) => {
-      const config = {
-        approved: "status-approved",
-        pending: "status-pending",
-        rejected: "status-rejected",
-      };
-      return `<span class="badge status-badge ${
-        config[status] || "bg-secondary"
-      }">${status.toUpperCase()}</span>`;
-    };
-    const createLink = (url, iconClass) =>
-      url
-        ? `<a href="${url}" target="_blank" class="link-icon me-2"><i class="bi ${iconClass}"></i></a>`
-        : "";
-
-    // --- DATATABLE INITIALIZATION ---
-    const dataTableInstance = table.DataTable({
-      destroy: true,
-      data: [],
-      paging: true,
-      searching: true,
-      info: true,
-      lengthChange: true,
-      autoWidth: false,
+    const table = $("#mergeDataTable").DataTable({
+      ajax: { url: "/superadmin/merge-data/list", dataSrc: "data" },
       columns: [
         {
           data: "status",
           className: "text-center",
-          orderable: false,
-          render: (data) => getStatusIcon(data),
+          render: (data) => {
+            const icons = { approved: "check-circle", pending: "clock", rejected: "x-circle" };
+            const colors = { approved: "text-success", pending: "text-warning", rejected: "text-danger" };
+            return `<i data-feather="${icons[data] || "help-circle"}" class="${colors[data] || "text-muted"}"></i>`;
+          },
         },
         {
           data: null,
-          orderable: true,
-          render: (data, type, row) => `
-                    <div class="release-title"><a href="#" class="view-details-link" data-id="${row.id}">${row.songName}</a></div>
-                    <div class="text-muted small">${row.artist}</div>`,
+          render: (row) =>
+            `<div class="release-title"><a href="#" class="merge-view-link" data-id="${row.id}">${row.songName}</a></div>
+             <div class="text-muted small">${row.artist}</div>`,
         },
         { data: "isrc", defaultContent: "N/A" },
         {
           data: null,
           className: "text-center",
-          orderable: false,
-          render: (data, type, row) =>
-            createLink(row.instagramAudio, "bi-music-note-beamed") +
-            " " +
-            createLink(row.reelMerge, "bi-camera-reels"),
+          render: (row) =>
+            (row.instagramAudio
+              ? `<a href="${row.instagramAudio}" target="_blank" class="me-2"><i class="bi bi-music-note-beamed"></i></a>`
+              : "") +
+            (row.reelMerge
+              ? `<a href="${row.reelMerge}" target="_blank"><i class="bi bi-camera-reels"></i></a>`
+              : ""),
         },
         { data: "matchingTime", defaultContent: "N/A" },
         {
           data: "status",
           className: "text-center",
-          render: (data) =>
-            `<div class="d-flex justify-content-center">${getStatusBadge(
-              data
-            )}</div>`,
+          render: (data) => {
+            const badgeClass = { approved: "success", pending: "warning", rejected: "danger" };
+            return `<span class="badge bg-${badgeClass[data] || "secondary"}">${data.toUpperCase()}</span>`;
+          },
         },
       ],
-      drawCallback: () => {
-        feather.replace();
-      },
-      language: {
-        info: "Showing _START_ to _END_ of _TOTAL_ entries",
-        infoEmpty: "Showing 0 to 0 of 0 entries",
-        infoFiltered: "(filtered from _MAX_ total entries)",
-        zeroRecords: "No matching requests found",
-        emptyTable: "No requests available",
-        search: "_INPUT_",
-        searchPlaceholder: "Search records...",
-      },
+      drawCallback: () => feather.replace(),
     });
 
-    // --- RENDER & UPDATE FUNCTIONS ---
-    function applyFiltersAndDraw() {
-      $.fn.dataTable.ext.search.pop();
-      $.fn.dataTable.ext.search.push(function (settings, data, dataIndex) {
-        if (currentFilter === "all") return true;
-        return mergeRequests[dataIndex].status === currentFilter;
+    // Open modal
+    $("#mergeDataTable tbody").on("click", ".merge-view-link", async function (e) {
+      e.preventDefault();
+      const id = $(this).data("id");
+
+      try {
+        const response = await fetch(`/superadmin/merge-data/detail/${id}`);
+        const result = await response.json();
+        if (result.success) {
+          const d = result.data;
+          document.getElementById("modal-songName").textContent = d.songName;
+          document.getElementById("modal-artist").textContent = d.artist;
+          document.getElementById("modal-isrc").textContent = d.isrc || "N/A";
+          document.getElementById("modal-matchingTime").textContent = d.matchingTime || "N/A";
+          document.getElementById("modal-instagramAudio").innerHTML = d.instagramAudio
+            ? `<a href="${d.instagramAudio}" target="_blank">${d.instagramAudio}</a>`
+            : "N/A";
+          document.getElementById("modal-reelMerge").innerHTML = d.reelMerge
+            ? `<a href="${d.reelMerge}" target="_blank">${d.reelMerge}</a>`
+            : "N/A";
+          document.getElementById("modal-status").innerHTML =
+            `<span class="badge bg-info">${d.status.toUpperCase()}</span>`;
+
+          mergeModalEl.dataset.currentId = d.id;
+          mergeModal.show();
+        }
+      } catch (err) {
+        console.error("Failed to fetch details:", err);
+      }
+    });
+
+    // Approve / Reject
+    document.getElementById("approveBtn").addEventListener("click", async () => {
+      const id = mergeModalEl.dataset.currentId;
+      await fetch(`/superadmin/merge-data/update-status/${id}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status: "approved" }),
       });
-      dataTableInstance.draw();
-    }
-
-    function openReleaseModal(id) {
-      const req = mergeRequests.find((r) => r.id === id);
-      if (!req) return;
-
-      document.getElementById("releaseTitle").textContent = req.songName;
-      document.getElementById("releaseArtistHeader").textContent = req.artist;
-      document.getElementById("releaseAlbumArtwork").src = req.artwork;
-      releaseModalEl.querySelector(
-        ".bg-image-blurred"
-      ).style.backgroundImage = `url('${req.artwork}')`;
-      document.getElementById("releaseStatusBadges").innerHTML = getStatusBadge(
-        req.status
-      );
-      document.getElementById("modal-isrc").textContent = req.isrc || "N/A";
-      document.getElementById("modal-matchingTime").textContent =
-        req.matchingTime || "N/A";
-      document.getElementById("modal-instagramAudio").innerHTML =
-        req.instagramAudio
-          ? `<a href="${req.instagramAudio}" target="_blank">${req.instagramAudio}</a>`
-          : "N/A";
-      document.getElementById("modal-reelMerge").innerHTML = req.reelMerge
-        ? `<a href="${req.reelMerge}" target="_blank">${req.reelMerge}</a>`
-        : "N/A";
-
-      releaseModalEl.dataset.currentId = req.id;
-      releaseModal.show();
-    }
-
-    function handleStatusUpdate(status) {
-      const requestId = parseInt(releaseModalEl.dataset.currentId, 10);
-      const request = mergeRequests.find((r) => r.id === requestId);
-      if (request) {
-        request.status = status;
-        applyFiltersAndDraw();
-      }
-      releaseModal.hide();
-    }
-
-    // --- EVENT LISTENERS ---
-    document.getElementById("filterTabs").addEventListener("click", (e) => {
-      if (e.target.matches("a.nav-link[data-filter]")) {
-        e.preventDefault();
-        currentFilter = e.target.dataset.filter;
-        document
-          .querySelectorAll("#filterTabs .nav-link")
-          .forEach((tab) => tab.classList.remove("active"));
-        e.target.classList.add("active");
-        applyFiltersAndDraw();
-      }
+      table.ajax.reload();
+      mergeModal.hide();
     });
 
-    $("#datatable tbody").on("click", ".view-details-link", function (e) {
-      e.preventDefault();
-      openReleaseModal(parseInt($(this).data("id"), 10));
+    document.getElementById("rejectBtn").addEventListener("click", async () => {
+      const id = mergeModalEl.dataset.currentId;
+      await fetch(`/superadmin/merge-data/update-status/${id}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status: "rejected" }),
+      });
+      table.ajax.reload();
+      mergeModal.hide();
     });
-
-    document
-      .getElementById("approveBtn")
-      .addEventListener("click", () => handleStatusUpdate("approved"));
-    document
-      .getElementById("rejectBtn")
-      .addEventListener("click", () => handleStatusUpdate("rejected"));
-
-    newRequestForm.addEventListener("submit", (e) => {
-      e.preventDefault();
-      const newRequest = {
-        id: Date.now(),
-        songName: document.getElementById("songNameInput").value,
-        artist: document.getElementById("artistInput").value,
-        isrc: document.getElementById("isrcInput").value,
-        instagramAudio: document.getElementById("instagramAudioInput").value,
-        reelMerge: document.getElementById("reelMergeInput").value,
-        matchingTime: document.getElementById("matchingTimeInput").value,
-        status: "pending",
-        artwork: "https://via.placeholder.com/150/cccccc/FFFFFF?text=New",
-      };
-      mergeRequests.unshift(newRequest);
-      dataTableInstance.clear().rows.add(mergeRequests).draw();
-      newRequestForm.reset();
-      newRequestModal.hide();
-    });
-
-    exportCsvBtn.addEventListener("click", () => {
-      const headers = [
-        "ID",
-        "Song Name",
-        "Artist",
-        "ISRC",
-        "Instagram Audio Link",
-        "Reel Merge Link",
-        "Matching Time",
-        "Status",
-      ];
-      const rows = dataTableInstance
-        .rows({ search: "applied" })
-        .data()
-        .toArray()
-        .map((req) => [
-          req.id,
-          req.songName,
-          req.artist,
-          req.isrc,
-          req.instagramAudio,
-          req.reelMerge,
-          req.matchingTime,
-          req.status,
-        ]);
-      const escapeCsvValue = (val) =>
-        `"${String(val || "").replace(/"/g, '""')}"`;
-      let csvContent =
-        "data:text/csv;charset=utf-8," +
-        headers.join(",") +
-        "\n" +
-        rows.map((r) => r.map(escapeCsvValue).join(",")).join("\n");
-
-      const link = document.createElement("a");
-      link.setAttribute("href", encodeURI(csvContent));
-      link.setAttribute("download", "merge-requests.csv");
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-    });
-
-    // --- INITIAL RENDER ---
-    dataTableInstance.clear().rows.add(mergeRequests).draw();
-    applyFiltersAndDraw();
   }
 });
+
+
 
 // relocation-data-page js
 
 // Add this entire new block to your app.js file
 document.addEventListener("DOMContentLoaded", function () {
-  const relocationPageContainer = document.querySelector(
-    ".admin-reloc-data-page"
-  );
+  const relocationPageContainer = document.querySelector(".admin-reloc-data-page");
+  if (!relocationPageContainer) return;
 
-  if (relocationPageContainer) {
-    // --- DATA ---
-    let relocationRequests = [
-      {
-        id: 1,
-        songName: "Cosmic Drift",
-        artist: "Orion Sun",
-        isrc: "US1232500004",
-        instagramAudio: "https://instagram.com/audio/123",
-        reelMerge: "https://instagram.com/reel/xyz",
-        status: "pending",
-        artwork:
-          "https://i.scdn.co/image/ab67616d0000b273e6f6a7f1b2b2b2b2b2b2b2b2",
-        matchingTime: "N/A",
-      },
-      {
-        id: 2,
-        songName: "Neon Tides",
-        artist: "Cyber Lazer",
-        isrc: "US1232500005",
-        instagramAudio: "https://instagram.com/audio/456",
-        reelMerge: "https://instagram.com/reel/abc",
-        matchingTime: "00:30-01:00",
-        status: "pending",
-        artwork:
-          "https://i.scdn.co/image/ab67616d0000b273f4f4f4f4f4f4f4f4f4f4f4f4",
-      },
-      {
-        id: 3,
-        songName: "Lost Signal",
-        artist: "Ghost FM",
-        isrc: "US1232500006",
-        instagramAudio: "https://instagram.com/audio/789",
-        reelMerge: "https://instagram.com/reel/def",
-        matchingTime: "01:00-01:15",
-        status: "rejected",
-        artwork:
-          "https://i.scdn.co/image/ab67616d0000b273a8a8a8a8a8a8a8a8a8a8a8a8",
-      },
-    ];
-    let currentFilter = "all";
+  // --- HELPER FUNCTIONS ---
+  const getStatusIcon = (status) => {
+    const s = (status || "").toLowerCase();
+    const icons  = { approved: "check-circle", pending: "clock", rejected: "x-circle" };
+    const colors = { approved: "text-success", pending: "text-warning", rejected: "text-danger" };
+    return `<i data-feather="${icons[s] || "help-circle"}" class="${colors[s] || "text-muted"}"></i>`;
+  };
 
-    // --- DOM ELEMENTS ---
-    const table = $("#datatable");
-    const releaseModalEl = document.getElementById("releaseModal");
-    const releaseModal = new bootstrap.Modal(releaseModalEl);
-    const newRequestModalEl = document.getElementById("newRequestModal");
-    const newRequestModal = new bootstrap.Modal(newRequestModalEl);
-    const newRequestForm = document.getElementById("newRequestForm");
-    const exportCsvBtn = document.getElementById("exportCsvBtn");
+  const getStatusBadge = (status) => {
+    const s = (status || "").toLowerCase();
+    const cls = {
+      approved: "status-approved",
+      pending: "status-pending",
+      rejected: "status-rejected",
+    }[s] || "bg-secondary";
+    return `<span class="badge status-badge ${cls}">${s.toUpperCase()}</span>`;
+  };
 
-    // --- HELPER FUNCTIONS ---
-    const getStatusIcon = (status) => {
-      const icons = {
-        approved: "check-circle",
-        pending: "clock",
-        rejected: "x-circle",
-      };
-      const colors = {
-        approved: "text-success",
-        pending: "text-warning",
-        rejected: "text-danger",
-      };
-      return `<i data-feather="${icons[status] || "help-circle"}" class="${
-        colors[status] || "text-muted"
-      }"></i>`;
-    };
-    const getStatusBadge = (status) => {
-      const config = {
-        approved: "status-approved",
-        pending: "status-pending",
-        rejected: "status-rejected",
-      };
-      return `<span class="badge status-badge ${
-        config[status] || "bg-secondary"
-      }">${status.toUpperCase()}</span>`;
-    };
-    const createLink = (url, iconClass) =>
-      url
-        ? `<a href="${url}" target="_blank" class="link-icon me-2"><i class="bi ${iconClass}"></i></a>`
-        : "";
+  const createLink = (url, iconClass) =>
+    url && url !== "N/A" && url !== ""
+      ? `<a href="${url}" target="_blank" class="link-icon me-2"><i class="bi ${iconClass}"></i></a>`
+      : "";
 
-    // --- DATATABLE INITIALIZATION ---
-    const dataTableInstance = table.DataTable({
-      destroy: true,
-      data: [],
-      paging: true,
-      searching: true,
-      info: true,
-      lengthChange: true,
-      autoWidth: false,
-      columns: [
-        {
-          data: "status",
-          className: "text-center",
-          orderable: false,
-          render: (data) => getStatusIcon(data),
+  // --- MODAL FUNCTIONS ---
+  const openModal = async (id) => {
+    try {
+      console.log("Opening modal for relocation ID:", id);
+      
+      // Show loading state
+      const modal = new bootstrap.Modal(document.getElementById('releaseModal'));
+      
+      // Fetch detailed data
+      const response = await fetch(`/superadmin/api/relocation-data/${id}`);
+      const result = await response.json();
+      
+      if (!result.success) {
+        throw new Error(result.error || 'Failed to fetch data');
+      }
+      
+      const data = result.data;
+      console.log("Modal data:", data);
+      
+      // Populate modal with data
+      populateModal(data);
+      
+      // Show modal
+      modal.show();
+      
+      // Store current ID for approve/reject actions
+      document.getElementById('releaseModal').setAttribute('data-current-id', id);
+      
+    } catch (error) {
+      console.error('Error opening modal:', error);
+      alert('Failed to load request details. Please try again.');
+    }
+  };
+
+  const populateModal = (data) => {
+    // Populate fields
+    document.getElementById('releaseTitle').textContent = data.songName || '-';
+    document.getElementById('releaseArtistHeader').textContent = data.artist || '-';
+    document.getElementById('modal-isrc').textContent = data.isrc || '-';
+    
+    // Status badges
+    const statusBadgesContainer = document.getElementById('releaseStatusBadges');
+    statusBadgesContainer.innerHTML = getStatusBadge(data.status);
+    
+    // Instagram Audio Link
+    const instagramContainer = document.getElementById('modal-instagramAudio');
+    if (data.instagramAudio && data.instagramAudio !== 'N/A' && data.instagramAudio !== '') {
+      instagramContainer.innerHTML = `<a href="${data.instagramAudio}" target="_blank" class="text-primary">${data.instagramAudio}</a>`;
+    } else {
+      instagramContainer.textContent = '-';
+    }
+    
+    // Update approve/reject button states based on current status
+    updateButtonStates(data.status);
+  };
+
+  const updateButtonStates = (status) => {
+    const approveBtn = document.getElementById('approveBtn');
+    const rejectBtn = document.getElementById('rejectBtn');
+    
+    // Reset button states
+    approveBtn.disabled = false;
+    rejectBtn.disabled = false;
+    approveBtn.classList.remove('btn-outline-success');
+    rejectBtn.classList.remove('btn-outline-danger');
+    approveBtn.classList.add('btn-success');
+    rejectBtn.classList.add('btn-danger');
+    
+    // Update based on current status
+    if (status.toLowerCase() === 'approved') {
+      approveBtn.disabled = true;
+      approveBtn.classList.remove('btn-success');
+      approveBtn.classList.add('btn-outline-success');
+      approveBtn.textContent = 'Approved';
+    } else {
+      approveBtn.textContent = 'Approve';
+    }
+    
+    if (status.toLowerCase() === 'rejected') {
+      rejectBtn.disabled = true;
+      rejectBtn.classList.remove('btn-danger');
+      rejectBtn.classList.add('btn-outline-danger');
+      rejectBtn.textContent = 'Rejected';
+    } else {
+      rejectBtn.textContent = 'Reject';
+    }
+  };
+
+  const updateStatus = async (id, status) => {
+    try {
+      console.log(`Updating status for ID ${id} to ${status}`);
+      
+      // Show loading state
+      const approveBtn = document.getElementById('approveBtn');
+      const rejectBtn = document.getElementById('rejectBtn');
+      const originalApproveText = approveBtn.textContent;
+      const originalRejectText = rejectBtn.textContent;
+      
+      if (status === 'approved') {
+        approveBtn.textContent = 'Approving...';
+        approveBtn.disabled = true;
+      } else {
+        rejectBtn.textContent = 'Rejecting...';
+        rejectBtn.disabled = true;
+      }
+      
+      const response = await fetch(`/superadmin/api/relocation-data/${id}/status`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Requested-With': 'XMLHttpRequest'
         },
-        {
-          data: null,
-          orderable: true,
-          render: (data, type, row) => `
-                    <div class="release-title"><a href="#" class="view-details-link" data-id="${row.id}">${row.songName}</a></div>
-                    <div class="text-muted small">${row.artist}</div>`,
-        },
-        { data: "isrc", defaultContent: "N/A" },
-        {
-          data: null,
-          className: "text-center",
-          orderable: false,
-          render: (data, type, row) =>
-            createLink(row.instagramAudio, "bi-music-note-beamed") +
-            " " +
-            createLink(row.reelMerge, "bi-camera-reels"),
-        },
-        {
-          data: "status",
-          className: "text-center",
-          render: (data) =>
-            `<div class="d-flex justify-content-center">${getStatusBadge(
-              data
-            )}</div>`,
-        },
-      ],
-      drawCallback: () => {
-        feather.replace();
-      },
-      language: {
-        info: "Showing _START_ to _END_ of _TOTAL_ entries",
-        infoEmpty: "Showing 0 to 0 of 0 entries",
-        infoFiltered: "(filtered from _MAX_ total entries)",
-        zeroRecords: "No matching requests found",
-        emptyTable: "No requests available",
-        search: "_INPUT_",
-        searchPlaceholder: "Search records...",
-      },
-    });
-
-    // --- RENDER & UPDATE FUNCTIONS ---
-    function applyFiltersAndDraw() {
-      $.fn.dataTable.ext.search.pop();
-      $.fn.dataTable.ext.search.push(function (settings, data, dataIndex) {
-        if (currentFilter === "all") return true;
-        return relocationRequests[dataIndex].status === currentFilter;
+        body: JSON.stringify({ status: status })
       });
-      dataTableInstance.draw();
-    }
-
-    function openReleaseModal(id) {
-      const req = relocationRequests.find((r) => r.id === id);
-      if (!req) return;
-      // (Code to populate the modal remains the same as your other page)
-      document.getElementById("releaseTitle").textContent = req.songName;
-      document.getElementById("releaseArtistHeader").textContent = req.artist;
-      document.getElementById("releaseAlbumArtwork").src = req.artwork;
-      releaseModalEl.querySelector(
-        ".bg-image-blurred"
-      ).style.backgroundImage = `url('${req.artwork}')`;
-      document.getElementById("releaseStatusBadges").innerHTML = getStatusBadge(
-        req.status
-      );
-      document.getElementById("modal-isrc").textContent = req.isrc || "N/A";
-      document.getElementById("modal-matchingTime").textContent =
-        req.matchingTime || "N/A";
-      document.getElementById("modal-instagramAudio").innerHTML =
-        req.instagramAudio
-          ? `<a href="${req.instagramAudio}" target="_blank">${req.instagramAudio}</a>`
-          : "N/A";
-      document.getElementById("modal-reelMerge").innerHTML = req.reelMerge
-        ? `<a href="${req.reelMerge}" target="_blank">${req.reelMerge}</a>`
-        : "N/A";
-      releaseModalEl.dataset.currentId = req.id;
-      releaseModal.show();
-    }
-
-    function handleStatusUpdate(status) {
-      const requestId = parseInt(releaseModalEl.dataset.currentId, 10);
-      const request = relocationRequests.find((r) => r.id === requestId);
-      if (request) {
-        request.status = status;
-        applyFiltersAndDraw();
+      
+      const result = await response.json();
+      
+      if (!result.success) {
+        throw new Error(result.error || 'Failed to update status');
       }
-      releaseModal.hide();
+      
+      console.log('Status updated successfully:', result);
+      
+      // Update button states
+      updateButtonStates(status);
+      
+      // Update status badge in modal
+      const statusBadgesContainer = document.getElementById('releaseStatusBadges');
+      statusBadgesContainer.innerHTML = getStatusBadge(status);
+      
+      // Refresh the DataTable to reflect changes
+      dataTableInstance.ajax.reload(null, false);
+      
+      // Show success message
+      alert(`Request ${status} successfully!`);
+      
+    } catch (error) {
+      console.error('Error updating status:', error);
+      
+      // Reset button states on error
+      if (status === 'approved') {
+        approveBtn.textContent = originalApproveText;
+        approveBtn.disabled = false;
+      } else {
+        rejectBtn.textContent = originalRejectText;
+        rejectBtn.disabled = false;
+      }
+      
+      alert('Failed to update status. Please try again.');
     }
+  };
 
-    // --- EVENT LISTENERS ---
-    document.getElementById("filterTabs").addEventListener("click", (e) => {
-      if (e.target.matches("a.nav-link[data-filter]")) {
+  // --- DATATABLE INITIALIZATION ---
+  const dataTableInstance = $("#relocationdataDatatable").DataTable({
+    destroy: true,
+    ajax: {
+      url: "/superadmin/api/relocation-data",
+      dataSrc: "data",
+    },
+    paging: true,
+    searching: true,
+    info: true,
+    lengthChange: true,
+    autoWidth: false,
+    columns: [
+      {
+        data: "status",
+        className: "text-center",
+        orderable: false,
+        render: (data) => getStatusIcon(data),
+      },
+      {
+        data: null,
+        render: (data, type, row) => `
+          <div class="release-title">
+            <a href="#" class="view-details-link" data-id="${row.id}">${row.songName}</a>
+          </div>
+          <div class="text-muted small">${row.artist}</div>`,
+      },
+      { data: "isrc", defaultContent: "N/A" },
+      {
+        data: "instagramAudio",
+        className: "text-center",
+        orderable: false,
+        render: (url) => createLink(url, "bi-music-note-beamed"),
+      },
+      {
+        data: "status",
+        className: "text-center",
+        render: (data) =>
+          `<div class="d-flex justify-content-center">${getStatusBadge(data)}</div>`,
+      },
+    ],
+    drawCallback: () => {
+      if (typeof feather !== "undefined") {
+        feather.replace();
+      }
+    },
+    language: {
+      info: "Showing _START_ to _END_ of _TOTAL_ entries",
+      infoEmpty: "Showing 0 to 0 of 0 entries",
+      infoFiltered: "(filtered from _MAX_ total entries)",
+      zeroRecords: "No matching requests found",
+      emptyTable: "No requests available",
+      search: "_INPUT_",
+      searchPlaceholder: "Search records...",
+    },
+  });
+
+  // --- EVENT LISTENERS ---
+  
+  // Modal detail link clicks
+  $("#relocationdataDatatable tbody").on("click", ".view-details-link", function (e) {
+    e.preventDefault();
+    const id = parseInt($(this).data("id"), 10);
+    openModal(id);
+  });
+
+  // Approve button click
+  document.getElementById('approveBtn').addEventListener('click', function() {
+    const id = document.getElementById('releaseModal').getAttribute('data-current-id');
+    if (id && !this.disabled) {
+      updateStatus(parseInt(id), 'approved');
+    }
+  });
+
+  // Reject button click
+  document.getElementById('rejectBtn').addEventListener('click', function() {
+    const id = document.getElementById('releaseModal').getAttribute('data-current-id');
+    if (id && !this.disabled) {
+      updateStatus(parseInt(id), 'rejected');
+    }
+  });
+
+  // Filter tabs functionality (if you have filter tabs)
+  const filterTabs = document.querySelectorAll('#filterTabs .nav-link');
+  if (filterTabs.length > 0) {
+    filterTabs.forEach(tab => {
+      tab.addEventListener('click', function(e) {
         e.preventDefault();
-        currentFilter = e.target.dataset.filter;
-        document
-          .querySelectorAll("#filterTabs .nav-link")
-          .forEach((tab) => tab.classList.remove("active"));
-        e.target.classList.add("active");
-        applyFiltersAndDraw();
-      }
+        
+        // Update active tab
+        filterTabs.forEach(t => t.classList.remove('active'));
+        this.classList.add('active');
+        
+        // Apply filter
+        const filter = this.getAttribute('data-filter');
+        if (filter === 'all') {
+          dataTableInstance.column(4).search('').draw();
+        } else {
+          dataTableInstance.column(4).search(filter.toUpperCase()).draw();
+        }
+      });
     });
+  }
 
-    $("#datatable tbody").on("click", ".view-details-link", function (e) {
-      e.preventDefault();
-      openReleaseModal(parseInt($(this).data("id"), 10));
+  // Export CSV functionality (if you have export button)
+  const exportBtn = document.getElementById('exportCsvBtn');
+  if (exportBtn) {
+    exportBtn.addEventListener('click', function() {
+      window.location.href = '/superadmin/api/relocation-data/export';
     });
-
-    document
-      .getElementById("approveBtn")
-      .addEventListener("click", () => handleStatusUpdate("approved"));
-    document
-      .getElementById("rejectBtn")
-      .addEventListener("click", () => handleStatusUpdate("rejected"));
-
-    newRequestForm.addEventListener("submit", (e) => {
-      e.preventDefault();
-      const newRequest = {
-        id: Date.now(),
-        songName: document.getElementById("songNameInput").value,
-        artist: document.getElementById("artistInput").value,
-        isrc: document.getElementById("isrcInput").value,
-        instagramAudio: document.getElementById("instagramAudioInput").value,
-        reelMerge: document.getElementById("reelMergeInput").value,
-        matchingTime: document.getElementById("matchingTimeInput").value,
-        status: "pending",
-        artwork: "https://via.placeholder.com/150/cccccc/FFFFFF?text=New", // Default artwork
-      };
-      relocationRequests.unshift(newRequest); // Add to the start of the main data array
-      dataTableInstance.clear().rows.add(relocationRequests).draw(); // Reload DataTable
-      newRequestForm.reset();
-      newRequestModal.hide();
-    });
-
-    exportCsvBtn.addEventListener("click", () => {
-      const headers = [
-        "ID",
-        "Song Name",
-        "Artist",
-        "ISRC",
-        "Instagram Audio Link",
-        "Reel Merge Link",
-        "Matching Time",
-        "Status",
-      ];
-      const rows = dataTableInstance
-        .rows({ search: "applied" })
-        .data()
-        .toArray()
-        .map((req) => [
-          req.id,
-          req.songName,
-          req.artist,
-          req.isrc,
-          req.instagramAudio,
-          req.reelMerge,
-          req.matchingTime,
-          req.status,
-        ]);
-      const escapeCsvValue = (val) =>
-        `"${String(val || "").replace(/"/g, '""')}"`;
-      let csvContent =
-        "data:text/csv;charset=utf-8," +
-        headers.join(",") +
-        "\n" +
-        rows.map((r) => r.map(escapeCsvValue).join(",")).join("\n");
-
-      const link = document.createElement("a");
-      link.setAttribute("href", encodeURI(csvContent));
-      link.setAttribute("download", "relocation-requests.csv"); // Correct filename
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-    });
-
-    // --- INITIAL RENDER ---
-    dataTableInstance.clear().rows.add(relocationRequests).draw();
-    applyFiltersAndDraw();
   }
 });
+
+
 
 // releases-page show and redirecting logic js
 
@@ -2367,52 +2207,16 @@ document.addEventListener("DOMContentLoaded", function () {
 // merge-request js
 
 document.addEventListener("DOMContentLoaded", function () {
-  // This is the unique container for your Claim/Merge page
   const pageContainer = document.querySelector(".admin-claim-merge-req-page");
 
-  // This ensures the code ONLY runs on the Claim/Merge page
   if (pageContainer) {
-    // --- DATA ---
-    let claimingRequests = [
-      {
-        id: 1,
-        songName: "Cosmic Drift",
-        isrc: "US1232500004",
-        instagramAudio: "https://instagram.com/audio/123",
-        reelMerge: "https://instagram.com/reel/xyz",
-        matchingTime: "00:15-00:45",
-        status: "Approved",
-      },
-      {
-        id: 2,
-        songName: "Neon Tides",
-        isrc: "US1232500005",
-        instagramAudio: "https://instagram.com/audio/456",
-        reelMerge: "https://instagram.com/reel/abc",
-        matchingTime: "00:30-01:00",
-        status: "Pending",
-      },
-      {
-        id: 3,
-        songName: "Lost Signal",
-        isrc: "US1232500006",
-        instagramAudio: "https://instagram.com/audio/789",
-        reelMerge: "https://instagram.com/reel/def",
-        matchingTime: "01:00-01:15",
-        status: "Rejected",
-      },
-    ];
-
-    // --- DOM ELEMENTS ---
-    const tableBody = document.getElementById("claimMergeTableBody"); // FIXED: Using unique ID
-    const paginationText = document.getElementById("pagination-text");
     const claimForm = document.getElementById("newClaimForm");
     const newClaimModal = new bootstrap.Modal(
       document.getElementById("newClaimRequestModal")
     );
     const exportCsvBtn = document.getElementById("exportCsvBtn");
 
-    // --- HELPER FUNCTIONS ---
+    // --- HELPERS ---
     function getStatusIcon(status) {
       const icons = {
         Approved: "check-circle",
@@ -2441,139 +2245,140 @@ document.addEventListener("DOMContentLoaded", function () {
       } ${textClass}">${status}</span>`;
     }
 
-    function exportToCsv(filename, data) {
-      if (!data || data.length === 0) {
-        alert("No data to export.");
-        return;
-      }
-      const headers = [
-        "ID",
-        "Song Name",
-        "ISRC",
-        "Instagram Audio Link",
-        "Reel Merge Link",
-        "Matching Time",
-        "Status",
-      ];
-      const rows = data.map((req) => [
-        req.id,
-        req.songName,
-        req.isrc,
-        req.instagramAudio,
-        req.reelMerge,
-        req.matchingTime,
-        req.status,
-      ]);
-      const escapeCsvValue = (value) => {
-        const stringValue = String(value || "");
-        if (
-          stringValue.includes(",") ||
-          stringValue.includes('"') ||
-          stringValue.includes("\n")
-        ) {
-          return `"${stringValue.replace(/"/g, '""')}"`;
-        }
-        return stringValue;
-      };
-      let csvContent =
-        "data:text/csv;charset=utf-8," +
-        headers.join(",") +
-        "\n" +
-        rows.map((r) => r.map(escapeCsvValue).join(",")).join("\n");
+    // --- INIT DATATABLE ---
+    const table = $("#claimMergeTable").DataTable({
+      processing: true,
+      serverSide: false, // set true if you want Laravel DataTables server-side
+      ajax: {
+        url: "/superadmin/claim-reel-merge/list",
+        dataSrc: "data",
+      },
+      columns: [
+        {
+          data: "status",
+          className: "text-center",
+          render: (data) => getStatusIcon(data),
+          orderable: false,
+        },
+        {
+          data: "song_name",
+          render: (data, type, row) =>
+            `<div class="release-title"><a href="#">${data}</a></div>`,
+        },
+        { data: "isrc", defaultContent: "N/A" },
+        {
+          data: "instagram_audio",
+          className: "text-center",
+          render: (data) =>
+            data
+              ? `<a href="${data}" target="_blank" class="link-icon" title="Instagram Audio"><i class="bi bi-music-note-beamed"></i></a>`
+              : "N/A",
+        },
+        {
+          data: "reel_merge",
+          className: "text-center",
+          render: (data) =>
+            data
+              ? `<a href="${data}" target="_blank" class="link-icon" title="Reel Merge"><i class="bi bi-camera-reels"></i></a>`
+              : "N/A",
+        },
+        { data: "matching_time", defaultContent: "N/A" },
+        {
+          data: "status",
+          className: "text-center",
+          render: (data) => getStatusBadge(data),
+        },
+      ],
+      drawCallback: () => {
+        feather.replace();
+      },
+      language: {
+        searchPlaceholder: "Search records...",
+        zeroRecords: "No matching claim requests found",
+        emptyTable: "No claim requests available",
+      },
+    });
 
-      const encodedUri = encodeURI(csvContent);
-      const link = document.createElement("a");
-      link.setAttribute("href", encodedUri);
-      link.setAttribute("download", filename);
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-    }
-
-    // --- RENDER & UPDATE FUNCTIONS ---
-    function renderTable(data) {
-      if (!data || data.length === 0) {
-        // FIXED: colspan changed from 8 to 7
-        tableBody.innerHTML = `
-                    <tr>
-                        <td colspan="7" class="empty-state">
-                            <i data-feather="inbox"></i>
-                            <div>
-                                <h5 class="mb-2">No Claiming Requests Found</h5>
-                                <p class="mb-0">Click 'New Claiming Request' to get started.</p>
-                            </div>
-                        </td>
-                    </tr>`;
-      } else {
-        tableBody.innerHTML = data
-          .map(
-            (request) => `
-                    <tr>
-                        <td class="text-center">${getStatusIcon(
-                          request.status
-                        )}</td>
-                        <td>
-                            <div class="release-title">
-                                <a href="#">${request.songName}</a>
-                            </div>
-                        </td>
-                        <td>${request.isrc || "N/A"}</td>
-                        <td class="text-center">
-                            ${
-                              request.instagramAudio
-                                ? `<a href="${request.instagramAudio}" target="_blank" class="link-icon" title="Instagram Audio"><i class="bi bi-music-note-beamed"></i></a>`
-                                : "N/A"
-                            }
-                        </td>
-                        <td class="text-center">
-                            ${
-                              request.reelMerge
-                                ? `<a href="${request.reelMerge}" target="_blank" class="link-icon" title="Reel Merge"><i class="bi bi-camera-reels"></i></a>`
-                                : "N/A"
-                            }
-                        </td>
-                        <td>${request.matchingTime || "N/A"}</td>
-                        <td>${getStatusBadge(request.status)}</td>
-                    </tr>
-                `
-          )
-          .join("");
-      }
-      feather.replace();
-      updatePaginationText(data.length, data.length);
-    }
-
-    function updatePaginationText(end, total) {
-      paginationText.innerHTML = `Showing <strong>1</strong> to <strong>${end}</strong> of <strong>${total}</strong> entries`;
-    }
-
-    // --- EVENT LISTENERS ---
-    claimForm.addEventListener("submit", function (event) {
+    // --- SUBMIT FORM ---
+    claimForm.addEventListener("submit", async function (event) {
       event.preventDefault();
-      const newRequest = {
-        id: Date.now(),
-        songName: document.getElementById("songName").value,
-        isrc: document.getElementById("isrc").value,
-        instagramAudio: document.getElementById("instagramAudio").value,
-        reelMerge: document.getElementById("reelMerge").value,
-        matchingTime: document.getElementById("matchingTime").value,
-        status: "Pending",
-      };
-      claimingRequests.push(newRequest);
-      renderTable(claimingRequests);
-      claimForm.reset();
-      newClaimModal.hide();
+      const formData = new FormData(claimForm);
+
+      try {
+        const response = await fetch("/superadmin/claim-reel-merge/store", {
+          method: "POST",
+          body: formData,
+          headers: {
+            "X-Requested-With": "XMLHttpRequest",
+          },
+        });
+
+        const result = await response.json();
+
+        if (result.success) {
+          table.ajax.reload(); // refresh DataTable
+          claimForm.reset();
+          newClaimModal.hide();
+        } else {
+          alert(result.message || "Something went wrong.");
+        }
+      } catch (err) {
+        console.error("Error submitting claim request:", err);
+        alert("Error: " + err.message);
+      }
     });
 
-    // ADDED: Event listener for the export button
-    exportCsvBtn.addEventListener("click", function () {
-      exportToCsv("claim-merge-requests.csv", claimingRequests);
-    });
+    // --- EXPORT ---
+    exportCsvBtn.addEventListener("click", async function () {
+      try {
+        const response = await fetch("/superadmin/claim-reel-merge/list");
+        const result = await response.json();
 
-    // --- INITIAL RENDER ---
-    renderTable(claimingRequests);
+        if (!result.data || result.data.length === 0) {
+          alert("No data to export.");
+          return;
+        }
+
+        const headers = [
+          "ID",
+          "Song Name",
+          "ISRC",
+          "Instagram Audio Link",
+          "Reel Merge Link",
+          "Matching Time",
+          "Status",
+        ];
+        const rows = result.data.map((req) => [
+          req.id,
+          req.song_name,
+          req.isrc,
+          req.instagram_audio,
+          req.reel_merge,
+          req.matching_time,
+          req.status,
+        ]);
+
+        let csvContent =
+          "data:text/csv;charset=utf-8," +
+          headers.join(",") +
+          "\n" +
+          rows.map((r) => r.join(",")).join("\n");
+
+        const encodedUri = encodeURI(csvContent);
+        const link = document.createElement("a");
+        link.setAttribute("href", encodedUri);
+        link.setAttribute("download", "claim-merge-requests.csv");
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      } catch (err) {
+        console.error("Export failed:", err);
+      }
+    });
   }
 });
+
+
 
 // youtube js
 document.addEventListener("DOMContentLoaded", function () {

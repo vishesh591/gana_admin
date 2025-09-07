@@ -7,9 +7,9 @@
                     <button type="button" class="btn btn-outline-secondary rounded-pill px-4" id="exportCsvBtn">
                         <i class="bi bi-download me-1"></i> Export to CSV
                     </button>
-                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#newRequestModal">
+                    <!-- <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#newRequestModal">
                         <i class="bi bi-plus-lg me-1"></i> New Claiming Request
-                    </button>
+                    </button> -->
                 </div>
             </div>
 
@@ -20,13 +20,15 @@
                             <li class="nav-item"><a class="nav-link active" href="#" data-filter="all">All</a></li>
                             <li class="nav-item"><a class="nav-link" href="#" data-filter="pending">Pending</a></li>
                             <li class="nav-item"><a class="nav-link" href="#" data-filter="rejected">Rejected</a></li>
+                            <li class="nav-item"><a class="nav-link" href="#" data-filter="approved">Approved</a></li>
+
                         </ul>
                     </div>
                 </div>
 
-                <div class="card-body p-4">
+                <div class="card-body p-4 admin-merge-data-page">
                     <div class="table-responsive">
-                        <table class="table table-hover mb-0 align-middle" id="datatable" style="width:100%;">
+                        <table class="table table-hover mb-0 align-middle" id="mergeDataTable" style="width:100%;">
                             <thead class="table-light">
                                 <tr>
                                     <th width="60" class="text-center"></th>
@@ -37,8 +39,7 @@
                                     <th class="text-center">Status</th>
                                 </tr>
                             </thead>
-                            <tbody id="tableBody">
-                                </tbody>
+                            <tbody></tbody>
                         </table>
                     </div>
                 </div>
@@ -79,39 +80,46 @@
     </div>
 </div>
 
-<div class="modal fade" id="releaseModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-fullscreen">
+<div class="modal fade" id="mergeDataModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
         <div class="modal-content shadow-lg">
-            <div class="modal-header-custom" id="releaseModalHeader">
-                <div class="bg-image-blurred"></div>
-                <div class="d-flex w-100">
-                    <img id="releaseAlbumArtwork" src="" alt="Album Artwork" class="me-4">
-                    <div class="flex-grow-1">
-                        <h2 id="releaseTitle"></h2>
-                        <p id="releaseArtistHeader"></p>
-                        <div id="releaseStatusBadges"></div>
+            <div class="modal-header">
+                <h5 class="modal-title" id="mergeModalTitle">Request Details</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="detail-label">Song Name</label>
+                        <p class="detail-value" id="modal-songName"></p>
                     </div>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <div class="col-md-6 mb-3">
+                        <label class="detail-label">Artist</label>
+                        <p class="detail-value" id="modal-artist"></p>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="detail-label">ISRC</label>
+                        <p class="detail-value" id="modal-isrc"></p>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="detail-label">Matching Time</label>
+                        <p class="detail-value" id="modal-matchingTime"></p>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="detail-label">Instagram Audio</label>
+                        <p class="detail-value" id="modal-instagramAudio"></p>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="detail-label">Reel Merge</label>
+                        <p class="detail-value" id="modal-reelMerge"></p>
+                    </div>
+                    <div class="col-12 mb-3">
+                        <label class="detail-label">Status</label>
+                        <p class="detail-value" id="modal-status"></p>
+                    </div>
                 </div>
             </div>
-            <div class="modal-body p-4 bg-light">
-                <div class="row justify-content-center">
-                    <div class="col-lg-8">
-                        <div class="card">
-                            <div class="card-body p-4">
-                                <h5 class="card-title mb-4">Request Details</h5>
-                                <div class="row">
-                                    <div class="col-md-6 mb-3"><label class="detail-label">ISRC</label><p class="detail-value" id="modal-isrc"></p></div>
-                                    <div class="col-md-6 mb-3"><label class="detail-label">Matching Time</label><p class="detail-value" id="modal-matchingTime"></p></div>
-                                    <div class="col-md-6 mb-3"><label class="detail-label">Instagram Audio</label><p class="detail-value" id="modal-instagramAudio"></p></div>
-                                    <div class="col-md-6 mb-3"><label class="detail-label">Reel Merge</label><p class="detail-value" id="modal-reelMerge"></p></div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="modal-footer border-0 justify-content-center bg-light py-3">
+            <div class="modal-footer">
                 <button type="button" class="btn btn-danger rounded-pill px-4" id="rejectBtn">Reject</button>
                 <button type="button" class="btn btn-success rounded-pill px-4" id="approveBtn">Approve</button>
             </div>
