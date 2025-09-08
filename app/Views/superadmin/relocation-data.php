@@ -27,15 +27,15 @@
                         <table class="table table-hover mb-0 align-middle" id="relocationdataDatatable" style="width:100%;">
                             <thead class="table-light">
                                 <tr>
-                                    <th width="60" class="text-center"></th>
-                                    <th>Song Name / Artist</th>
-                                    <th>ISRC</th>
-                                    <th class="text-center">Links</th>
-                                    <th class="text-center">Status</th>
+                                    <th width="60" class="text-center">Status</th>
+                                    <th width="300">Song Name / Artist</th>
+                                    <th width="120" class="text-center">ISRC</th>
+                                    <th width="120" class="text-center">Links</th>
+                                    <th width="120" class="text-center">Status</th>
                                 </tr>
                             </thead>
                             <tbody id="tableBody">
-                                </tbody>
+                            </tbody>
                         </table>
                     </div>
                 </div>
@@ -104,6 +104,14 @@
                     <div class="col-md-12 mb-3">
                         <strong>Instagram Audio Link:</strong>
                         <p id="modal-instagramAudio" class="mb-0">-</p>
+                    </div>
+                    <div class="col-md-12 mb-3">
+                        <strong>Instagram Link:</strong>
+                        <p id="modal-instagramLink" class="mb-0">-</p>
+                    </div>
+                    <div class="col-md-12 mb-3">
+                        <strong>Facebook Link:</strong>
+                        <p id="modal-facebookLink" class="mb-0">-</p>
                     </div>
                 </div>
             </div>

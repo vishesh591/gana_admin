@@ -59,7 +59,7 @@
                 <h5 class="modal-title">Create New Artist</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
-                        <div id="artistAlertBox" class="mt-2 w-100"></div>
+            <div id="artistAlertBox" class="mt-2 w-100"></div>
 
             <div class="modal-body">
                 <form id="createArtistForm"
@@ -71,12 +71,68 @@
                         <input type="text" class="form-control" id="artistName" name="artist_name" required>
                     </div>
                     <div class="mb-3">
-                        <label class="form-label">Spotify Id</label>
-                        <input type="text" class="form-control" id="Spotify" name="spotify_id">
+                        <label for="artist_search" class="form-label">Spotify Artist</label>
+                        <div class="position-relative">
+                            <input type="text" class="form-control" id="artist_search"
+                                placeholder="Type artist name to search..." autocomplete="off">
+                            <input type="hidden" id="spotify_id" name="spotify_id">
+
+                            <!-- Dropdown for search results -->
+                            <div id="spotify_dropdown" class="dropdown-menu w-100" style="display: none; max-height: 300px; overflow-y: auto;">
+                                <!-- Search results will appear here -->
+                            </div>
+                        </div>
+
+                        <div id="selected_artist" class="mt-2" style="display: none;">
+                            <div class="card">
+                                <div class="card-body py-2">
+                                    <div class="d-flex align-items-center">
+                                        <img id="selected_artist_image" src="" alt="Artist" class="rounded me-3" width="50" height="50">
+                                        <div>
+                                            <h6 id="selected_artist_name" class="mb-0"></h6>
+                                            <small id="selected_artist_info" class="text-muted"></small>
+                                        </div>
+                                        <button type="button" class="btn btn-sm btn-outline-danger ms-auto" id="clear_artist">Clear</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-text">
+                            Search and select a Spotify artist
+                        </div>
                     </div>
                     <div class="mb-3">
-                        <label class="form-label">Apple ID</label>
-                        <input type="text" class="form-control" id="Apple" name="apple_id">
+                        <label for="apple_artist_search" class="form-label">Apple Music Artist</label>
+                        <div class="position-relative">
+                            <input type="text" class="form-control" id="apple_artist_search"
+                                placeholder="Type artist name to search..." autocomplete="off">
+                            <input type="hidden" id="apple_id" name="apple_id">
+
+                            <!-- Dropdown for search results -->
+                            <div id="apple_dropdown" class="dropdown-menu w-100" style="display: none; max-height: 300px; overflow-y: auto;">
+                                <!-- Search results will appear here -->
+                            </div>
+                        </div>
+
+                        <div id="selected_apple_artist" class="mt-2" style="display: none;">
+                            <div class="card">
+                                <div class="card-body py-2">
+                                    <div class="d-flex align-items-center">
+                                        <img id="selected_apple_artist_image" src="" alt="Artist" class="rounded me-3" width="50" height="50">
+                                        <div>
+                                            <h6 id="selected_apple_artist_name" class="mb-0"></h6>
+                                            <small id="selected_apple_artist_info" class="text-muted"></small>
+                                        </div>
+                                        <button type="button" class="btn btn-sm btn-outline-danger ms-auto" id="clear_apple_artist">Clear</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-text">
+                            Search and select an Apple Music artist (optional)
+                        </div>
                     </div>
 
                     <div class="mb-3">

@@ -112,7 +112,7 @@ class RelocationRequestController extends BaseController
     {
         try {
             $rows = $this->relocationModel
-                ->select('id, song_name, artist_name, isrc, instagram_link, status, created_at, updated_at')
+                ->select('id, song_name, artist_name, isrc, instagram_link, instagram_audio, facebook_link, status, created_at, updated_at')
                 ->orderBy('created_at', 'DESC')
                 ->findAll();
 
@@ -122,8 +122,10 @@ class RelocationRequestController extends BaseController
                     'songName'       => $r['song_name'] ?? 'Unknown Song',
                     'artist'         => $r['artist_name'] ?? 'Unknown Artist',
                     'isrc'           => $r['isrc'] ?? 'N/A',
-                    'instagramAudio' => $r['instagram_link'] ?? '',
-                    'status'         => $r['status'],
+                    'instagramAudio' => $r['instagram_audio'] ?? '',
+                    'instagramLink'  => $r['instagram_link'] ?? '',
+                    'facebookLink'   => $r['facebook_link'] ?? '',
+                    'status'         => $r['status'] ?? 'pending',
                     'artwork'        => base_url('assets/images/default-artwork.jpg'),
                     'created_at'     => $r['created_at'],
                     'updated_at'     => $r['updated_at'],
@@ -143,8 +145,6 @@ class RelocationRequestController extends BaseController
         }
     }
 
-    // Add these methods to your existing controller
-
     public function getRelocationDataDetail($id)
     {
         try {
@@ -162,10 +162,12 @@ class RelocationRequestController extends BaseController
                 'songName'       => $request['song_name'] ?? 'Unknown Song',
                 'artist'         => $request['artist_name'] ?? 'Unknown Artist',
                 'isrc'           => $request['isrc'] ?? 'N/A',
-                'instagramAudio' => $request['instagram_link'] ?? '',
+                'instagramAudio' => $request['instagram_audio'] ?? '', // Fixed field mapping
+                'instagramLink'  => $request['instagram_link'] ?? '',  // Fixed field mapping
+                'facebookLink'   => $request['facebook_link'] ?? '',
                 'reelMerge'      => $request['reel_merge_link'] ?? '',
                 'matchingTime'   => $request['matching_time'] ?? '',
-                'status'         => $request['status'],
+                'status'         => $request['status'] ?? 'pending',
                 'artwork'        => base_url('assets/images/default-artwork.jpg'),
             ];
 
@@ -174,6 +176,7 @@ class RelocationRequestController extends BaseController
                 'data'    => $data,
             ]);
         } catch (\Throwable $e) {
+            log_message('error', 'getRelocationDataDetail error: ' . $e->getMessage());
             return $this->response->setStatusCode(500)->setJSON([
                 'success' => false,
                 'error'   => 'Failed to fetch request details',
