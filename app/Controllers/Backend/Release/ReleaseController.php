@@ -257,184 +257,184 @@ class ReleaseController extends BaseController
                 ->with('error', 'Failed to create release: ' . $e->getMessage());
         }
     }
-public function update($id)
-{
-    try {
-        log_message('debug', 'POST data received: ' . json_encode($this->request->getPost()));
+    public function update($id)
+    {
+        try {
+            log_message('debug', 'POST data received: ' . json_encode($this->request->getPost()));
 
-        $release = $this->releaseRepo->find($id);
-        if (!$release) {
+            $release = $this->releaseRepo->find($id);
+            if (!$release) {
+                if ($this->request->isAJAX()) {
+                    return $this->response->setStatusCode(404)->setJSON([
+                        'success' => false,
+                        'error' => 'Release not found'
+                    ]);
+                }
+                return redirect()->to('/superadmin/releases')
+                    ->with('error', 'Release not found');
+            }
+
+            $status = (int)$this->request->getPost('status');
+            if (!$status) {
+                $status = (int)$release['status']; // Keep existing status if not provided
+            }
+
+            // Special logic: If current status is Delivered (3) and submit button is clicked (status=1), 
+            // change it to Takedown (2) instead of Review (1)
+            if ($release['status'] == 3 && $status == 1) {
+                $status = 3; // Change to Takedown instead of Review
+                log_message('debug', 'Status changed from Delivered to Takedown due to submit action');
+            }
+
+            $rejectionMessage = $this->request->getPost('message');
+
+            log_message('debug', 'Status value: ' . $status);
+            log_message('debug', 'Rejection message: ' . $rejectionMessage);
+
+            $artworkPath = $release['artwork']; // Keep existing artwork by default
+            $artworkFile = $this->request->getFile('artworkFile');
+            if ($artworkFile && $artworkFile->isValid() && !$artworkFile->hasMoved()) {
+                $artworkName = $artworkFile->getRandomName();
+                if ($artworkFile->move(FCPATH . 'uploads/artworks', $artworkName)) {
+                    $artworkPath = 'uploads/artworks/' . $artworkName;
+                }
+            }
+
+            $audioPath = $release['audio_file']; // Keep existing audio by default
+            $audioFile = $this->request->getFile('audioFile');
+            if ($audioFile && $audioFile->isValid() && !$audioFile->hasMoved()) {
+                $audioName = $audioFile->getRandomName();
+                if ($audioFile->move(FCPATH . 'uploads/audio', $audioName)) {
+                    $audioPath = 'uploads/audio/' . $audioName;
+                }
+            }
+
+            $stores = $this->request->getPost('stores') ?? [];
+            $rights = $this->request->getPost('rights') ?? [];
+
+            $releaseData = [
+                'id'                        => $id,
+                'title'                     => $this->request->getPost('releaseTitle'),
+                'label_id'                  => $this->request->getPost('label_id'),
+                'artist_id'                 => $this->request->getPost('artist'),
+                'featuring_artist_id'       => $this->request->getPost('featuringArtist'),
+                'release_type'              => $this->request->getPost('releaseType'),
+                'mood_type'                 => $this->request->getPost('mood'),
+                'genre_type'                => $this->request->getPost('genre'),
+                'upc_ean'                   => $this->request->getPost('upcEan'),
+                'language'                  => $this->request->getPost('language'),
+                'artwork'                   => $artworkPath,
+                'track_title'               => $this->request->getPost('trackTitle'),
+                'secondary_track_type'      => $this->request->getPost('secondaryTrackType'),
+                'instrumental'              => $this->request->getPost('instrumental'),
+                'isrc'                      => $this->request->getPost('isrc'),
+                'author'                    => $this->request->getPost('author'),
+                'composer'                  => $this->request->getPost('composer'),
+                'remixer'                   => $this->request->getPost('remixer'),
+                'arranger'                  => $this->request->getPost('arranger'),
+                'music_producer'            => $this->request->getPost('producer'),
+                'publisher'                 => $this->request->getPost('publisher'),
+                'c_line_year'               => $this->request->getPost('cLineYear'),
+                'c_line'                    => $this->request->getPost('cLine'),
+                'p_line_year'               => $this->request->getPost('pLineYear'),
+                'p_line'                    => $this->request->getPost('pLine'),
+                'production_year'           => $this->request->getPost('productionYear'),
+                'track_title_language'      => $this->request->getPost('trackLanguage'),
+                'explicit_song'             => $this->request->getPost('explicit'),
+                'lyrics'                    => $this->request->getPost('lyrics'),
+                'audio_file'                => $audioPath,
+                'release_date'              => $this->request->getPost('release_date'),
+                'stores_ids'                => json_encode($stores),
+                'rights_management_options' => json_encode($rights),
+                'pre_sale_date'             => $this->request->getPost('pre_sale_date'),
+                'original_release_date'     => $this->request->getPost('original_release_date'),
+                'release_price'             => $this->request->getPost('release_price'),
+                'sale_price'                => $this->request->getPost('sale_price'),
+                't_and_c'                   => 'yes',
+                'updated_at'                => date('Y-m-d H:i:s'),
+                'status'                    => $status, // Use the processed status
+            ];
+
+            // Add rejection message if status is rejected
+            if ($status == 4 && !empty($rejectionMessage)) {
+                $releaseData['rejected_at'] = date('Y-m-d H:i:s');
+                log_message('debug', 'Marking release as Rejected at: ' . $releaseData['rejected_at']);
+            }
+
+            if ($status == 3) {
+                $releaseData['delivered_at'] = date('Y-m-d H:i:s');
+                log_message('debug', 'Marking release as delivered at: ' . $releaseData['delivered_at']);
+            }
+
+            if ($status == 2) {
+                $releaseData['takedown_at'] = date('Y-m-d H:i:s');
+                log_message('debug', 'Marking release as takedown at: ' . $releaseData['takedown_at']);
+            }
+
+            if ($status == 5) {
+                $releaseData['approved_at'] = date('Y-m-d H:i:s');
+                log_message('debug', 'Marking Approved as delivered at: ' . $releaseData['approved_at']);
+            }
+
+            log_message('debug', 'Final release data status: ' . $releaseData['status']);
+
+            // Use model's save method
+            $model = new \App\Models\Backend\ReleaseModel();
+            $result = $model->save($releaseData);
+
+            if (!$result) {
+                throw new \Exception('Failed to save release data');
+            }
+
+            // Determine success message based on status
+            $statusMessages = [
+                1 => 'Release submitted successfully',
+                2 => 'Release taken down successfully',
+                3 => 'Release marked as delivered successfully',
+                4 => 'Release rejected successfully' . (!empty($rejectionMessage) ? ' with message' : ''),
+                5 => 'Release approved successfully'
+            ];
+
+            $message = $statusMessages[$status] ?? 'Release updated successfully';
+
+            // Determine redirect URL based on status
+            $redirectUrl = '/superadmin/releases';
+            if ($status == 3 || $status == 2) { // For delivered or takedown status
+                $redirectUrl = "/superadmin/releases/view/{$id}";
+            }
+
             if ($this->request->isAJAX()) {
-                return $this->response->setStatusCode(404)->setJSON([
-                    'success' => false,
-                    'error' => 'Release not found'
+                if (ob_get_length()) ob_clean();
+
+                return $this->response->setJSON([
+                    'success' => true,
+                    'message' => $message,
+                    'redirect' => $redirectUrl,
+                    'status' => $status
                 ]);
             }
-            return redirect()->to('/superadmin/releases')
-                ->with('error', 'Release not found');
-        }
 
-        $status = (int)$this->request->getPost('status');
-        if (!$status) {
-            $status = (int)$release['status']; // Keep existing status if not provided
-        }
+            return redirect()->to($redirectUrl)
+                ->with('success', $message);
+        } catch (\Exception $e) {
+            log_message('error', 'Release update failed: ' . $e->getMessage());
+            log_message('error', 'Stack trace: ' . $e->getTraceAsString());
 
-        // Special logic: If current status is Delivered (3) and submit button is clicked (status=1), 
-        // change it to Takedown (2) instead of Review (1)
-        if ($release['status'] == 3 && $status == 1) {
-            $status = 2; // Change to Takedown instead of Review
-            log_message('debug', 'Status changed from Delivered to Takedown due to submit action');
-        }
+            if ($this->request->isAJAX()) {
+                // Clear any output buffer
+                if (ob_get_length()) ob_clean();
 
-        $rejectionMessage = $this->request->getPost('message');
-
-        log_message('debug', 'Status value: ' . $status);
-        log_message('debug', 'Rejection message: ' . $rejectionMessage);
-
-        $artworkPath = $release['artwork']; // Keep existing artwork by default
-        $artworkFile = $this->request->getFile('artworkFile');
-        if ($artworkFile && $artworkFile->isValid() && !$artworkFile->hasMoved()) {
-            $artworkName = $artworkFile->getRandomName();
-            if ($artworkFile->move(FCPATH . 'uploads/artworks', $artworkName)) {
-                $artworkPath = 'uploads/artworks/' . $artworkName;
+                return $this->response->setStatusCode(500)->setJSON([
+                    'success' => false,
+                    'error' => 'Failed to update release: ' . $e->getMessage()
+                ]);
             }
+
+            return redirect()->back()
+                ->withInput()
+                ->with('error', 'Failed to update release: ' . $e->getMessage());
         }
-
-        $audioPath = $release['audio_file']; // Keep existing audio by default
-        $audioFile = $this->request->getFile('audioFile');
-        if ($audioFile && $audioFile->isValid() && !$audioFile->hasMoved()) {
-            $audioName = $audioFile->getRandomName();
-            if ($audioFile->move(FCPATH . 'uploads/audio', $audioName)) {
-                $audioPath = 'uploads/audio/' . $audioName;
-            }
-        }
-
-        $stores = $this->request->getPost('stores') ?? [];
-        $rights = $this->request->getPost('rights') ?? [];
-
-        $releaseData = [
-            'id'                        => $id,
-            'title'                     => $this->request->getPost('releaseTitle'),
-            'label_id'                  => $this->request->getPost('label_id'),
-            'artist_id'                 => $this->request->getPost('artist'),
-            'featuring_artist_id'       => $this->request->getPost('featuringArtist'),
-            'release_type'              => $this->request->getPost('releaseType'),
-            'mood_type'                 => $this->request->getPost('mood'),
-            'genre_type'                => $this->request->getPost('genre'),
-            'upc_ean'                   => $this->request->getPost('upcEan'),
-            'language'                  => $this->request->getPost('language'),
-            'artwork'                   => $artworkPath,
-            'track_title'               => $this->request->getPost('trackTitle'),
-            'secondary_track_type'      => $this->request->getPost('secondaryTrackType'),
-            'instrumental'              => $this->request->getPost('instrumental'),
-            'isrc'                      => $this->request->getPost('isrc'),
-            'author'                    => $this->request->getPost('author'),
-            'composer'                  => $this->request->getPost('composer'),
-            'remixer'                   => $this->request->getPost('remixer'),
-            'arranger'                  => $this->request->getPost('arranger'),
-            'music_producer'            => $this->request->getPost('producer'),
-            'publisher'                 => $this->request->getPost('publisher'),
-            'c_line_year'               => $this->request->getPost('cLineYear'),
-            'c_line'                    => $this->request->getPost('cLine'),
-            'p_line_year'               => $this->request->getPost('pLineYear'),
-            'p_line'                    => $this->request->getPost('pLine'),
-            'production_year'           => $this->request->getPost('productionYear'),
-            'track_title_language'      => $this->request->getPost('trackLanguage'),
-            'explicit_song'             => $this->request->getPost('explicit'),
-            'lyrics'                    => $this->request->getPost('lyrics'),
-            'audio_file'                => $audioPath,
-            'release_date'              => $this->request->getPost('release_date'),
-            'stores_ids'                => json_encode($stores),
-            'rights_management_options' => json_encode($rights),
-            'pre_sale_date'             => $this->request->getPost('pre_sale_date'),
-            'original_release_date'     => $this->request->getPost('original_release_date'),
-            'release_price'             => $this->request->getPost('release_price'),
-            'sale_price'                => $this->request->getPost('sale_price'),
-            't_and_c'                   => 'yes',
-            'updated_at'                => date('Y-m-d H:i:s'),
-            'status'                    => $status, // Use the processed status
-        ];
-
-        // Add rejection message if status is rejected
-        if ($status == 4 && !empty($rejectionMessage)) {
-            $releaseData['rejected_at'] = date('Y-m-d H:i:s');
-            log_message('debug', 'Marking release as Rejected at: ' . $releaseData['rejected_at']);
-        }
-
-        if ($status == 3) {
-            $releaseData['delivered_at'] = date('Y-m-d H:i:s');
-            log_message('debug', 'Marking release as delivered at: ' . $releaseData['delivered_at']);
-        }
-
-        if ($status == 2) {
-            $releaseData['takedown_at'] = date('Y-m-d H:i:s');
-            log_message('debug', 'Marking release as takedown at: ' . $releaseData['takedown_at']);
-        }
-
-        if ($status == 5) {
-            $releaseData['approved_at'] = date('Y-m-d H:i:s');
-            log_message('debug', 'Marking Approved as delivered at: ' . $releaseData['approved_at']);
-        }
-
-        log_message('debug', 'Final release data status: ' . $releaseData['status']);
-
-        // Use model's save method
-        $model = new \App\Models\Backend\ReleaseModel();
-        $result = $model->save($releaseData);
-
-        if (!$result) {
-            throw new \Exception('Failed to save release data');
-        }
-
-        // Determine success message based on status
-        $statusMessages = [
-            1 => 'Release submitted successfully',
-            2 => 'Release taken down successfully',
-            3 => 'Release marked as delivered successfully',
-            4 => 'Release rejected successfully' . (!empty($rejectionMessage) ? ' with message' : ''),
-            5 => 'Release approved successfully'
-        ];
-
-        $message = $statusMessages[$status] ?? 'Release updated successfully';
-
-        // Determine redirect URL based on status
-        $redirectUrl = '/superadmin/releases';
-        if ($status == 3 || $status == 2) { // For delivered or takedown status
-            $redirectUrl = "/superadmin/releases/view/{$id}";
-        }
-
-        if ($this->request->isAJAX()) {
-            if (ob_get_length()) ob_clean();
-
-            return $this->response->setJSON([
-                'success' => true,
-                'message' => $message,
-                'redirect' => $redirectUrl,
-                'status' => $status
-            ]);
-        }
-
-        return redirect()->to($redirectUrl)
-            ->with('success', $message);
-    } catch (\Exception $e) {
-        log_message('error', 'Release update failed: ' . $e->getMessage());
-        log_message('error', 'Stack trace: ' . $e->getTraceAsString());
-
-        if ($this->request->isAJAX()) {
-            // Clear any output buffer
-            if (ob_get_length()) ob_clean();
-
-            return $this->response->setStatusCode(500)->setJSON([
-                'success' => false,
-                'error' => 'Failed to update release: ' . $e->getMessage()
-            ]);
-        }
-
-        return redirect()->back()
-            ->withInput()
-            ->with('error', 'Failed to update release: ' . $e->getMessage());
     }
-}
 
     public function addRelease()
     {
