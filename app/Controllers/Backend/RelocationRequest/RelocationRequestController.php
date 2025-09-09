@@ -157,19 +157,25 @@ class RelocationRequestController extends BaseController
                 ]);
             }
 
+            // Debug: Log the raw data from database
+            log_message('debug', 'Raw request data: ' . print_r($request, true));
+
             $data = [
                 'id'             => (int) $request['id'],
                 'songName'       => $request['song_name'] ?? 'Unknown Song',
-                'artist'         => $request['artist_name'] ?? 'Unknown Artist',
+                'artist'         => $request['artist_name'] ?? 'Unknown Artist', 
                 'isrc'           => $request['isrc'] ?? 'N/A',
-                'instagramAudio' => $request['instagram_audio'] ?? '', // Fixed field mapping
-                'instagramLink'  => $request['instagram_link'] ?? '',  // Fixed field mapping
+                'instagramAudio' => $request['instagram_audio'] ?? '',
+                'instagramLink'  => $request['instagram_link'] ?? '',
                 'facebookLink'   => $request['facebook_link'] ?? '',
                 'reelMerge'      => $request['reel_merge_link'] ?? '',
                 'matchingTime'   => $request['matching_time'] ?? '',
-                'status'         => $request['status'] ?? 'pending',
+                'status'         => $request['status'] ?? 'pending', // Make sure this field exists in DB
                 'artwork'        => base_url('assets/images/default-artwork.jpg'),
             ];
+
+            // Debug: Log the formatted data being sent to frontend
+            log_message('debug', 'Formatted data being sent: ' . print_r($data, true));
 
             return $this->response->setJSON([
                 'success' => true,

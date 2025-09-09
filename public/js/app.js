@@ -1009,20 +1009,24 @@ document.addEventListener("DOMContentLoaded", function () {
             return data || "";
           },
         },
+        // Action column (only video links + View button)
         {
           data: null,
           className: "text-center",
           orderable: false,
           searchable: false,
-          width: "150px",
+          width: "200px",
           render: (data, type, row) => {
             if (type === "display") {
+              let linksHtml = "";
+              if (Array.isArray(row.videoLinks)) {
+                row.videoLinks.forEach((url, i) => {
+                  linksHtml += `<a href="${url}" target="_blank" class="btn btn-sm btn-outline-secondary me-1">Video ${i + 1}</a>`;
+                });
+              }
               return `
-                ${createLink(row.instagramAudio, "bi-music-note-beamed")}
-                ${createLink(row.reelMerge, "bi-camera-reels")}
-                <button class="btn btn-sm btn-primary view-btn" data-id="${
-                  row.id
-                }">View</button>
+                ${linksHtml}
+                <button class="btn btn-sm btn-primary view-btn" data-id="${row.id}">View</button>
               `;
             }
             return "";
@@ -1055,15 +1059,19 @@ document.addEventListener("DOMContentLoaded", function () {
 
     releaseModalEl.dataset.currentId = r.id;
 
-    // Fill modal inputs - Use correct field names
     document.getElementById("songName").value = r.songName || "N/A";
     document.getElementById("artistName").value = r.artist || "N/A";
     document.getElementById("isrcCode").value = r.isrc || "N/A";
     document.getElementById("upcCode").value = r.upc || "N/A";
+    document.getElementById("removalReason").value = r.removalReason || "N/A";
     document.getElementById("statusDropdown").value = r.status || "Pending";
+
+    // Show video links (optional: display in console or append somewhere in modal)
+    console.log("Video Links:", r.videoLinks);
 
     releaseModal.show();
   }
+
 
   // Save button handler (Approve/Reject/Pending)
   document
@@ -1200,6 +1208,27 @@ document.addEventListener("DOMContentLoaded", function () {
       drawCallback: () => feather.replace(),
     });
 
+    // ✅ Fix filter tabs
+    document.getElementById("filterTabs")?.addEventListener("click", (e) => {
+      if (e.target.matches("a.nav-link[data-filter]")) {
+        e.preventDefault();
+        const filter = e.target.dataset.filter;
+
+        // Update active tab
+        document
+          .querySelectorAll("#filterTabs .nav-link")
+          .forEach((t) => t.classList.remove("active"));
+        e.target.classList.add("active");
+
+        // Apply filter to status column (index 5 here)
+        if (filter === "all") {
+          table.column(5).search("").draw();
+        } else {
+          table.column(5).search("^" + filter + "$", true, false).draw();
+        }
+      }
+    });
+
     // Open modal
     $("#mergeDataTable tbody").on(
       "click",
@@ -1265,6 +1294,7 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 });
 
+
 // relocation-data-page js
 
 // Add this entire new block to your app.js file
@@ -1289,14 +1319,25 @@ document.addEventListener("DOMContentLoaded", function () {
   };
 
   const getStatusBadge = (status) => {
-    const s = (status || "").toLowerCase();
-    const cls =
-      {
-        approved: "status-approved",
-        pending: "status-pending",
-        rejected: "status-rejected",
-      }[s] || "bg-secondary";
-    return `<span class="badge status-badge ${cls}">${s.toUpperCase()}</span>`;
+    console.log("getStatusBadge called with:", status, "Type:", typeof status); // Debug
+    
+    // Handle null, undefined, or empty status
+    if (!status || status === null || status === undefined) {
+      status = 'pending'; // Default fallback
+    }
+    
+    const s = String(status).trim().toLowerCase(); // Convert to string first, then normalize
+    console.log("Normalized status:", s); // Debug
+    
+    const cls = {
+      approved: "status-approved",
+      pending: "status-pending", 
+      rejected: "status-rejected",
+    }[s] || "bg-secondary";
+
+    const displayText = s ? s.toUpperCase() : 'PENDING';
+    
+    return `<span class="badge status-badge ${cls}">${displayText}</span>`;
   };
 
   const createLink = (url, iconClass) =>
@@ -1319,6 +1360,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
       const data = result.data;
       console.log("Modal data:", data);
+      console.log("Status from API:", data.status); // Debug specific status
 
       populateModal(data);
       modal.show();
@@ -1330,43 +1372,62 @@ document.addEventListener("DOMContentLoaded", function () {
   };
 
   const populateModal = (data) => {
+    console.log("Full data object:", data); // Debug: Check entire data object
+    console.log("Status value:", data.status); // Debug: Check specific status value
+    
     // Basic fields
     document.getElementById("releaseTitle").textContent = data.songName || "-";
     document.getElementById("releaseArtistHeader").textContent = data.artist || "-";
     document.getElementById("modal-isrc").textContent = data.isrc || "-";
 
-    // Status
-    document.getElementById("releaseStatusBadges").innerHTML = getStatusBadge(data.status);
+    // Status - Fixed with better error handling
+  document.getElementById("releaseStatusBadges").textContent = data.status || "-";
+
 
     // Instagram Audio Link
     const instaAudio = document.getElementById("modal-instagramAudio");
-    instaAudio.innerHTML =
-      data.instagramAudio && data.instagramAudio !== "N/A"
-        ? `<a href="${data.instagramAudio}" target="_blank" class="text-primary">${data.instagramAudio}</a>`
-        : "-";
+    if (instaAudio) {
+      instaAudio.innerHTML =
+        data.instagramAudio && data.instagramAudio !== "N/A" && data.instagramAudio !== ""
+          ? `<a href="${data.instagramAudio}" target="_blank" class="text-primary">${data.instagramAudio}</a>`
+          : "-";
+    }
 
     // Instagram Link
     const instaLink = document.getElementById("modal-instagramLink");
-    instaLink.innerHTML =
-      data.instagramLink && data.instagramLink !== "N/A"
-        ? `<a href="${data.instagramLink}" target="_blank" class="text-primary">${data.instagramLink}</a>`
-        : "-";
+    if (instaLink) {
+      instaLink.innerHTML =
+        data.instagramLink && data.instagramLink !== "N/A" && data.instagramLink !== ""
+          ? `<a href="${data.instagramLink}" target="_blank" class="text-primary">${data.instagramLink}</a>`
+          : "-";
+    }
 
     // Facebook Link
     const fbLink = document.getElementById("modal-facebookLink");
-    fbLink.innerHTML =
-      data.facebookLink && data.facebookLink !== "N/A"
-        ? `<a href="${data.facebookLink}" target="_blank" class="text-primary">${data.facebookLink}</a>`
-        : "-";
+    if (fbLink) {
+      fbLink.innerHTML =
+        data.facebookLink && data.facebookLink !== "N/A" && data.facebookLink !== ""
+          ? `<a href="${data.facebookLink}" target="_blank" class="text-primary">${data.facebookLink}</a>`
+          : "-";
+    }
 
     // Update approve/reject buttons
-    updateButtonStates(data.status);
+    updateButtonStates(data.status || 'pending');
   };
 
   const updateButtonStates = (status) => {
     const approveBtn = document.getElementById("approveBtn");
     const rejectBtn = document.getElementById("rejectBtn");
+    
+    if (!approveBtn || !rejectBtn) {
+      console.error("Approve or Reject button not found!");
+      return;
+    }
 
+    const normalizedStatus = String(status || 'pending').toLowerCase();
+    console.log("updateButtonStates called with:", normalizedStatus); // Debug
+
+    // Reset buttons to default state
     approveBtn.disabled = false;
     rejectBtn.disabled = false;
     approveBtn.classList.remove("btn-outline-success");
@@ -1374,7 +1435,7 @@ document.addEventListener("DOMContentLoaded", function () {
     approveBtn.classList.add("btn-success");
     rejectBtn.classList.add("btn-danger");
 
-    if (status.toLowerCase() === "approved") {
+    if (normalizedStatus === "approved") {
       approveBtn.disabled = true;
       approveBtn.classList.remove("btn-success");
       approveBtn.classList.add("btn-outline-success");
@@ -1383,7 +1444,7 @@ document.addEventListener("DOMContentLoaded", function () {
       approveBtn.textContent = "Approve";
     }
 
-    if (status.toLowerCase() === "rejected") {
+    if (normalizedStatus === "rejected") {
       rejectBtn.disabled = true;
       rejectBtn.classList.remove("btn-danger");
       rejectBtn.classList.add("btn-outline-danger");
@@ -1425,7 +1486,13 @@ document.addEventListener("DOMContentLoaded", function () {
 
       console.log("Status updated successfully:", result);
       updateButtonStates(status);
-      document.getElementById("releaseStatusBadges").innerHTML = getStatusBadge(status);
+      
+      // Update the status badge in modal
+      const statusElement = document.getElementById("releaseStatusBadges");
+      if (statusElement) {
+        statusElement.innerHTML = getStatusBadge(status);
+      }
+      
       dataTableInstance.ajax.reload(null, false);
       alert(`Request ${status} successfully!`);
     } catch (error) {

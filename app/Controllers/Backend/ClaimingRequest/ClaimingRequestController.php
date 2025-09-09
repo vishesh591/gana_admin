@@ -121,24 +121,23 @@ class ClaimingRequestController extends BaseController
     {
         try {
             $rows = $this->claimingRequestModel
-                ->select('id, song_name, artist_name, upc, isrc, instagram_link, facebook_link, video_links, status, created_at, updated_at')
+                ->select('id, song_name, artist_name, upc, isrc, video_links, removal_reason, status, created_at, updated_at')
                 ->orderBy('created_at', 'DESC')
                 ->findAll();
 
             $data = array_map(function ($r) {
                 return [
-                    'id'              => (int) $r['id'],
-                    'songName'        => $r['song_name'] ?? 'Unknown Song',
-                    'artist'          => $r['artist_name'] ?? 'Unknown Artist',
-                    'upc'             => $r['upc'] ?? 'N/A',
-                    'isrc'            => $r['isrc'] ?? 'N/A',
-                    'instagramAudio'  => $r['instagram_link'] ?? '',
-                    'reelMerge'       => $r['facebook_link'] ?? '',
-                    'matchingTime'    => $r['video_links'] ?? 'N/A', // reuse if you want to show something
-                    'status'          => $this->getStatusText($r['status']),
-                    'artwork'         => base_url('assets/images/default-artwork.jpg'),
-                    'created_at'      => $r['created_at'],
-                    'updated_at'      => $r['updated_at'],
+                    'id'             => (int) $r['id'],
+                    'songName'       => $r['song_name'] ?? 'Unknown Song',
+                    'artist'         => $r['artist_name'] ?? 'Unknown Artist',
+                    'upc'            => $r['upc'] ?? 'N/A',
+                    'isrc'           => $r['isrc'] ?? 'N/A',
+                    'videoLinks'     => $this->parseVideoLinks($r['video_links'] ?? ''), // convert to array
+                    'removalReason'  => $r['removal_reason'] ?? 'N/A',
+                    'status'         => $this->getStatusText($r['status']),
+                    'artwork'        => base_url('assets/images/default-artwork.jpg'),
+                    'created_at'     => $r['created_at'],
+                    'updated_at'     => $r['updated_at'],
                 ];
             }, $rows);
 
@@ -154,6 +153,15 @@ class ClaimingRequestController extends BaseController
             ]);
         }
     }
+
+    /**
+     * Convert a stored text (comma/line separated) into array of links
+     */
+    private function parseVideoLinks(string $links): array
+    {
+        return array_filter(array_map('trim', preg_split('/[\r\n,]+/', $links)));
+    }
+
 
     public function updateStatus($id)
     {

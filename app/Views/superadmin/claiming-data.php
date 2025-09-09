@@ -107,7 +107,10 @@
             <label class="form-label">UPC</label>
             <input type="text" class="form-control" id="upcCode" readonly>
           </div>
-
+          <div class="mb-3">
+            <label class="form-label">Reason</label>
+            <input type="text" class="form-control" id="removalReason" readonly>
+          </div>
           <div class="mb-3">
             <label class="form-label">Status</label>
             <select class="form-select" id="statusDropdown">

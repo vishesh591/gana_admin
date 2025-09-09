@@ -132,7 +132,7 @@
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label for="featuringArtist" class="form-label required-field">Featuring Artist</label>
-                                <select class="form-select searchable-select" id="featuringArtist" name="featuringArtist" required
+                                <select class="form-select searchable-select" id="featuringArtist" name="featuringArtist"
                                     data-placeholder="Search and select a label...">
                                     <option value="">Featuring Artist</option>
                                     <?php foreach ($artists as $artist): ?>
