@@ -46,6 +46,8 @@ $routes->group('superadmin', ['filter' => 'role:superadmin'], function ($routes)
     $routes->post('create-label', 'Backend\Label\LabelController::store');
     $routes->get('artists', 'Backend\Artist\ArtistController::index');
     $routes->get('api/artists', 'Backend\Artist\ArtistController::getArtistsJson');
+    $routes->post('artist/search-spotify', 'Backend\Artist\ArtistController::searchSpotifyArtists');
+    $routes->post('artist/search-apple-music', 'Backend\Artist\ArtistController::searchAppleMusicArtists');
     $routes->get('labels', 'Backend\Label\LabelController::index');
     $routes->post('register', 'RegisterController::register');
     $routes->get('accounts', 'RegisterController::accounts');

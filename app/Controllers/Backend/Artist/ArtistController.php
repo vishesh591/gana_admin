@@ -4,6 +4,7 @@ namespace App\Controllers\Backend\Artist;
 
 use App\Controllers\BaseController;
 use App\Repositories\Artist\ArtistRepository;
+use App\Services\SpotifyService;
 
 class ArtistController extends BaseController
 {
@@ -18,8 +19,8 @@ class ArtistController extends BaseController
     {
         $validationRules = [
             'artist_name'   => 'required|min_length[2]|max_length[255]',
-            'spotify_id'    => 'permit_empty|max_length[255]',
-            'apple_id'      => 'permit_empty|max_length[255]',
+            'spotify_id'    => 'permit_empty_spotify_artist',
+            'apple_id'      => 'permit_empty_apple_artist',
             'profile_image' => 'uploaded[profile_image]|is_image[profile_image]|mime_in[profile_image,image/jpg,image/jpeg,image/png]'
         ];
 
@@ -36,10 +37,12 @@ class ArtistController extends BaseController
             return redirect()->back()->withInput()->with('errors', $errors);
         }
 
+        // Get the Spotify ID from the form submission
+        $spotifyId = $this->request->getPost('spotify_id');
 
         $data = [
             'name'        => $this->request->getPost('artist_name'),
-            'spotify_id'  => $this->request->getPost('spotify_id'),
+            'spotify_id'  => $spotifyId, // Use the actual Spotify ID, not empty string
             'apple_id'    => $this->request->getPost('apple_id'),
         ];
 
@@ -62,6 +65,44 @@ class ArtistController extends BaseController
         return redirect()->back()->with('success', 'Artist created successfully');
     }
 
+    /**
+     * AJAX endpoint to validate Spotify artist (optional for real-time validation)
+     */
+    public function searchSpotifyArtists()
+    {
+        $query = $this->request->getPost('query');
+
+        if (empty($query) || strlen($query) < 2) {
+            return $this->response->setJSON([
+                'success' => false,
+                'data' => [],
+                'error' => 'Please enter at least 2 characters'
+            ]);
+        }
+
+        $spotifyService = new SpotifyService();
+        $result = $spotifyService->searchArtists($query, 10);
+
+        return $this->response->setJSON($result);
+    }
+
+    public function searchAppleMusicArtists()
+    {
+        $query = $this->request->getPost('query');
+
+        if (empty($query) || strlen($query) < 2) {
+            return $this->response->setJSON([
+                'success' => false,
+                'data' => [],
+                'error' => 'Please enter at least 2 characters'
+            ]);
+        }
+
+        $spotifyService = new SpotifyService();
+        $result = $spotifyService->searchAppleMusicArtists($query, 10);
+
+        return $this->response->setJSON($result);
+    }
 
     public function index()
     {
