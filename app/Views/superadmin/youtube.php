@@ -3,8 +3,13 @@
         <div class="container-fluid">
             <div class="py-3 d-flex align-items-sm-center flex-sm-row flex-column justify-content-between">
                 <h4 class="fs-18 fw-bold m-0">YouTube Owner Conflict</h4>
+                    <div>
+                        <button class="btn btn-outline-secondary me-2">
+                            <i data-feather="plus" id="importYoutubeCsv" class="me-1"></i>Import Conflict
+                        </button>
+                    </div>
             </div>
-
+  
             <div class="card shadow-sm">
                 <div class="card-body p-4">
                     <div class="table-responsive">

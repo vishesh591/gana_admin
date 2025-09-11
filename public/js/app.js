@@ -363,440 +363,442 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 // facebook-page js
 // Add this entire new block to your app.js file
-document.addEventListener('DOMContentLoaded', function() {
+// document.addEventListener('DOMContentLoaded', function() {
 
-    // =========================================================================
-    //  REUSABLE FUNCTION FOR ALL CONFLICT PAGES (YOUTUBE, FACEBOOK, ETC.)
-    // =========================================================================
-    function initializeConflictPage(config) {
-        const pageContainer = document.querySelector(config.pageSelector);
-        if (!pageContainer) {
-            return; // Exit if we're not on the right page
-        }
+//     // =========================================================================
+//     //  REUSABLE FUNCTION FOR ALL CONFLICT PAGES (YOUTUBE, FACEBOOK, ETC.)
+//     // =========================================================================
+//     function initializeConflictPage(config) {
+//         const pageContainer = document.querySelector(config.pageSelector);
+//         if (!pageContainer) {
+//             return; // Exit if we're not on the right page
+//         }
 
-        // --- DATA & HELPERS ---
-            const territoriesByRegion = {
-      Africa: [
-        { name: "Algeria", code: "DZ" },
-        { name: "Angola", code: "AO" },
-        { name: "Benin", code: "BJ" },
-        { name: "Botswana", code: "BW" },
-        { name: "Burkina Faso", code: "BF" },
-        { name: "Burundi", code: "BI" },
-        { name: "Cabo Verde", code: "CV" },
-        { name: "Cameroon", code: "CM" },
-        { name: "Central African Republic", code: "CF" },
-        { name: "Chad", code: "TD" },
-        { name: "Comoros", code: "KM" },
-        { name: "Congo", code: "CG" },
-        { name: "Congo (DRC)", code: "CD" },
-        { name: "Côte d'Ivoire", code: "CI" },
-        { name: "Djibouti", code: "DJ" },
-        { name: "Egypt", code: "EG" },
-        { name: "Equatorial Guinea", code: "GQ" },
-        { name: "Eritrea", code: "ER" },
-        { name: "Eswatini", code: "SZ" },
-        { name: "Ethiopia", code: "ET" },
-        { name: "Gabon", code: "GA" },
-        { name: "Gambia", code: "GM" },
-        { name: "Ghana", code: "GH" },
-        { name: "Guinea", code: "GN" },
-        { name: "Guinea-Bissau", code: "GW" },
-        { name: "Kenya", code: "KE" },
-        { name: "Lesotho", code: "LS" },
-        { name: "Liberia", code: "LR" },
-        { name: "Libya", code: "LY" },
-        { name: "Madagascar", code: "MG" },
-        { name: "Malawi", code: "MW" },
-        { name: "Mali", code: "ML" },
-        { name: "Mauritania", code: "MR" },
-        { name: "Mauritius", code: "MU" },
-        { name: "Mayotte", code: "YT" },
-        { name: "Morocco", code: "MA" },
-        { name: "Mozambique", code: "MZ" },
-        { name: "Namibia", code: "NA" },
-        { name: "Niger", code: "NE" },
-        { name: "Nigeria", code: "NG" },
-        { name: "Réunion", code: "RE" },
-        { name: "Rwanda", code: "RW" },
-        { name: "Saint Helena", code: "SH" },
-        { name: "Sao Tome and Principe", code: "ST" },
-        { name: "Senegal", code: "SN" },
-        { name: "Seychelles", code: "SC" },
-        { name: "Sierra Leone", code: "SL" },
-        { name: "Somalia", code: "SO" },
-        { name: "South Africa", code: "ZA" },
-        { name: "South Sudan", code: "SS" },
-        { name: "Sudan", code: "SD" },
-        { name: "Tanzania", code: "TZ" },
-        { name: "Togo", code: "TG" },
-        { name: "Tunisia", code: "TN" },
-        { name: "Uganda", code: "UG" },
-        { name: "Zambia", code: "ZM" },
-        { name: "Zimbabwe", code: "ZW" },
-      ],
-      Antarctica: [
-        { name: "Antarctica", code: "AQ" },
-        { name: "French Southern Territories", code: "TF" },
-        { name: "South Georgia and the South Sandwich Islands", code: "GS" },
-      ],
-      Asia: [
-        { name: "Afghanistan", code: "AF" },
-        { name: "Armenia", code: "AM" },
-        { name: "Azerbaijan", code: "AZ" },
-        { name: "Bahrain", code: "BH" },
-        { name: "Bangladesh", code: "BD" },
-        { name: "Bhutan", code: "BT" },
-        { name: "British Indian Ocean Territory", code: "IO" },
-        { name: "Brunei", code: "BN" },
-        { name: "Cambodia", code: "KH" },
-        { name: "China", code: "CN" },
-        { name: "Cyprus", code: "CY" },
-        { name: "Georgia", code: "GE" },
-        { name: "Hong Kong", code: "HK" },
-        { name: "India", code: "IN" },
-        { name: "Indonesia", code: "ID" },
-        { name: "Iran", code: "IR" },
-        { name: "Iraq", code: "IQ" },
-        { name: "Israel", code: "IL" },
-        { name: "Japan", code: "JP" },
-        { name: "Jordan", code: "JO" },
-        { name: "Kazakhstan", code: "KZ" },
-        { name: "Kuwait", code: "KW" },
-        { name: "Kyrgyzstan", code: "KG" },
-        { name: "Laos", code: "LA" },
-        { name: "Lebanon", code: "LB" },
-        { name: "Macao", code: "MO" },
-        { name: "Malaysia", code: "MY" },
-        { name: "Maldives", code: "MV" },
-        { name: "Mongolia", code: "MN" },
-        { name: "Myanmar", code: "MM" },
-        { name: "Nepal", code: "NP" },
-        { name: "North Korea", code: "KP" },
-        { name: "Oman", code: "OM" },
-        { name: "Pakistan", code: "PK" },
-        { name: "Palestine", code: "PS" },
-        { name: "Philippines", code: "PH" },
-        { name: "Qatar", code: "QA" },
-        { name: "Saudi Arabia", code: "SA" },
-        { name: "Singapore", code: "SG" },
-        { name: "South Korea", code: "KR" },
-        { name: "Sri Lanka", code: "LK" },
-        { name: "Syria", code: "SY" },
-        { name: "Taiwan", code: "TW" },
-        { name: "Tajikistan", code: "TJ" },
-        { name: "Thailand", code: "TH" },
-        { name: "Timor-Leste", code: "TL" },
-        { name: "Turkey", code: "TR" },
-        { name: "Turkmenistan", code: "TM" },
-        { name: "United Arab Emirates", code: "AE" },
-        { name: "Uzbekistan", code: "UZ" },
-        { name: "Vietnam", code: "VN" },
-        { name: "Yemen", code: "YE" },
-      ],
-      Europe: [
-        { name: "Åland Islands", code: "AX" },
-        { name: "Albania", code: "AL" },
-        { name: "Andorra", code: "AD" },
-        { name: "Austria", code: "AT" },
-        { name: "Belarus", code: "BY" },
-        { name: "Belgium", code: "BE" },
-        { name: "Bosnia and Herzegovina", code: "BA" },
-        { name: "Bulgaria", code: "BG" },
-        { name: "Croatia", code: "HR" },
-        { name: "Czechia", code: "CZ" },
-        { name: "Denmark", code: "DK" },
-        { name: "Estonia", code: "EE" },
-        { name: "Faroe Islands", code: "FO" },
-        { name: "Finland", code: "FI" },
-        { name: "France", code: "FR" },
-        { name: "Germany", code: "DE" },
-        { name: "Gibraltar", code: "GI" },
-        { name: "Greece", code: "GR" },
-        { name: "Guernsey", code: "GG" },
-        { name: "Holy See", code: "VA" },
-        { name: "Hungary", code: "HU" },
-        { name: "Iceland", code: "IS" },
-        { name: "Ireland", code: "IE" },
-        { name: "Isle of Man", code: "IM" },
-        { name: "Italy", code: "IT" },
-        { name: "Jersey", code: "JE" },
-        { name: "Latvia", code: "LV" },
-        { name: "Liechtenstein", code: "LI" },
-        { name: "Lithuania", code: "LT" },
-        { name: "Luxembourg", code: "LU" },
-        { name: "Malta", code: "MT" },
-        { name: "Moldova", code: "MD" },
-        { name: "Monaco", code: "MC" },
-        { name: "Montenegro", code: "ME" },
-        { name: "Netherlands", code: "NL" },
-        { name: "North Macedonia", code: "MK" },
-        { name: "Norway", code: "NO" },
-        { name: "Poland", code: "PL" },
-        { name: "Portugal", code: "PT" },
-        { name: "Romania", code: "RO" },
-        { name: "Russia", code: "RU" },
-        { name: "San Marino", code: "SM" },
-        { name: "Serbia", code: "RS" },
-        { name: "Slovakia", code: "SK" },
-        { name: "Slovenia", code: "SI" },
-        { name: "Spain", code: "ES" },
-        { name: "Svalbard and Jan Mayen", code: "SJ" },
-        { name: "Sweden", code: "SE" },
-        { name: "Switzerland", code: "CH" },
-        { name: "Ukraine", code: "UA" },
-        { name: "United Kingdom", code: "GB" },
-      ],
-      "North America": [
-        { name: "Anguilla", code: "AI" },
-        { name: "Antigua and Barbuda", code: "AG" },
-        { name: "Aruba", code: "AW" },
-        { name: "Bahamas", code: "BS" },
-        { name: "Barbados", code: "BB" },
-        { name: "Belize", code: "BZ" },
-        { name: "Bermuda", code: "BM" },
-        { name: "Bonaire", code: "BQ" },
-        { name: "Canada", code: "CA" },
-        { name: "Cayman Islands", code: "KY" },
-        { name: "Costa Rica", code: "CR" },
-        { name: "Cuba", code: "CU" },
-        { name: "Curaçao", code: "CW" },
-        { name: "Dominica", code: "DM" },
-        { name: "Dominican Republic", code: "DO" },
-        { name: "El Salvador", code: "SV" },
-        { name: "Greenland", code: "GL" },
-        { name: "Grenada", code: "GD" },
-        { name: "Guadeloupe", code: "GP" },
-        { name: "Guatemala", code: "GT" },
-        { name: "Haiti", code: "HT" },
-        { name: "Honduras", code: "HN" },
-        { name: "Jamaica", code: "JM" },
-        { name: "Martinique", code: "MQ" },
-        { name: "Mexico", code: "MX" },
-        { name: "Montserrat", code: "MS" },
-        { name: "Nicaragua", code: "NI" },
-        { name: "Panama", code: "PA" },
-        { name: "Puerto Rico", code: "PR" },
-        { name: "Saint Barthélemy", code: "BL" },
-        { name: "Saint Kitts and Nevis", code: "KN" },
-        { name: "Saint Lucia", code: "LC" },
-        { name: "Saint Martin", code: "MF" },
-        { name: "Saint Pierre and Miquelon", code: "PM" },
-        { name: "Saint Vincent and the Grenadines", code: "VC" },
-        { name: "Sint Maarten", code: "SX" },
-        { name: "Trinidad and Tobago", code: "TT" },
-        { name: "Turks and Caicos Islands", code: "TC" },
-        { name: "United States", code: "US" },
-        { name: "U.S. Virgin Islands", code: "VI" },
-      ],
-      Oceania: [
-        { name: "American Samoa", code: "AS" },
-        { name: "Australia", code: "AU" },
-        { name: "Christmas Island", code: "CX" },
-        { name: "Cocos (Keeling) Islands", code: "CC" },
-        { name: "Cook Islands", code: "CK" },
-        { name: "Fiji", code: "FJ" },
-        { name: "French Polynesia", code: "PF" },
-        { name: "Guam", code: "GU" },
-        { name: "Kiribati", code: "KI" },
-        { name: "Marshall Islands", code: "MH" },
-        { name: "Micronesia", code: "FM" },
-        { name: "Nauru", code: "NR" },
-        { name: "New Caledonia", code: "NC" },
-        { name: "New Zealand", code: "NZ" },
-        { name: "Niue", code: "NU" },
-        { name: "Norfolk Island", code: "NF" },
-        { name: "Northern Mariana Islands", code: "MP" },
-        { name: "Palau", code: "PW" },
-        { name: "Papua New Guinea", code: "PG" },
-        { name: "Pitcairn", code: "PN" },
-        { name: "Samoa", code: "WS" },
-        { name: "Solomon Islands", code: "SB" },
-        { name: "Tokelau", code: "TK" },
-        { name: "Tonga", code: "TO" },
-        { name: "Tuvalu", code: "TV" },
-        { name: "U.S. Minor Outlying Islands", code: "UM" },
-        { name: "Vanuatu", code: "VU" },
-        { name: "Wallis and Futuna", code: "WF" },
-      ],
-      "South America": [
-        { name: "Argentina", code: "AR" },
-        { name: "Bolivia", code: "BO" },
-        { name: "Brazil", code: "BR" },
-        { name: "Chile", code: "CL" },
-        { name: "Colombia", code: "CO" },
-        { name: "Ecuador", code: "EC" },
-        { name: "Falkland Islands", code: "FK" },
-        { name: "French Guiana", code: "GF" },
-        { name: "Guyana", code: "GY" },
-        { name: "Paraguay", code: "PY" },
-        { name: "Peru", code: "PE" },
-        { name: "Suriname", code: "SR" },
-        { name: "Uruguay", code: "UY" },
-        { name: "Venezuela", code: "VE" },
-      ],
-    };
-        const totalCountries = Object.values(territoriesByRegion).flat().length;
+//         // --- DATA & HELPERS ---
+//             const territoriesByRegion = {
+//       Africa: [
+//         { name: "Algeria", code: "DZ" },
+//         { name: "Angola", code: "AO" },
+//         { name: "Benin", code: "BJ" },
+//         { name: "Botswana", code: "BW" },
+//         { name: "Burkina Faso", code: "BF" },
+//         { name: "Burundi", code: "BI" },
+//         { name: "Cabo Verde", code: "CV" },
+//         { name: "Cameroon", code: "CM" },
+//         { name: "Central African Republic", code: "CF" },
+//         { name: "Chad", code: "TD" },
+//         { name: "Comoros", code: "KM" },
+//         { name: "Congo", code: "CG" },
+//         { name: "Congo (DRC)", code: "CD" },
+//         { name: "Côte d'Ivoire", code: "CI" },
+//         { name: "Djibouti", code: "DJ" },
+//         { name: "Egypt", code: "EG" },
+//         { name: "Equatorial Guinea", code: "GQ" },
+//         { name: "Eritrea", code: "ER" },
+//         { name: "Eswatini", code: "SZ" },
+//         { name: "Ethiopia", code: "ET" },
+//         { name: "Gabon", code: "GA" },
+//         { name: "Gambia", code: "GM" },
+//         { name: "Ghana", code: "GH" },
+//         { name: "Guinea", code: "GN" },
+//         { name: "Guinea-Bissau", code: "GW" },
+//         { name: "Kenya", code: "KE" },
+//         { name: "Lesotho", code: "LS" },
+//         { name: "Liberia", code: "LR" },
+//         { name: "Libya", code: "LY" },
+//         { name: "Madagascar", code: "MG" },
+//         { name: "Malawi", code: "MW" },
+//         { name: "Mali", code: "ML" },
+//         { name: "Mauritania", code: "MR" },
+//         { name: "Mauritius", code: "MU" },
+//         { name: "Mayotte", code: "YT" },
+//         { name: "Morocco", code: "MA" },
+//         { name: "Mozambique", code: "MZ" },
+//         { name: "Namibia", code: "NA" },
+//         { name: "Niger", code: "NE" },
+//         { name: "Nigeria", code: "NG" },
+//         { name: "Réunion", code: "RE" },
+//         { name: "Rwanda", code: "RW" },
+//         { name: "Saint Helena", code: "SH" },
+//         { name: "Sao Tome and Principe", code: "ST" },
+//         { name: "Senegal", code: "SN" },
+//         { name: "Seychelles", code: "SC" },
+//         { name: "Sierra Leone", code: "SL" },
+//         { name: "Somalia", code: "SO" },
+//         { name: "South Africa", code: "ZA" },
+//         { name: "South Sudan", code: "SS" },
+//         { name: "Sudan", code: "SD" },
+//         { name: "Tanzania", code: "TZ" },
+//         { name: "Togo", code: "TG" },
+//         { name: "Tunisia", code: "TN" },
+//         { name: "Uganda", code: "UG" },
+//         { name: "Zambia", code: "ZM" },
+//         { name: "Zimbabwe", code: "ZW" },
+//       ],
+//       Antarctica: [
+//         { name: "Antarctica", code: "AQ" },
+//         { name: "French Southern Territories", code: "TF" },
+//         { name: "South Georgia and the South Sandwich Islands", code: "GS" },
+//       ],
+//       Asia: [
+//         { name: "Afghanistan", code: "AF" },
+//         { name: "Armenia", code: "AM" },
+//         { name: "Azerbaijan", code: "AZ" },
+//         { name: "Bahrain", code: "BH" },
+//         { name: "Bangladesh", code: "BD" },
+//         { name: "Bhutan", code: "BT" },
+//         { name: "British Indian Ocean Territory", code: "IO" },
+//         { name: "Brunei", code: "BN" },
+//         { name: "Cambodia", code: "KH" },
+//         { name: "China", code: "CN" },
+//         { name: "Cyprus", code: "CY" },
+//         { name: "Georgia", code: "GE" },
+//         { name: "Hong Kong", code: "HK" },
+//         { name: "India", code: "IN" },
+//         { name: "Indonesia", code: "ID" },
+//         { name: "Iran", code: "IR" },
+//         { name: "Iraq", code: "IQ" },
+//         { name: "Israel", code: "IL" },
+//         { name: "Japan", code: "JP" },
+//         { name: "Jordan", code: "JO" },
+//         { name: "Kazakhstan", code: "KZ" },
+//         { name: "Kuwait", code: "KW" },
+//         { name: "Kyrgyzstan", code: "KG" },
+//         { name: "Laos", code: "LA" },
+//         { name: "Lebanon", code: "LB" },
+//         { name: "Macao", code: "MO" },
+//         { name: "Malaysia", code: "MY" },
+//         { name: "Maldives", code: "MV" },
+//         { name: "Mongolia", code: "MN" },
+//         { name: "Myanmar", code: "MM" },
+//         { name: "Nepal", code: "NP" },
+//         { name: "North Korea", code: "KP" },
+//         { name: "Oman", code: "OM" },
+//         { name: "Pakistan", code: "PK" },
+//         { name: "Palestine", code: "PS" },
+//         { name: "Philippines", code: "PH" },
+//         { name: "Qatar", code: "QA" },
+//         { name: "Saudi Arabia", code: "SA" },
+//         { name: "Singapore", code: "SG" },
+//         { name: "South Korea", code: "KR" },
+//         { name: "Sri Lanka", code: "LK" },
+//         { name: "Syria", code: "SY" },
+//         { name: "Taiwan", code: "TW" },
+//         { name: "Tajikistan", code: "TJ" },
+//         { name: "Thailand", code: "TH" },
+//         { name: "Timor-Leste", code: "TL" },
+//         { name: "Turkey", code: "TR" },
+//         { name: "Turkmenistan", code: "TM" },
+//         { name: "United Arab Emirates", code: "AE" },
+//         { name: "Uzbekistan", code: "UZ" },
+//         { name: "Vietnam", code: "VN" },
+//         { name: "Yemen", code: "YE" },
+//       ],
+//       Europe: [
+//         { name: "Åland Islands", code: "AX" },
+//         { name: "Albania", code: "AL" },
+//         { name: "Andorra", code: "AD" },
+//         { name: "Austria", code: "AT" },
+//         { name: "Belarus", code: "BY" },
+//         { name: "Belgium", code: "BE" },
+//         { name: "Bosnia and Herzegovina", code: "BA" },
+//         { name: "Bulgaria", code: "BG" },
+//         { name: "Croatia", code: "HR" },
+//         { name: "Czechia", code: "CZ" },
+//         { name: "Denmark", code: "DK" },
+//         { name: "Estonia", code: "EE" },
+//         { name: "Faroe Islands", code: "FO" },
+//         { name: "Finland", code: "FI" },
+//         { name: "France", code: "FR" },
+//         { name: "Germany", code: "DE" },
+//         { name: "Gibraltar", code: "GI" },
+//         { name: "Greece", code: "GR" },
+//         { name: "Guernsey", code: "GG" },
+//         { name: "Holy See", code: "VA" },
+//         { name: "Hungary", code: "HU" },
+//         { name: "Iceland", code: "IS" },
+//         { name: "Ireland", code: "IE" },
+//         { name: "Isle of Man", code: "IM" },
+//         { name: "Italy", code: "IT" },
+//         { name: "Jersey", code: "JE" },
+//         { name: "Latvia", code: "LV" },
+//         { name: "Liechtenstein", code: "LI" },
+//         { name: "Lithuania", code: "LT" },
+//         { name: "Luxembourg", code: "LU" },
+//         { name: "Malta", code: "MT" },
+//         { name: "Moldova", code: "MD" },
+//         { name: "Monaco", code: "MC" },
+//         { name: "Montenegro", code: "ME" },
+//         { name: "Netherlands", code: "NL" },
+//         { name: "North Macedonia", code: "MK" },
+//         { name: "Norway", code: "NO" },
+//         { name: "Poland", code: "PL" },
+//         { name: "Portugal", code: "PT" },
+//         { name: "Romania", code: "RO" },
+//         { name: "Russia", code: "RU" },
+//         { name: "San Marino", code: "SM" },
+//         { name: "Serbia", code: "RS" },
+//         { name: "Slovakia", code: "SK" },
+//         { name: "Slovenia", code: "SI" },
+//         { name: "Spain", code: "ES" },
+//         { name: "Svalbard and Jan Mayen", code: "SJ" },
+//         { name: "Sweden", code: "SE" },
+//         { name: "Switzerland", code: "CH" },
+//         { name: "Ukraine", code: "UA" },
+//         { name: "United Kingdom", code: "GB" },
+//       ],
+//       "North America": [
+//         { name: "Anguilla", code: "AI" },
+//         { name: "Antigua and Barbuda", code: "AG" },
+//         { name: "Aruba", code: "AW" },
+//         { name: "Bahamas", code: "BS" },
+//         { name: "Barbados", code: "BB" },
+//         { name: "Belize", code: "BZ" },
+//         { name: "Bermuda", code: "BM" },
+//         { name: "Bonaire", code: "BQ" },
+//         { name: "Canada", code: "CA" },
+//         { name: "Cayman Islands", code: "KY" },
+//         { name: "Costa Rica", code: "CR" },
+//         { name: "Cuba", code: "CU" },
+//         { name: "Curaçao", code: "CW" },
+//         { name: "Dominica", code: "DM" },
+//         { name: "Dominican Republic", code: "DO" },
+//         { name: "El Salvador", code: "SV" },
+//         { name: "Greenland", code: "GL" },
+//         { name: "Grenada", code: "GD" },
+//         { name: "Guadeloupe", code: "GP" },
+//         { name: "Guatemala", code: "GT" },
+//         { name: "Haiti", code: "HT" },
+//         { name: "Honduras", code: "HN" },
+//         { name: "Jamaica", code: "JM" },
+//         { name: "Martinique", code: "MQ" },
+//         { name: "Mexico", code: "MX" },
+//         { name: "Montserrat", code: "MS" },
+//         { name: "Nicaragua", code: "NI" },
+//         { name: "Panama", code: "PA" },
+//         { name: "Puerto Rico", code: "PR" },
+//         { name: "Saint Barthélemy", code: "BL" },
+//         { name: "Saint Kitts and Nevis", code: "KN" },
+//         { name: "Saint Lucia", code: "LC" },
+//         { name: "Saint Martin", code: "MF" },
+//         { name: "Saint Pierre and Miquelon", code: "PM" },
+//         { name: "Saint Vincent and the Grenadines", code: "VC" },
+//         { name: "Sint Maarten", code: "SX" },
+//         { name: "Trinidad and Tobago", code: "TT" },
+//         { name: "Turks and Caicos Islands", code: "TC" },
+//         { name: "United States", code: "US" },
+//         { name: "U.S. Virgin Islands", code: "VI" },
+//       ],
+//       Oceania: [
+//         { name: "American Samoa", code: "AS" },
+//         { name: "Australia", code: "AU" },
+//         { name: "Christmas Island", code: "CX" },
+//         { name: "Cocos (Keeling) Islands", code: "CC" },
+//         { name: "Cook Islands", code: "CK" },
+//         { name: "Fiji", code: "FJ" },
+//         { name: "French Polynesia", code: "PF" },
+//         { name: "Guam", code: "GU" },
+//         { name: "Kiribati", code: "KI" },
+//         { name: "Marshall Islands", code: "MH" },
+//         { name: "Micronesia", code: "FM" },
+//         { name: "Nauru", code: "NR" },
+//         { name: "New Caledonia", code: "NC" },
+//         { name: "New Zealand", code: "NZ" },
+//         { name: "Niue", code: "NU" },
+//         { name: "Norfolk Island", code: "NF" },
+//         { name: "Northern Mariana Islands", code: "MP" },
+//         { name: "Palau", code: "PW" },
+//         { name: "Papua New Guinea", code: "PG" },
+//         { name: "Pitcairn", code: "PN" },
+//         { name: "Samoa", code: "WS" },
+//         { name: "Solomon Islands", code: "SB" },
+//         { name: "Tokelau", code: "TK" },
+//         { name: "Tonga", code: "TO" },
+//         { name: "Tuvalu", code: "TV" },
+//         { name: "U.S. Minor Outlying Islands", code: "UM" },
+//         { name: "Vanuatu", code: "VU" },
+//         { name: "Wallis and Futuna", code: "WF" },
+//       ],
+//       "South America": [
+//         { name: "Argentina", code: "AR" },
+//         { name: "Bolivia", code: "BO" },
+//         { name: "Brazil", code: "BR" },
+//         { name: "Chile", code: "CL" },
+//         { name: "Colombia", code: "CO" },
+//         { name: "Ecuador", code: "EC" },
+//         { name: "Falkland Islands", code: "FK" },
+//         { name: "French Guiana", code: "GF" },
+//         { name: "Guyana", code: "GY" },
+//         { name: "Paraguay", code: "PY" },
+//         { name: "Peru", code: "PE" },
+//         { name: "Suriname", code: "SR" },
+//         { name: "Uruguay", code: "UY" },
+//         { name: "Venezuela", code: "VE" },
+//       ],
+//     };
+//         const totalCountries = Object.values(territoriesByRegion).flat().length;
 
-        const getStatusBadge = (status) => {
-            let badgeClass = 'bg-secondary-subtle text-secondary-emphasis';
-            if (status === 'Action Required') badgeClass = 'bg-danger-subtle text-danger-emphasis';
-            else if (status === 'Resolved') badgeClass = 'bg-success-subtle text-success-emphasis';
-            else if (status === 'In Review') badgeClass = 'bg-warning-subtle text-warning-emphasis';
-            return `<span class="badge rounded-pill border ${badgeClass}">${status}</span>`;
-        };
-        const parseViews = (views) => (typeof views !== 'string') ? 0 : parseFloat(views.toUpperCase()) * (views.toUpperCase().includes('K') ? 1000 : 1);
-        const parseExpiry = (expiry) => (typeof expiry !== 'string' || expiry === '-') ? Infinity : parseInt(expiry);
+//         const getStatusBadge = (status) => {
+//             let badgeClass = 'bg-secondary-subtle text-secondary-emphasis';
+//             if (status === 'Action Required') badgeClass = 'bg-danger-subtle text-danger-emphasis';
+//             else if (status === 'Resolved') badgeClass = 'bg-success-subtle text-success-emphasis';
+//             else if (status === 'In Review') badgeClass = 'bg-warning-subtle text-warning-emphasis';
+//             return `<span class="badge rounded-pill border ${badgeClass}">${status}</span>`;
+//         };
+//         const parseViews = (views) => (typeof views !== 'string') ? 0 : parseFloat(views.toUpperCase()) * (views.toUpperCase().includes('K') ? 1000 : 1);
+//         const parseExpiry = (expiry) => (typeof expiry !== 'string' || expiry === '-') ? Infinity : parseInt(expiry);
         
-        // --- DATATABLES CONFIGURATION ---
-        const dataTableInstance = $(pageContainer.querySelector('#datatable')).DataTable({
-            destroy: true,
-            data: config.data,
-            paging: true,
-            searching: true,
-            info: true,
-            lengthChange: true,
-            autoWidth: false,
-            columns: [
-                { data: null, className: 'text-center', orderable: false, render: () => `<i class="bi ${config.platformIconClass} fs-5"></i>` },
-                { data: 'category' },
-                { data: 'assetTitle' },
-                { data: null, render: (data, type, row) => `<div class="fw-bold">${row.artist}</div><small class="text-muted">Asset ID: ${row.assetId}</small>` },
-                { data: 'upc' },
-                { data: 'otherParty' },
-                { data: 'dailyViews', render: { _: (data) => data, sort: (data) => parseViews(data) } },
-                { data: 'expiry', render: { _: (data) => data, sort: (data) => parseExpiry(data) } },
-                { data: 'status', render: (data) => getStatusBadge(data) },
-                { data: null, className: 'text-center', orderable: false, render: () => `<i class="bi bi-chevron-right text-muted"></i>` }
-            ],
-            createdRow: function(row, data) {
-                $(row).attr({
-                    'style': 'cursor: pointer;',
-                    'data-bs-toggle': 'offcanvas',
-                    'data-bs-target': config.offcanvasId,
-                    'data-song-name': data.assetTitle,
-                    'data-artist-name': data.artist,
-                    'data-isrc': data.isrc,
-                    'data-cover-url': data.albumCoverUrl,
-                    'data-category': data.category,
-                    'data-other-party': data.otherParty
-                });
-            },
-            language: { search: "_INPUT_", searchPlaceholder: "Search conflicts..." }
-        });
+//         // --- DATATABLES CONFIGURATION ---
+//         const dataTableInstance = $(pageContainer.querySelector('#datatable')).DataTable({
+//             destroy: true,
+//             data: config.data,
+//             paging: true,
+//             searching: true,
+//             info: true,
+//             lengthChange: true,
+//             autoWidth: false,
+//             columns: [
+//                 { data: null, className: 'text-center', orderable: false, render: () => `<i class="bi ${config.platformIconClass} fs-5"></i>` },
+//                 { data: 'category' },
+//                 { data: 'assetTitle' },
+//                 { data: null, render: (data, type, row) => `<div class="fw-bold">${row.artist}</div><small class="text-muted">Asset ID: ${row.assetId}</small>` },
+//                 { data: 'upc' },
+//                 { data: 'otherParty' },
+//                 { data: 'dailyViews', render: { _: (data) => data, sort: (data) => parseViews(data) } },
+//                 { data: 'expiry', render: { _: (data) => data, sort: (data) => parseExpiry(data) } },
+//                 { data: 'status', render: (data) => getStatusBadge(data) },
+//                 { data: null, className: 'text-center', orderable: false, render: () => `<i class="bi bi-chevron-right text-muted"></i>` }
+//             ],
+//             createdRow: function(row, data) {
+//                 $(row).attr({
+//                     'style': 'cursor: pointer;',
+//                     'data-bs-toggle': 'offcanvas',
+//                     'data-bs-target': config.offcanvasId,
+//                     'data-song-name': data.assetTitle,
+//                     'data-artist-name': data.artist,
+//                     'data-isrc': data.isrc,
+//                     'data-cover-url': data.albumCoverUrl,
+//                     'data-category': data.category,
+//                     'data-other-party': data.otherParty
+//                 });
+//             },
+//             language: { search: "_INPUT_", searchPlaceholder: "Search conflicts..." }
+//         });
 
-        // --- OFFCANVAS LOGIC ---
-        const conflictOffcanvasEl = document.querySelector(config.offcanvasId);
-        if (conflictOffcanvasEl) {
-            const conflictForm = conflictOffcanvasEl.querySelector('form');
-            const steps = Array.from(conflictOffcanvasEl.querySelectorAll('.form-step'));
-            const nextBtn = conflictOffcanvasEl.querySelector('#nextBtn');
-            const backBtn = conflictOffcanvasEl.querySelector('#backBtn');
-            const submitBtn = conflictOffcanvasEl.querySelector('#submitBtn');
-            let currentStep = 0;
+//         // --- OFFCANVAS LOGIC ---
+//         const conflictOffcanvasEl = document.querySelector(config.offcanvasId);
+//         if (conflictOffcanvasEl) {
+//             const conflictForm = conflictOffcanvasEl.querySelector('form');
+//             const steps = Array.from(conflictOffcanvasEl.querySelectorAll('.form-step'));
+//             const nextBtn = conflictOffcanvasEl.querySelector('#nextBtn');
+//             const backBtn = conflictOffcanvasEl.querySelector('#backBtn');
+//             const submitBtn = conflictOffcanvasEl.querySelector('#submitBtn');
+//             let currentStep = 0;
 
-            function showStep(stepIndex) {
-                steps.forEach((step, index) => step.classList.toggle('d-none', index !== stepIndex));
-                backBtn.classList.toggle('d-none', stepIndex === 0);
-                nextBtn.classList.toggle('d-none', stepIndex === steps.length - 1);
-                submitBtn.classList.toggle('d-none', stepIndex !== steps.length - 1);
-                currentStep = stepIndex;
-            }
+//             function showStep(stepIndex) {
+//                 steps.forEach((step, index) => step.classList.toggle('d-none', index !== stepIndex));
+//                 backBtn.classList.toggle('d-none', stepIndex === 0);
+//                 nextBtn.classList.toggle('d-none', stepIndex === steps.length - 1);
+//                 submitBtn.classList.toggle('d-none', stepIndex !== steps.length - 1);
+//                 currentStep = stepIndex;
+//             }
 
-            nextBtn.addEventListener('click', () => {
-                if (currentStep === 0 && !conflictForm.querySelector('input[name="rightsOwned"]:checked')) return alert('Please select a rights option.');
-                if (currentStep === 1 && !conflictForm.querySelector('.country-checkbox:checked')) return alert('Please select at least one territory.');
-                if (currentStep < steps.length - 1) showStep(currentStep + 1);
-            });
+//             nextBtn.addEventListener('click', () => {
+//                 if (currentStep === 0 && !conflictForm.querySelector('input[name="rightsOwned"]:checked')) return alert('Please select a rights option.');
+//                 if (currentStep === 1 && !conflictForm.querySelector('.country-checkbox:checked')) return alert('Please select at least one territory.');
+//                 if (currentStep < steps.length - 1) showStep(currentStep + 1);
+//             });
 
-            backBtn.addEventListener('click', () => {
-                if (currentStep > 0) showStep(currentStep - 1);
-            });
+//             backBtn.addEventListener('click', () => {
+//                 if (currentStep > 0) showStep(currentStep - 1);
+//             });
 
-            conflictOffcanvasEl.addEventListener('show.bs.offcanvas', function(event) {
-                const data = event.relatedTarget.dataset;
-                ['', '2', '3'].forEach(s => {
-                    const suffix = s ? parseInt(s) : '';
-                    conflictOffcanvasEl.querySelector(`#modalAlbumCover${suffix}`).src = data.coverUrl;
-                    conflictOffcanvasEl.querySelector(`#modalSongName${suffix}`).textContent = data.songName;
-                    conflictOffcanvasEl.querySelector(`#modalArtistName${suffix}`).textContent = data.artistName;
-                });
-                conflictOffcanvasEl.querySelector('#modalIsrc').textContent = `ISRC: ${data.isrc}`;
-                conflictOffcanvasEl.querySelector('#modalPlatform').textContent = config.platformName;
-                conflictOffcanvasEl.querySelector('#offcanvasTitle').textContent = data.category;
-                conflictOffcanvasEl.querySelector('#offcanvasSubtitle').textContent = `VS. ${data.otherParty}`;
-                renderTerritoryAccordion();
-                conflictForm.reset();
-                showStep(0);
-            });
+//             conflictOffcanvasEl.addEventListener('show.bs.offcanvas', function(event) {
+//                 const data = event.relatedTarget.dataset;
+//                 ['', '2', '3'].forEach(s => {
+//                     const suffix = s ? parseInt(s) : '';
+//                     conflictOffcanvasEl.querySelector(`#modalAlbumCover${suffix}`).src = data.coverUrl;
+//                     conflictOffcanvasEl.querySelector(`#modalSongName${suffix}`).textContent = data.songName;
+//                     conflictOffcanvasEl.querySelector(`#modalArtistName${suffix}`).textContent = data.artistName;
+//                 });
+//                 conflictOffcanvasEl.querySelector('#modalIsrc').textContent = `ISRC: ${data.isrc}`;
+//                 conflictOffcanvasEl.querySelector('#modalPlatform').textContent = config.platformName;
+//                 conflictOffcanvasEl.querySelector('#offcanvasTitle').textContent = data.category;
+//                 conflictOffcanvasEl.querySelector('#offcanvasSubtitle').textContent = `VS. ${data.otherParty}`;
+//                 renderTerritoryAccordion();
+//                 conflictForm.reset();
+//                 showStep(0);
+//             });
             
-            conflictForm.addEventListener('submit', function(e) {
-                e.preventDefault();
-                alert('Resolution submitted successfully!');
-                bootstrap.Offcanvas.getInstance(conflictOffcanvasEl).hide();
-            });
+//             conflictForm.addEventListener('submit', function(e) {
+//                 e.preventDefault();
+//                 alert('Resolution submitted successfully!');
+//                 bootstrap.Offcanvas.getInstance(conflictOffcanvasEl).hide();
+//             });
 
-            function renderTerritoryAccordion() {
-                const accordionContainer = conflictOffcanvasEl.querySelector('#territoryAccordion');
-                accordionContainer.innerHTML = Object.entries(territoriesByRegion).map(([region, countries]) => {
-                    if (countries.length === 0) return '';
-                    const regionId = region.replace(/[^a-zA-Z0-9]/g, '');
-                    return `
-                    <div class="accordion-item">
-                        <h2 class="accordion-header">
-                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-${config.platformName}-${regionId}">
-                                <div class="form-check me-auto"><input class="form-check-input region-checkbox" type="checkbox" data-region="${region}" checked><label class="form-check-label fw-bold">${region}</label></div>
-                                <span class="text-muted small me-2">${countries.length} countries</span>
-                            </button>
-                        </h2>
-                        <div id="collapse-${config.platformName}-${regionId}" class="accordion-collapse collapse" data-bs-parent="#territoryAccordion">
-                            <div class="accordion-body">${countries.map(c =>`<div class="form-check"><input class="form-check-input country-checkbox" type="checkbox" data-region="${region}" checked><label class="form-check-label">${c.name}</label></div>`).join('')}</div>
-                        </div>
-                    </div>`;
-                }).join('');
-                addTerritoryEventListeners();
-                updateTerritoryCounter();
-            }
+//             function renderTerritoryAccordion() {
+//                 const accordionContainer = conflictOffcanvasEl.querySelector('#territoryAccordion');
+//                 accordionContainer.innerHTML = Object.entries(territoriesByRegion).map(([region, countries]) => {
+//                     if (countries.length === 0) return '';
+//                     const regionId = region.replace(/[^a-zA-Z0-9]/g, '');
+//                     return `
+//                     <div class="accordion-item">
+//                         <h2 class="accordion-header">
+//                             <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-${config.platformName}-${regionId}">
+//                                 <div class="form-check me-auto"><input class="form-check-input region-checkbox" type="checkbox" data-region="${region}" checked><label class="form-check-label fw-bold">${region}</label></div>
+//                                 <span class="text-muted small me-2">${countries.length} countries</span>
+//                             </button>
+//                         </h2>
+//                         <div id="collapse-${config.platformName}-${regionId}" class="accordion-collapse collapse" data-bs-parent="#territoryAccordion">
+//                             <div class="accordion-body">${countries.map(c =>`<div class="form-check"><input class="form-check-input country-checkbox" type="checkbox" data-region="${region}" checked><label class="form-check-label">${c.name}</label></div>`).join('')}</div>
+//                         </div>
+//                     </div>`;
+//                 }).join('');
+//                 addTerritoryEventListeners();
+//                 updateTerritoryCounter();
+//             }
 
-            function updateTerritoryCounter() {
-                 const selected = conflictOffcanvasEl.querySelectorAll('.country-checkbox:checked').length;
-                 conflictOffcanvasEl.querySelector('#territoryCounter').textContent = `${selected} contested countries out of ${totalCountries} delivered`;
-            }
+//             function updateTerritoryCounter() {
+//                  const selected = conflictOffcanvasEl.querySelectorAll('.country-checkbox:checked').length;
+//                  conflictOffcanvasEl.querySelector('#territoryCounter').textContent = `${selected} contested countries out of ${totalCountries} delivered`;
+//             }
 
-            function addTerritoryEventListeners() { /* ... same logic as before ... */ }
-        }
-    }
+//             function addTerritoryEventListeners() { /* ... same logic as before ... */ }
+//         }
+//     }
     
-    // =========================================================================
-    //  PAGE-SPECIFIC CONFIGURATIONS
-    // =========================================================================
+//     // =========================================================================
+//     //  PAGE-SPECIFIC CONFIGURATIONS
+//     // =========================================================================
 
-    // --- YouTube Page Configuration ---
-    const youtubeConflictData = [
-        { id: 1, category: 'Ownership conflict', assetTitle: 'Cosmic Drift', artist: 'Astro Beats', assetId: '90736897913', upc: '198009123456', isrc: 'USAT22312345', otherParty: 'The Orchard', dailyViews: '79K', expiry: '2 days', status: 'Action Required', albumCoverUrl: 'https://placehold.co/80x80/ff0000/ffffff?text=C' },
-        { id: 2, category: 'Policy', assetTitle: 'Ocean Tides', artist: 'Deep Wave', assetId: '3478239381', upc: '198009654321', isrc: 'USAT22354321', otherParty: 'Believe', dailyViews: '3K', expiry: '-', status: 'Resolved', albumCoverUrl: 'https://placehold.co/80x80/1abc9c/ffffff?text=O' },
-    ];
-    initializeConflictPage({
-        pageSelector: '.admin-youtube-page', // The unique class for the YouTube page
-        data: youtubeConflictData,
-        platformName: 'YouTube',
-        platformIconClass: 'bi-youtube text-danger',
-        offcanvasId: '#conflictResolutionOffcanvas'
-    });
+//     // --- YouTube Page Configuration ---
+//     const youtubeConflictData = [
+//         { id: 1, category: 'Ownership conflict', assetTitle: 'Cosmic Drift', artist: 'Astro Beats', assetId: '90736897913', upc: '198009123456', isrc: 'USAT22312345', otherParty: 'The Orchard', dailyViews: '79K', expiry: '2 days', status: 'Action Required', albumCoverUrl: 'https://placehold.co/80x80/ff0000/ffffff?text=C' },
+//         { id: 2, category: 'Policy', assetTitle: 'Ocean Tides', artist: 'Deep Wave', assetId: '3478239381', upc: '198009654321', isrc: 'USAT22354321', otherParty: 'Believe', dailyViews: '3K', expiry: '-', status: 'Resolved', albumCoverUrl: 'https://placehold.co/80x80/1abc9c/ffffff?text=O' },
+//     ];
+//     initializeConflictPage({
+//         pageSelector: '.admin-youtube-page', // The unique class for the YouTube page
+//         data: youtubeConflictData,
+//         platformName: 'YouTube',
+//         platformIconClass: 'bi-youtube text-danger',
+//         offcanvasId: '#conflictResolutionOffcanvas'
+//     });
 
-    // --- Facebook Page Configuration ---
-    const facebookConflictData = [
-        { id: 1, category: 'Ownership conflict', assetTitle: 'Facebook Song A', artist: 'Social Singers', assetId: 'FB12345', upc: '198009111222', isrc: 'USFB12345678', otherParty: 'DistroKid', dailyViews: '15K', expiry: '5 days', status: 'Action Required', albumCoverUrl: 'https://placehold.co/80x80/3b5998/ffffff?text=A' },
-        { id: 2, category: 'Metadata Error', assetTitle: 'Insta Reel Hit', artist: 'The Grammers', assetId: 'FB54321', upc: '198009222333', isrc: 'USFB87654321', otherParty: 'TuneCore', dailyViews: '1M', expiry: '20 days', status: 'In Review', albumCoverUrl: 'https://placehold.co/80x80/833ab4/ffffff?text=H' },
-    ];
-    initializeConflictPage({
-        pageSelector: '.admin-facebook-page', // The unique class for the Facebook page
-        data: facebookConflictData,
-        platformName: 'Facebook',
-        platformIconClass: 'bi-facebook text-primary',
-        offcanvasId: '#facebookConflictOffcanvas'
-    });
-});
+//     // --- Facebook Page Configuration ---
+//     const facebookConflictData = [
+//         { id: 1, category: 'Ownership conflict', assetTitle: 'Facebook Song A', artist: 'Social Singers', assetId: 'FB12345', upc: '198009111222', isrc: 'USFB12345678', otherParty: 'DistroKid', dailyViews: '15K', expiry: '5 days', status: 'Action Required', albumCoverUrl: 'https://placehold.co/80x80/3b5998/ffffff?text=A' },
+//         { id: 2, category: 'Metadata Error', assetTitle: 'Insta Reel Hit', artist: 'The Grammers', assetId: 'FB54321', upc: '198009222333', isrc: 'USFB87654321', otherParty: 'TuneCore', dailyViews: '1M', expiry: '20 days', status: 'In Review', albumCoverUrl: 'https://placehold.co/80x80/833ab4/ffffff?text=H' },
+//     ];
+//     initializeConflictPage({
+//         pageSelector: '.admin-facebook-page', // The unique class for the Facebook page
+//         data: facebookConflictData,
+//         platformName: 'Facebook',
+//         platformIconClass: 'bi-facebook text-primary',
+//         offcanvasId: '#facebookConflictOffcanvas'
+//     });
+// });
+
+
 // claim-data-page js
 // In your app.js, replace the entire .admin-claim-data-page block with this:
 document.addEventListener("DOMContentLoaded", function () {
@@ -2650,951 +2652,647 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 // youtube js
-document.addEventListener("DOMContentLoaded", function () {
-  // This is the unique container for your YouTube page
-  const youtubePageContainer = document.querySelector(".admin-youtube-page");
 
-  // This ensures the code ONLY runs on the YouTube page
-  if (youtubePageContainer) {
-    // --- DATA ---
-    const conflictRequests = [
-      {
-        id: 1,
-        category: "Ownership conflict",
-        assetTitle: "Cosmic Drift",
-        artist: "Astro Beats",
-        assetId: "90736897913",
-        upc: "198009123456",
-        isrc: "USAT22312345",
-        otherParty: "The Orchard",
-        dailyViews: "79K",
-        expiry: "2 days",
-        status: "Action Required",
-        albumCoverUrl: "https://placehold.co/80x80/3498db/ffffff?text=C",
-      },
-      {
-        id: 2,
-        category: "Policy",
-        assetTitle: "Ocean Tides",
-        artist: "Deep Wave",
-        assetId: "3478239381",
-        upc: "198009654321",
-        isrc: "USAT22354321",
-        otherParty: "Believe",
-        dailyViews: "3K",
-        expiry: "-",
-        status: "Resolved",
-        albumCoverUrl: "https://placehold.co/80x80/1abc9c/ffffff?text=O",
-      },
-      {
-        id: 3,
-        category: "Ownership conflict",
-        assetTitle: "City Lights",
-        artist: "Urban Glow",
-        assetId: "3478239381",
-        upc: "198009789012",
-        isrc: "USAT22398765",
-        otherParty: "CD Baby",
-        dailyViews: "1.2K",
-        expiry: "15 days",
-        status: "In Review",
-        albumCoverUrl: "https://placehold.co/80x80/9b59b6/ffffff?text=C",
-      },
-      {
-        id: 4,
-        category: "Metadata Error",
-        assetTitle: "Desert Mirage",
-        artist: "Sahara Echo",
-        assetId: "89321756430",
-        upc: "198001112233",
-        isrc: "USAT22445566",
-        otherParty: "TuneCore",
-        dailyViews: "58K",
-        expiry: "5 days",
-        status: "Action Required",
-        albumCoverUrl: "https://placehold.co/80x80/e67e22/ffffff?text=D",
-      },
-      {
-        id: 5,
-        category: "Ownership conflict",
-        assetTitle: "Electric Horizon",
-        artist: "Volt Squad",
-        assetId: "98574623109",
-        upc: "198002244466",
-        isrc: "USAT22449900",
-        otherParty: "The Orchard",
-        dailyViews: "12K",
-        expiry: "7 days",
-        status: "In Review",
-        albumCoverUrl: "https://placehold.co/80x80/f39c12/ffffff?text=E",
-      },
-    ];
+// document.addEventListener("DOMContentLoaded", function () {
+//   // This is the unique container for your YouTube page
+//   const youtubePageContainer = document.querySelector(".admin-youtube-page");
 
-    const territoriesByRegion = {
-      Africa: [
-        { name: "Algeria", code: "DZ" },
-        { name: "Angola", code: "AO" },
-        { name: "Benin", code: "BJ" },
-        { name: "Botswana", code: "BW" },
-        { name: "Burkina Faso", code: "BF" },
-        { name: "Burundi", code: "BI" },
-        { name: "Cabo Verde", code: "CV" },
-        { name: "Cameroon", code: "CM" },
-        { name: "Central African Republic", code: "CF" },
-        { name: "Chad", code: "TD" },
-        { name: "Comoros", code: "KM" },
-        { name: "Congo", code: "CG" },
-        { name: "Congo (DRC)", code: "CD" },
-        { name: "Côte d'Ivoire", code: "CI" },
-        { name: "Djibouti", code: "DJ" },
-        { name: "Egypt", code: "EG" },
-        { name: "Equatorial Guinea", code: "GQ" },
-        { name: "Eritrea", code: "ER" },
-        { name: "Eswatini", code: "SZ" },
-        { name: "Ethiopia", code: "ET" },
-        { name: "Gabon", code: "GA" },
-        { name: "Gambia", code: "GM" },
-        { name: "Ghana", code: "GH" },
-        { name: "Guinea", code: "GN" },
-        { name: "Guinea-Bissau", code: "GW" },
-        { name: "Kenya", code: "KE" },
-        { name: "Lesotho", code: "LS" },
-        { name: "Liberia", code: "LR" },
-        { name: "Libya", code: "LY" },
-        { name: "Madagascar", code: "MG" },
-        { name: "Malawi", code: "MW" },
-        { name: "Mali", code: "ML" },
-        { name: "Mauritania", code: "MR" },
-        { name: "Mauritius", code: "MU" },
-        { name: "Mayotte", code: "YT" },
-        { name: "Morocco", code: "MA" },
-        { name: "Mozambique", code: "MZ" },
-        { name: "Namibia", code: "NA" },
-        { name: "Niger", code: "NE" },
-        { name: "Nigeria", code: "NG" },
-        { name: "Réunion", code: "RE" },
-        { name: "Rwanda", code: "RW" },
-        { name: "Saint Helena", code: "SH" },
-        { name: "Sao Tome and Principe", code: "ST" },
-        { name: "Senegal", code: "SN" },
-        { name: "Seychelles", code: "SC" },
-        { name: "Sierra Leone", code: "SL" },
-        { name: "Somalia", code: "SO" },
-        { name: "South Africa", code: "ZA" },
-        { name: "South Sudan", code: "SS" },
-        { name: "Sudan", code: "SD" },
-        { name: "Tanzania", code: "TZ" },
-        { name: "Togo", code: "TG" },
-        { name: "Tunisia", code: "TN" },
-        { name: "Uganda", code: "UG" },
-        { name: "Zambia", code: "ZM" },
-        { name: "Zimbabwe", code: "ZW" },
-      ],
-      Antarctica: [
-        { name: "Antarctica", code: "AQ" },
-        { name: "French Southern Territories", code: "TF" },
-        { name: "South Georgia and the South Sandwich Islands", code: "GS" },
-      ],
-      Asia: [
-        { name: "Afghanistan", code: "AF" },
-        { name: "Armenia", code: "AM" },
-        { name: "Azerbaijan", code: "AZ" },
-        { name: "Bahrain", code: "BH" },
-        { name: "Bangladesh", code: "BD" },
-        { name: "Bhutan", code: "BT" },
-        { name: "British Indian Ocean Territory", code: "IO" },
-        { name: "Brunei", code: "BN" },
-        { name: "Cambodia", code: "KH" },
-        { name: "China", code: "CN" },
-        { name: "Cyprus", code: "CY" },
-        { name: "Georgia", code: "GE" },
-        { name: "Hong Kong", code: "HK" },
-        { name: "India", code: "IN" },
-        { name: "Indonesia", code: "ID" },
-        { name: "Iran", code: "IR" },
-        { name: "Iraq", code: "IQ" },
-        { name: "Israel", code: "IL" },
-        { name: "Japan", code: "JP" },
-        { name: "Jordan", code: "JO" },
-        { name: "Kazakhstan", code: "KZ" },
-        { name: "Kuwait", code: "KW" },
-        { name: "Kyrgyzstan", code: "KG" },
-        { name: "Laos", code: "LA" },
-        { name: "Lebanon", code: "LB" },
-        { name: "Macao", code: "MO" },
-        { name: "Malaysia", code: "MY" },
-        { name: "Maldives", code: "MV" },
-        { name: "Mongolia", code: "MN" },
-        { name: "Myanmar", code: "MM" },
-        { name: "Nepal", code: "NP" },
-        { name: "North Korea", code: "KP" },
-        { name: "Oman", code: "OM" },
-        { name: "Pakistan", code: "PK" },
-        { name: "Palestine", code: "PS" },
-        { name: "Philippines", code: "PH" },
-        { name: "Qatar", code: "QA" },
-        { name: "Saudi Arabia", code: "SA" },
-        { name: "Singapore", code: "SG" },
-        { name: "South Korea", code: "KR" },
-        { name: "Sri Lanka", code: "LK" },
-        { name: "Syria", code: "SY" },
-        { name: "Taiwan", code: "TW" },
-        { name: "Tajikistan", code: "TJ" },
-        { name: "Thailand", code: "TH" },
-        { name: "Timor-Leste", code: "TL" },
-        { name: "Turkey", code: "TR" },
-        { name: "Turkmenistan", code: "TM" },
-        { name: "United Arab Emirates", code: "AE" },
-        { name: "Uzbekistan", code: "UZ" },
-        { name: "Vietnam", code: "VN" },
-        { name: "Yemen", code: "YE" },
-      ],
-      Europe: [
-        { name: "Åland Islands", code: "AX" },
-        { name: "Albania", code: "AL" },
-        { name: "Andorra", code: "AD" },
-        { name: "Austria", code: "AT" },
-        { name: "Belarus", code: "BY" },
-        { name: "Belgium", code: "BE" },
-        { name: "Bosnia and Herzegovina", code: "BA" },
-        { name: "Bulgaria", code: "BG" },
-        { name: "Croatia", code: "HR" },
-        { name: "Czechia", code: "CZ" },
-        { name: "Denmark", code: "DK" },
-        { name: "Estonia", code: "EE" },
-        { name: "Faroe Islands", code: "FO" },
-        { name: "Finland", code: "FI" },
-        { name: "France", code: "FR" },
-        { name: "Germany", code: "DE" },
-        { name: "Gibraltar", code: "GI" },
-        { name: "Greece", code: "GR" },
-        { name: "Guernsey", code: "GG" },
-        { name: "Holy See", code: "VA" },
-        { name: "Hungary", code: "HU" },
-        { name: "Iceland", code: "IS" },
-        { name: "Ireland", code: "IE" },
-        { name: "Isle of Man", code: "IM" },
-        { name: "Italy", code: "IT" },
-        { name: "Jersey", code: "JE" },
-        { name: "Latvia", code: "LV" },
-        { name: "Liechtenstein", code: "LI" },
-        { name: "Lithuania", code: "LT" },
-        { name: "Luxembourg", code: "LU" },
-        { name: "Malta", code: "MT" },
-        { name: "Moldova", code: "MD" },
-        { name: "Monaco", code: "MC" },
-        { name: "Montenegro", code: "ME" },
-        { name: "Netherlands", code: "NL" },
-        { name: "North Macedonia", code: "MK" },
-        { name: "Norway", code: "NO" },
-        { name: "Poland", code: "PL" },
-        { name: "Portugal", code: "PT" },
-        { name: "Romania", code: "RO" },
-        { name: "Russia", code: "RU" },
-        { name: "San Marino", code: "SM" },
-        { name: "Serbia", code: "RS" },
-        { name: "Slovakia", code: "SK" },
-        { name: "Slovenia", code: "SI" },
-        { name: "Spain", code: "ES" },
-        { name: "Svalbard and Jan Mayen", code: "SJ" },
-        { name: "Sweden", code: "SE" },
-        { name: "Switzerland", code: "CH" },
-        { name: "Ukraine", code: "UA" },
-        { name: "United Kingdom", code: "GB" },
-      ],
-      "North America": [
-        { name: "Anguilla", code: "AI" },
-        { name: "Antigua and Barbuda", code: "AG" },
-        { name: "Aruba", code: "AW" },
-        { name: "Bahamas", code: "BS" },
-        { name: "Barbados", code: "BB" },
-        { name: "Belize", code: "BZ" },
-        { name: "Bermuda", code: "BM" },
-        { name: "Bonaire", code: "BQ" },
-        { name: "Canada", code: "CA" },
-        { name: "Cayman Islands", code: "KY" },
-        { name: "Costa Rica", code: "CR" },
-        { name: "Cuba", code: "CU" },
-        { name: "Curaçao", code: "CW" },
-        { name: "Dominica", code: "DM" },
-        { name: "Dominican Republic", code: "DO" },
-        { name: "El Salvador", code: "SV" },
-        { name: "Greenland", code: "GL" },
-        { name: "Grenada", code: "GD" },
-        { name: "Guadeloupe", code: "GP" },
-        { name: "Guatemala", code: "GT" },
-        { name: "Haiti", code: "HT" },
-        { name: "Honduras", code: "HN" },
-        { name: "Jamaica", code: "JM" },
-        { name: "Martinique", code: "MQ" },
-        { name: "Mexico", code: "MX" },
-        { name: "Montserrat", code: "MS" },
-        { name: "Nicaragua", code: "NI" },
-        { name: "Panama", code: "PA" },
-        { name: "Puerto Rico", code: "PR" },
-        { name: "Saint Barthélemy", code: "BL" },
-        { name: "Saint Kitts and Nevis", code: "KN" },
-        { name: "Saint Lucia", code: "LC" },
-        { name: "Saint Martin", code: "MF" },
-        { name: "Saint Pierre and Miquelon", code: "PM" },
-        { name: "Saint Vincent and the Grenadines", code: "VC" },
-        { name: "Sint Maarten", code: "SX" },
-        { name: "Trinidad and Tobago", code: "TT" },
-        { name: "Turks and Caicos Islands", code: "TC" },
-        { name: "United States", code: "US" },
-        { name: "U.S. Virgin Islands", code: "VI" },
-      ],
-      Oceania: [
-        { name: "American Samoa", code: "AS" },
-        { name: "Australia", code: "AU" },
-        { name: "Christmas Island", code: "CX" },
-        { name: "Cocos (Keeling) Islands", code: "CC" },
-        { name: "Cook Islands", code: "CK" },
-        { name: "Fiji", code: "FJ" },
-        { name: "French Polynesia", code: "PF" },
-        { name: "Guam", code: "GU" },
-        { name: "Kiribati", code: "KI" },
-        { name: "Marshall Islands", code: "MH" },
-        { name: "Micronesia", code: "FM" },
-        { name: "Nauru", code: "NR" },
-        { name: "New Caledonia", code: "NC" },
-        { name: "New Zealand", code: "NZ" },
-        { name: "Niue", code: "NU" },
-        { name: "Norfolk Island", code: "NF" },
-        { name: "Northern Mariana Islands", code: "MP" },
-        { name: "Palau", code: "PW" },
-        { name: "Papua New Guinea", code: "PG" },
-        { name: "Pitcairn", code: "PN" },
-        { name: "Samoa", code: "WS" },
-        { name: "Solomon Islands", code: "SB" },
-        { name: "Tokelau", code: "TK" },
-        { name: "Tonga", code: "TO" },
-        { name: "Tuvalu", code: "TV" },
-        { name: "U.S. Minor Outlying Islands", code: "UM" },
-        { name: "Vanuatu", code: "VU" },
-        { name: "Wallis and Futuna", code: "WF" },
-      ],
-      "South America": [
-        { name: "Argentina", code: "AR" },
-        { name: "Bolivia", code: "BO" },
-        { name: "Brazil", code: "BR" },
-        { name: "Chile", code: "CL" },
-        { name: "Colombia", code: "CO" },
-        { name: "Ecuador", code: "EC" },
-        { name: "Falkland Islands", code: "FK" },
-        { name: "French Guiana", code: "GF" },
-        { name: "Guyana", code: "GY" },
-        { name: "Paraguay", code: "PY" },
-        { name: "Peru", code: "PE" },
-        { name: "Suriname", code: "SR" },
-        { name: "Uruguay", code: "UY" },
-        { name: "Venezuela", code: "VE" },
-      ],
-    };
-    const totalCountries = Object.values(territoriesByRegion).reduce(
-      (sum, region) => sum + region.length,
-      0
-    );
-    let sortState = { key: null, direction: "asc" };
+//   // This ensures the code ONLY runs on the YouTube page
+//   if (youtubePageContainer) {
+//     // --- DATA ---
+//     const conflictRequests = [
+//       {
+//         id: 1,
+//         category: "Ownership conflict",
+//         assetTitle: "Cosmic Drift",
+//         artist: "Astro Beats",
+//         assetId: "90736897913",
+//         upc: "198009123456",
+//         isrc: "USAT22312345",
+//         otherParty: "The Orchard",
+//         dailyViews: "79K",
+//         expiry: "2 days",
+//         status: "Action Required",
+//         albumCoverUrl: "https://placehold.co/80x80/3498db/ffffff?text=C",
+//       },
+//       {
+//         id: 2,
+//         category: "Policy",
+//         assetTitle: "Ocean Tides",
+//         artist: "Deep Wave",
+//         assetId: "3478239381",
+//         upc: "198009654321",
+//         isrc: "USAT22354321",
+//         otherParty: "Believe",
+//         dailyViews: "3K",
+//         expiry: "-",
+//         status: "Resolved",
+//         albumCoverUrl: "https://placehold.co/80x80/1abc9c/ffffff?text=O",
+//       },
+//       {
+//         id: 3,
+//         category: "Ownership conflict",
+//         assetTitle: "City Lights",
+//         artist: "Urban Glow",
+//         assetId: "3478239381",
+//         upc: "198009789012",
+//         isrc: "USAT22398765",
+//         otherParty: "CD Baby",
+//         dailyViews: "1.2K",
+//         expiry: "15 days",
+//         status: "In Review",
+//         albumCoverUrl: "https://placehold.co/80x80/9b59b6/ffffff?text=C",
+//       },
+//       {
+//         id: 4,
+//         category: "Metadata Error",
+//         assetTitle: "Desert Mirage",
+//         artist: "Sahara Echo",
+//         assetId: "89321756430",
+//         upc: "198001112233",
+//         isrc: "USAT22445566",
+//         otherParty: "TuneCore",
+//         dailyViews: "58K",
+//         expiry: "5 days",
+//         status: "Action Required",
+//         albumCoverUrl: "https://placehold.co/80x80/e67e22/ffffff?text=D",
+//       },
+//       {
+//         id: 5,
+//         category: "Ownership conflict",
+//         assetTitle: "Electric Horizon",
+//         artist: "Volt Squad",
+//         assetId: "98574623109",
+//         upc: "198002244466",
+//         isrc: "USAT22449900",
+//         otherParty: "The Orchard",
+//         dailyViews: "12K",
+//         expiry: "7 days",
+//         status: "In Review",
+//         albumCoverUrl: "https://placehold.co/80x80/f39c12/ffffff?text=E",
+//       },
+//     ];
 
-    // --- HELPER FUNCTIONS ---
-    function getStatusBadge(status) {
-      let badgeClass = "bg-secondary-subtle text-secondary-emphasis"; // Default
-      if (status === "Action Required")
-        badgeClass = "bg-danger-subtle text-danger-emphasis";
-      else if (status === "Resolved")
-        badgeClass = "bg-success-subtle text-success-emphasis";
-      else if (status === "In Review")
-        badgeClass = "bg-warning-subtle text-warning-emphasis";
-      return `<span class="badge rounded-pill border ${badgeClass}">${status}</span>`;
-    }
+//     const territoriesByRegion = {
+//       Africa: [
+//         { name: "Algeria", code: "DZ" },
+//         { name: "Angola", code: "AO" },
+//         { name: "Benin", code: "BJ" },
+//         { name: "Botswana", code: "BW" },
+//         { name: "Burkina Faso", code: "BF" },
+//         { name: "Burundi", code: "BI" },
+//         { name: "Cabo Verde", code: "CV" },
+//         { name: "Cameroon", code: "CM" },
+//         { name: "Central African Republic", code: "CF" },
+//         { name: "Chad", code: "TD" },
+//         { name: "Comoros", code: "KM" },
+//         { name: "Congo", code: "CG" },
+//         { name: "Congo (DRC)", code: "CD" },
+//         { name: "Côte d'Ivoire", code: "CI" },
+//         { name: "Djibouti", code: "DJ" },
+//         { name: "Egypt", code: "EG" },
+//         { name: "Equatorial Guinea", code: "GQ" },
+//         { name: "Eritrea", code: "ER" },
+//         { name: "Eswatini", code: "SZ" },
+//         { name: "Ethiopia", code: "ET" },
+//         { name: "Gabon", code: "GA" },
+//         { name: "Gambia", code: "GM" },
+//         { name: "Ghana", code: "GH" },
+//         { name: "Guinea", code: "GN" },
+//         { name: "Guinea-Bissau", code: "GW" },
+//         { name: "Kenya", code: "KE" },
+//         { name: "Lesotho", code: "LS" },
+//         { name: "Liberia", code: "LR" },
+//         { name: "Libya", code: "LY" },
+//         { name: "Madagascar", code: "MG" },
+//         { name: "Malawi", code: "MW" },
+//         { name: "Mali", code: "ML" },
+//         { name: "Mauritania", code: "MR" },
+//         { name: "Mauritius", code: "MU" },
+//         { name: "Mayotte", code: "YT" },
+//         { name: "Morocco", code: "MA" },
+//         { name: "Mozambique", code: "MZ" },
+//         { name: "Namibia", code: "NA" },
+//         { name: "Niger", code: "NE" },
+//         { name: "Nigeria", code: "NG" },
+//         { name: "Réunion", code: "RE" },
+//         { name: "Rwanda", code: "RW" },
+//         { name: "Saint Helena", code: "SH" },
+//         { name: "Sao Tome and Principe", code: "ST" },
+//         { name: "Senegal", code: "SN" },
+//         { name: "Seychelles", code: "SC" },
+//         { name: "Sierra Leone", code: "SL" },
+//         { name: "Somalia", code: "SO" },
+//         { name: "South Africa", code: "ZA" },
+//         { name: "South Sudan", code: "SS" },
+//         { name: "Sudan", code: "SD" },
+//         { name: "Tanzania", code: "TZ" },
+//         { name: "Togo", code: "TG" },
+//         { name: "Tunisia", code: "TN" },
+//         { name: "Uganda", code: "UG" },
+//         { name: "Zambia", code: "ZM" },
+//         { name: "Zimbabwe", code: "ZW" },
+//       ],
+//       Antarctica: [
+//         { name: "Antarctica", code: "AQ" },
+//         { name: "French Southern Territories", code: "TF" },
+//         { name: "South Georgia and the South Sandwich Islands", code: "GS" },
+//       ],
+//       Asia: [
+//         { name: "Afghanistan", code: "AF" },
+//         { name: "Armenia", code: "AM" },
+//         { name: "Azerbaijan", code: "AZ" },
+//         { name: "Bahrain", code: "BH" },
+//         { name: "Bangladesh", code: "BD" },
+//         { name: "Bhutan", code: "BT" },
+//         { name: "British Indian Ocean Territory", code: "IO" },
+//         { name: "Brunei", code: "BN" },
+//         { name: "Cambodia", code: "KH" },
+//         { name: "China", code: "CN" },
+//         { name: "Cyprus", code: "CY" },
+//         { name: "Georgia", code: "GE" },
+//         { name: "Hong Kong", code: "HK" },
+//         { name: "India", code: "IN" },
+//         { name: "Indonesia", code: "ID" },
+//         { name: "Iran", code: "IR" },
+//         { name: "Iraq", code: "IQ" },
+//         { name: "Israel", code: "IL" },
+//         { name: "Japan", code: "JP" },
+//         { name: "Jordan", code: "JO" },
+//         { name: "Kazakhstan", code: "KZ" },
+//         { name: "Kuwait", code: "KW" },
+//         { name: "Kyrgyzstan", code: "KG" },
+//         { name: "Laos", code: "LA" },
+//         { name: "Lebanon", code: "LB" },
+//         { name: "Macao", code: "MO" },
+//         { name: "Malaysia", code: "MY" },
+//         { name: "Maldives", code: "MV" },
+//         { name: "Mongolia", code: "MN" },
+//         { name: "Myanmar", code: "MM" },
+//         { name: "Nepal", code: "NP" },
+//         { name: "North Korea", code: "KP" },
+//         { name: "Oman", code: "OM" },
+//         { name: "Pakistan", code: "PK" },
+//         { name: "Palestine", code: "PS" },
+//         { name: "Philippines", code: "PH" },
+//         { name: "Qatar", code: "QA" },
+//         { name: "Saudi Arabia", code: "SA" },
+//         { name: "Singapore", code: "SG" },
+//         { name: "South Korea", code: "KR" },
+//         { name: "Sri Lanka", code: "LK" },
+//         { name: "Syria", code: "SY" },
+//         { name: "Taiwan", code: "TW" },
+//         { name: "Tajikistan", code: "TJ" },
+//         { name: "Thailand", code: "TH" },
+//         { name: "Timor-Leste", code: "TL" },
+//         { name: "Turkey", code: "TR" },
+//         { name: "Turkmenistan", code: "TM" },
+//         { name: "United Arab Emirates", code: "AE" },
+//         { name: "Uzbekistan", code: "UZ" },
+//         { name: "Vietnam", code: "VN" },
+//         { name: "Yemen", code: "YE" },
+//       ],
+//       Europe: [
+//         { name: "Åland Islands", code: "AX" },
+//         { name: "Albania", code: "AL" },
+//         { name: "Andorra", code: "AD" },
+//         { name: "Austria", code: "AT" },
+//         { name: "Belarus", code: "BY" },
+//         { name: "Belgium", code: "BE" },
+//         { name: "Bosnia and Herzegovina", code: "BA" },
+//         { name: "Bulgaria", code: "BG" },
+//         { name: "Croatia", code: "HR" },
+//         { name: "Czechia", code: "CZ" },
+//         { name: "Denmark", code: "DK" },
+//         { name: "Estonia", code: "EE" },
+//         { name: "Faroe Islands", code: "FO" },
+//         { name: "Finland", code: "FI" },
+//         { name: "France", code: "FR" },
+//         { name: "Germany", code: "DE" },
+//         { name: "Gibraltar", code: "GI" },
+//         { name: "Greece", code: "GR" },
+//         { name: "Guernsey", code: "GG" },
+//         { name: "Holy See", code: "VA" },
+//         { name: "Hungary", code: "HU" },
+//         { name: "Iceland", code: "IS" },
+//         { name: "Ireland", code: "IE" },
+//         { name: "Isle of Man", code: "IM" },
+//         { name: "Italy", code: "IT" },
+//         { name: "Jersey", code: "JE" },
+//         { name: "Latvia", code: "LV" },
+//         { name: "Liechtenstein", code: "LI" },
+//         { name: "Lithuania", code: "LT" },
+//         { name: "Luxembourg", code: "LU" },
+//         { name: "Malta", code: "MT" },
+//         { name: "Moldova", code: "MD" },
+//         { name: "Monaco", code: "MC" },
+//         { name: "Montenegro", code: "ME" },
+//         { name: "Netherlands", code: "NL" },
+//         { name: "North Macedonia", code: "MK" },
+//         { name: "Norway", code: "NO" },
+//         { name: "Poland", code: "PL" },
+//         { name: "Portugal", code: "PT" },
+//         { name: "Romania", code: "RO" },
+//         { name: "Russia", code: "RU" },
+//         { name: "San Marino", code: "SM" },
+//         { name: "Serbia", code: "RS" },
+//         { name: "Slovakia", code: "SK" },
+//         { name: "Slovenia", code: "SI" },
+//         { name: "Spain", code: "ES" },
+//         { name: "Svalbard and Jan Mayen", code: "SJ" },
+//         { name: "Sweden", code: "SE" },
+//         { name: "Switzerland", code: "CH" },
+//         { name: "Ukraine", code: "UA" },
+//         { name: "United Kingdom", code: "GB" },
+//       ],
+//       "North America": [
+//         { name: "Anguilla", code: "AI" },
+//         { name: "Antigua and Barbuda", code: "AG" },
+//         { name: "Aruba", code: "AW" },
+//         { name: "Bahamas", code: "BS" },
+//         { name: "Barbados", code: "BB" },
+//         { name: "Belize", code: "BZ" },
+//         { name: "Bermuda", code: "BM" },
+//         { name: "Bonaire", code: "BQ" },
+//         { name: "Canada", code: "CA" },
+//         { name: "Cayman Islands", code: "KY" },
+//         { name: "Costa Rica", code: "CR" },
+//         { name: "Cuba", code: "CU" },
+//         { name: "Curaçao", code: "CW" },
+//         { name: "Dominica", code: "DM" },
+//         { name: "Dominican Republic", code: "DO" },
+//         { name: "El Salvador", code: "SV" },
+//         { name: "Greenland", code: "GL" },
+//         { name: "Grenada", code: "GD" },
+//         { name: "Guadeloupe", code: "GP" },
+//         { name: "Guatemala", code: "GT" },
+//         { name: "Haiti", code: "HT" },
+//         { name: "Honduras", code: "HN" },
+//         { name: "Jamaica", code: "JM" },
+//         { name: "Martinique", code: "MQ" },
+//         { name: "Mexico", code: "MX" },
+//         { name: "Montserrat", code: "MS" },
+//         { name: "Nicaragua", code: "NI" },
+//         { name: "Panama", code: "PA" },
+//         { name: "Puerto Rico", code: "PR" },
+//         { name: "Saint Barthélemy", code: "BL" },
+//         { name: "Saint Kitts and Nevis", code: "KN" },
+//         { name: "Saint Lucia", code: "LC" },
+//         { name: "Saint Martin", code: "MF" },
+//         { name: "Saint Pierre and Miquelon", code: "PM" },
+//         { name: "Saint Vincent and the Grenadines", code: "VC" },
+//         { name: "Sint Maarten", code: "SX" },
+//         { name: "Trinidad and Tobago", code: "TT" },
+//         { name: "Turks and Caicos Islands", code: "TC" },
+//         { name: "United States", code: "US" },
+//         { name: "U.S. Virgin Islands", code: "VI" },
+//       ],
+//       Oceania: [
+//         { name: "American Samoa", code: "AS" },
+//         { name: "Australia", code: "AU" },
+//         { name: "Christmas Island", code: "CX" },
+//         { name: "Cocos (Keeling) Islands", code: "CC" },
+//         { name: "Cook Islands", code: "CK" },
+//         { name: "Fiji", code: "FJ" },
+//         { name: "French Polynesia", code: "PF" },
+//         { name: "Guam", code: "GU" },
+//         { name: "Kiribati", code: "KI" },
+//         { name: "Marshall Islands", code: "MH" },
+//         { name: "Micronesia", code: "FM" },
+//         { name: "Nauru", code: "NR" },
+//         { name: "New Caledonia", code: "NC" },
+//         { name: "New Zealand", code: "NZ" },
+//         { name: "Niue", code: "NU" },
+//         { name: "Norfolk Island", code: "NF" },
+//         { name: "Northern Mariana Islands", code: "MP" },
+//         { name: "Palau", code: "PW" },
+//         { name: "Papua New Guinea", code: "PG" },
+//         { name: "Pitcairn", code: "PN" },
+//         { name: "Samoa", code: "WS" },
+//         { name: "Solomon Islands", code: "SB" },
+//         { name: "Tokelau", code: "TK" },
+//         { name: "Tonga", code: "TO" },
+//         { name: "Tuvalu", code: "TV" },
+//         { name: "U.S. Minor Outlying Islands", code: "UM" },
+//         { name: "Vanuatu", code: "VU" },
+//         { name: "Wallis and Futuna", code: "WF" },
+//       ],
+//       "South America": [
+//         { name: "Argentina", code: "AR" },
+//         { name: "Bolivia", code: "BO" },
+//         { name: "Brazil", code: "BR" },
+//         { name: "Chile", code: "CL" },
+//         { name: "Colombia", code: "CO" },
+//         { name: "Ecuador", code: "EC" },
+//         { name: "Falkland Islands", code: "FK" },
+//         { name: "French Guiana", code: "GF" },
+//         { name: "Guyana", code: "GY" },
+//         { name: "Paraguay", code: "PY" },
+//         { name: "Peru", code: "PE" },
+//         { name: "Suriname", code: "SR" },
+//         { name: "Uruguay", code: "UY" },
+//         { name: "Venezuela", code: "VE" },
+//       ],
+//     };
+//     const totalCountries = Object.values(territoriesByRegion).reduce(
+//       (sum, region) => sum + region.length,
+//       0
+//     );
+//     let sortState = { key: null, direction: "asc" };
 
-    function parseViews(views) {
-      if (typeof views !== "string") return 0;
-      const num = parseFloat(views.toUpperCase());
-      return views.toUpperCase().includes("K") ? num * 1000 : num;
-    }
-    function parseExpiry(expiry) {
-      if (typeof expiry !== "string" || expiry === "-") return Infinity;
-      return parseInt(expiry);
-    }
-    function updateTerritoryCounter() {
-      const container = document.getElementById("conflictResolutionOffcanvas");
-      if (!container) return;
-      const selectedCount = container.querySelectorAll(
-        ".country-checkbox:checked"
-      ).length;
-      container.querySelector(
-        "#territoryCounter"
-      ).textContent = `${selectedCount} contested countries out of ${totalCountries} delivered`;
-    }
-    function updateSortIcons() {
-      document
-        .querySelectorAll(".sort-icon")
-        .forEach((icon) => icon.classList.remove("active", "asc", "desc"));
-      if (sortState.key) {
-        const activeHeader = document.querySelector(
-          `.sortable-header[data-sort="${sortState.key}"]`
-        );
-        if (activeHeader)
-          activeHeader
-            .querySelector(".sort-icon")
-            .classList.add("active", sortState.direction);
-      }
-    }
-    function addTerritoryEventListeners() {
-      const container = document.getElementById("conflictResolutionOffcanvas");
-      if (!container) return;
-      container.querySelectorAll(".region-checkbox").forEach((rcb) =>
-        rcb.addEventListener("change", function () {
-          const region = this.dataset.region;
-          container
-            .querySelectorAll(`.country-checkbox[data-region="${region}"]`)
-            .forEach((ccb) => (ccb.checked = this.checked));
-          updateTerritoryCounter();
-        })
-      );
-      container.querySelectorAll(".country-checkbox").forEach((ccb) =>
-        ccb.addEventListener("change", function () {
-          const region = this.dataset.region;
-          const allInRegion = Array.from(
-            container.querySelectorAll(
-              `.country-checkbox[data-region="${region}"]`
-            )
-          ).every((cb) => cb.checked);
-          container.querySelector(
-            `.region-checkbox[data-region="${region}"]`
-          ).checked = allInRegion;
-          updateTerritoryCounter();
-        })
-      );
-    }
+//     // --- HELPER FUNCTIONS ---
+//     function getStatusBadge(status) {
+//       let badgeClass = "bg-secondary-subtle text-secondary-emphasis"; // Default
+//       if (status === "Action Required")
+//         badgeClass = "bg-danger-subtle text-danger-emphasis";
+//       else if (status === "Resolved")
+//         badgeClass = "bg-success-subtle text-success-emphasis";
+//       else if (status === "In Review")
+//         badgeClass = "bg-warning-subtle text-warning-emphasis";
+//       return `<span class="badge rounded-pill border ${badgeClass}">${status}</span>`;
+//     }
 
-    // --- RENDER FUNCTIONS ---
-    function renderTable(data) {
-      const tableBody = document.getElementById("youtubeTableBody");
-      tableBody.innerHTML =
-        !data || data.length === 0
-          ? `<tr><td colspan="10" class="text-center p-5"><h5>No matching conflicts found.</h5></td></tr>`
-          : data
-              .map(
-                (req) => `
-                <tr style="cursor: pointer;" data-bs-toggle="offcanvas" data-bs-target="#conflictResolutionOffcanvas"
-                    data-song-name="${req.assetTitle}" data-artist-name="${
-                  req.artist
-                }" data-isrc="${req.isrc}" 
-                    data-cover-url="${req.albumCoverUrl}" data-category="${
-                  req.category
-                }" data-other-party="${req.otherParty}">
-                    <td class="text-center"><i class="bi bi-youtube text-danger fs-5"></i></td>
-                    <td>${req.category}</td>
-                    <td>${req.assetTitle}</td>
-                    <td><div class="fw-bold">${
-                      req.artist
-                    }</div><small class="text-muted">Asset ID: ${
-                  req.assetId
-                }</small></td>
-                    <td>${req.upc}</td>
-                    <td>${req.otherParty}</td>
-                    <td>${req.dailyViews}</td>
-                    <td>${req.expiry}</td>
-                    <td>${getStatusBadge(req.status)}</td>
-                    <td><i class="bi bi-chevron-right text-muted"></i></td>
-                </tr>`
-              )
-              .join("");
-      document.getElementById(
-        "pagination-text"
-      ).textContent = `${data.length} of ${conflictRequests.length} results`;
-    }
+//     function parseViews(views) {
+//       if (typeof views !== "string") return 0;
+//       const num = parseFloat(views.toUpperCase());
+//       return views.toUpperCase().includes("K") ? num * 1000 : num;
+//     }
+//     function parseExpiry(expiry) {
+//       if (typeof expiry !== "string" || expiry === "-") return Infinity;
+//       return parseInt(expiry);
+//     }
+//     function updateTerritoryCounter() {
+//       const container = document.getElementById("conflictResolutionOffcanvas");
+//       if (!container) return;
+//       const selectedCount = container.querySelectorAll(
+//         ".country-checkbox:checked"
+//       ).length;
+//       container.querySelector(
+//         "#territoryCounter"
+//       ).textContent = `${selectedCount} contested countries out of ${totalCountries} delivered`;
+//     }
+//     function updateSortIcons() {
+//       document
+//         .querySelectorAll(".sort-icon")
+//         .forEach((icon) => icon.classList.remove("active", "asc", "desc"));
+//       if (sortState.key) {
+//         const activeHeader = document.querySelector(
+//           `.sortable-header[data-sort="${sortState.key}"]`
+//         );
+//         if (activeHeader)
+//           activeHeader
+//             .querySelector(".sort-icon")
+//             .classList.add("active", sortState.direction);
+//       }
+//     }
+//     function addTerritoryEventListeners() {
+//       const container = document.getElementById("conflictResolutionOffcanvas");
+//       if (!container) return;
+//       container.querySelectorAll(".region-checkbox").forEach((rcb) =>
+//         rcb.addEventListener("change", function () {
+//           const region = this.dataset.region;
+//           container
+//             .querySelectorAll(`.country-checkbox[data-region="${region}"]`)
+//             .forEach((ccb) => (ccb.checked = this.checked));
+//           updateTerritoryCounter();
+//         })
+//       );
+//       container.querySelectorAll(".country-checkbox").forEach((ccb) =>
+//         ccb.addEventListener("change", function () {
+//           const region = this.dataset.region;
+//           const allInRegion = Array.from(
+//             container.querySelectorAll(
+//               `.country-checkbox[data-region="${region}"]`
+//             )
+//           ).every((cb) => cb.checked);
+//           container.querySelector(
+//             `.region-checkbox[data-region="${region}"]`
+//           ).checked = allInRegion;
+//           updateTerritoryCounter();
+//         })
+//       );
+//     }
 
-    function renderTerritoryAccordion() {
-      const accordionContainer = document.getElementById("territoryAccordion");
-      if (!accordionContainer) return;
-      accordionContainer.innerHTML = Object.entries(territoriesByRegion)
-        .map(([region, countries]) => {
-          const regionId = region.replace(/[^a-zA-Z0-9]/g, "");
-          return `
-                <div class="accordion-item">
-                    <h2 class="accordion-header" id="heading-${regionId}">
-                        <button class="accordion-button collapsed d-flex align-items-center" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-${regionId}" aria-expanded="false">
-                            <div class="form-check me-auto pe-2"><input class="form-check-input region-checkbox" type="checkbox" id="region-${regionId}" data-region="${region}" checked><label class="form-check-label fw-bold" for="region-${regionId}">${region}</label></div>
-                            <span class="text-muted small me-2">${
-                              countries.length
-                            } countries</span>
-                        </button>
-                    </h2>
-                    <div id="collapse-${regionId}" class="accordion-collapse collapse" data-bs-parent="#territoryAccordion">
-                        <div class="accordion-body"><div class="territory-list-inner">${countries
-                          .map(
-                            (country) =>
-                              `<div class="form-check"><input class="form-check-input country-checkbox" type="checkbox" value="${country.code}" id="country-${country.code}" data-region="${region}" checked><label class="form-check-label" for="country-${country.code}">${country.name}</label></div>`
-                          )
-                          .join("")}</div></div>
-                    </div>
-                </div>`;
-        })
-        .join("");
-      addTerritoryEventListeners();
-      updateTerritoryCounter();
-    }
+//     // --- RENDER FUNCTIONS ---
+//     function renderTable(data) {
+//       const tableBody = document.getElementById("youtubeTableBody");
+//       tableBody.innerHTML =
+//         !data || data.length === 0
+//           ? `<tr><td colspan="10" class="text-center p-5"><h5>No matching conflicts found.</h5></td></tr>`
+//           : data
+//               .map(
+//                 (req) => `
+//                 <tr style="cursor: pointer;" data-bs-toggle="offcanvas" data-bs-target="#conflictResolutionOffcanvas"
+//                     data-song-name="${req.assetTitle}" data-artist-name="${
+//                   req.artist
+//                 }" data-isrc="${req.isrc}" 
+//                     data-cover-url="${req.albumCoverUrl}" data-category="${
+//                   req.category
+//                 }" data-other-party="${req.otherParty}">
+//                     <td class="text-center"><i class="bi bi-youtube text-danger fs-5"></i></td>
+//                     <td>${req.category}</td>
+//                     <td>${req.assetTitle}</td>
+//                     <td><div class="fw-bold">${
+//                       req.artist
+//                     }</div><small class="text-muted">Asset ID: ${
+//                   req.assetId
+//                 }</small></td>
+//                     <td>${req.upc}</td>
+//                     <td>${req.otherParty}</td>
+//                     <td>${req.dailyViews}</td>
+//                     <td>${req.expiry}</td>
+//                     <td>${getStatusBadge(req.status)}</td>
+//                     <td><i class="bi bi-chevron-right text-muted"></i></td>
+//                 </tr>`
+//               )
+//               .join("");
+//       document.getElementById(
+//         "pagination-text"
+//       ).textContent = `${data.length} of ${conflictRequests.length} results`;
+//     }
 
-    // --- EVENT HANDLERS & INITIALIZATION ---
-    const conflictOffcanvasEl = document.getElementById(
-      "conflictResolutionOffcanvas"
-    );
-    const conflictOffcanvas = new bootstrap.Offcanvas(conflictOffcanvasEl);
-    const conflictForm = document.getElementById("youtubeConflictForm");
-    const steps = Array.from(conflictForm.querySelectorAll(".form-step"));
-    const nextBtn = conflictOffcanvasEl.querySelector("#nextBtn");
-    const backBtn = conflictOffcanvasEl.querySelector("#backBtn");
-    const submitBtn = conflictOffcanvasEl.querySelector("#submitBtn");
-    const fileInput = conflictOffcanvasEl.querySelector("#formFile");
-    const fileDisplay = conflictOffcanvasEl.querySelector("#selectedFileName");
-    let currentStep = 0;
+//     function renderTerritoryAccordion() {
+//       const accordionContainer = document.getElementById("territoryAccordion");
+//       if (!accordionContainer) return;
+//       accordionContainer.innerHTML = Object.entries(territoriesByRegion)
+//         .map(([region, countries]) => {
+//           const regionId = region.replace(/[^a-zA-Z0-9]/g, "");
+//           return `
+//                 <div class="accordion-item">
+//                     <h2 class="accordion-header" id="heading-${regionId}">
+//                         <button class="accordion-button collapsed d-flex align-items-center" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-${regionId}" aria-expanded="false">
+//                             <div class="form-check me-auto pe-2"><input class="form-check-input region-checkbox" type="checkbox" id="region-${regionId}" data-region="${region}" checked><label class="form-check-label fw-bold" for="region-${regionId}">${region}</label></div>
+//                             <span class="text-muted small me-2">${
+//                               countries.length
+//                             } countries</span>
+//                         </button>
+//                     </h2>
+//                     <div id="collapse-${regionId}" class="accordion-collapse collapse" data-bs-parent="#territoryAccordion">
+//                         <div class="accordion-body"><div class="territory-list-inner">${countries
+//                           .map(
+//                             (country) =>
+//                               `<div class="form-check"><input class="form-check-input country-checkbox" type="checkbox" value="${country.code}" id="country-${country.code}" data-region="${region}" checked><label class="form-check-label" for="country-${country.code}">${country.name}</label></div>`
+//                           )
+//                           .join("")}</div></div>
+//                     </div>
+//                 </div>`;
+//         })
+//         .join("");
+//       addTerritoryEventListeners();
+//       updateTerritoryCounter();
+//     }
 
-    document
-      .getElementById("releasesTable")
-      .querySelector("thead")
-      .addEventListener("click", (e) => {
-        const headerCell = e.target.closest(".sortable-header");
-        if (!headerCell) return;
-        const sortKey = headerCell.dataset.sort;
-        if (sortState.key === sortKey) {
-          sortState.direction = sortState.direction === "asc" ? "desc" : "asc";
-        } else {
-          sortState.key = sortKey;
-          sortState.direction = "asc";
-        }
-        conflictRequests.sort((a, b) => {
-          let valA = a[sortState.key],
-            valB = b[sortState.key];
-          if (sortState.key === "dailyViews") {
-            valA = parseViews(valA);
-            valB = parseViews(valB);
-          } else if (sortState.key === "expiry") {
-            valA = parseExpiry(valA);
-            valB = parseExpiry(valB);
-          }
-          let comparison = 0;
-          if (valA > valB) comparison = 1;
-          else if (valA < valB) comparison = -1;
-          return sortState.direction === "desc" ? comparison * -1 : comparison;
-        });
-        renderTable(conflictRequests);
-        updateSortIcons();
-      });
+//     // --- EVENT HANDLERS & INITIALIZATION ---
+//     const conflictOffcanvasEl = document.getElementById(
+//       "conflictResolutionOffcanvas"
+//     );
+//     const conflictOffcanvas = new bootstrap.Offcanvas(conflictOffcanvasEl);
+//     const conflictForm = document.getElementById("youtubeConflictForm");
+//     const steps = Array.from(conflictForm.querySelectorAll(".form-step"));
+//     const nextBtn = conflictOffcanvasEl.querySelector("#nextBtn");
+//     const backBtn = conflictOffcanvasEl.querySelector("#backBtn");
+//     const submitBtn = conflictOffcanvasEl.querySelector("#submitBtn");
+//     const fileInput = conflictOffcanvasEl.querySelector("#formFile");
+//     const fileDisplay = conflictOffcanvasEl.querySelector("#selectedFileName");
+//     let currentStep = 0;
 
-    function showStep(stepIndex) {
-      steps.forEach((step, index) =>
-        step.classList.toggle("d-none", index !== stepIndex)
-      );
-      backBtn.classList.toggle("d-none", stepIndex === 0);
-      nextBtn.classList.toggle("d-none", stepIndex === steps.length - 1);
-      submitBtn.classList.toggle("d-none", stepIndex !== steps.length - 1);
-      currentStep = stepIndex;
-    }
+//     document
+//       .getElementById("releasesTable")
+//       .querySelector("thead")
+//       .addEventListener("click", (e) => {
+//         const headerCell = e.target.closest(".sortable-header");
+//         if (!headerCell) return;
+//         const sortKey = headerCell.dataset.sort;
+//         if (sortState.key === sortKey) {
+//           sortState.direction = sortState.direction === "asc" ? "desc" : "asc";
+//         } else {
+//           sortState.key = sortKey;
+//           sortState.direction = "asc";
+//         }
+//         conflictRequests.sort((a, b) => {
+//           let valA = a[sortState.key],
+//             valB = b[sortState.key];
+//           if (sortState.key === "dailyViews") {
+//             valA = parseViews(valA);
+//             valB = parseViews(valB);
+//           } else if (sortState.key === "expiry") {
+//             valA = parseExpiry(valA);
+//             valB = parseExpiry(valB);
+//           }
+//           let comparison = 0;
+//           if (valA > valB) comparison = 1;
+//           else if (valA < valB) comparison = -1;
+//           return sortState.direction === "desc" ? comparison * -1 : comparison;
+//         });
+//         renderTable(conflictRequests);
+//         updateSortIcons();
+//       });
 
-    nextBtn.addEventListener("click", () => {
-      if (
-        currentStep === 0 &&
-        !conflictForm.querySelector('input[name="rightsOwned"]:checked')
-      )
-        return alert("Please select a rights option.");
-      if (
-        currentStep === 1 &&
-        !conflictForm.querySelector(".country-checkbox:checked")
-      )
-        return alert("Please select at least one territory.");
-      if (currentStep < steps.length - 1) showStep(currentStep + 1);
-    });
+//     function showStep(stepIndex) {
+//       steps.forEach((step, index) =>
+//         step.classList.toggle("d-none", index !== stepIndex)
+//       );
+//       backBtn.classList.toggle("d-none", stepIndex === 0);
+//       nextBtn.classList.toggle("d-none", stepIndex === steps.length - 1);
+//       submitBtn.classList.toggle("d-none", stepIndex !== steps.length - 1);
+//       currentStep = stepIndex;
+//     }
 
-    backBtn.addEventListener("click", () => showStep(currentStep - 1));
+//     nextBtn.addEventListener("click", () => {
+//       if (
+//         currentStep === 0 &&
+//         !conflictForm.querySelector('input[name="rightsOwned"]:checked')
+//       )
+//         return alert("Please select a rights option.");
+//       if (
+//         currentStep === 1 &&
+//         !conflictForm.querySelector(".country-checkbox:checked")
+//       )
+//         return alert("Please select at least one territory.");
+//       if (currentStep < steps.length - 1) showStep(currentStep + 1);
+//     });
 
-    conflictOffcanvasEl.addEventListener("show.bs.offcanvas", function (event) {
-      const data = event.relatedTarget.dataset;
-      ["", "2", "3"].forEach((s) => {
-        conflictOffcanvasEl.querySelector(`#modalAlbumCover${s}`).src =
-          data.coverUrl;
-        conflictOffcanvasEl.querySelector(`#modalSongName${s}`).textContent =
-          data.songName;
-        conflictOffcanvasEl.querySelector(`#modalArtistName${s}`).textContent =
-          data.artistName;
-      });
-      conflictOffcanvasEl.querySelector(
-        "#modalIsrc"
-      ).textContent = `ISRC: ${data.isrc}`;
-      conflictOffcanvasEl.querySelector("#offcanvasTitle").textContent =
-        data.category;
-      conflictOffcanvasEl.querySelector(
-        "#offcanvasSubtitle"
-      ).textContent = `VS. ${data.otherParty}`;
-      conflictForm.reset();
-      conflictOffcanvasEl
-        .querySelectorAll(".radio-card")
-        .forEach((c) => c.classList.remove("selected"));
-      fileDisplay.classList.add("d-none");
-      conflictOffcanvasEl
-        .querySelectorAll('#territoryAccordion input[type="checkbox"]')
-        .forEach((cb) => (cb.checked = true));
-      updateTerritoryCounter();
-      showStep(0);
-    });
+//     backBtn.addEventListener("click", () => showStep(currentStep - 1));
 
-    conflictForm.addEventListener("submit", function (e) {
-      e.preventDefault();
-      if (!fileInput.files.length && currentStep === 2)
-        return alert("Please upload a supporting document.");
-      alert("Resolution submitted successfully!");
-      conflictOffcanvas.hide();
-    });
+//     conflictOffcanvasEl.addEventListener("show.bs.offcanvas", function (event) {
+//       const data = event.relatedTarget.dataset;
+//       ["", "2", "3"].forEach((s) => {
+//         conflictOffcanvasEl.querySelector(`#modalAlbumCover${s}`).src =
+//           data.coverUrl;
+//         conflictOffcanvasEl.querySelector(`#modalSongName${s}`).textContent =
+//           data.songName;
+//         conflictOffcanvasEl.querySelector(`#modalArtistName${s}`).textContent =
+//           data.artistName;
+//       });
+//       conflictOffcanvasEl.querySelector(
+//         "#modalIsrc"
+//       ).textContent = `ISRC: ${data.isrc}`;
+//       conflictOffcanvasEl.querySelector("#offcanvasTitle").textContent =
+//         data.category;
+//       conflictOffcanvasEl.querySelector(
+//         "#offcanvasSubtitle"
+//       ).textContent = `VS. ${data.otherParty}`;
+//       conflictForm.reset();
+//       conflictOffcanvasEl
+//         .querySelectorAll(".radio-card")
+//         .forEach((c) => c.classList.remove("selected"));
+//       fileDisplay.classList.add("d-none");
+//       conflictOffcanvasEl
+//         .querySelectorAll('#territoryAccordion input[type="checkbox"]')
+//         .forEach((cb) => (cb.checked = true));
+//       updateTerritoryCounter();
+//       showStep(0);
+//     });
 
-    conflictOffcanvasEl.querySelectorAll(".radio-card").forEach((c) =>
-      c.addEventListener("click", function () {
-        conflictOffcanvasEl
-          .querySelectorAll(".radio-card")
-          .forEach((el) => el.classList.remove("selected"));
-        this.classList.add("selected");
-        this.querySelector('input[type="radio"]').checked = true;
-      })
-    );
+//     conflictForm.addEventListener("submit", function (e) {
+//       e.preventDefault();
+//       if (!fileInput.files.length && currentStep === 2)
+//         return alert("Please upload a supporting document.");
+//       alert("Resolution submitted successfully!");
+//       conflictOffcanvas.hide();
+//     });
 
-    conflictOffcanvasEl
-      .querySelector("#fileUploadContainer")
-      .addEventListener("click", () => fileInput.click());
-    fileInput.addEventListener("change", () => {
-      if (fileInput.files.length > 0) {
-        fileDisplay.querySelector("span").textContent = fileInput.files[0].name;
-        fileDisplay.classList.remove("d-none");
-      }
-    });
-    fileDisplay.querySelector(".btn-close").addEventListener("click", () => {
-      fileInput.value = "";
-      fileDisplay.classList.add("d-none");
-    });
+//     conflictOffcanvasEl.querySelectorAll(".radio-card").forEach((c) =>
+//       c.addEventListener("click", function () {
+//         conflictOffcanvasEl
+//           .querySelectorAll(".radio-card")
+//           .forEach((el) => el.classList.remove("selected"));
+//         this.classList.add("selected");
+//         this.querySelector('input[type="radio"]').checked = true;
+//       })
+//     );
 
-    // --- INITIAL RENDER ---
-    renderTable(conflictRequests);
-    renderTerritoryAccordion();
-    updateSortIcons();
-  }
-});
+//     conflictOffcanvasEl
+//       .querySelector("#fileUploadContainer")
+//       .addEventListener("click", () => fileInput.click());
+//     fileInput.addEventListener("change", () => {
+//       if (fileInput.files.length > 0) {
+//         fileDisplay.querySelector("span").textContent = fileInput.files[0].name;
+//         fileDisplay.classList.remove("d-none");
+//       }
+//     });
+//     fileDisplay.querySelector(".btn-close").addEventListener("click", () => {
+//       fileInput.value = "";
+//       fileDisplay.classList.add("d-none");
+//     });
+
+//     // --- INITIAL RENDER ---
+//     renderTable(conflictRequests);
+//     renderTerritoryAccordion();
+//     updateSortIcons();
+//   }
+// });
+
+
 // facebook-page js
 // Add this entire new block to your app.js file
 document.addEventListener("DOMContentLoaded", function () {
   const facebookPageContainer = document.querySelector(".admin-facebook-page");
 
   if (facebookPageContainer) {
-    // --- DATA ---
-    const conflictRequests = [
-      {
-        id: 1,
-        category: "Ownership conflict",
-        assetTitle: "Cosmic Drift",
-        artist: "Astro Beats",
-        assetId: "90736897913",
-        upc: "198009123456",
-        isrc: "USAT22312345",
-        otherParty: "The Orchard",
-        dailyViews: "79K",
-        expiry: "2 days",
-        status: "Action Required",
-        albumCoverUrl: "https://placehold.co/80x80/3b5998/ffffff?text=C",
-      },
-      {
-        id: 2,
-        category: "Policy",
-        assetTitle: "Ocean Tides",
-        artist: "Deep Wave",
-        assetId: "3478239381",
-        upc: "198009654321",
-        isrc: "USAT22354321",
-        otherParty: "Believe",
-        dailyViews: "3K",
-        expiry: "-",
-        status: "Resolved",
-        albumCoverUrl: "https://placehold.co/80x80/1abc9c/ffffff?text=O",
-      },
-      {
-        id: 3,
-        category: "Ownership conflict",
-        assetTitle: "City Lights",
-        artist: "Urban Glow",
-        assetId: "3478239381",
-        upc: "198009789012",
-        isrc: "USAT22398765",
-        otherParty: "CD Baby",
-        dailyViews: "1.2K",
-        expiry: "15 days",
-        status: "In Review",
-        albumCoverUrl: "https://placehold.co/80x80/9b59b6/ffffff?text=C",
-      },
-    ];
-    const territoriesByRegion = {
-      Africa: [
-        { name: "Algeria", code: "DZ" },
-        { name: "Angola", code: "AO" },
-        { name: "Benin", code: "BJ" },
-        { name: "Botswana", code: "BW" },
-        { name: "Burkina Faso", code: "BF" },
-        { name: "Burundi", code: "BI" },
-        { name: "Cabo Verde", code: "CV" },
-        { name: "Cameroon", code: "CM" },
-        { name: "Central African Republic", code: "CF" },
-        { name: "Chad", code: "TD" },
-        { name: "Comoros", code: "KM" },
-        { name: "Congo", code: "CG" },
-        { name: "Congo (DRC)", code: "CD" },
-        { name: "Côte d'Ivoire", code: "CI" },
-        { name: "Djibouti", code: "DJ" },
-        { name: "Egypt", code: "EG" },
-        { name: "Equatorial Guinea", code: "GQ" },
-        { name: "Eritrea", code: "ER" },
-        { name: "Eswatini", code: "SZ" },
-        { name: "Ethiopia", code: "ET" },
-        { name: "Gabon", code: "GA" },
-        { name: "Gambia", code: "GM" },
-        { name: "Ghana", code: "GH" },
-        { name: "Guinea", code: "GN" },
-        { name: "Guinea-Bissau", code: "GW" },
-        { name: "Kenya", code: "KE" },
-        { name: "Lesotho", code: "LS" },
-        { name: "Liberia", code: "LR" },
-        { name: "Libya", code: "LY" },
-        { name: "Madagascar", code: "MG" },
-        { name: "Malawi", code: "MW" },
-        { name: "Mali", code: "ML" },
-        { name: "Mauritania", code: "MR" },
-        { name: "Mauritius", code: "MU" },
-        { name: "Mayotte", code: "YT" },
-        { name: "Morocco", code: "MA" },
-        { name: "Mozambique", code: "MZ" },
-        { name: "Namibia", code: "NA" },
-        { name: "Niger", code: "NE" },
-        { name: "Nigeria", code: "NG" },
-        { name: "Réunion", code: "RE" },
-        { name: "Rwanda", code: "RW" },
-        { name: "Saint Helena", code: "SH" },
-        { name: "Sao Tome and Principe", code: "ST" },
-        { name: "Senegal", code: "SN" },
-        { name: "Seychelles", code: "SC" },
-        { name: "Sierra Leone", code: "SL" },
-        { name: "Somalia", code: "SO" },
-        { name: "South Africa", code: "ZA" },
-        { name: "South Sudan", code: "SS" },
-        { name: "Sudan", code: "SD" },
-        { name: "Tanzania", code: "TZ" },
-        { name: "Togo", code: "TG" },
-        { name: "Tunisia", code: "TN" },
-        { name: "Uganda", code: "UG" },
-        { name: "Zambia", code: "ZM" },
-        { name: "Zimbabwe", code: "ZW" },
-      ],
-      Antarctica: [
-        { name: "Antarctica", code: "AQ" },
-        { name: "French Southern Territories", code: "TF" },
-        { name: "South Georgia and the South Sandwich Islands", code: "GS" },
-      ],
-      Asia: [
-        { name: "Afghanistan", code: "AF" },
-        { name: "Armenia", code: "AM" },
-        { name: "Azerbaijan", code: "AZ" },
-        { name: "Bahrain", code: "BH" },
-        { name: "Bangladesh", code: "BD" },
-        { name: "Bhutan", code: "BT" },
-        { name: "British Indian Ocean Territory", code: "IO" },
-        { name: "Brunei", code: "BN" },
-        { name: "Cambodia", code: "KH" },
-        { name: "China", code: "CN" },
-        { name: "Cyprus", code: "CY" },
-        { name: "Georgia", code: "GE" },
-        { name: "Hong Kong", code: "HK" },
-        { name: "India", code: "IN" },
-        { name: "Indonesia", code: "ID" },
-        { name: "Iran", code: "IR" },
-        { name: "Iraq", code: "IQ" },
-        { name: "Israel", code: "IL" },
-        { name: "Japan", code: "JP" },
-        { name: "Jordan", code: "JO" },
-        { name: "Kazakhstan", code: "KZ" },
-        { name: "Kuwait", code: "KW" },
-        { name: "Kyrgyzstan", code: "KG" },
-        { name: "Laos", code: "LA" },
-        { name: "Lebanon", code: "LB" },
-        { name: "Macao", code: "MO" },
-        { name: "Malaysia", code: "MY" },
-        { name: "Maldives", code: "MV" },
-        { name: "Mongolia", code: "MN" },
-        { name: "Myanmar", code: "MM" },
-        { name: "Nepal", code: "NP" },
-        { name: "North Korea", code: "KP" },
-        { name: "Oman", code: "OM" },
-        { name: "Pakistan", code: "PK" },
-        { name: "Palestine", code: "PS" },
-        { name: "Philippines", code: "PH" },
-        { name: "Qatar", code: "QA" },
-        { name: "Saudi Arabia", code: "SA" },
-        { name: "Singapore", code: "SG" },
-        { name: "South Korea", code: "KR" },
-        { name: "Sri Lanka", code: "LK" },
-        { name: "Syria", code: "SY" },
-        { name: "Taiwan", code: "TW" },
-        { name: "Tajikistan", code: "TJ" },
-        { name: "Thailand", code: "TH" },
-        { name: "Timor-Leste", code: "TL" },
-        { name: "Turkey", code: "TR" },
-        { name: "Turkmenistan", code: "TM" },
-        { name: "United Arab Emirates", code: "AE" },
-        { name: "Uzbekistan", code: "UZ" },
-        { name: "Vietnam", code: "VN" },
-        { name: "Yemen", code: "YE" },
-      ],
-      Europe: [
-        { name: "Åland Islands", code: "AX" },
-        { name: "Albania", code: "AL" },
-        { name: "Andorra", code: "AD" },
-        { name: "Austria", code: "AT" },
-        { name: "Belarus", code: "BY" },
-        { name: "Belgium", code: "BE" },
-        { name: "Bosnia and Herzegovina", code: "BA" },
-        { name: "Bulgaria", code: "BG" },
-        { name: "Croatia", code: "HR" },
-        { name: "Czechia", code: "CZ" },
-        { name: "Denmark", code: "DK" },
-        { name: "Estonia", code: "EE" },
-        { name: "Faroe Islands", code: "FO" },
-        { name: "Finland", code: "FI" },
-        { name: "France", code: "FR" },
-        { name: "Germany", code: "DE" },
-        { name: "Gibraltar", code: "GI" },
-        { name: "Greece", code: "GR" },
-        { name: "Guernsey", code: "GG" },
-        { name: "Holy See", code: "VA" },
-        { name: "Hungary", code: "HU" },
-        { name: "Iceland", code: "IS" },
-        { name: "Ireland", code: "IE" },
-        { name: "Isle of Man", code: "IM" },
-        { name: "Italy", code: "IT" },
-        { name: "Jersey", code: "JE" },
-        { name: "Latvia", code: "LV" },
-        { name: "Liechtenstein", code: "LI" },
-        { name: "Lithuania", code: "LT" },
-        { name: "Luxembourg", code: "LU" },
-        { name: "Malta", code: "MT" },
-        { name: "Moldova", code: "MD" },
-        { name: "Monaco", code: "MC" },
-        { name: "Montenegro", code: "ME" },
-        { name: "Netherlands", code: "NL" },
-        { name: "North Macedonia", code: "MK" },
-        { name: "Norway", code: "NO" },
-        { name: "Poland", code: "PL" },
-        { name: "Portugal", code: "PT" },
-        { name: "Romania", code: "RO" },
-        { name: "Russia", code: "RU" },
-        { name: "San Marino", code: "SM" },
-        { name: "Serbia", code: "RS" },
-        { name: "Slovakia", code: "SK" },
-        { name: "Slovenia", code: "SI" },
-        { name: "Spain", code: "ES" },
-        { name: "Svalbard and Jan Mayen", code: "SJ" },
-        { name: "Sweden", code: "SE" },
-        { name: "Switzerland", code: "CH" },
-        { name: "Ukraine", code: "UA" },
-        { name: "United Kingdom", code: "GB" },
-      ],
-      "North America": [
-        { name: "Anguilla", code: "AI" },
-        { name: "Antigua and Barbuda", code: "AG" },
-        { name: "Aruba", code: "AW" },
-        { name: "Bahamas", code: "BS" },
-        { name: "Barbados", code: "BB" },
-        { name: "Belize", code: "BZ" },
-        { name: "Bermuda", code: "BM" },
-        { name: "Bonaire", code: "BQ" },
-        { name: "Canada", code: "CA" },
-        { name: "Cayman Islands", code: "KY" },
-        { name: "Costa Rica", code: "CR" },
-        { name: "Cuba", code: "CU" },
-        { name: "Curaçao", code: "CW" },
-        { name: "Dominica", code: "DM" },
-        { name: "Dominican Republic", code: "DO" },
-        { name: "El Salvador", code: "SV" },
-        { name: "Greenland", code: "GL" },
-        { name: "Grenada", code: "GD" },
-        { name: "Guadeloupe", code: "GP" },
-        { name: "Guatemala", code: "GT" },
-        { name: "Haiti", code: "HT" },
-        { name: "Honduras", code: "HN" },
-        { name: "Jamaica", code: "JM" },
-        { name: "Martinique", code: "MQ" },
-        { name: "Mexico", code: "MX" },
-        { name: "Montserrat", code: "MS" },
-        { name: "Nicaragua", code: "NI" },
-        { name: "Panama", code: "PA" },
-        { name: "Puerto Rico", code: "PR" },
-        { name: "Saint Barthélemy", code: "BL" },
-        { name: "Saint Kitts and Nevis", code: "KN" },
-        { name: "Saint Lucia", code: "LC" },
-        { name: "Saint Martin", code: "MF" },
-        { name: "Saint Pierre and Miquelon", code: "PM" },
-        { name: "Saint Vincent and the Grenadines", code: "VC" },
-        { name: "Sint Maarten", code: "SX" },
-        { name: "Trinidad and Tobago", code: "TT" },
-        { name: "Turks and Caicos Islands", code: "TC" },
-        { name: "United States", code: "US" },
-        { name: "U.S. Virgin Islands", code: "VI" },
-      ],
-      Oceania: [
-        { name: "American Samoa", code: "AS" },
-        { name: "Australia", code: "AU" },
-        { name: "Christmas Island", code: "CX" },
-        { name: "Cocos (Keeling) Islands", code: "CC" },
-        { name: "Cook Islands", code: "CK" },
-        { name: "Fiji", code: "FJ" },
-        { name: "French Polynesia", code: "PF" },
-        { name: "Guam", code: "GU" },
-        { name: "Kiribati", code: "KI" },
-        { name: "Marshall Islands", code: "MH" },
-        { name: "Micronesia", code: "FM" },
-        { name: "Nauru", code: "NR" },
-        { name: "New Caledonia", code: "NC" },
-        { name: "New Zealand", code: "NZ" },
-        { name: "Niue", code: "NU" },
-        { name: "Norfolk Island", code: "NF" },
-        { name: "Northern Mariana Islands", code: "MP" },
-        { name: "Palau", code: "PW" },
-        { name: "Papua New Guinea", code: "PG" },
-        { name: "Pitcairn", code: "PN" },
-        { name: "Samoa", code: "WS" },
-        { name: "Solomon Islands", code: "SB" },
-        { name: "Tokelau", code: "TK" },
-        { name: "Tonga", code: "TO" },
-        { name: "Tuvalu", code: "TV" },
-        { name: "U.S. Minor Outlying Islands", code: "UM" },
-        { name: "Vanuatu", code: "VU" },
-        { name: "Wallis and Futuna", code: "WF" },
-      ],
-      "South America": [
-        { name: "Argentina", code: "AR" },
-        { name: "Bolivia", code: "BO" },
-        { name: "Brazil", code: "BR" },
-        { name: "Chile", code: "CL" },
-        { name: "Colombia", code: "CO" },
-        { name: "Ecuador", code: "EC" },
-        { name: "Falkland Islands", code: "FK" },
-        { name: "French Guiana", code: "GF" },
-        { name: "Guyana", code: "GY" },
-        { name: "Paraguay", code: "PY" },
-        { name: "Peru", code: "PE" },
-        { name: "Suriname", code: "SR" },
-        { name: "Uruguay", code: "UY" },
-        { name: "Venezuela", code: "VE" },
-      ],
-    };
-    const totalCountries = Object.values(territoriesByRegion).flat().length;
-
     // --- DOM ELEMENTS ---
-    const table = $("#datatable");
+    const table = $("#facebookDatatable"); // updated selector
+    let dataTableInstance = null;
 
     // --- HELPER & PARSING FUNCTIONS ---
     const getStatusBadge = (status) => {
@@ -3607,94 +3305,188 @@ document.addEventListener("DOMContentLoaded", function () {
         badgeClass = "bg-warning-subtle text-warning-emphasis";
       return `<span class="badge rounded-pill border ${badgeClass}">${status}</span>`;
     };
+
     const parseViews = (views) =>
       typeof views !== "string"
         ? 0
         : parseFloat(views.toUpperCase()) *
           (views.toUpperCase().includes("K") ? 1000 : 1);
+
     const parseExpiry = (expiry) =>
       typeof expiry !== "string" || expiry === "-"
         ? Infinity
         : parseInt(expiry);
 
     // --- DATATABLES CONFIGURATION ---
-    const dataTableInstance = table.DataTable({
-      destroy: true,
-      data: conflictRequests,
-      paging: true,
-      searching: true,
-      info: true,
-      lengthChange: true,
-      autoWidth: false,
-      columns: [
-        {
-          data: null,
-          className: "text-center",
-          orderable: false,
-          render: () => `<i class="bi bi-facebook text-primary fs-5"></i>`,
+    function initializeDataTable() {
+      if (dataTableInstance) {
+        dataTableInstance.destroy();
+      }
+
+      dataTableInstance = table.DataTable({
+        destroy: true,
+        processing: true,
+        serverSide: false,
+        ajax: {
+          url: '/superadmin/facebook/list-json',
+          type: 'GET',
+          dataSrc: function (json) {
+            console.log("Raw response:", json);
+            return json.data;
+          },
+          error: function(xhr, error, thrown) {
+            console.error('DataTable Ajax Error:', error, thrown);
+            alert('Error loading conflict data. Please refresh the page.');
+          }
         },
-        { data: "category" },
-        { data: "assetTitle" },
-        {
-          data: null,
-          render: (data, type, row) =>
-            `<div class="fw-bold">${row.artist}</div><small class="text-muted">Asset ID: ${row.assetId}</small>`,
+        paging: true,
+        searching: true,
+        info: true,
+        lengthChange: true,
+        autoWidth: false,
+        order: [[1, 'desc']], // Order by ID/date descending
+        columns: [
+          {
+            data: null,
+            className: "text-center",
+            orderable: false,
+            render: () => `<i class="bi bi-facebook text-primary fs-5"></i>`,
+          },
+          { data: "category", title: "Category" },
+          { data: "assetTitle", title: "Asset Title" },
+          {
+            data: null,
+            title: "Artist / Asset ID",
+            render: (data, type, row) =>
+              `<div class="fw-bold">${row.artist || 'N/A'}</div><small class="text-muted">Asset ID: ${row.assetId || 'N/A'}</small>`,
+          },
+          { data: "upc", title: "UPC" },
+          { data: "otherParty", title: "Other Party" },
+          {
+            data: "dailyViews",
+            title: "Daily Views",
+            render: { 
+              _: (data) => data || '0', 
+              sort: (data) => parseViews(data) 
+            },
+          },
+          {
+            data: "expiry",
+            title: "Expiry",
+            render: { 
+              _: (data) => data || '-', 
+              sort: (data) => parseExpiry(data) 
+            },
+          },
+          { 
+            data: "status",
+            title: "Status", 
+            render: (data) => getStatusBadge(data || 'Action Required')
+          },
+          {
+            data: null,
+            className: "text-center",
+            orderable: false,
+            render: () => `<i class="bi bi-chevron-right text-muted"></i>`,
+          },
+        ],
+        createdRow: function (row, data) {
+          $(row).attr({
+            style: "cursor: pointer;",
+            "data-bs-toggle": "offcanvas",
+            "data-bs-target": "#facebookConflictOffcanvas",
+            "data-conflict-id": data.id,
+            "data-song-name": data.assetTitle || data.songName,
+            "data-artist-name": data.artist || data.artistName,
+            "data-isrc": data.isrc,
+            "data-cover-url": data.albumCoverUrl || "https://placehold.co/80x80/3b5998/ffffff?text=FB",
+            "data-category": data.category,
+            "data-other-party": data.otherParty,
+            "data-conflict-state": data.conflictState,
+            "data-countries": JSON.stringify(data.countries || {})
+          });
         },
-        { data: "upc" },
-        { data: "otherParty" },
-        {
-          data: "dailyViews",
-          render: { _: (data) => data, sort: (data) => parseViews(data) },
+        language: {
+          info: "Showing _START_ to _END_ of _TOTAL_ entries",
+          infoEmpty: "Showing 0 to 0 of 0 entries",
+          infoFiltered: "(filtered from _MAX_ total entries)",
+          zeroRecords: "No matching conflicts found",
+          emptyTable: "No conflicts available",
+          search: "_INPUT_",
+          searchPlaceholder: "Search conflicts...",
+          processing: "Loading conflicts..."
         },
-        {
-          data: "expiry",
-          render: { _: (data) => data, sort: (data) => parseExpiry(data) },
-        },
-        { data: "status", render: (data) => getStatusBadge(data) },
-        {
-          data: null,
-          className: "text-center",
-          orderable: false,
-          render: () => `<i class="bi bi-chevron-right text-muted"></i>`,
-        },
-      ],
-      createdRow: function (row, data) {
-        $(row).attr({
-          style: "cursor: pointer;",
-          "data-bs-toggle": "offcanvas",
-          "data-bs-target": "#facebookConflictOffcanvas",
-          "data-song-name": data.assetTitle,
-          "data-artist-name": data.artist,
-          "data-isrc": data.isrc,
-          "data-cover-url": data.albumCoverUrl,
-          "data-category": data.category,
-          "data-other-party": data.otherParty,
+      });
+    }
+
+    // Initialize the DataTable
+    initializeDataTable();
+
+
+    // --- IMPORT CSV FUNCTIONALITY ---
+    const importBtn = document.getElementById("importFacebookCsv");
+    if (importBtn) {
+      importBtn.addEventListener("click", function() {
+        // Create file input dynamically
+        const fileInput = document.createElement("input");
+        fileInput.type = "file";
+        fileInput.accept = ".csv";
+        fileInput.style.display = "none";
+        
+        fileInput.addEventListener("change", function(e) {
+          const file = e.target.files[0];
+          if (!file) return;
+          
+          const formData = new FormData();
+          formData.append("file", file);
+          
+          // Show loading state
+          const originalText = importBtn.innerHTML;
+          importBtn.innerHTML = '<i class="spinner-border spinner-border-sm me-1"></i>Importing...';
+          importBtn.disabled = true;
+          
+          fetch('/superadmin/facebook/import', {
+            method: 'POST',
+            body: formData
+          })
+          .then(response => response.json())
+          .then(data => {
+            if (data.status === 'success') {
+              alert(`Import successful!\nProcessed: ${data.processed_rows}\nInserted: ${data.inserted_rows}`);
+              // Refresh the DataTable
+              dataTableInstance.ajax.reload();
+            } else {
+              alert(`Import failed: ${data.message}`);
+            }
+          })
+          .catch(error => {
+            console.error('Import error:', error);
+            alert('Import failed. Please try again.');
+          })
+          .finally(() => {
+            // Restore button state
+            importBtn.innerHTML = originalText;
+            importBtn.disabled = false;
+            document.body.removeChild(fileInput);
+          });
         });
-      },
-      language: {
-        info: "Showing _START_ to _END_ of _TOTAL_ entries",
-        infoEmpty: "Showing 0 to 0 of 0 entries",
-        infoFiltered: "(filtered from _MAX_ total entries)",
-        zeroRecords: "No matching conflicts found",
-        emptyTable: "No conflicts available",
-        search: "_INPUT_",
-        searchPlaceholder: "Search conflicts...",
-      },
-    });
+        
+        document.body.appendChild(fileInput);
+        fileInput.click();
+      });
+    }
 
     // --- OFFCANVAS LOGIC ---
-    const conflictOffcanvasEl = document.getElementById(
-      "facebookConflictOffcanvas"
-    );
+    const conflictOffcanvasEl = document.getElementById("facebookConflictOffcanvas");
     if (conflictOffcanvasEl) {
       const conflictForm = document.getElementById("facebookConflictForm");
-      const steps = Array.from(
-        conflictOffcanvasEl.querySelectorAll(".form-step")
-      );
+      const steps = Array.from(conflictOffcanvasEl.querySelectorAll(".form-step"));
       const nextBtn = document.getElementById("nextBtn");
       const backBtn = document.getElementById("backBtn");
       const submitBtn = document.getElementById("submitBtn");
       let currentStep = 0;
+      let currentConflictId = null;
+      let conflictCountries = {};
 
       function showStep(stepIndex) {
         steps.forEach((step, index) =>
@@ -3724,166 +3516,332 @@ document.addEventListener("DOMContentLoaded", function () {
         if (currentStep > 0) showStep(currentStep - 1);
       });
 
-      conflictOffcanvasEl.addEventListener(
-        "show.bs.offcanvas",
-        function (event) {
-          const data = event.relatedTarget.dataset;
-          // Populate offcanvas fields
-          ["", "2", "3"].forEach((s) => {
-            const suffix = s ? parseInt(s) : "";
-            conflictOffcanvasEl.querySelector(`#modalAlbumCover${suffix}`).src =
-              data.coverUrl;
-            conflictOffcanvasEl.querySelector(
-              `#modalSongName${suffix}`
-            ).textContent = data.songName;
-            conflictOffcanvasEl.querySelector(
-              `#modalArtistName${suffix}`
-            ).textContent = data.artistName;
-          });
-          conflictOffcanvasEl.querySelector(
-            "#modalIsrc"
-          ).textContent = `ISRC: ${data.isrc}`;
-          conflictOffcanvasEl.querySelector("#offcanvasTitle").textContent =
-            data.category;
-          conflictOffcanvasEl.querySelector(
-            "#offcanvasSubtitle"
-          ).textContent = `VS. ${data.otherParty}`;
-
-          // Render accordion and reset form state
-          renderTerritoryAccordion();
-          conflictForm.reset();
-          conflictForm
-            .querySelectorAll(".radio-card")
-            .forEach((c) => c.classList.remove("selected"));
-          document.getElementById("selectedFileName")?.classList.add("d-none");
-          showStep(0);
+      conflictOffcanvasEl.addEventListener("show.bs.offcanvas", function (event) {
+        const trigger = event.relatedTarget;
+        const data = trigger.dataset;
+        
+        // Store current conflict ID
+        currentConflictId = data.conflictId;
+        
+        // Parse countries data
+        try {
+          conflictCountries = JSON.parse(data.countries || '{}');
+        } catch (e) {
+          console.warn('Failed to parse countries data:', e);
+          conflictCountries = {};
         }
-      );
+
+        // Populate offcanvas fields
+        ["", "2", "3"].forEach((s) => {
+          const suffix = s ? parseInt(s) : "";
+          const albumCover = conflictOffcanvasEl.querySelector(`#modalAlbumCover${suffix}`);
+          const songName = conflictOffcanvasEl.querySelector(`#modalSongName${suffix}`);
+          const artistName = conflictOffcanvasEl.querySelector(`#modalArtistName${suffix}`);
+          
+          if (albumCover) albumCover.src = data.coverUrl || "https://placehold.co/80x80/3b5998/ffffff?text=FB";
+          if (songName) songName.textContent = data.songName || 'Unknown';
+          if (artistName) artistName.textContent = data.artistName || 'Unknown';
+        });
+
+        const isrcEl = conflictOffcanvasEl.querySelector("#modalIsrc");
+        if (isrcEl) isrcEl.textContent = `ISRC: ${data.isrc || 'N/A'}`;
+        
+        const titleEl = conflictOffcanvasEl.querySelector("#offcanvasTitle");
+        if (titleEl) titleEl.textContent = data.category || 'Ownership Conflict';
+        
+        const subtitleEl = conflictOffcanvasEl.querySelector("#offcanvasSubtitle");
+        if (subtitleEl) subtitleEl.textContent = `VS. ${data.otherParty || 'Unknown'}`;
+
+        // Render accordion and reset form state
+        renderTerritoryAccordion();
+        conflictForm.reset();
+        conflictForm.querySelectorAll(".radio-card").forEach((c) => c.classList.remove("selected"));
+        
+        const fileDisplay = document.getElementById("selectedFileName");
+        if (fileDisplay) fileDisplay.classList.add("d-none");
+        
+        showStep(0);
+      });
 
       conflictForm.addEventListener("submit", function (e) {
         e.preventDefault();
+        
         const formFile = document.getElementById("formFile");
-        if (currentStep === 2 && formFile && !formFile.files.length)
+        if (currentStep === 2 && formFile && !formFile.files.length) {
           return alert("Please upload a supporting document.");
-        alert("Resolution submitted successfully!");
-        bootstrap.Offcanvas.getInstance(conflictOffcanvasEl).hide();
+        }
+
+        // Collect form data
+        const formData = new FormData();
+        const rightsOwned = conflictForm.querySelector('input[name="rightsOwned"]:checked')?.value || '';
+        const selectedTerritories = Array.from(conflictForm.querySelectorAll('.country-checkbox:checked'))
+          .map(cb => cb.value);
+
+        // Debug logging
+        console.log('Submitting data:', {
+          conflict_id: currentConflictId,
+          rights_owned: rightsOwned,
+          territories: selectedTerritories,
+          has_file: formFile && formFile.files[0] ? true : false
+        });
+
+        formData.append('conflict_id', currentConflictId);
+        formData.append('rights_owned', rightsOwned);
+        formData.append('territories', JSON.stringify(selectedTerritories));
+        
+        if (formFile && formFile.files[0]) {
+          formData.append('supporting_document', formFile.files[0]);
+        }
+
+        // Show loading state
+        const originalText = submitBtn.innerHTML;
+        submitBtn.innerHTML = '<i class="spinner-border spinner-border-sm me-1"></i>Submitting...';
+        submitBtn.disabled = true;
+
+        fetch('/superadmin/facebook/update-resolution', {
+          method: 'POST',
+          body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+          if (data.status === 'success') {
+            alert("Resolution submitted successfully!");
+            bootstrap.Offcanvas.getInstance(conflictOffcanvasEl).hide();
+            // Refresh the DataTable to show updated status
+            dataTableInstance.ajax.reload();
+          } else {
+            alert(`Failed to submit resolution: ${data.message}`);
+          }
+        })
+        .catch(error => {
+          console.error('Submit error:', error);
+          alert('Failed to submit resolution. Please try again.');
+        })
+        .finally(() => {
+          // Restore button state
+          submitBtn.innerHTML = originalText;
+          submitBtn.disabled = false;
+        });
       });
 
       function renderTerritoryAccordion() {
-        const accordionContainer = conflictOffcanvasEl.querySelector(
-          "#territoryAccordion"
-        );
+        const accordionContainer = conflictOffcanvasEl.querySelector("#territoryAccordion");
         if (!accordionContainer) return;
-        accordionContainer.innerHTML = Object.entries(territoriesByRegion)
-          .map(([region, countries]) => {
-            if (countries.length === 0) return "";
-            const regionId = region.replace(/[^a-zA-Z0-9]/g, "");
+
+        // Show loading state
+        accordionContainer.innerHTML = '<div class="text-center p-3"><i class="spinner-border spinner-border-sm me-2"></i>Loading territories...</div>';
+
+        // Fetch all countries grouped by continent
+        fetch('/superadmin/facebook/get-all-countries')
+          .then(response => response.json())
+          .then(data => {
+            if (data.status === 'success') {
+              renderCountriesAccordion(data.countries);
+            } else {
+              accordionContainer.innerHTML = '<div class="text-center p-3 text-danger">Error loading territories</div>';
+            }
+          })
+          .catch(error => {
+            console.error('Error fetching countries:', error);
+            accordionContainer.innerHTML = '<div class="text-center p-3 text-danger">Error loading territories</div>';
+          });
+      }
+
+      function renderCountriesAccordion(allCountries) {
+        const accordionContainer = conflictOffcanvasEl.querySelector("#territoryAccordion");
+        if (!accordionContainer) return;
+
+        // Create a set of country IDs that should be checked (from conflict data)
+        const checkedCountryIds = new Set();
+        Object.values(conflictCountries).forEach(countries => {
+          if (Array.isArray(countries)) {
+            countries.forEach(country => {
+              checkedCountryIds.add(country.id);
+            });
+          }
+        });
+
+        // Render accordion with all countries, checking only the ones in conflict data
+        accordionContainer.innerHTML = Object.entries(allCountries)
+          .map(([continent, countries]) => {
+            if (!countries || countries.length === 0) return "";
+            
+            const regionId = continent.replace(/[^a-zA-Z0-9]/g, "");
+            
+            // Count how many countries in this continent should be checked
+            const checkedCountsInRegion = countries.filter(c => checkedCountryIds.has(c.id)).length;
+            const allCountriesInRegionChecked = checkedCountsInRegion === countries.length && countries.length > 0;
+            
             return `
-                    <div class="accordion-item">
-                        <h2 class="accordion-header">
-                            <button class="accordion-button collapsed d-flex align-items-center" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-fb-${regionId}">
-                                <div class="form-check me-auto pe-2">
-                                    <input class="form-check-input region-checkbox" type="checkbox" id="region-fb-${regionId}" data-region="${region}" checked>
-                                    <label class="form-check-label fw-bold" for="region-fb-${regionId}">${region}</label>
-                                </div>
-                                <span class="text-muted small me-2">${
-                                  countries.length
-                                } countries</span>
-                            </button>
-                        </h2>
-                        <div id="collapse-fb-${regionId}" class="accordion-collapse collapse" data-bs-parent="#territoryAccordion">
-                            <div class="accordion-body">
-                                <div class="territory-list-inner">${countries
-                                  .map(
-                                    (c) => `
-                                    <div class="form-check">
-                                        <input class="form-check-input country-checkbox" type="checkbox" value="${c.code}" id="country-fb-${c.code}" data-region="${region}" checked>
-                                        <label class="form-check-label" for="country-fb-${c.code}">${c.name}</label>
-                                    </div>`
-                                  )
-                                  .join("")}
-                                </div>
-                            </div>
+              <div class="accordion-item">
+                <h2 class="accordion-header">
+                  <button class="accordion-button collapsed d-flex align-items-center" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-fb-${regionId}">
+                    <div class="form-check me-auto pe-2">
+                      <input class="form-check-input region-checkbox" type="checkbox" id="region-fb-${regionId}" data-region="${continent}" ${allCountriesInRegionChecked ? 'checked' : ''}>
+                      <label class="form-check-label fw-bold" for="region-fb-${regionId}">${continent}</label>
+                    </div>
+                    <span class="text-muted small me-2">${countries.length} countries ${checkedCountsInRegion > 0 ? `(${checkedCountsInRegion} selected)` : ''}</span>
+                  </button>
+                </h2>
+                <div id="collapse-fb-${regionId}" class="accordion-collapse collapse" data-bs-parent="#territoryAccordion">
+                  <div class="accordion-body">
+                    <div class="territory-list-inner">
+                      ${countries.map(c => `
+                        <div class="form-check">
+                          <input class="form-check-input country-checkbox" type="checkbox" value="${c.id}" id="country-fb-${c.id}" data-region="${continent}" ${checkedCountryIds.has(c.id) ? 'checked' : ''}>
+                          <label class="form-check-label" for="country-fb-${c.id}">${c.name}</label>
                         </div>
-                    </div>`;
+                      `).join("")}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            `;
           })
           .join("");
+          
         addTerritoryEventListeners();
         updateTerritoryCounter();
       }
 
       function updateTerritoryCounter() {
-        const selected = conflictOffcanvasEl.querySelectorAll(
-          ".country-checkbox:checked"
-        ).length;
-        conflictOffcanvasEl.querySelector(
-          "#territoryCounter"
-        ).textContent = `${selected} contested countries out of ${totalCountries} delivered`;
+        const selected = conflictOffcanvasEl.querySelectorAll(".country-checkbox:checked").length;
+        const total = conflictOffcanvasEl.querySelectorAll(".country-checkbox").length;
+        const counterEl = conflictOffcanvasEl.querySelector("#territoryCounter");
+        if (counterEl) {
+          counterEl.textContent = `${selected} contested countries out of ${total} delivered`;
+        }
       }
 
       function addTerritoryEventListeners() {
-        conflictOffcanvasEl
-          .querySelectorAll(".region-checkbox, .country-checkbox")
-          .forEach((cb) => {
-            cb.addEventListener("change", function (e) {
-              const region = e.target.dataset.region;
-              if (e.target.classList.contains("region-checkbox")) {
-                conflictOffcanvasEl
-                  .querySelectorAll(
-                    `.country-checkbox[data-region="${region}"]`
-                  )
-                  .forEach(
-                    (countryCb) => (countryCb.checked = e.target.checked)
-                  );
-              } else {
-                const allInRegion = [
-                  ...conflictOffcanvasEl.querySelectorAll(
-                    `.country-checkbox[data-region="${region}"]`
-                  ),
-                ].every((c) => c.checked);
-                conflictOffcanvasEl.querySelector(
-                  `.region-checkbox[data-region="${region}"]`
-                ).checked = allInRegion;
+        conflictOffcanvasEl.querySelectorAll(".region-checkbox, .country-checkbox").forEach((cb) => {
+          cb.addEventListener("change", function (e) {
+            const region = e.target.dataset.region;
+            if (e.target.classList.contains("region-checkbox")) {
+              conflictOffcanvasEl.querySelectorAll(`.country-checkbox[data-region="${region}"]`).forEach(
+                (countryCb) => (countryCb.checked = e.target.checked)
+              );
+            } else {
+              const allInRegion = [
+                ...conflictOffcanvasEl.querySelectorAll(`.country-checkbox[data-region="${region}"]`),
+              ].every((c) => c.checked);
+              const regionCheckbox = conflictOffcanvasEl.querySelector(`.region-checkbox[data-region="${region}"]`);
+              if (regionCheckbox) {
+                regionCheckbox.checked = allInRegion;
               }
-              updateTerritoryCounter();
-            });
+            }
+            updateTerritoryCounter();
           });
+        });
       }
 
       // --- Remaining event listeners for form interactions ---
       conflictOffcanvasEl.addEventListener("click", function (e) {
         if (e.target.closest(".radio-card")) {
           const card = e.target.closest(".radio-card");
-          conflictOffcanvasEl
-            .querySelectorAll(".radio-card")
-            .forEach((c) => c.classList.remove("selected"));
+          conflictOffcanvasEl.querySelectorAll(".radio-card").forEach((c) => c.classList.remove("selected"));
           card.classList.add("selected");
-          card.querySelector('input[type="radio"]').checked = true;
+          const radioInput = card.querySelector('input[type="radio"]');
+          if (radioInput) radioInput.checked = true;
         }
       });
 
       const fileInput = document.getElementById("formFile");
       const fileDisplay = document.getElementById("selectedFileName");
-      document
-        .getElementById("fileUploadContainer")
-        ?.addEventListener("click", () => fileInput.click());
-      fileInput?.addEventListener("change", () => {
-        if (fileInput.files.length > 0 && fileDisplay) {
-          fileDisplay.querySelector("span").textContent =
-            fileInput.files[0].name;
-          fileDisplay.classList.remove("d-none");
-        }
-      });
-      fileDisplay
-        ?.querySelector(".btn-close")
-        .addEventListener("click", (e) => {
-          e.stopPropagation();
-          if (fileInput) fileInput.value = "";
-          fileDisplay.classList.add("d-none");
+      const fileUploadContainer = document.getElementById("fileUploadContainer");
+      
+      if (fileUploadContainer && fileInput) {
+        fileUploadContainer.addEventListener("click", () => fileInput.click());
+      }
+      
+      if (fileInput && fileDisplay) {
+        fileInput.addEventListener("change", () => {
+          if (fileInput.files.length > 0) {
+            const span = fileDisplay.querySelector("span");
+            if (span) span.textContent = fileInput.files[0].name;
+            fileDisplay.classList.remove("d-none");
+          }
         });
+      }
+      
+      if (fileDisplay) {
+        const closeBtn = fileDisplay.querySelector(".btn-close");
+        if (closeBtn) {
+          closeBtn.addEventListener("click", (e) => {
+            e.stopPropagation();
+            if (fileInput) fileInput.value = "";
+            fileDisplay.classList.add("d-none");
+          });
+        }
+      }
     }
   }
 });
+
+//facebook conflict import 
+// document.getElementById("importFacebookCsv").addEventListener("click", function () {
+//   const input = document.createElement("input");
+//   input.type = "file";
+//   input.accept = ".csv,text/csv";
+//   input.onchange = async function (e) {
+//     const file = e.target.files[0];
+//     if (!file) return;
+
+//     // disable button visually while uploading
+//     const btn = e.currentTarget;
+//     btn.disabled = true;
+
+//     const formData = new FormData();
+//     formData.append('file', file);
+
+//     // If you have CI CSRF enabled and expose token in meta tags, append it:
+//     const csrfNameMeta = document.querySelector('meta[name="csrf-token-name"]');
+//     const csrfValueMeta = document.querySelector('meta[name="csrf-token"]');
+//     if (csrfNameMeta && csrfValueMeta) {
+//       formData.append(csrfNameMeta.content, csrfValueMeta.content);
+//     }
+
+//     try {
+//       const resp = await fetch('facebook/import', {
+//         method: 'POST',
+//         body: formData,
+//         credentials: 'same-origin',
+//         headers: {
+//           'X-Requested-With': 'XMLHttpRequest'
+//         }
+//       });
+
+//       const json = await resp.json();
+//       if (!resp.ok) {
+//         alert('Import failed: ' + (json.message || resp.statusText));
+//       } else {
+//         // Show summary
+//         let msg = `Imported file: ${json.file}\nProcessed rows: ${json.processed_rows}\nInserted rows: ${json.inserted_rows}\n`;
+//         if (json.missing_headers && json.missing_headers.length) {
+//           msg += `Missing headers (CSV vs expected): ${json.missing_headers.join(', ')}\n`;
+//         }
+//         if (json.missing_country_mappings && json.missing_country_mappings.length) {
+//           msg += `Missing country mappings (${json.missing_country_mappings.length}):\n`;
+//           json.missing_country_mappings.slice(0,10).forEach(m => {
+//             msg += `  row ${m.row}: ${m.iso}\n`;
+//           });
+//         }
+//         if (json.errors && json.errors.length) {
+//           msg += `Errors (${json.errors.length}). See console for details.`;
+//           console.error('Import errors', json.errors);
+//         }
+//         alert(msg);
+//         // optionally reload a datatable or page here
+//       }
+//     } catch (err) {
+//       console.error(err);
+//       alert('Import failed (network or server error). See console for details.');
+//     } finally {
+//       btn.disabled = false;
+//     }
+//   };
+//   input.click();
+// });
 
 //support form
 
@@ -3926,19 +3884,21 @@ $("#supportForm").on("submit", function (e) {
 
 //support list js
 $(document).ready(function () {
-  let table = $("#datatable").DataTable({
-    destroy: true,
-    ajax: "/superadmin/support/data",
-    columns: [
-      { data: "id" },
-      { data: "full_name" },
-      { data: "email" },
-      { data: "subject" },
-      { data: "status" },
-      { data: "created_at" },
-      { data: "actions", orderable: false, searchable: false },
-    ],
-  });
+  // Only run on support page
+  if ($("#datatable").length) {
+    let table = $("#datatable").DataTable({
+      destroy: true,
+      ajax: "/superadmin/support/data",
+      columns: [
+        { data: "id" },
+        { data: "full_name" },
+        { data: "email" },
+        { data: "subject" },
+        { data: "status" },
+        { data: "created_at" },
+        { data: "actions", orderable: false, searchable: false },
+      ],
+    });
   function showAlert(type, message) {
     // type = "success", "danger", "warning", "info"
     let alertHtml = `
@@ -3997,6 +3957,7 @@ $(document).ready(function () {
       },
     });
   });
+}
 });
 
 // Enhanced Multi-Step Form Validation System
@@ -5409,4 +5370,6 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   }
 });
+
+
 

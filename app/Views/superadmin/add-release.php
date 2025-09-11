@@ -329,13 +329,10 @@
                         <div class="row">
                             <div class="col-md-3 mb-3">
                                 <label for="cLineYear" class="form-label required-field">© Line Year</label>
-                                <select class="form-select" id="cLineYear" name="cLineYear" required>
-                                    <option value="" <?= !isset($release) ? 'selected' : '' ?> disabled>Select year</option>
-                                    <option value="2025" <?= (isset($release) && $release['c_line_year'] == '2025') ? 'selected' : '' ?>>2025</option>
-                                    <option value="2024" <?= (isset($release) && $release['c_line_year'] == '2024') ? 'selected' : '' ?>>2024</option>
-                                    <option value="2023" <?= (isset($release) && $release['c_line_year'] == '2023') ? 'selected' : '' ?>>2023</option>
-                                </select>
-                                <div class="invalid-feedback">Please select a © Line Year.</div>
+                                <input type="number" class="form-control" id="cLineYear" name="cLineYear"
+                                    value="<?= isset($release) ? esc($release['c_line_year']) : '' ?>"
+                                    required placeholder="Enter year">
+                                <div class="invalid-feedback">Please enter a © Line Year.</div>
                             </div>
                             <div class="col-md-3 mb-3">
                                 <label for="cLine" class="form-label">© Line</label>
@@ -344,13 +341,10 @@
                             </div>
                             <div class="col-md-3 mb-3">
                                 <label for="pLineYear" class="form-label required-field">℗ Line Year</label>
-                                <select class="form-select" id="pLineYear" name="pLineYear" required>
-                                    <option value="" <?= !isset($release) ? 'selected' : '' ?> disabled>Select year</option>
-                                    <option value="2025" <?= (isset($release) && $release['p_line_year'] == '2025') ? 'selected' : '' ?>>2025</option>
-                                    <option value="2024" <?= (isset($release) && $release['p_line_year'] == '2024') ? 'selected' : '' ?>>2024</option>
-                                    <option value="2023" <?= (isset($release) && $release['p_line_year'] == '2023') ? 'selected' : '' ?>>2023</option>
-                                </select>
-                                <div class="invalid-feedback">Please select a ℗ Line Year.</div>
+                                <input type="number" class="form-control" id="pLineYear" name="pLineYear"
+                                    value="<?= isset($release) ? esc($release['p_line_year']) : '' ?>"
+                                    required placeholder="Enter year">
+                                <div class="invalid-feedback">Please enter a ℗ Line Year.</div>
                             </div>
                             <div class="col-md-3 mb-3">
                                 <label for="pLine" class="form-label">℗ Line</label>
@@ -358,6 +352,7 @@
                                     value="<?= isset($release) ? esc($release['p_line']) : '' ?>">
                             </div>
                         </div>
+
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <label for="productionYear" class="form-label required-field">Production Year</label>

@@ -37,7 +37,6 @@ $routes->group('superadmin', ['filter' => 'role:superadmin'], function ($routes)
     // $routes->get('relocation-request', 'SuperAdmin::relocation_request');
     // $routes->get('merge-request', 'SuperAdmin::merge_request');
     $routes->get('youtube', 'SuperAdmin::youtube');
-    $routes->get('facebook', 'SuperAdmin::facebook');
 
     $routes->get('add-release', 'Backend\Release\ReleaseController::addRelease');
     // $routes->get('support', 'SuperAdmin::support');//will comment later
@@ -97,6 +96,13 @@ $routes->group('superadmin', ['filter' => 'role:superadmin'], function ($routes)
     $routes->get('merge-data/list', 'Backend\ClaimReelMerge\ClaimReelMergeController::getMergeDataJson');
     $routes->get('merge-data/detail/(:num)', 'Backend\ClaimReelMerge\ClaimReelMergeController::getMergeDataDetail/$1');
     $routes->post('merge-data/update-status/(:num)', 'Backend\ClaimReelMerge\ClaimReelMergeController::updateMergeStatus/$1');
+    $routes->group('facebook', function ($routes) {
+        $routes->post('import', 'Backend\FacebookConflict\FacebookConflictController::import');
+        $routes->get('list-json', 'Backend\FacebookConflict\FacebookConflictController::listConflictsJson');
+        $routes->get('/', 'Backend\FacebookConflict\FacebookConflictController::index');
+        $routes->post('update-resolution', 'Backend\FacebookConflict\FacebookConflictController::updateResolution');
+    });
+    $routes->get('facebook/get-all-countries', 'Backend\FacebookConflict\FacebookConflictController::getAllCountries');
 });
 
 
