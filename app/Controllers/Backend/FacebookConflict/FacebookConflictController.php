@@ -68,7 +68,7 @@ class FacebookConflictController extends BaseController
     private function getConflictsData()
     {
         $conflicts = $this->facebookConflictModel
-            ->orderBy('id', 'DESC')
+            ->orderBy('id', 'DESC')->whereIn('status', ['In Review', 'Action Required'])
             ->findAll();
 
         $data = [];
@@ -93,6 +93,41 @@ class FacebookConflictController extends BaseController
                     'name' => $c['name'],
                     'iso2' => $c['iso2'],
                 ];
+            }
+
+            // Create a formatted country list for display purposes
+            $countryDisplayText = '';
+            foreach ($countriesGrouped as $continent => $countries) {
+                $countryDisplayText .= $continent . ":\n";
+                foreach ($countries as $country) {
+                    $countryDisplayText .= "  • " . $country['name'] . "\n";
+                }
+                $countryDisplayText .= "\n";
+            }
+
+            // Format rights owned text for display
+            $rightsOwnedDisplay = '';
+            switch ($conflict['resolution_rights_owned']) {
+                case 'original_exclusive':
+                    $rightsOwnedDisplay = 'My content is Original and I own exclusive rights on all or part of the territories';
+                    break;
+                case 'non_exclusive':
+                    $rightsOwnedDisplay = 'I own non-exclusive rights only (license granted by a third party)';
+                    break;
+                case 'cid_exclusive':
+                    $rightsOwnedDisplay = 'I have granted exclusive license for Content-ID stores only';
+                    break;
+                case 'soundalike':
+                    $rightsOwnedDisplay = 'It is soundalike recording (e.g., cover or remix)';
+                    break;
+                case 'public_domain':
+                    $rightsOwnedDisplay = 'It is Public Domain recording';
+                    break;
+                case 'no_rights':
+                    $rightsOwnedDisplay = 'I don\'t own rights for the selected content';
+                    break;
+                default:
+                    $rightsOwnedDisplay = $conflict['resolution_rights_owned'] ?? '';
             }
 
             // Format data for frontend display
@@ -124,6 +159,15 @@ class FacebookConflictController extends BaseController
                     'other_party_overlap' => $conflict['other_party_reference_overlap_percentage'],
                 ],
                 'countries' => $countriesGrouped,
+
+                // Resolution data for "In Review" status
+                'resolutionData' => [
+                    'rightsOwned' => $conflict['resolution_rights_owned'] ?? '',
+                    'rightsOwnedDisplay' => $rightsOwnedDisplay,
+                    'resolutionDate' => $conflict['resolution_date'] ?? '',
+                    'supportingDocumentPath' => base_url() . '/' . $conflict['supporting_document_path'] ?? '',
+                    'countryDisplayText' => trim($countryDisplayText)
+                ]
             ];
         }
 
@@ -209,7 +253,7 @@ class FacebookConflictController extends BaseController
             $updateData = [
                 'resolution_rights_owned' => $rightsOwned,
                 'resolution_date' => date('Y-m-d H:i:s'),
-                'status' => 'Resolved'
+                'status' => 'In Review'
             ];
 
             // Handle supporting document upload
@@ -292,32 +336,190 @@ class FacebookConflictController extends BaseController
                 ->setJSON(['status' => 'error', 'message' => $e->getMessage()]);
         }
     }
-    // /**
-    //  * Helper method to upload supporting document
-    //  */
-    // private function uploadSupportingDocument($file)
-    // {
-    //     if (!$file->isValid()) {
-    //         throw new \Exception('Invalid file upload');
-    //     }
 
-    //     $uploadPath = WRITEPATH . 'uploads/facebook_conflicts/';
+    // Show ownership data page
+    public function ownershipIndex()
+    {
+        $data = $this->getOwnershipConflictsData();
 
-    //     // Create directory if it doesn't exist
-    //     if (!is_dir($uploadPath)) {
-    //         mkdir($uploadPath, 0755, true);
-    //     }
+        return view('superadmin/index', [
+            'file_name' => 'ownership-data',
+            'data'      => $data,
+        ]);
+    }
 
-    //     // Generate unique filename
-    //     $fileName = uniqid() . '_' . $file->getClientName();
+    /**
+     * Return ownership conflicts data as JSON
+     */
+    public function listOwnershipConflictsJson()
+    {
+        $data = $this->getOwnershipConflictsData();
 
-    //     // Move the file
-    //     if (!$file->move($uploadPath, $fileName)) {
-    //         throw new \Exception('Failed to move uploaded file');
-    //     }
+        $json = json_encode(['data' => $data], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
 
-    //     return 'uploads/facebook_conflicts/' . $fileName;
-    // }
+        if ($json === false) {
+            log_message('error', 'JSON encode failed in listOwnershipConflictsJson(): ' . json_last_error_msg());
+            return $this->response->setJSON(['data' => []]);
+        }
+
+        return $this->response
+            ->setHeader('Content-Type', 'application/json')
+            ->setBody($json);
+    }
+
+    /**
+     * Get formatted ownership conflicts data
+     */
+    private function getOwnershipConflictsData()
+    {
+        $facebookConflict = new FacebookConflictModel();
+        $conflicts = $facebookConflict
+            ->orderBy('id', 'DESC')
+            ->findAll();
+
+        $data = [];
+
+        foreach ($conflicts as $conflict) {
+            // Rights owned display
+            $rightsOwnedDisplay = '';
+            switch ($conflict['resolution_rights_owned']) {
+                case 'original_exclusive':
+                    $rightsOwnedDisplay = 'My content is Original and I own exclusive rights';
+                    break;
+                case 'non_exclusive':
+                    $rightsOwnedDisplay = 'I own non-exclusive rights only (license granted by a third party)';
+                    break;
+                case 'cid_exclusive':
+                    $rightsOwnedDisplay = 'I have granted exclusive license for Content-ID stores only';
+                    break;
+                case 'soundalike':
+                    $rightsOwnedDisplay = 'It is soundalike recording (e.g., cover or remix)';
+                    break;
+                case 'public_domain':
+                    $rightsOwnedDisplay = 'It is Public Domain recording';
+                    break;
+                case 'no_rights':
+                    $rightsOwnedDisplay = 'I don\'t own rights for the selected content';
+                    break;
+                default:
+                    $rightsOwnedDisplay = $conflict['resolution_rights_owned'] ?? '';
+            }
+            foreach ($conflicts as $conflict) {
+                // Get related countries
+                $linkedCountries = $this->conflictCountryModel
+                    ->select('countries.id, countries.name, countries.iso2, countries.continent')
+                    ->join('countries', 'countries.id = conflict_countries.country_id')
+                    ->where('conflict_countries.conflict_id', $conflict['id'])
+                    ->findAll();
+
+                // Group by continent
+                $countriesGrouped = [];
+                foreach ($linkedCountries as $c) {
+                    $continent = $c['continent'] ?? 'Other';
+                    if (!isset($countriesGrouped[$continent])) {
+                        $countriesGrouped[$continent] = [];
+                    }
+                    $countriesGrouped[$continent][] = [
+                        'id' => $c['id'],
+                        'name' => $c['name'],
+                        'iso2' => $c['iso2'],
+                    ];
+                }
+
+                // Create a formatted country list for display purposes
+                $countryDisplayText = '';
+                foreach ($countriesGrouped as $continent => $countries) {
+                    $countryDisplayText .= $continent . ":\n";
+                    foreach ($countries as $country) {
+                        $countryDisplayText .= "  • " . $country['name'] . "\n";
+                    }
+                    $countryDisplayText .= "\n";
+                }
+
+                $data[] = [
+                    'id' => $conflict['id'],
+                    'category' => $this->formatConflictCategory($conflict['conflict_category']),
+                    'assetTitle' => $conflict['reference_copyright_title'],
+                    'artist' => $conflict['reference_copyright_artist'],
+                    'assetId' => $conflict['reference_asset_id'] ?? $conflict['reference_copyright_id'],
+                    'upc' => $this->extractUPC($conflict),
+                    'isrc' => $conflict['reference_copyright_isrc'],
+                    'otherParty' => $conflict['other_party_name'],
+                    'dailyViews' => $this->formatViewCount($conflict['last_28_days_view_count']),
+                    'expiry' => $this->formatExpiryDate($conflict['conflict_expiration_date']),
+                    'status' => $conflict['status'] ?? 'Action Required',
+
+                    // Additional data for the form
+                    'songName' => $conflict['reference_copyright_title'],
+                    'artistName' => $conflict['reference_copyright_artist'],
+                    'conflictState' => $conflict['conflict_state'],
+                    'conflictCategory' => $conflict['conflict_category'],
+                    'matchCount' => $conflict['reference_copyright_match_count'],
+
+                    'questions' => [
+                        'reference_id' => $conflict['reference_copyright_id'],
+                        'asset_id' => $conflict['reference_asset_id'],
+                        'overlap_percentage' => $conflict['reference_overlap_percentage'],
+                        'overlap_duration' => $conflict['reference_overlap_duration_ms'],
+                        'other_party_overlap' => $conflict['other_party_reference_overlap_percentage'],
+                    ],
+                    'countries' => $countriesGrouped,
+
+                    // Resolution data for "In Review" status
+                    'resolutionData' => [
+                        'rightsOwned' => $conflict['resolution_rights_owned'] ?? '',
+                        'rightsOwnedDisplay' => $rightsOwnedDisplay,
+                        'resolutionDate' => $conflict['resolution_date'] ?? '',
+                        'supportingDocumentPath' => base_url() . '/' . $conflict['supporting_document_path'] ?? '',
+                        'countryDisplayText' => trim($countryDisplayText),
+                        'rejectionMessage' => $conflict['message'] ?? '',
+                    ]
+                ];
+            }
+
+            return $data;
+        }
+    }
+
+    /**
+     * Update ownership conflict status only
+     */
+    public function updateOwnership($id)
+    {
+        $status = $this->request->getPost('status');
+        $rejectionMessage = $this->request->getPost('rejectionMessage');
+
+        $data = [];
+
+        if ($status !== null && $status !== '') {
+            $data['status'] = $status;
+        }
+
+        if ($rejectionMessage !== null && $rejectionMessage !== '') {
+            $data['message'] = $rejectionMessage;
+        }
+
+        if (empty($data)) {
+            return $this->response->setJSON([
+                'status' => 'error',
+                'message' => 'No data provided for update.'
+            ]);
+        }
+
+        log_message('debug', 'Data: ' . print_r($data, true));
+        log_message('debug', 'ID: ' . $id);
+
+
+        $this->facebookConflictModel->update($id, $data);
+
+        return $this->response->setJSON([
+            'status' => 'success',
+            'message' => 'Ownership updated successfully.'
+        ]);
+    }
+
+
+
 
 
     public function import()

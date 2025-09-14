@@ -11,6 +11,10 @@
                         <a href="<?= base_url('superadmin/add-release') ?>" class="btn btn-primary">
                             <i data-feather="plus" class="me-1"></i> Add New Release
                         </a>
+                        <button type="button" class="btn btn-outline-danger rounded-pill px-4" id="showRejectionMessagesBtn">
+                            <i class="bi bi-x-circle me-1"></i> Rejection Messages
+                        </button>
+
                     </div>
                 </div>
             </div>
@@ -155,4 +159,32 @@
             </div>
         </div>
     </div>
+</div>
+
+<!-- Rejection Messages Modal -->
+<div class="modal fade" id="rejectionMessagesModal" tabindex="-1" aria-labelledby="rejectionMessagesModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header bg-danger text-white">
+        <h5 class="modal-title" id="rejectionMessagesModalLabel">
+          <i class="bi bi-x-circle me-2"></i> Rejection Details
+        </h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <table class="table table-bordered align-middle">
+          <thead class="table-light">
+            <tr>
+              <th>UPC</th>
+              <th>ISRC</th>
+              <th>Rejection Message</th>
+            </tr>
+          </thead>
+          <tbody id="rejectionMessagesBody">
+            <!-- JS will inject rows here -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
 </div>

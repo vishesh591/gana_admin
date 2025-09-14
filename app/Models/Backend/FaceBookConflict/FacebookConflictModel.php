@@ -37,6 +37,11 @@ class FacebookConflictModel extends Model
         'reference_asset_id',
         'other_party_reference_overlap_percentage',
         'other_party_reference_overlap_duration_ms',
+        'status',
+        'message',
+        'resolution_rights_owned',
+        'resolution_date',
+        'supporting_document_path',
         'created_at',
         'updated_at',
     ];

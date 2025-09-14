@@ -45,6 +45,7 @@ class ReleaseController extends BaseController
                     'status' => $statusMap[$r['status']] ?? 'review',
                     'status_numeric' => $r['status'],
                     'albumArtwork' => '/images/rocket.png',
+                    'rejectionMessage' => $r['message'] ?? ''
                 ];
             }, $releases);
 
@@ -56,6 +57,43 @@ class ReleaseController extends BaseController
             'releaseCounts' => $releaseCounts,
         ];
         return view('superadmin/index', $page_array);
+    }
+
+    public function rejectedReleases()
+    {
+        if ($this->request->isAJAX()) {
+            $releases = $this->releaseRepo->findAll();
+
+            $statusMap = [
+                1 => 'review',
+                2 => 'takedown',
+                3 => 'delivered',
+                4 => 'rejected',
+                5 => 'approved',
+            ];
+
+            $artistModel = new \App\Models\Backend\ArtistModel();
+
+            $rejectedData = array_values(array_filter(array_map(function ($r) use ($statusMap, $artistModel) {
+                $artist = $artistModel->find($r['artist_id']);
+                $artistName = $artist ? $artist['name'] : $r['author'];
+                return [
+                    'id' => $r['id'],
+                    'title' => $r['title'],
+                    'artist' => $artistName,
+                    'upc' => $r['upc_ean'],
+                    'isrc' => $r['isrc'],
+                    'status' => $statusMap[$r['status']] ?? 'review',
+                    'rejectionMessage' => $r['message'] ?? ''
+                ];
+            }, $releases), function ($item) {
+                return $item['status'] === 'rejected';
+            }));
+
+            return $this->response->setJSON(['data' => $rejectedData]);
+        }
+
+        return $this->response->setJSON(['data' => []]); // fallback
     }
 
     // public function show($id)
@@ -358,6 +396,7 @@ class ReleaseController extends BaseController
             // Add rejection message if status is rejected
             if ($status == 4 && !empty($rejectionMessage)) {
                 $releaseData['rejected_at'] = date('Y-m-d H:i:s');
+                $releaseData['message'] = $rejectionMessage;
                 log_message('debug', 'Marking release as Rejected at: ' . $releaseData['rejected_at']);
             }
 

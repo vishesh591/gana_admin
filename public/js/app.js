@@ -233,571 +233,924 @@ var App = (() =>
   ))();
 new App().init();
 
-
-//ownership-data js 
-// =========================================================================
-//  LOGIC FOR THE OWNERSHIP DATA PAGE
-// =========================================================================
+//ownership-data js
 function initializeOwnershipPage(config) {
-    const pageContainer = document.querySelector(config.pageSelector);
-    if (!pageContainer) return; // Exit if not on the ownership page
+  const pageContainer = document.querySelector(config.pageSelector);
+  if (!pageContainer) return;
 
-    const getStatusBadge = (status) => {
-        let badgeClass = 'bg-secondary-subtle text-secondary-emphasis';
-        if (status === 'Action Required') badgeClass = 'bg-danger-subtle text-danger-emphasis';
-        else if (status === 'Resolved') badgeClass = 'bg-success-subtle text-success-emphasis';
-        else if (status === 'In Review') badgeClass = 'bg-warning-subtle text-warning-emphasis';
-        return `<span class="badge rounded-pill border ${badgeClass}">${status}</span>`;
+  let currentConflictId = null; // keep track of the selected row ID
+
+  const getStatusBadge = (status) => {
+    let badgeClass = "bg-secondary-subtle text-secondary-emphasis";
+    if (status === "Action Required")
+      badgeClass = "bg-danger-subtle text-danger-emphasis";
+    else if (status === "Resolved" || status === "Approved")
+      badgeClass = "bg-success-subtle text-success-emphasis";
+    else if (status === "In Review")
+      badgeClass = "bg-warning-subtle text-warning-emphasis";
+    else if (status === "Rejected") badgeClass = "bg-danger text-white";
+    return `<span class="badge rounded-pill border ${badgeClass}">${status}</span>`;
+  };
+
+  const populateTable = (tableBodySelector, data, platformConfig) => {
+    const tableBody = pageContainer.querySelector(tableBodySelector);
+    if (!tableBody) return;
+
+    data.forEach((item) => {
+      const row = document.createElement("tr");
+      row.style.cursor = "pointer";
+      row.setAttribute("data-bs-toggle", "offcanvas");
+      row.setAttribute("data-bs-target", "#ownershipDetailsOffcanvas");
+
+      // ✅ FIXED: Set ALL required data attributes
+      row.setAttribute("data-id", item.id);
+      row.setAttribute(
+        "data-song-name",
+        item.songName || item.assetTitle || ""
+      );
+      row.setAttribute(
+        "data-artist-name",
+        item.artistName || item.artist || ""
+      );
+      row.setAttribute("data-isrc", item.isrc || "");
+      row.setAttribute("data-upc", item.upc || "");
+      row.setAttribute("data-category", item.category || "");
+      row.setAttribute("data-other-party", item.otherParty || "");
+      row.setAttribute("data-asset-title", item.assetTitle || "");
+      row.setAttribute("data-asset-id", item.assetId || "");
+      row.setAttribute("data-daily-views", item.dailyViews || "");
+      row.setAttribute("data-expiry", item.expiry || "");
+      row.setAttribute("data-platform-name", platformConfig.platformName);
+      row.setAttribute("data-status", item.status || "");
+
+      // ✅ FIXED: Include ALL resolution data fields
+      const completeResolutionData = {
+        rightsOwnedDisplay:
+          item.resolutionData?.rightsOwnedDisplay ||
+          item.rightsOwnedDisplay ||
+          "",
+        countryDisplayText:
+          item.resolutionData?.countryDisplayText ||
+          item.countryDisplayText ||
+          "",
+        supportingDocumentPath:
+          item.resolutionData?.supportingDocumentPath ||
+          item.supportingDocumentPath ||
+          "",
+        resolutionDate:
+          item.resolutionData?.resolutionDate ||
+          item.resolutionDate ||
+          item.submissionDate ||
+          "",
+        rejectionMessage:
+          item.resolutionData?.rejectionMessage || item.rejectionMessage || "",
+        submissionDate:
+          item.resolutionData?.submissionDate || item.submissionDate || "",
+        // Add any other fields that might exist
+        ...item.resolutionData,
+      };
+
+      row.setAttribute(
+        "data-resolution-data",
+        encodeURIComponent(JSON.stringify(completeResolutionData))
+      );
+
+      row.innerHTML = `
+        <td class="text-center"><i class="bi ${
+          platformConfig.platformIconClass
+        } fs-5"></i></td>
+        <td>${item.category}</td>
+        <td>${item.assetTitle}</td>
+        <td>
+          <div class="fw-bold">${item.artist}</div>
+          <small class="text-muted">Asset ID: ${item.assetId}</small>
+        </td>
+        <td>${item.upc}</td>
+        <td>${item.otherParty}</td>
+        <td>${item.dailyViews}</td>
+        <td>${item.expiry}</td>
+        <td class="status-cell">${getStatusBadge(item.status)}</td>
+        <td class="text-center"><i class="bi bi-chevron-right text-muted"></i></td>
+      `;
+      tableBody.appendChild(row);
+    });
+  };
+
+  populateTable(".facebook-data-body", config.facebookData, {
+    platformName: "Facebook",
+    platformIconClass: "bi-facebook text-primary",
+  });
+
+  $(".datatable").DataTable({
+    destroy: true,
+    paging: true,
+    searching: true,
+    info: true,
+    lengthChange: false,
+    autoWidth: false,
+    language: {
+      search: "_INPUT_",
+      searchPlaceholder: "Search facebook conflicts...",
+    },
+  });
+
+  // --- OFFCANVAS ---
+  const ownershipOffcanvasEl = document.getElementById(
+    "ownershipDetailsOffcanvas"
+  );
+  if (!ownershipOffcanvasEl) return;
+
+  ownershipOffcanvasEl.addEventListener("show.bs.offcanvas", function (event) {
+    const triggerRow = event.relatedTarget;
+    const data = triggerRow.dataset;
+
+    // ✅ FIXED: Parse resolution data properly
+    let resolutionData = {};
+    try {
+      resolutionData = JSON.parse(
+        decodeURIComponent(data.resolutionData || "{}")
+      );
+    } catch (e) {
+      console.error("Error parsing resolution data:", e);
+      resolutionData = {};
+    }
+
+    // ✅ Save current conflict ID
+    currentConflictId = data.id;
+
+    console.log("Opening offcanvas for ID:", currentConflictId);
+    console.log("All data:", data);
+    console.log("Resolution data:", resolutionData);
+
+    // Clear all fields first
+    const clearElement = (selector, defaultValue = "-") => {
+      const el = ownershipOffcanvasEl.querySelector(selector);
+      if (el) el.textContent = defaultValue;
     };
 
-    // --- FUNCTION TO POPULATE THE YOUTUBE TABLE ---
-    const populateTable = (tableBodySelector, data, platformConfig) => {
-        const tableBody = pageContainer.querySelector(tableBodySelector);
-        if(!tableBody) return;
+    // Album Cover (always FB placeholder)
+    const albumCover = ownershipOffcanvasEl.querySelector(
+      "#ownershipAlbumCover"
+    );
+    if (albumCover) {
+      albumCover.src = "https://placehold.co/80x80/3b5998/ffffff?text=FB";
+    }
 
-        data.forEach(item => {
-            const row = document.createElement('tr');
-            row.style.cursor = 'pointer';
-            row.setAttribute('data-bs-toggle', 'offcanvas');
-            row.setAttribute('data-bs-target', '#ownershipDetailsOffcanvas');
-            
-            // Set all data attributes needed for the modal header
-            row.setAttribute('data-song-name', item.assetTitle);
-            row.setAttribute('data-artist-name', item.artist);
-            row.setAttribute('data-isrc', item.isrc);
-            row.setAttribute('data-cover-url', item.albumCoverUrl);
-            row.setAttribute('data-category', item.category);
-            row.setAttribute('data-other-party', item.otherParty);
-            row.setAttribute('data-platform-name', platformConfig.platformName);
+    // ✅ FIXED: Use correct data attribute names (kebab-case from dataset)
+    clearElement("#ownershipSongName");
+    const songNameEl = ownershipOffcanvasEl.querySelector("#ownershipSongName");
+    if (songNameEl)
+      songNameEl.textContent = data.songName || data.assetTitle || "-";
 
-            row.innerHTML = `
-                <td class="text-center"><i class="bi ${platformConfig.platformIconClass} fs-5"></i></td>
-                <td>${item.assetTitle}</td>
-                <td><div class="fw-bold">${item.artist}</div><small class="text-muted">Asset ID: ${item.assetId}</small></td>
-                <td>${item.upc}</td>
-                <td>${item.otherParty}</td>
-                <td>${getStatusBadge(item.status)}</td>
-                <td class="text-center"><i class="bi bi-chevron-right text-muted"></i></td>
-            `;
-            tableBody.appendChild(row);
+    clearElement("#ownershipArtistName");
+    const artistNameEl = ownershipOffcanvasEl.querySelector(
+      "#ownershipArtistName"
+    );
+    if (artistNameEl) artistNameEl.textContent = data.artistName || "-";
+
+    clearElement("#ownershipIsrc");
+    const isrcEl = ownershipOffcanvasEl.querySelector("#ownershipIsrc");
+    if (isrcEl) isrcEl.textContent = `ISRC: ${data.isrc || "N/A"}`;
+
+    clearElement("#ownershipPlatform");
+    const platformEl = ownershipOffcanvasEl.querySelector("#ownershipPlatform");
+    if (platformEl) platformEl.textContent = data.platformName || "-";
+
+    clearElement("#ownershipOffcanvasTitle");
+    const titleEl = ownershipOffcanvasEl.querySelector(
+      "#ownershipOffcanvasTitle"
+    );
+    if (titleEl)
+      titleEl.textContent = `Resolution Details: ${data.category || "Unknown"}`;
+
+    clearElement("#ownershipOffcanvasSubtitle");
+    const subtitleEl = ownershipOffcanvasEl.querySelector(
+      "#ownershipOffcanvasSubtitle"
+    );
+    if (subtitleEl)
+      subtitleEl.textContent = `VS. ${data.otherParty || "Unknown"}`;
+
+    // ✅ FIXED: Update status badge properly
+    const statusBadgeEl = ownershipOffcanvasEl.querySelector(
+      "#currentStatusBadge"
+    );
+    if (statusBadgeEl) {
+      const badgeHTML = getStatusBadge(data.status || "Unknown");
+      const tempDiv = document.createElement("div");
+      tempDiv.innerHTML = badgeHTML;
+      const badge = tempDiv.firstChild;
+      statusBadgeEl.className = badge.className;
+      statusBadgeEl.textContent = badge.textContent;
+    }
+
+    // ✅ FIXED: Update dropdown immediately and handle change
+    const statusDropdown = document.getElementById("statusDropdown");
+    if (statusDropdown) {
+      statusDropdown.value = data.status || "";
+
+      // Show/hide rejection section based on status
+      const rejectionMessageSection = document.getElementById(
+        "rejectionMessageSection"
+      );
+      if (rejectionMessageSection) {
+        if (data.status === "Rejected") {
+          rejectionMessageSection.classList.remove("d-none");
+        } else {
+          rejectionMessageSection.classList.add("d-none");
+        }
+      }
+    }
+
+    // ✅ FIXED: Resolution Details with all fields
+    clearElement("#resolutionRightsOwned");
+    const rightsOwnedEl = ownershipOffcanvasEl.querySelector(
+      "#resolutionRightsOwned"
+    );
+    if (rightsOwnedEl) {
+      rightsOwnedEl.textContent = resolutionData.rightsOwnedDisplay || "N/A";
+    }
+
+    const countriesEl = ownershipOffcanvasEl.querySelector(
+      "#resolutionCountries"
+    );
+    if (countriesEl) {
+      countriesEl.innerHTML = resolutionData.countryDisplayText
+        ? `<pre class="mb-0">${resolutionData.countryDisplayText}</pre>`
+        : `<i class="bi bi-globe text-muted me-2"></i>No territories selected`;
+    }
+
+    const docInfoEl = ownershipOffcanvasEl.querySelector(
+      "#supportingDocumentInfo"
+    );
+    if (docInfoEl) {
+      docInfoEl.innerHTML = resolutionData.supportingDocumentPath
+        ? `<a href="${resolutionData.supportingDocumentPath}" target="_blank"><i class="bi bi-file-earmark-text me-2"></i>View Document</a>`
+        : `<i class="bi bi-file-earmark-text text-muted me-2"></i>No document uploaded`;
+    }
+
+    // ✅ FIXED: Resolution/Submission Date
+    clearElement("#resolutionDate");
+    const resolutionDateEl =
+      ownershipOffcanvasEl.querySelector("#resolutionDate");
+    if (resolutionDateEl) {
+      const dateToShow =
+        resolutionData.resolutionDate || resolutionData.submissionDate || "-";
+      resolutionDateEl.textContent = dateToShow;
+    }
+
+    // ✅ FIXED: Handle Rejection case properly
+    const rejectionSection = ownershipOffcanvasEl.querySelector(
+      "#rejectionDisplaySection"
+    );
+    const rejectionMessageEl = ownershipOffcanvasEl.querySelector(
+      "#rejectionDisplayMessage"
+    );
+    const rejectionDateEl =
+      ownershipOffcanvasEl.querySelector("#rejectionDate");
+
+    if (data.status === "Rejected") {
+      if (rejectionSection) rejectionSection.classList.remove("d-none");
+      if (rejectionMessageEl) {
+        rejectionMessageEl.textContent =
+          resolutionData.rejectionMessage || "No rejection message provided.";
+      }
+      if (rejectionDateEl) {
+        rejectionDateEl.textContent =
+          resolutionData.resolutionDate || resolutionData.submissionDate || "-";
+      }
+    } else {
+      if (rejectionSection) rejectionSection.classList.add("d-none");
+    }
+
+    // ✅ Clear the rejection message input field
+    const rejectionMessageInput = document.getElementById("rejectionMessage");
+    if (rejectionMessageInput) {
+      rejectionMessageInput.value = "";
+    }
+
+    // ✅ Add any other fields that might exist in your HTML
+    const additionalFields = [
+      { selector: "#ownershipAssetId", value: data.assetId },
+      { selector: "#ownershipUpc", value: data.upc },
+      { selector: "#ownershipDailyViews", value: data.dailyViews },
+      { selector: "#ownershipExpiry", value: data.expiry },
+      { selector: "#submissionDate", value: resolutionData.submissionDate },
+    ];
+
+    additionalFields.forEach((field) => {
+      const el = ownershipOffcanvasEl.querySelector(field.selector);
+      if (el) {
+        el.textContent = field.value || "-";
+      }
+    });
+  });
+
+  // --- Update Status Handling ---
+  const updateBtn = document.getElementById("updateStatusBtn");
+  const statusDropdown = document.getElementById("statusDropdown");
+  const rejectionMessageSection = document.getElementById(
+    "rejectionMessageSection"
+  );
+
+  if (statusDropdown && updateBtn) {
+    statusDropdown.addEventListener("change", () => {
+      if (statusDropdown.value === "Rejected") {
+        rejectionMessageSection?.classList.remove("d-none");
+      } else {
+        rejectionMessageSection?.classList.add("d-none");
+      }
+    });
+
+    updateBtn.addEventListener("click", () => {
+      const selectedStatus = statusDropdown.value;
+      const rejectionMessage =
+        document.getElementById("rejectionMessage")?.value || "";
+
+      if (!currentConflictId) {
+        alert("Conflict ID not found!");
+        return;
+      }
+
+      fetch(`/superadmin/facebook-ownership/update/${currentConflictId}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+        body: new URLSearchParams({
+          status: selectedStatus,
+          rejectionMessage: rejectionMessage,
+        }),
+      })
+        .then((res) => res.json())
+        .then((json) => {
+          if (json.status === "success") {
+            alert("Status updated successfully.");
+
+            // ✅ Update dataset + table cell immediately
+            const row = document.querySelector(
+              `[data-id="${currentConflictId}"]`
+            );
+            if (row) {
+              row.dataset.status = selectedStatus;
+              const statusCell = row.querySelector(".status-cell");
+              if (statusCell) {
+                statusCell.innerHTML = getStatusBadge(selectedStatus);
+              }
+            }
+
+            // ✅ Reflect in dropdown immediately
+            statusDropdown.value = selectedStatus;
+
+            // Update current status badge in offcanvas
+            const statusBadgeEl = ownershipOffcanvasEl.querySelector(
+              "#currentStatusBadge"
+            );
+            if (statusBadgeEl) {
+              const badgeHTML = getStatusBadge(selectedStatus);
+              const tempDiv = document.createElement("div");
+              tempDiv.innerHTML = badgeHTML;
+              const badge = tempDiv.firstChild;
+              statusBadgeEl.className = badge.className;
+              statusBadgeEl.textContent = badge.textContent;
+            }
+          } else {
+            alert("Error: " + json.message);
+          }
+        })
+        .catch((err) => {
+          console.error("Update request failed:", err);
+          alert("An error occurred while updating.");
         });
-    };
-    
-    // --- POPULATE ONLY THE YOUTUBE TABLE ---
-    populateTable('.youtube-data-body', config.youtubeData, { platformName: 'YouTube', platformIconClass: 'bi-youtube text-danger'});
-    
-    // Initialize DataTable on the table
-    $('.datatable').DataTable({
-        destroy: true,
-        paging: true,
-        searching: true,
-        info: true,
-        lengthChange: false,
-        autoWidth: false,
-        language: { search: "_INPUT_", searchPlaceholder: "Search YouTube conflicts..." }
     });
-
-    // --- OFFCANVAS DISPLAY LOGIC (MODIFIED FOR DUMMY DATA) ---
-    const ownershipOffcanvasEl = document.getElementById('ownershipDetailsOffcanvas');
-    if (!ownershipOffcanvasEl) return;
-    
-    ownershipOffcanvasEl.addEventListener('show.bs.offcanvas', function(event) {
-        const triggerRow = event.relatedTarget;
-        const data = triggerRow.dataset;
-
-        // Populate header info from the clicked row's data attributes
-        ownershipOffcanvasEl.querySelector('#ownershipAlbumCover').src = data.coverUrl;
-        ownershipOffcanvasEl.querySelector('#ownershipSongName').textContent = data.songName;
-        ownershipOffcanvasEl.querySelector('#ownershipArtistName').textContent = data.artistName;
-        ownershipOffcanvasEl.querySelector('#ownershipIsrc').textContent = `ISRC: ${data.isrc}`;
-        ownershipOffcanvasEl.querySelector('#ownershipPlatform').textContent = data.platformName;
-        ownershipOffcanvasEl.querySelector('#ownershipOffcanvasTitle').textContent = `Resolution Details: ${data.category}`;
-        ownershipOffcanvasEl.querySelector('#ownershipOffcanvasSubtitle').textContent = `VS. ${data.otherParty}`;
-        
-        // --- INJECT DUMMY "RESOLVED" DATA ---
-        // This part no longer checks localStorage. It shows the same data every time.
-        const contentDiv = ownershipOffcanvasEl.querySelector('#ownershipDetailsContent');
-        const dummyResolvedData = {
-            rightsOwned: 'My content is Original and I own exclusive rights on all or part of the territories',
-            territories: ['France', 'Germany', 'United Kingdom', 'India'],
-            documentName: 'contract_agreement.pdf',
-            submittedOn: '9/5/2025, 4:15:30 PM'
-        };
-
-        contentDiv.innerHTML = `
-            <div class="mb-4">
-                <h6 class="fw-bold">Rights Owned</h6>
-                <p class="text-muted">${dummyResolvedData.rightsOwned}</p>
-            </div>
-            <div class="mb-4">
-                <h6 class="fw-bold">Contested Territories (${dummyResolvedData.territories.length})</h6>
-                <div class="territory-list bg-light p-3 rounded" style="max-height: 200px; overflow-y: auto;">
-                   ${dummyResolvedData.territories.map(t => `<p class="mb-1 small">${t}</p>`).join('')}
-                </div>
-            </div>
-             <div class="mb-4">
-                <h6 class="fw-bold">Supporting Document</h6>
-                <p class="text-muted"><i class="bi bi-file-earmark-text me-2"></i>${dummyResolvedData.documentName}</p>
-            </div>
-            <hr>
-            <small class="text-muted">Submitted on: ${dummyResolvedData.submittedOn}</small>
-        `;
-    });
+  }
 }
 
-// =========================================================================
-//  MAIN EXECUTION BLOCK
-// =========================================================================
-document.addEventListener('DOMContentLoaded', function() {
-
-    // --- DUMMY DATA ---
-    const youtubeConflictData = [
-        { id: 1, category: 'Ownership conflict', assetTitle: 'Cosmic Drift', artist: 'Astro Beats', assetId: '90736897913', upc: '198009123456', isrc: 'USAT22312345', otherParty: 'The Orchard', status: 'Action Required', albumCoverUrl: 'https://placehold.co/80x80/ff0000/ffffff?text=C' },
-        { id: 2, category: 'Policy', assetTitle: 'Ocean Tides', artist: 'Deep Wave', assetId: '3478239381', upc: '198009654321', isrc: 'USAT22354321', otherParty: 'Believe', status: 'Resolved', albumCoverUrl: 'https://placehold.co/80x80/1abc9c/ffffff?text=O' },
-    ];
-  
-    initializeOwnershipPage({
-        pageSelector: '.admin-ownership-data-page',
-        youtubeData: youtubeConflictData,
+document.addEventListener("DOMContentLoaded", function () {
+  fetch("/superadmin/facebook-ownership/list")
+    .then((res) => res.json())
+    .then((json) => {
+      console.log("Fetched data:", json.data); // Debug log
+      initializeOwnershipPage({
+        pageSelector: ".admin-ownership-data-page",
+        facebookData: json.data,
+      });
+    })
+    .catch((error) => {
+      console.error("Error fetching data:", error);
     });
 });
-// facebook-page js
-// Add this entire new block to your app.js file
-// document.addEventListener('DOMContentLoaded', function() {
 
-//     // =========================================================================
-//     //  REUSABLE FUNCTION FOR ALL CONFLICT PAGES (YOUTUBE, FACEBOOK, ETC.)
-//     // =========================================================================
-//     function initializeConflictPage(config) {
-//         const pageContainer = document.querySelector(config.pageSelector);
-//         if (!pageContainer) {
-//             return; // Exit if we're not on the right page
-//         }
+// youtube ownership
 
-//         // --- DATA & HELPERS ---
-//             const territoriesByRegion = {
-//       Africa: [
-//         { name: "Algeria", code: "DZ" },
-//         { name: "Angola", code: "AO" },
-//         { name: "Benin", code: "BJ" },
-//         { name: "Botswana", code: "BW" },
-//         { name: "Burkina Faso", code: "BF" },
-//         { name: "Burundi", code: "BI" },
-//         { name: "Cabo Verde", code: "CV" },
-//         { name: "Cameroon", code: "CM" },
-//         { name: "Central African Republic", code: "CF" },
-//         { name: "Chad", code: "TD" },
-//         { name: "Comoros", code: "KM" },
-//         { name: "Congo", code: "CG" },
-//         { name: "Congo (DRC)", code: "CD" },
-//         { name: "Côte d'Ivoire", code: "CI" },
-//         { name: "Djibouti", code: "DJ" },
-//         { name: "Egypt", code: "EG" },
-//         { name: "Equatorial Guinea", code: "GQ" },
-//         { name: "Eritrea", code: "ER" },
-//         { name: "Eswatini", code: "SZ" },
-//         { name: "Ethiopia", code: "ET" },
-//         { name: "Gabon", code: "GA" },
-//         { name: "Gambia", code: "GM" },
-//         { name: "Ghana", code: "GH" },
-//         { name: "Guinea", code: "GN" },
-//         { name: "Guinea-Bissau", code: "GW" },
-//         { name: "Kenya", code: "KE" },
-//         { name: "Lesotho", code: "LS" },
-//         { name: "Liberia", code: "LR" },
-//         { name: "Libya", code: "LY" },
-//         { name: "Madagascar", code: "MG" },
-//         { name: "Malawi", code: "MW" },
-//         { name: "Mali", code: "ML" },
-//         { name: "Mauritania", code: "MR" },
-//         { name: "Mauritius", code: "MU" },
-//         { name: "Mayotte", code: "YT" },
-//         { name: "Morocco", code: "MA" },
-//         { name: "Mozambique", code: "MZ" },
-//         { name: "Namibia", code: "NA" },
-//         { name: "Niger", code: "NE" },
-//         { name: "Nigeria", code: "NG" },
-//         { name: "Réunion", code: "RE" },
-//         { name: "Rwanda", code: "RW" },
-//         { name: "Saint Helena", code: "SH" },
-//         { name: "Sao Tome and Principe", code: "ST" },
-//         { name: "Senegal", code: "SN" },
-//         { name: "Seychelles", code: "SC" },
-//         { name: "Sierra Leone", code: "SL" },
-//         { name: "Somalia", code: "SO" },
-//         { name: "South Africa", code: "ZA" },
-//         { name: "South Sudan", code: "SS" },
-//         { name: "Sudan", code: "SD" },
-//         { name: "Tanzania", code: "TZ" },
-//         { name: "Togo", code: "TG" },
-//         { name: "Tunisia", code: "TN" },
-//         { name: "Uganda", code: "UG" },
-//         { name: "Zambia", code: "ZM" },
-//         { name: "Zimbabwe", code: "ZW" },
-//       ],
-//       Antarctica: [
-//         { name: "Antarctica", code: "AQ" },
-//         { name: "French Southern Territories", code: "TF" },
-//         { name: "South Georgia and the South Sandwich Islands", code: "GS" },
-//       ],
-//       Asia: [
-//         { name: "Afghanistan", code: "AF" },
-//         { name: "Armenia", code: "AM" },
-//         { name: "Azerbaijan", code: "AZ" },
-//         { name: "Bahrain", code: "BH" },
-//         { name: "Bangladesh", code: "BD" },
-//         { name: "Bhutan", code: "BT" },
-//         { name: "British Indian Ocean Territory", code: "IO" },
-//         { name: "Brunei", code: "BN" },
-//         { name: "Cambodia", code: "KH" },
-//         { name: "China", code: "CN" },
-//         { name: "Cyprus", code: "CY" },
-//         { name: "Georgia", code: "GE" },
-//         { name: "Hong Kong", code: "HK" },
-//         { name: "India", code: "IN" },
-//         { name: "Indonesia", code: "ID" },
-//         { name: "Iran", code: "IR" },
-//         { name: "Iraq", code: "IQ" },
-//         { name: "Israel", code: "IL" },
-//         { name: "Japan", code: "JP" },
-//         { name: "Jordan", code: "JO" },
-//         { name: "Kazakhstan", code: "KZ" },
-//         { name: "Kuwait", code: "KW" },
-//         { name: "Kyrgyzstan", code: "KG" },
-//         { name: "Laos", code: "LA" },
-//         { name: "Lebanon", code: "LB" },
-//         { name: "Macao", code: "MO" },
-//         { name: "Malaysia", code: "MY" },
-//         { name: "Maldives", code: "MV" },
-//         { name: "Mongolia", code: "MN" },
-//         { name: "Myanmar", code: "MM" },
-//         { name: "Nepal", code: "NP" },
-//         { name: "North Korea", code: "KP" },
-//         { name: "Oman", code: "OM" },
-//         { name: "Pakistan", code: "PK" },
-//         { name: "Palestine", code: "PS" },
-//         { name: "Philippines", code: "PH" },
-//         { name: "Qatar", code: "QA" },
-//         { name: "Saudi Arabia", code: "SA" },
-//         { name: "Singapore", code: "SG" },
-//         { name: "South Korea", code: "KR" },
-//         { name: "Sri Lanka", code: "LK" },
-//         { name: "Syria", code: "SY" },
-//         { name: "Taiwan", code: "TW" },
-//         { name: "Tajikistan", code: "TJ" },
-//         { name: "Thailand", code: "TH" },
-//         { name: "Timor-Leste", code: "TL" },
-//         { name: "Turkey", code: "TR" },
-//         { name: "Turkmenistan", code: "TM" },
-//         { name: "United Arab Emirates", code: "AE" },
-//         { name: "Uzbekistan", code: "UZ" },
-//         { name: "Vietnam", code: "VN" },
-//         { name: "Yemen", code: "YE" },
-//       ],
-//       Europe: [
-//         { name: "Åland Islands", code: "AX" },
-//         { name: "Albania", code: "AL" },
-//         { name: "Andorra", code: "AD" },
-//         { name: "Austria", code: "AT" },
-//         { name: "Belarus", code: "BY" },
-//         { name: "Belgium", code: "BE" },
-//         { name: "Bosnia and Herzegovina", code: "BA" },
-//         { name: "Bulgaria", code: "BG" },
-//         { name: "Croatia", code: "HR" },
-//         { name: "Czechia", code: "CZ" },
-//         { name: "Denmark", code: "DK" },
-//         { name: "Estonia", code: "EE" },
-//         { name: "Faroe Islands", code: "FO" },
-//         { name: "Finland", code: "FI" },
-//         { name: "France", code: "FR" },
-//         { name: "Germany", code: "DE" },
-//         { name: "Gibraltar", code: "GI" },
-//         { name: "Greece", code: "GR" },
-//         { name: "Guernsey", code: "GG" },
-//         { name: "Holy See", code: "VA" },
-//         { name: "Hungary", code: "HU" },
-//         { name: "Iceland", code: "IS" },
-//         { name: "Ireland", code: "IE" },
-//         { name: "Isle of Man", code: "IM" },
-//         { name: "Italy", code: "IT" },
-//         { name: "Jersey", code: "JE" },
-//         { name: "Latvia", code: "LV" },
-//         { name: "Liechtenstein", code: "LI" },
-//         { name: "Lithuania", code: "LT" },
-//         { name: "Luxembourg", code: "LU" },
-//         { name: "Malta", code: "MT" },
-//         { name: "Moldova", code: "MD" },
-//         { name: "Monaco", code: "MC" },
-//         { name: "Montenegro", code: "ME" },
-//         { name: "Netherlands", code: "NL" },
-//         { name: "North Macedonia", code: "MK" },
-//         { name: "Norway", code: "NO" },
-//         { name: "Poland", code: "PL" },
-//         { name: "Portugal", code: "PT" },
-//         { name: "Romania", code: "RO" },
-//         { name: "Russia", code: "RU" },
-//         { name: "San Marino", code: "SM" },
-//         { name: "Serbia", code: "RS" },
-//         { name: "Slovakia", code: "SK" },
-//         { name: "Slovenia", code: "SI" },
-//         { name: "Spain", code: "ES" },
-//         { name: "Svalbard and Jan Mayen", code: "SJ" },
-//         { name: "Sweden", code: "SE" },
-//         { name: "Switzerland", code: "CH" },
-//         { name: "Ukraine", code: "UA" },
-//         { name: "United Kingdom", code: "GB" },
-//       ],
-//       "North America": [
-//         { name: "Anguilla", code: "AI" },
-//         { name: "Antigua and Barbuda", code: "AG" },
-//         { name: "Aruba", code: "AW" },
-//         { name: "Bahamas", code: "BS" },
-//         { name: "Barbados", code: "BB" },
-//         { name: "Belize", code: "BZ" },
-//         { name: "Bermuda", code: "BM" },
-//         { name: "Bonaire", code: "BQ" },
-//         { name: "Canada", code: "CA" },
-//         { name: "Cayman Islands", code: "KY" },
-//         { name: "Costa Rica", code: "CR" },
-//         { name: "Cuba", code: "CU" },
-//         { name: "Curaçao", code: "CW" },
-//         { name: "Dominica", code: "DM" },
-//         { name: "Dominican Republic", code: "DO" },
-//         { name: "El Salvador", code: "SV" },
-//         { name: "Greenland", code: "GL" },
-//         { name: "Grenada", code: "GD" },
-//         { name: "Guadeloupe", code: "GP" },
-//         { name: "Guatemala", code: "GT" },
-//         { name: "Haiti", code: "HT" },
-//         { name: "Honduras", code: "HN" },
-//         { name: "Jamaica", code: "JM" },
-//         { name: "Martinique", code: "MQ" },
-//         { name: "Mexico", code: "MX" },
-//         { name: "Montserrat", code: "MS" },
-//         { name: "Nicaragua", code: "NI" },
-//         { name: "Panama", code: "PA" },
-//         { name: "Puerto Rico", code: "PR" },
-//         { name: "Saint Barthélemy", code: "BL" },
-//         { name: "Saint Kitts and Nevis", code: "KN" },
-//         { name: "Saint Lucia", code: "LC" },
-//         { name: "Saint Martin", code: "MF" },
-//         { name: "Saint Pierre and Miquelon", code: "PM" },
-//         { name: "Saint Vincent and the Grenadines", code: "VC" },
-//         { name: "Sint Maarten", code: "SX" },
-//         { name: "Trinidad and Tobago", code: "TT" },
-//         { name: "Turks and Caicos Islands", code: "TC" },
-//         { name: "United States", code: "US" },
-//         { name: "U.S. Virgin Islands", code: "VI" },
-//       ],
-//       Oceania: [
-//         { name: "American Samoa", code: "AS" },
-//         { name: "Australia", code: "AU" },
-//         { name: "Christmas Island", code: "CX" },
-//         { name: "Cocos (Keeling) Islands", code: "CC" },
-//         { name: "Cook Islands", code: "CK" },
-//         { name: "Fiji", code: "FJ" },
-//         { name: "French Polynesia", code: "PF" },
-//         { name: "Guam", code: "GU" },
-//         { name: "Kiribati", code: "KI" },
-//         { name: "Marshall Islands", code: "MH" },
-//         { name: "Micronesia", code: "FM" },
-//         { name: "Nauru", code: "NR" },
-//         { name: "New Caledonia", code: "NC" },
-//         { name: "New Zealand", code: "NZ" },
-//         { name: "Niue", code: "NU" },
-//         { name: "Norfolk Island", code: "NF" },
-//         { name: "Northern Mariana Islands", code: "MP" },
-//         { name: "Palau", code: "PW" },
-//         { name: "Papua New Guinea", code: "PG" },
-//         { name: "Pitcairn", code: "PN" },
-//         { name: "Samoa", code: "WS" },
-//         { name: "Solomon Islands", code: "SB" },
-//         { name: "Tokelau", code: "TK" },
-//         { name: "Tonga", code: "TO" },
-//         { name: "Tuvalu", code: "TV" },
-//         { name: "U.S. Minor Outlying Islands", code: "UM" },
-//         { name: "Vanuatu", code: "VU" },
-//         { name: "Wallis and Futuna", code: "WF" },
-//       ],
-//       "South America": [
-//         { name: "Argentina", code: "AR" },
-//         { name: "Bolivia", code: "BO" },
-//         { name: "Brazil", code: "BR" },
-//         { name: "Chile", code: "CL" },
-//         { name: "Colombia", code: "CO" },
-//         { name: "Ecuador", code: "EC" },
-//         { name: "Falkland Islands", code: "FK" },
-//         { name: "French Guiana", code: "GF" },
-//         { name: "Guyana", code: "GY" },
-//         { name: "Paraguay", code: "PY" },
-//         { name: "Peru", code: "PE" },
-//         { name: "Suriname", code: "SR" },
-//         { name: "Uruguay", code: "UY" },
-//         { name: "Venezuela", code: "VE" },
-//       ],
-//     };
-//         const totalCountries = Object.values(territoriesByRegion).flat().length;
+function initializeYouTubeOwnershipPage(config) {
+  // Use YouTube-specific page selector
+  const pageContainer = document.querySelector(config.pageSelector);
+  if (!pageContainer) {
+    console.warn(
+      "YouTube ownership page container not found:",
+      config.pageSelector
+    );
+    return;
+  }
 
-//         const getStatusBadge = (status) => {
-//             let badgeClass = 'bg-secondary-subtle text-secondary-emphasis';
-//             if (status === 'Action Required') badgeClass = 'bg-danger-subtle text-danger-emphasis';
-//             else if (status === 'Resolved') badgeClass = 'bg-success-subtle text-success-emphasis';
-//             else if (status === 'In Review') badgeClass = 'bg-warning-subtle text-warning-emphasis';
-//             return `<span class="badge rounded-pill border ${badgeClass}">${status}</span>`;
-//         };
-//         const parseViews = (views) => (typeof views !== 'string') ? 0 : parseFloat(views.toUpperCase()) * (views.toUpperCase().includes('K') ? 1000 : 1);
-//         const parseExpiry = (expiry) => (typeof expiry !== 'string' || expiry === '-') ? Infinity : parseInt(expiry);
-        
-//         // --- DATATABLES CONFIGURATION ---
-//         const dataTableInstance = $(pageContainer.querySelector('#datatable')).DataTable({
-//             destroy: true,
-//             data: config.data,
-//             paging: true,
-//             searching: true,
-//             info: true,
-//             lengthChange: true,
-//             autoWidth: false,
-//             columns: [
-//                 { data: null, className: 'text-center', orderable: false, render: () => `<i class="bi ${config.platformIconClass} fs-5"></i>` },
-//                 { data: 'category' },
-//                 { data: 'assetTitle' },
-//                 { data: null, render: (data, type, row) => `<div class="fw-bold">${row.artist}</div><small class="text-muted">Asset ID: ${row.assetId}</small>` },
-//                 { data: 'upc' },
-//                 { data: 'otherParty' },
-//                 { data: 'dailyViews', render: { _: (data) => data, sort: (data) => parseViews(data) } },
-//                 { data: 'expiry', render: { _: (data) => data, sort: (data) => parseExpiry(data) } },
-//                 { data: 'status', render: (data) => getStatusBadge(data) },
-//                 { data: null, className: 'text-center', orderable: false, render: () => `<i class="bi bi-chevron-right text-muted"></i>` }
-//             ],
-//             createdRow: function(row, data) {
-//                 $(row).attr({
-//                     'style': 'cursor: pointer;',
-//                     'data-bs-toggle': 'offcanvas',
-//                     'data-bs-target': config.offcanvasId,
-//                     'data-song-name': data.assetTitle,
-//                     'data-artist-name': data.artist,
-//                     'data-isrc': data.isrc,
-//                     'data-cover-url': data.albumCoverUrl,
-//                     'data-category': data.category,
-//                     'data-other-party': data.otherParty
-//                 });
-//             },
-//             language: { search: "_INPUT_", searchPlaceholder: "Search conflicts..." }
-//         });
+  console.log("Initializing YouTube ownership page");
+  let currentConflictId = null;
 
-//         // --- OFFCANVAS LOGIC ---
-//         const conflictOffcanvasEl = document.querySelector(config.offcanvasId);
-//         if (conflictOffcanvasEl) {
-//             const conflictForm = conflictOffcanvasEl.querySelector('form');
-//             const steps = Array.from(conflictOffcanvasEl.querySelectorAll('.form-step'));
-//             const nextBtn = conflictOffcanvasEl.querySelector('#nextBtn');
-//             const backBtn = conflictOffcanvasEl.querySelector('#backBtn');
-//             const submitBtn = conflictOffcanvasEl.querySelector('#submitBtn');
-//             let currentStep = 0;
+  const getStatusBadge = (status) => {
+    let badgeClass = "bg-secondary-subtle text-secondary-emphasis";
+    if (status === "Action Required")
+      badgeClass = "bg-danger-subtle text-danger-emphasis";
+    else if (status === "Resolved" || status === "Approved")
+      badgeClass = "bg-success-subtle text-success-emphasis";
+    else if (status === "In Review")
+      badgeClass = "bg-warning-subtle text-warning-emphasis";
+    else if (status === "Rejected") badgeClass = "bg-danger text-white";
+    return `<span class="badge rounded-pill border ${badgeClass}">${status}</span>`;
+  };
 
-//             function showStep(stepIndex) {
-//                 steps.forEach((step, index) => step.classList.toggle('d-none', index !== stepIndex));
-//                 backBtn.classList.toggle('d-none', stepIndex === 0);
-//                 nextBtn.classList.toggle('d-none', stepIndex === steps.length - 1);
-//                 submitBtn.classList.toggle('d-none', stepIndex !== steps.length - 1);
-//                 currentStep = stepIndex;
-//             }
+  const populateTable = (tableBodySelector, data, platformConfig) => {
+    const tableBody = pageContainer.querySelector(tableBodySelector);
+    if (!tableBody) {
+      console.error("YouTube table body not found:", tableBodySelector);
+      return;
+    }
 
-//             nextBtn.addEventListener('click', () => {
-//                 if (currentStep === 0 && !conflictForm.querySelector('input[name="rightsOwned"]:checked')) return alert('Please select a rights option.');
-//                 if (currentStep === 1 && !conflictForm.querySelector('.country-checkbox:checked')) return alert('Please select at least one territory.');
-//                 if (currentStep < steps.length - 1) showStep(currentStep + 1);
-//             });
+    console.log("Populating YouTube table with", data.length, "items");
 
-//             backBtn.addEventListener('click', () => {
-//                 if (currentStep > 0) showStep(currentStep - 1);
-//             });
+    // Clear existing data
+    tableBody.innerHTML = "";
 
-//             conflictOffcanvasEl.addEventListener('show.bs.offcanvas', function(event) {
-//                 const data = event.relatedTarget.dataset;
-//                 ['', '2', '3'].forEach(s => {
-//                     const suffix = s ? parseInt(s) : '';
-//                     conflictOffcanvasEl.querySelector(`#modalAlbumCover${suffix}`).src = data.coverUrl;
-//                     conflictOffcanvasEl.querySelector(`#modalSongName${suffix}`).textContent = data.songName;
-//                     conflictOffcanvasEl.querySelector(`#modalArtistName${suffix}`).textContent = data.artistName;
-//                 });
-//                 conflictOffcanvasEl.querySelector('#modalIsrc').textContent = `ISRC: ${data.isrc}`;
-//                 conflictOffcanvasEl.querySelector('#modalPlatform').textContent = config.platformName;
-//                 conflictOffcanvasEl.querySelector('#offcanvasTitle').textContent = data.category;
-//                 conflictOffcanvasEl.querySelector('#offcanvasSubtitle').textContent = `VS. ${data.otherParty}`;
-//                 renderTerritoryAccordion();
-//                 conflictForm.reset();
-//                 showStep(0);
-//             });
-            
-//             conflictForm.addEventListener('submit', function(e) {
-//                 e.preventDefault();
-//                 alert('Resolution submitted successfully!');
-//                 bootstrap.Offcanvas.getInstance(conflictOffcanvasEl).hide();
-//             });
+    if (data.length === 0) {
+      tableBody.innerHTML = `
+        <tr>
+          <td colspan="10" class="text-center text-muted">
+            <i class="bi bi-info-circle"></i> No YouTube conflicts found
+          </td>
+        </tr>
+      `;
+      return;
+    }
 
-//             function renderTerritoryAccordion() {
-//                 const accordionContainer = conflictOffcanvasEl.querySelector('#territoryAccordion');
-//                 accordionContainer.innerHTML = Object.entries(territoriesByRegion).map(([region, countries]) => {
-//                     if (countries.length === 0) return '';
-//                     const regionId = region.replace(/[^a-zA-Z0-9]/g, '');
-//                     return `
-//                     <div class="accordion-item">
-//                         <h2 class="accordion-header">
-//                             <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-${config.platformName}-${regionId}">
-//                                 <div class="form-check me-auto"><input class="form-check-input region-checkbox" type="checkbox" data-region="${region}" checked><label class="form-check-label fw-bold">${region}</label></div>
-//                                 <span class="text-muted small me-2">${countries.length} countries</span>
-//                             </button>
-//                         </h2>
-//                         <div id="collapse-${config.platformName}-${regionId}" class="accordion-collapse collapse" data-bs-parent="#territoryAccordion">
-//                             <div class="accordion-body">${countries.map(c =>`<div class="form-check"><input class="form-check-input country-checkbox" type="checkbox" data-region="${region}" checked><label class="form-check-label">${c.name}</label></div>`).join('')}</div>
-//                         </div>
-//                     </div>`;
-//                 }).join('');
-//                 addTerritoryEventListeners();
-//                 updateTerritoryCounter();
-//             }
+    data.forEach((item) => {
+      const row = document.createElement("tr");
+      row.style.cursor = "pointer";
+      row.setAttribute("data-bs-toggle", "offcanvas");
+      row.setAttribute("data-bs-target", "#youtubeOwnershipDetailsOffcanvas");
 
-//             function updateTerritoryCounter() {
-//                  const selected = conflictOffcanvasEl.querySelectorAll('.country-checkbox:checked').length;
-//                  conflictOffcanvasEl.querySelector('#territoryCounter').textContent = `${selected} contested countries out of ${totalCountries} delivered`;
-//             }
+      // Set ALL required data attributes
+      row.setAttribute("data-id", item.id || "");
+      row.setAttribute(
+        "data-song-name",
+        item.songName || item.assetTitle || ""
+      );
+      row.setAttribute(
+        "data-artist-name",
+        item.artistName || item.artist || ""
+      );
+      row.setAttribute("data-isrc", item.isrc || "");
+      row.setAttribute("data-upc", item.upc || "");
+      row.setAttribute("data-category", item.category || "");
+      row.setAttribute("data-other-party", item.otherParty || "");
+      row.setAttribute("data-asset-title", item.assetTitle || "");
+      row.setAttribute("data-asset-id", item.assetId || "");
+      row.setAttribute("data-daily-views", item.dailyViews || "");
+      row.setAttribute("data-expiry", item.expiry || "");
+      row.setAttribute("data-platform-name", platformConfig.platformName);
+      row.setAttribute("data-status", item.status || "");
 
-//             function addTerritoryEventListeners() { /* ... same logic as before ... */ }
-//         }
-//     }
-    
-//     // =========================================================================
-//     //  PAGE-SPECIFIC CONFIGURATIONS
-//     // =========================================================================
+      // YouTube specific attributes
+      row.setAttribute("data-video-title", item.videoTitle || "");
+      row.setAttribute("data-channel-name", item.channelName || "");
+      row.setAttribute("data-issue-type", item.issueType || "");
+      row.setAttribute(
+        "data-duration-seconds",
+        item.details?.duration_seconds || "0"
+      );
+      row.setAttribute(
+        "data-duration-percentage-reference",
+        item.details?.duration_percentage_reference || "0"
+      );
+      row.setAttribute(
+        "data-duration-percentage-video",
+        item.details?.duration_percentage_video || "0"
+      );
 
-//     // --- YouTube Page Configuration ---
-//     const youtubeConflictData = [
-//         { id: 1, category: 'Ownership conflict', assetTitle: 'Cosmic Drift', artist: 'Astro Beats', assetId: '90736897913', upc: '198009123456', isrc: 'USAT22312345', otherParty: 'The Orchard', dailyViews: '79K', expiry: '2 days', status: 'Action Required', albumCoverUrl: 'https://placehold.co/80x80/ff0000/ffffff?text=C' },
-//         { id: 2, category: 'Policy', assetTitle: 'Ocean Tides', artist: 'Deep Wave', assetId: '3478239381', upc: '198009654321', isrc: 'USAT22354321', otherParty: 'Believe', dailyViews: '3K', expiry: '-', status: 'Resolved', albumCoverUrl: 'https://placehold.co/80x80/1abc9c/ffffff?text=O' },
-//     ];
-//     initializeConflictPage({
-//         pageSelector: '.admin-youtube-page', // The unique class for the YouTube page
-//         data: youtubeConflictData,
-//         platformName: 'YouTube',
-//         platformIconClass: 'bi-youtube text-danger',
-//         offcanvasId: '#conflictResolutionOffcanvas'
-//     });
+      // Include ALL resolution data fields
+      const completeResolutionData = {
+        rightsOwnedDisplay:
+          item.resolutionData?.rightsOwnedDisplay ||
+          item.rightsOwnedDisplay ||
+          "",
+        supportingDocumentPath:
+          item.resolutionData?.supportingDocumentPath ||
+          item.supportingDocumentPath ||
+          "",
+        resolutionDate:
+          item.resolutionData?.resolutionDate ||
+          item.resolutionDate ||
+          item.submissionDate ||
+          "",
+        rejectionMessage:
+          item.resolutionData?.rejectionMessage || item.rejectionMessage || "",
+        submissionDate:
+          item.resolutionData?.submissionDate || item.submissionDate || "",
+        ...item.resolutionData,
+      };
 
-//     // --- Facebook Page Configuration ---
-//     const facebookConflictData = [
-//         { id: 1, category: 'Ownership conflict', assetTitle: 'Facebook Song A', artist: 'Social Singers', assetId: 'FB12345', upc: '198009111222', isrc: 'USFB12345678', otherParty: 'DistroKid', dailyViews: '15K', expiry: '5 days', status: 'Action Required', albumCoverUrl: 'https://placehold.co/80x80/3b5998/ffffff?text=A' },
-//         { id: 2, category: 'Metadata Error', assetTitle: 'Insta Reel Hit', artist: 'The Grammers', assetId: 'FB54321', upc: '198009222333', isrc: 'USFB87654321', otherParty: 'TuneCore', dailyViews: '1M', expiry: '20 days', status: 'In Review', albumCoverUrl: 'https://placehold.co/80x80/833ab4/ffffff?text=H' },
-//     ];
-//     initializeConflictPage({
-//         pageSelector: '.admin-facebook-page', // The unique class for the Facebook page
-//         data: facebookConflictData,
-//         platformName: 'Facebook',
-//         platformIconClass: 'bi-facebook text-primary',
-//         offcanvasId: '#facebookConflictOffcanvas'
-//     });
-// });
+      row.setAttribute(
+        "data-resolution-data",
+        encodeURIComponent(JSON.stringify(completeResolutionData))
+      );
 
+      row.innerHTML = `
+        <td class="text-center"><i class="bi ${
+          platformConfig.platformIconClass
+        } fs-5"></i></td>
+        <td>${item.category || "-"}</td>
+        <td>${item.assetTitle || "-"}</td>
+        <td>
+          <div class="fw-bold">${item.artist || "-"}</div>
+          <small class="text-muted">Asset ID: ${item.assetId || "-"}</small>
+        </td>
+        <td>${item.upc || "-"}</td>
+        <td>${item.otherParty || "-"}</td>
+        <td>${item.dailyViews || "-"}</td>
+        <td>${item.expiry || "-"}</td>
+        <td class="status-cell">${getStatusBadge(item.status || "Unknown")}</td>
+        <td class="text-center"><i class="bi bi-chevron-right text-muted"></i></td>
+      `;
+      tableBody.appendChild(row);
+    });
+  };
+
+  // Populate YouTube data
+  populateTable(".youtube-data-body", config.youtubeData || [], {
+    platformName: "YouTube",
+    platformIconClass: "bi-youtube text-danger",
+  });
+
+  // Initialize DataTable for YouTube only
+  const youtubeTable = pageContainer.querySelector(".youtube-datatable");
+  if (youtubeTable && $.fn.DataTable) {
+    $(youtubeTable).DataTable({
+      destroy: true,
+      paging: true,
+      searching: true,
+      info: true,
+      lengthChange: false,
+      autoWidth: false,
+      language: {
+        search: "_INPUT_",
+        searchPlaceholder: "Search YouTube conflicts...",
+      },
+    });
+  }
+
+  // Rest of your offcanvas and update logic remains the same...
+  const youtubeOwnershipOffcanvasEl = document.getElementById(
+    "youtubeOwnershipDetailsOffcanvas"
+  );
+  if (!youtubeOwnershipOffcanvasEl) return;
+
+  youtubeOwnershipOffcanvasEl.addEventListener(
+    "show.bs.offcanvas",
+    function (event) {
+      const triggerRow = event.relatedTarget;
+      const data = triggerRow.dataset;
+
+      let resolutionData = {};
+      try {
+        resolutionData = JSON.parse(
+          decodeURIComponent(data.resolutionData || "{}")
+        );
+      } catch (e) {
+        console.error("Error parsing resolution data:", e);
+        resolutionData = {};
+      }
+
+      currentConflictId = data.id;
+      console.log("Opening YouTube offcanvas for ID:", currentConflictId);
+      console.log("All data:", data);
+      console.log("Resolution data:", resolutionData);
+
+      // Clear all fields first
+      const clearElement = (selector, defaultValue = "-") => {
+        const el = youtubeOwnershipOffcanvasEl.querySelector(selector);
+        if (el) el.textContent = defaultValue;
+      };
+
+      // Album Cover (YouTube red placeholder)
+      const albumCover = youtubeOwnershipOffcanvasEl.querySelector(
+        "#youtubeOwnershipAlbumCover"
+      );
+      if (albumCover) {
+        albumCover.src = "https://placehold.co/80x80/FF0000/ffffff?text=YT";
+      }
+
+      // Basic Information
+      clearElement("#youtubeOwnershipSongName");
+      const songNameEl = youtubeOwnershipOffcanvasEl.querySelector(
+        "#youtubeOwnershipSongName"
+      );
+      if (songNameEl)
+        songNameEl.textContent = data.songName || data.assetTitle || "-";
+
+      clearElement("#youtubeOwnershipArtistName");
+      const artistNameEl = youtubeOwnershipOffcanvasEl.querySelector(
+        "#youtubeOwnershipArtistName"
+      );
+      if (artistNameEl) artistNameEl.textContent = data.artistName || "-";
+
+      clearElement("#youtubeOwnershipIsrc");
+      const isrcEl = youtubeOwnershipOffcanvasEl.querySelector(
+        "#youtubeOwnershipIsrc"
+      );
+      if (isrcEl) isrcEl.textContent = `ISRC: ${data.isrc || "N/A"}`;
+
+      clearElement("#youtubeOwnershipPlatform");
+      const platformEl = youtubeOwnershipOffcanvasEl.querySelector(
+        "#youtubeOwnershipPlatform"
+      );
+      if (platformEl) platformEl.textContent = "YouTube";
+
+      clearElement("#youtubeOwnershipOffcanvasTitle");
+      const titleEl = youtubeOwnershipOffcanvasEl.querySelector(
+        "#youtubeOwnershipOffcanvasTitle"
+      );
+      if (titleEl)
+        titleEl.textContent = `Resolution Details: ${
+          data.category || "Unknown"
+        }`;
+
+      clearElement("#youtubeOwnershipOffcanvasSubtitle");
+      const subtitleEl = youtubeOwnershipOffcanvasEl.querySelector(
+        "#youtubeOwnershipOffcanvasSubtitle"
+      );
+      if (subtitleEl)
+        subtitleEl.textContent = `VS. ${data.otherParty || "Unknown"}`;
+
+      // Update status badge
+      const statusBadgeEl = youtubeOwnershipOffcanvasEl.querySelector(
+        "#youtubeCurrentStatusBadge"
+      );
+      if (statusBadgeEl) {
+        const badgeHTML = getStatusBadge(data.status || "Unknown");
+        const tempDiv = document.createElement("div");
+        tempDiv.innerHTML = badgeHTML;
+        const badge = tempDiv.firstChild;
+        statusBadgeEl.className = badge.className;
+        statusBadgeEl.textContent = badge.textContent;
+      }
+
+      // Update dropdown and handle rejection section
+      const statusDropdown = document.getElementById("youtubeStatusDropdown");
+      if (statusDropdown) {
+        statusDropdown.value = data.status || "";
+
+        const rejectionMessageSection = document.getElementById(
+          "youtubeRejectionMessageSection"
+        );
+        if (rejectionMessageSection) {
+          if (data.status === "Rejected") {
+            rejectionMessageSection.classList.remove("d-none");
+          } else {
+            rejectionMessageSection.classList.add("d-none");
+          }
+        }
+      }
+
+      // Resolution Details
+      clearElement("#youtubeResolutionRightsOwned");
+      const rightsOwnedEl = youtubeOwnershipOffcanvasEl.querySelector(
+        "#youtubeResolutionRightsOwned"
+      );
+      if (rightsOwnedEl) {
+        rightsOwnedEl.textContent = resolutionData.rightsOwnedDisplay || "N/A";
+      }
+
+      const docInfoEl = youtubeOwnershipOffcanvasEl.querySelector(
+        "#youtubeSupportingDocumentInfo"
+      );
+      if (docInfoEl) {
+        docInfoEl.innerHTML = resolutionData.supportingDocumentPath
+          ? `<a href="${resolutionData.supportingDocumentPath}" target="_blank"><i class="bi bi-file-earmark-text me-2"></i>View Document</a>`
+          : `<i class="bi bi-file-earmark-text text-muted me-2"></i>No document uploaded`;
+      }
+
+      // Resolution Date
+      clearElement("#youtubeResolutionDate");
+      const resolutionDateEl = youtubeOwnershipOffcanvasEl.querySelector(
+        "#youtubeResolutionDate"
+      );
+      if (resolutionDateEl) {
+        const dateToShow =
+          resolutionData.resolutionDate || resolutionData.submissionDate || "-";
+        resolutionDateEl.textContent = dateToShow;
+      }
+
+      // YouTube Specific Details
+      clearElement("#youtubeVideoTitle");
+      const videoTitleEl =
+        youtubeOwnershipOffcanvasEl.querySelector("#youtubeVideoTitle");
+      if (videoTitleEl) videoTitleEl.textContent = data.assetTitle || "-";
+
+      clearElement("#youtubeChannelName");
+      const channelNameEl = youtubeOwnershipOffcanvasEl.querySelector(
+        "#youtubeChannelName"
+      );
+      if (channelNameEl) channelNameEl.textContent = data.artistName || "-";
+
+      clearElement("#youtubeIssueType");
+      const issueTypeEl =
+        youtubeOwnershipOffcanvasEl.querySelector("#youtubeIssueType");
+      if (issueTypeEl) issueTypeEl.textContent = data.issueType || "-";
+
+      clearElement("#youtubeDurationSeconds");
+      const durationSecondsEl = youtubeOwnershipOffcanvasEl.querySelector(
+        "#youtubeDurationSeconds"
+      );
+      if (durationSecondsEl)
+        durationSecondsEl.textContent = data.durationSeconds || "0";
+
+      clearElement("#youtubeDurationPercentageReference");
+      const durationRefEl = youtubeOwnershipOffcanvasEl.querySelector(
+        "#youtubeDurationPercentageReference"
+      );
+      if (durationRefEl)
+        durationRefEl.textContent = data.durationPercentageReference || "0";
+
+      clearElement("#youtubeDurationPercentageVideo");
+      const durationVideoEl = youtubeOwnershipOffcanvasEl.querySelector(
+        "#youtubeDurationPercentageVideo"
+      );
+      if (durationVideoEl)
+        durationVideoEl.textContent = data.durationPercentageVideo || "0";
+
+      // Handle Rejection case
+      const rejectionSection = youtubeOwnershipOffcanvasEl.querySelector(
+        "#youtubeRejectionDisplaySection"
+      );
+      const rejectionMessageEl = youtubeOwnershipOffcanvasEl.querySelector(
+        "#youtubeRejectionDisplayMessage"
+      );
+      const rejectionDateEl = youtubeOwnershipOffcanvasEl.querySelector(
+        "#youtubeRejectionDate"
+      );
+
+      if (data.status === "Rejected") {
+        if (rejectionSection) rejectionSection.classList.remove("d-none");
+        if (rejectionMessageEl) {
+          rejectionMessageEl.textContent =
+            resolutionData.rejectionMessage || "No rejection message provided.";
+        }
+        if (rejectionDateEl) {
+          rejectionDateEl.textContent =
+            resolutionData.resolutionDate ||
+            resolutionData.submissionDate ||
+            "-";
+        }
+      } else {
+        if (rejectionSection) rejectionSection.classList.add("d-none");
+      }
+
+      // Clear the rejection message input field
+      const rejectionMessageInput = document.getElementById(
+        "youtubeRejectionMessage"
+      );
+      if (rejectionMessageInput) {
+        rejectionMessageInput.value = "";
+      }
+    }
+  );
+
+  // --- Update Status Handling ---
+  const updateBtn = document.getElementById("youtubeUpdateStatusBtn");
+  const statusDropdown = document.getElementById("youtubeStatusDropdown");
+  const rejectionMessageSection = document.getElementById(
+    "youtubeRejectionMessageSection"
+  );
+
+  if (statusDropdown && updateBtn) {
+    statusDropdown.addEventListener("change", () => {
+      if (statusDropdown.value === "Rejected") {
+        rejectionMessageSection?.classList.remove("d-none");
+      } else {
+        rejectionMessageSection?.classList.add("d-none");
+      }
+    });
+
+    updateBtn.addEventListener("click", () => {
+      const selectedStatus = statusDropdown.value;
+      const rejectionMessage =
+        document.getElementById("youtubeRejectionMessage")?.value || "";
+
+      if (!currentConflictId) {
+        alert("Conflict ID not found!");
+        return;
+      }
+
+      fetch(`/superadmin/youtube-ownership/update/${currentConflictId}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+        body: new URLSearchParams({
+          status: selectedStatus,
+          rejectionMessage: rejectionMessage,
+        }),
+      })
+        .then((res) => res.json())
+        .then((json) => {
+          if (json.status === "success") {
+            alert("Status updated successfully.");
+
+            // Update dataset + table cell immediately
+            const row = document.querySelector(
+              `[data-id="${currentConflictId}"]`
+            );
+            if (row) {
+              row.dataset.status = selectedStatus;
+              const statusCell = row.querySelector(".status-cell");
+              if (statusCell) {
+                statusCell.innerHTML = getStatusBadge(selectedStatus);
+              }
+            }
+
+            // Reflect in dropdown immediately
+            statusDropdown.value = selectedStatus;
+
+            // Update current status badge in offcanvas
+            const statusBadgeEl = youtubeOwnershipOffcanvasEl.querySelector(
+              "#youtubeCurrentStatusBadge"
+            );
+            if (statusBadgeEl) {
+              const badgeHTML = getStatusBadge(selectedStatus);
+              const tempDiv = document.createElement("div");
+              tempDiv.innerHTML = badgeHTML;
+              const badge = tempDiv.firstChild;
+              statusBadgeEl.className = badge.className;
+              statusBadgeEl.textContent = badge.textContent;
+            }
+          } else {
+            alert("Error: " + json.message);
+          }
+        })
+        .catch((err) => {
+          console.error("Update request failed:", err);
+          alert("An error occurred while updating.");
+        });
+    });
+  }
+}
+
+document.addEventListener("DOMContentLoaded", function () {
+  // Check if we're on the YouTube ownership page
+  const isYouTubePage = document.querySelector(".admin-youtube-ownership-page");
+
+  if (!isYouTubePage) {
+    console.log("Not on YouTube ownership page, skipping initialization");
+    return;
+  }
+
+  console.log("Loading YouTube ownership data...");
+
+  fetch("/superadmin/youtube-ownership/list")
+    .then((res) => {
+      if (!res.ok) {
+        throw new Error(`HTTP error! status: ${res.status}`);
+      }
+      return res.json();
+    })
+    .then((json) => {
+      console.log("Fetched YouTube data:", json);
+
+      if (!json.data) {
+        console.warn("No data property in response");
+        return;
+      }
+
+      initializeYouTubeOwnershipPage({
+        pageSelector: ".admin-youtube-ownership-page", // Updated selector
+        youtubeData: json.data,
+      });
+    })
+    .catch((error) => {
+      console.error("Error fetching YouTube data:", error);
+
+      // Show error in table
+      const tableBody = document.querySelector(".youtube-data-body");
+      if (tableBody) {
+        tableBody.innerHTML = `
+          <tr>
+            <td colspan="10" class="text-center text-danger">
+              <i class="bi bi-exclamation-triangle"></i> 
+              Error loading data: ${error.message}
+            </td>
+          </tr>
+        `;
+      }
+    });
+});
 
 // claim-data-page js
 // In your app.js, replace the entire .admin-claim-data-page block with this:
@@ -1023,7 +1376,9 @@ document.addEventListener("DOMContentLoaded", function () {
               let linksHtml = "";
               if (Array.isArray(row.videoLinks)) {
                 row.videoLinks.forEach((url, i) => {
-                  linksHtml += `<a href="${url}" target="_blank" class="btn btn-sm btn-outline-secondary me-1">Video ${i + 1}</a>`;
+                  linksHtml += `<a href="${url}" target="_blank" class="btn btn-sm btn-outline-secondary me-1">Video ${
+                    i + 1
+                  }</a>`;
                 });
               }
               return `
@@ -1073,7 +1428,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
     releaseModal.show();
   }
-
 
   // Save button handler (Approve/Reject/Pending)
   document
@@ -1226,7 +1580,10 @@ document.addEventListener("DOMContentLoaded", function () {
         if (filter === "all") {
           table.column(5).search("").draw();
         } else {
-          table.column(5).search("^" + filter + "$", true, false).draw();
+          table
+            .column(5)
+            .search("^" + filter + "$", true, false)
+            .draw();
         }
       }
     });
@@ -1296,12 +1653,13 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 });
 
-
 // relocation-data-page js
 
 // Add this entire new block to your app.js file
 document.addEventListener("DOMContentLoaded", function () {
-  const relocationPageContainer = document.querySelector(".admin-reloc-data-page");
+  const relocationPageContainer = document.querySelector(
+    ".admin-reloc-data-page"
+  );
   if (!relocationPageContainer) return;
 
   // --- HELPER FUNCTIONS ---
@@ -1317,28 +1675,31 @@ document.addEventListener("DOMContentLoaded", function () {
       pending: "text-warning",
       rejected: "text-danger",
     };
-    return `<i data-feather="${icons[s] || "help-circle"}" class="${colors[s] || "text-muted"}"></i>`;
+    return `<i data-feather="${icons[s] || "help-circle"}" class="${
+      colors[s] || "text-muted"
+    }"></i>`;
   };
 
   const getStatusBadge = (status) => {
     console.log("getStatusBadge called with:", status, "Type:", typeof status); // Debug
-    
+
     // Handle null, undefined, or empty status
     if (!status || status === null || status === undefined) {
-      status = 'pending'; // Default fallback
+      status = "pending"; // Default fallback
     }
-    
+
     const s = String(status).trim().toLowerCase(); // Convert to string first, then normalize
     console.log("Normalized status:", s); // Debug
-    
-    const cls = {
-      approved: "status-approved",
-      pending: "status-pending", 
-      rejected: "status-rejected",
-    }[s] || "bg-secondary";
 
-    const displayText = s ? s.toUpperCase() : 'PENDING';
-    
+    const cls =
+      {
+        approved: "status-approved",
+        pending: "status-pending",
+        rejected: "status-rejected",
+      }[s] || "bg-secondary";
+
+    const displayText = s ? s.toUpperCase() : "PENDING";
+
     return `<span class="badge status-badge ${cls}">${displayText}</span>`;
   };
 
@@ -1351,7 +1712,9 @@ document.addEventListener("DOMContentLoaded", function () {
   const openModal = async (id) => {
     try {
       console.log("Opening modal for relocation ID:", id);
-      const modal = new bootstrap.Modal(document.getElementById("releaseModal"));
+      const modal = new bootstrap.Modal(
+        document.getElementById("releaseModal")
+      );
 
       const response = await fetch(`/superadmin/api/relocation-data/${id}`);
       const result = await response.json();
@@ -1366,7 +1729,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
       populateModal(data);
       modal.show();
-      document.getElementById("releaseModal").setAttribute("data-current-id", id);
+      document
+        .getElementById("releaseModal")
+        .setAttribute("data-current-id", id);
     } catch (error) {
       console.error("Error opening modal:", error);
       alert("Failed to load request details. Please try again.");
@@ -1376,21 +1741,24 @@ document.addEventListener("DOMContentLoaded", function () {
   const populateModal = (data) => {
     console.log("Full data object:", data); // Debug: Check entire data object
     console.log("Status value:", data.status); // Debug: Check specific status value
-    
+
     // Basic fields
     document.getElementById("releaseTitle").textContent = data.songName || "-";
-    document.getElementById("releaseArtistHeader").textContent = data.artist || "-";
+    document.getElementById("releaseArtistHeader").textContent =
+      data.artist || "-";
     document.getElementById("modal-isrc").textContent = data.isrc || "-";
 
     // Status - Fixed with better error handling
-  document.getElementById("releaseStatusBadges").textContent = data.status || "-";
-
+    document.getElementById("releaseStatusBadges").textContent =
+      data.status || "-";
 
     // Instagram Audio Link
     const instaAudio = document.getElementById("modal-instagramAudio");
     if (instaAudio) {
       instaAudio.innerHTML =
-        data.instagramAudio && data.instagramAudio !== "N/A" && data.instagramAudio !== ""
+        data.instagramAudio &&
+        data.instagramAudio !== "N/A" &&
+        data.instagramAudio !== ""
           ? `<a href="${data.instagramAudio}" target="_blank" class="text-primary">${data.instagramAudio}</a>`
           : "-";
     }
@@ -1399,7 +1767,9 @@ document.addEventListener("DOMContentLoaded", function () {
     const instaLink = document.getElementById("modal-instagramLink");
     if (instaLink) {
       instaLink.innerHTML =
-        data.instagramLink && data.instagramLink !== "N/A" && data.instagramLink !== ""
+        data.instagramLink &&
+        data.instagramLink !== "N/A" &&
+        data.instagramLink !== ""
           ? `<a href="${data.instagramLink}" target="_blank" class="text-primary">${data.instagramLink}</a>`
           : "-";
     }
@@ -1408,25 +1778,27 @@ document.addEventListener("DOMContentLoaded", function () {
     const fbLink = document.getElementById("modal-facebookLink");
     if (fbLink) {
       fbLink.innerHTML =
-        data.facebookLink && data.facebookLink !== "N/A" && data.facebookLink !== ""
+        data.facebookLink &&
+        data.facebookLink !== "N/A" &&
+        data.facebookLink !== ""
           ? `<a href="${data.facebookLink}" target="_blank" class="text-primary">${data.facebookLink}</a>`
           : "-";
     }
 
     // Update approve/reject buttons
-    updateButtonStates(data.status || 'pending');
+    updateButtonStates(data.status || "pending");
   };
 
   const updateButtonStates = (status) => {
     const approveBtn = document.getElementById("approveBtn");
     const rejectBtn = document.getElementById("rejectBtn");
-    
+
     if (!approveBtn || !rejectBtn) {
       console.error("Approve or Reject button not found!");
       return;
     }
 
-    const normalizedStatus = String(status || 'pending').toLowerCase();
+    const normalizedStatus = String(status || "pending").toLowerCase();
     console.log("updateButtonStates called with:", normalizedStatus); // Debug
 
     // Reset buttons to default state
@@ -1472,14 +1844,17 @@ document.addEventListener("DOMContentLoaded", function () {
         rejectBtn.disabled = true;
       }
 
-      const response = await fetch(`/superadmin/api/relocation-data/${id}/status`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "X-Requested-With": "XMLHttpRequest",
-        },
-        body: JSON.stringify({ status: status }),
-      });
+      const response = await fetch(
+        `/superadmin/api/relocation-data/${id}/status`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "X-Requested-With": "XMLHttpRequest",
+          },
+          body: JSON.stringify({ status: status }),
+        }
+      );
 
       const result = await response.json();
       if (!result.success) {
@@ -1488,13 +1863,13 @@ document.addEventListener("DOMContentLoaded", function () {
 
       console.log("Status updated successfully:", result);
       updateButtonStates(status);
-      
+
       // Update the status badge in modal
       const statusElement = document.getElementById("releaseStatusBadges");
       if (statusElement) {
         statusElement.innerHTML = getStatusBadge(status);
       }
-      
+
       dataTableInstance.ajax.reload(null, false);
       alert(`Request ${status} successfully!`);
     } catch (error) {
@@ -1513,9 +1888,9 @@ document.addEventListener("DOMContentLoaded", function () {
   // --- DATATABLE INITIALIZATION ---
   const dataTableInstance = $("#relocationdataDatatable").DataTable({
     destroy: true,
-    ajax: { 
-      url: "/superadmin/api/relocation-data", 
-      dataSrc: "data" 
+    ajax: {
+      url: "/superadmin/api/relocation-data",
+      dataSrc: "data",
     },
     paging: true,
     searching: true,
@@ -1538,16 +1913,20 @@ document.addEventListener("DOMContentLoaded", function () {
         render: (data, type, row) => `
           <div class="release-info">
             <div class="release-title">
-              <a href="#" class="view-details-link fw-semibold" data-id="${row.id}">${row.songName || 'Unknown Song'}</a>
+              <a href="#" class="view-details-link fw-semibold" data-id="${
+                row.id
+              }">${row.songName || "Unknown Song"}</a>
             </div>
-            <div class="text-muted small mt-1">${row.artist || 'Unknown Artist'}</div>
+            <div class="text-muted small mt-1">${
+              row.artist || "Unknown Artist"
+            }</div>
           </div>`,
       },
-      { 
-        data: "isrc", 
+      {
+        data: "isrc",
         defaultContent: "N/A",
         width: "120px",
-        className: "text-center"
+        className: "text-center",
       },
       {
         data: null,
@@ -1556,23 +1935,46 @@ document.addEventListener("DOMContentLoaded", function () {
         width: "120px",
         render: (data, type, row) => {
           const links = [];
-          if (row.instagramAudio && row.instagramAudio !== "N/A" && row.instagramAudio !== "") {
-            links.push(`<a href="${row.instagramAudio}" target="_blank" class="link-icon me-1" title="Instagram Audio"><i class="bi bi-music-note-beamed"></i></a>`);
+          if (
+            row.instagramAudio &&
+            row.instagramAudio !== "N/A" &&
+            row.instagramAudio !== ""
+          ) {
+            links.push(
+              `<a href="${row.instagramAudio}" target="_blank" class="link-icon me-1" title="Instagram Audio"><i class="bi bi-music-note-beamed"></i></a>`
+            );
           }
-          if (row.instagramLink && row.instagramLink !== "N/A" && row.instagramLink !== "") {
-            links.push(`<a href="${row.instagramLink}" target="_blank" class="link-icon me-1" title="Instagram"><i class="bi bi-instagram"></i></a>`);
+          if (
+            row.instagramLink &&
+            row.instagramLink !== "N/A" &&
+            row.instagramLink !== ""
+          ) {
+            links.push(
+              `<a href="${row.instagramLink}" target="_blank" class="link-icon me-1" title="Instagram"><i class="bi bi-instagram"></i></a>`
+            );
           }
-          if (row.facebookLink && row.facebookLink !== "N/A" && row.facebookLink !== "") {
-            links.push(`<a href="${row.facebookLink}" target="_blank" class="link-icon me-1" title="Facebook"><i class="bi bi-facebook"></i></a>`);
+          if (
+            row.facebookLink &&
+            row.facebookLink !== "N/A" &&
+            row.facebookLink !== ""
+          ) {
+            links.push(
+              `<a href="${row.facebookLink}" target="_blank" class="link-icon me-1" title="Facebook"><i class="bi bi-facebook"></i></a>`
+            );
           }
-          return links.length > 0 ? links.join('') : '<span class="text-muted">-</span>';
-        }
+          return links.length > 0
+            ? links.join("")
+            : '<span class="text-muted">-</span>';
+        },
       },
       {
         data: "status",
         className: "text-center",
         width: "120px",
-        render: (data) => `<div class="d-flex justify-content-center">${getStatusBadge(data)}</div>`,
+        render: (data) =>
+          `<div class="d-flex justify-content-center">${getStatusBadge(
+            data
+          )}</div>`,
       },
     ],
     columnDefs: [
@@ -1597,19 +1999,27 @@ document.addEventListener("DOMContentLoaded", function () {
   });
 
   // --- EVENT LISTENERS ---
-  $("#relocationdataDatatable tbody").on("click", ".view-details-link", function (e) {
-    e.preventDefault();
-    const id = parseInt($(this).data("id"), 10);
-    openModal(id);
-  });
+  $("#relocationdataDatatable tbody").on(
+    "click",
+    ".view-details-link",
+    function (e) {
+      e.preventDefault();
+      const id = parseInt($(this).data("id"), 10);
+      openModal(id);
+    }
+  );
 
   document.getElementById("approveBtn").addEventListener("click", function () {
-    const id = document.getElementById("releaseModal").getAttribute("data-current-id");
+    const id = document
+      .getElementById("releaseModal")
+      .getAttribute("data-current-id");
     if (id && !this.disabled) updateStatus(parseInt(id), "approved");
   });
 
   document.getElementById("rejectBtn").addEventListener("click", function () {
-    const id = document.getElementById("releaseModal").getAttribute("data-current-id");
+    const id = document
+      .getElementById("releaseModal")
+      .getAttribute("data-current-id");
     if (id && !this.disabled) updateStatus(parseInt(id), "rejected");
   });
 
@@ -1883,7 +2293,11 @@ $(document).ready(function () {
     }
 
     // Show loading
-    dropdown.show().html('<div class="dropdown-item text-center"><small class="text-muted">Searching...</small></div>');
+    dropdown
+      .show()
+      .html(
+        '<div class="dropdown-item text-center"><small class="text-muted">Searching...</small></div>'
+      );
 
     // Debounce search
     spotifySearchTimeout = setTimeout(() => {
@@ -1895,8 +2309,12 @@ $(document).ready(function () {
           if (response.success && response.data.length > 0) {
             let html = "";
             response.data.forEach(function (artist) {
-              let image = artist.image || "https://via.placeholder.com/40x40?text=🎵";
-              let followers = artist.followers > 0 ? `${artist.followers.toLocaleString()} followers` : "No followers data";
+              let image =
+                artist.image || "https://via.placeholder.com/40x40?text=🎵";
+              let followers =
+                artist.followers > 0
+                  ? `${artist.followers.toLocaleString()} followers`
+                  : "No followers data";
               let genres = artist.genres || "No genres";
 
               html += `
@@ -1912,12 +2330,16 @@ $(document).ready(function () {
             });
             dropdown.html(html);
           } else {
-            dropdown.html('<div class="dropdown-item text-center text-muted">No artists found</div>');
+            dropdown.html(
+              '<div class="dropdown-item text-center text-muted">No artists found</div>'
+            );
           }
         },
         error: function () {
-          dropdown.html('<div class="dropdown-item text-center text-danger">Search failed</div>');
-        }
+          dropdown.html(
+            '<div class="dropdown-item text-center text-danger">Search failed</div>'
+          );
+        },
       });
     }, 500);
   });
@@ -1936,7 +2358,11 @@ $(document).ready(function () {
     }
 
     // Show loading
-    dropdown.show().html('<div class="dropdown-item text-center"><small class="text-muted">Searching Apple Music...</small></div>');
+    dropdown
+      .show()
+      .html(
+        '<div class="dropdown-item text-center"><small class="text-muted">Searching Apple Music...</small></div>'
+      );
 
     // Debounce search
     appleSearchTimeout = setTimeout(() => {
@@ -1949,7 +2375,8 @@ $(document).ready(function () {
             console.log("Apple Music search response:", response); // Debug log
             let html = "";
             response.data.forEach(function (artist) {
-              let image = artist.image || "data:image/svg+xml;base64,PHN2ZyB4bWxucz0..."; 
+              let image =
+                artist.image || "data:image/svg+xml;base64,PHN2ZyB4bWxucz0...";
               let genres = artist.genres || "No genres";
               let info = `${genres}`;
 
@@ -1966,12 +2393,16 @@ $(document).ready(function () {
             });
             dropdown.html(html);
           } else {
-            dropdown.html('<div class="dropdown-item text-center text-muted">No artists found</div>');
+            dropdown.html(
+              '<div class="dropdown-item text-center text-muted">No artists found</div>'
+            );
           }
         },
         error: function () {
-          dropdown.html('<div class="dropdown-item text-center text-danger">Search failed</div>');
-        }
+          dropdown.html(
+            '<div class="dropdown-item text-center text-danger">Search failed</div>'
+          );
+        },
       });
     }, 500);
   });
@@ -2077,7 +2508,9 @@ $(document).ready(function () {
         showArtistAlert("danger", msg);
       },
       complete: function () {
-        $('button[type="submit"]').prop("disabled", false).text("Create Artist");
+        $('button[type="submit"]')
+          .prop("disabled", false)
+          .text("Create Artist");
       },
     });
   });
@@ -2651,638 +3084,569 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 });
 
-// youtube js
+// youtube js - Updated with In Review functionality
+document.addEventListener("DOMContentLoaded", function () {
+  const youtubePageContainer = document.querySelector(".admin-youtube-page");
 
-// document.addEventListener("DOMContentLoaded", function () {
-//   // This is the unique container for your YouTube page
-//   const youtubePageContainer = document.querySelector(".admin-youtube-page");
+  if (youtubePageContainer) {
+    let conflictRequests = [];
+    let sortState = { key: null, direction: "asc" };
 
-//   // This ensures the code ONLY runs on the YouTube page
-//   if (youtubePageContainer) {
-//     // --- DATA ---
-//     const conflictRequests = [
-//       {
-//         id: 1,
-//         category: "Ownership conflict",
-//         assetTitle: "Cosmic Drift",
-//         artist: "Astro Beats",
-//         assetId: "90736897913",
-//         upc: "198009123456",
-//         isrc: "USAT22312345",
-//         otherParty: "The Orchard",
-//         dailyViews: "79K",
-//         expiry: "2 days",
-//         status: "Action Required",
-//         albumCoverUrl: "https://placehold.co/80x80/3498db/ffffff?text=C",
-//       },
-//       {
-//         id: 2,
-//         category: "Policy",
-//         assetTitle: "Ocean Tides",
-//         artist: "Deep Wave",
-//         assetId: "3478239381",
-//         upc: "198009654321",
-//         isrc: "USAT22354321",
-//         otherParty: "Believe",
-//         dailyViews: "3K",
-//         expiry: "-",
-//         status: "Resolved",
-//         albumCoverUrl: "https://placehold.co/80x80/1abc9c/ffffff?text=O",
-//       },
-//       {
-//         id: 3,
-//         category: "Ownership conflict",
-//         assetTitle: "City Lights",
-//         artist: "Urban Glow",
-//         assetId: "3478239381",
-//         upc: "198009789012",
-//         isrc: "USAT22398765",
-//         otherParty: "CD Baby",
-//         dailyViews: "1.2K",
-//         expiry: "15 days",
-//         status: "In Review",
-//         albumCoverUrl: "https://placehold.co/80x80/9b59b6/ffffff?text=C",
-//       },
-//       {
-//         id: 4,
-//         category: "Metadata Error",
-//         assetTitle: "Desert Mirage",
-//         artist: "Sahara Echo",
-//         assetId: "89321756430",
-//         upc: "198001112233",
-//         isrc: "USAT22445566",
-//         otherParty: "TuneCore",
-//         dailyViews: "58K",
-//         expiry: "5 days",
-//         status: "Action Required",
-//         albumCoverUrl: "https://placehold.co/80x80/e67e22/ffffff?text=D",
-//       },
-//       {
-//         id: 5,
-//         category: "Ownership conflict",
-//         assetTitle: "Electric Horizon",
-//         artist: "Volt Squad",
-//         assetId: "98574623109",
-//         upc: "198002244466",
-//         isrc: "USAT22449900",
-//         otherParty: "The Orchard",
-//         dailyViews: "12K",
-//         expiry: "7 days",
-//         status: "In Review",
-//         albumCoverUrl: "https://placehold.co/80x80/f39c12/ffffff?text=E",
-//       },
-//     ];
+    // --- HELPERS ---
+    function getStatusBadge(status) {
+      let badgeClass = "bg-secondary-subtle text-secondary-emphasis";
+      if (status === "Action Required")
+        badgeClass = "bg-danger-subtle text-danger-emphasis";
+      else if (status === "Resolved")
+        badgeClass = "bg-success-subtle text-success-emphasis";
+      else if (status === "In Review")
+        badgeClass = "bg-warning-subtle text-warning-emphasis";
+      return `<span class="badge rounded-pill border ${badgeClass}">${status}</span>`;
+    }
 
-//     const territoriesByRegion = {
-//       Africa: [
-//         { name: "Algeria", code: "DZ" },
-//         { name: "Angola", code: "AO" },
-//         { name: "Benin", code: "BJ" },
-//         { name: "Botswana", code: "BW" },
-//         { name: "Burkina Faso", code: "BF" },
-//         { name: "Burundi", code: "BI" },
-//         { name: "Cabo Verde", code: "CV" },
-//         { name: "Cameroon", code: "CM" },
-//         { name: "Central African Republic", code: "CF" },
-//         { name: "Chad", code: "TD" },
-//         { name: "Comoros", code: "KM" },
-//         { name: "Congo", code: "CG" },
-//         { name: "Congo (DRC)", code: "CD" },
-//         { name: "Côte d'Ivoire", code: "CI" },
-//         { name: "Djibouti", code: "DJ" },
-//         { name: "Egypt", code: "EG" },
-//         { name: "Equatorial Guinea", code: "GQ" },
-//         { name: "Eritrea", code: "ER" },
-//         { name: "Eswatini", code: "SZ" },
-//         { name: "Ethiopia", code: "ET" },
-//         { name: "Gabon", code: "GA" },
-//         { name: "Gambia", code: "GM" },
-//         { name: "Ghana", code: "GH" },
-//         { name: "Guinea", code: "GN" },
-//         { name: "Guinea-Bissau", code: "GW" },
-//         { name: "Kenya", code: "KE" },
-//         { name: "Lesotho", code: "LS" },
-//         { name: "Liberia", code: "LR" },
-//         { name: "Libya", code: "LY" },
-//         { name: "Madagascar", code: "MG" },
-//         { name: "Malawi", code: "MW" },
-//         { name: "Mali", code: "ML" },
-//         { name: "Mauritania", code: "MR" },
-//         { name: "Mauritius", code: "MU" },
-//         { name: "Mayotte", code: "YT" },
-//         { name: "Morocco", code: "MA" },
-//         { name: "Mozambique", code: "MZ" },
-//         { name: "Namibia", code: "NA" },
-//         { name: "Niger", code: "NE" },
-//         { name: "Nigeria", code: "NG" },
-//         { name: "Réunion", code: "RE" },
-//         { name: "Rwanda", code: "RW" },
-//         { name: "Saint Helena", code: "SH" },
-//         { name: "Sao Tome and Principe", code: "ST" },
-//         { name: "Senegal", code: "SN" },
-//         { name: "Seychelles", code: "SC" },
-//         { name: "Sierra Leone", code: "SL" },
-//         { name: "Somalia", code: "SO" },
-//         { name: "South Africa", code: "ZA" },
-//         { name: "South Sudan", code: "SS" },
-//         { name: "Sudan", code: "SD" },
-//         { name: "Tanzania", code: "TZ" },
-//         { name: "Togo", code: "TG" },
-//         { name: "Tunisia", code: "TN" },
-//         { name: "Uganda", code: "UG" },
-//         { name: "Zambia", code: "ZM" },
-//         { name: "Zimbabwe", code: "ZW" },
-//       ],
-//       Antarctica: [
-//         { name: "Antarctica", code: "AQ" },
-//         { name: "French Southern Territories", code: "TF" },
-//         { name: "South Georgia and the South Sandwich Islands", code: "GS" },
-//       ],
-//       Asia: [
-//         { name: "Afghanistan", code: "AF" },
-//         { name: "Armenia", code: "AM" },
-//         { name: "Azerbaijan", code: "AZ" },
-//         { name: "Bahrain", code: "BH" },
-//         { name: "Bangladesh", code: "BD" },
-//         { name: "Bhutan", code: "BT" },
-//         { name: "British Indian Ocean Territory", code: "IO" },
-//         { name: "Brunei", code: "BN" },
-//         { name: "Cambodia", code: "KH" },
-//         { name: "China", code: "CN" },
-//         { name: "Cyprus", code: "CY" },
-//         { name: "Georgia", code: "GE" },
-//         { name: "Hong Kong", code: "HK" },
-//         { name: "India", code: "IN" },
-//         { name: "Indonesia", code: "ID" },
-//         { name: "Iran", code: "IR" },
-//         { name: "Iraq", code: "IQ" },
-//         { name: "Israel", code: "IL" },
-//         { name: "Japan", code: "JP" },
-//         { name: "Jordan", code: "JO" },
-//         { name: "Kazakhstan", code: "KZ" },
-//         { name: "Kuwait", code: "KW" },
-//         { name: "Kyrgyzstan", code: "KG" },
-//         { name: "Laos", code: "LA" },
-//         { name: "Lebanon", code: "LB" },
-//         { name: "Macao", code: "MO" },
-//         { name: "Malaysia", code: "MY" },
-//         { name: "Maldives", code: "MV" },
-//         { name: "Mongolia", code: "MN" },
-//         { name: "Myanmar", code: "MM" },
-//         { name: "Nepal", code: "NP" },
-//         { name: "North Korea", code: "KP" },
-//         { name: "Oman", code: "OM" },
-//         { name: "Pakistan", code: "PK" },
-//         { name: "Palestine", code: "PS" },
-//         { name: "Philippines", code: "PH" },
-//         { name: "Qatar", code: "QA" },
-//         { name: "Saudi Arabia", code: "SA" },
-//         { name: "Singapore", code: "SG" },
-//         { name: "South Korea", code: "KR" },
-//         { name: "Sri Lanka", code: "LK" },
-//         { name: "Syria", code: "SY" },
-//         { name: "Taiwan", code: "TW" },
-//         { name: "Tajikistan", code: "TJ" },
-//         { name: "Thailand", code: "TH" },
-//         { name: "Timor-Leste", code: "TL" },
-//         { name: "Turkey", code: "TR" },
-//         { name: "Turkmenistan", code: "TM" },
-//         { name: "United Arab Emirates", code: "AE" },
-//         { name: "Uzbekistan", code: "UZ" },
-//         { name: "Vietnam", code: "VN" },
-//         { name: "Yemen", code: "YE" },
-//       ],
-//       Europe: [
-//         { name: "Åland Islands", code: "AX" },
-//         { name: "Albania", code: "AL" },
-//         { name: "Andorra", code: "AD" },
-//         { name: "Austria", code: "AT" },
-//         { name: "Belarus", code: "BY" },
-//         { name: "Belgium", code: "BE" },
-//         { name: "Bosnia and Herzegovina", code: "BA" },
-//         { name: "Bulgaria", code: "BG" },
-//         { name: "Croatia", code: "HR" },
-//         { name: "Czechia", code: "CZ" },
-//         { name: "Denmark", code: "DK" },
-//         { name: "Estonia", code: "EE" },
-//         { name: "Faroe Islands", code: "FO" },
-//         { name: "Finland", code: "FI" },
-//         { name: "France", code: "FR" },
-//         { name: "Germany", code: "DE" },
-//         { name: "Gibraltar", code: "GI" },
-//         { name: "Greece", code: "GR" },
-//         { name: "Guernsey", code: "GG" },
-//         { name: "Holy See", code: "VA" },
-//         { name: "Hungary", code: "HU" },
-//         { name: "Iceland", code: "IS" },
-//         { name: "Ireland", code: "IE" },
-//         { name: "Isle of Man", code: "IM" },
-//         { name: "Italy", code: "IT" },
-//         { name: "Jersey", code: "JE" },
-//         { name: "Latvia", code: "LV" },
-//         { name: "Liechtenstein", code: "LI" },
-//         { name: "Lithuania", code: "LT" },
-//         { name: "Luxembourg", code: "LU" },
-//         { name: "Malta", code: "MT" },
-//         { name: "Moldova", code: "MD" },
-//         { name: "Monaco", code: "MC" },
-//         { name: "Montenegro", code: "ME" },
-//         { name: "Netherlands", code: "NL" },
-//         { name: "North Macedonia", code: "MK" },
-//         { name: "Norway", code: "NO" },
-//         { name: "Poland", code: "PL" },
-//         { name: "Portugal", code: "PT" },
-//         { name: "Romania", code: "RO" },
-//         { name: "Russia", code: "RU" },
-//         { name: "San Marino", code: "SM" },
-//         { name: "Serbia", code: "RS" },
-//         { name: "Slovakia", code: "SK" },
-//         { name: "Slovenia", code: "SI" },
-//         { name: "Spain", code: "ES" },
-//         { name: "Svalbard and Jan Mayen", code: "SJ" },
-//         { name: "Sweden", code: "SE" },
-//         { name: "Switzerland", code: "CH" },
-//         { name: "Ukraine", code: "UA" },
-//         { name: "United Kingdom", code: "GB" },
-//       ],
-//       "North America": [
-//         { name: "Anguilla", code: "AI" },
-//         { name: "Antigua and Barbuda", code: "AG" },
-//         { name: "Aruba", code: "AW" },
-//         { name: "Bahamas", code: "BS" },
-//         { name: "Barbados", code: "BB" },
-//         { name: "Belize", code: "BZ" },
-//         { name: "Bermuda", code: "BM" },
-//         { name: "Bonaire", code: "BQ" },
-//         { name: "Canada", code: "CA" },
-//         { name: "Cayman Islands", code: "KY" },
-//         { name: "Costa Rica", code: "CR" },
-//         { name: "Cuba", code: "CU" },
-//         { name: "Curaçao", code: "CW" },
-//         { name: "Dominica", code: "DM" },
-//         { name: "Dominican Republic", code: "DO" },
-//         { name: "El Salvador", code: "SV" },
-//         { name: "Greenland", code: "GL" },
-//         { name: "Grenada", code: "GD" },
-//         { name: "Guadeloupe", code: "GP" },
-//         { name: "Guatemala", code: "GT" },
-//         { name: "Haiti", code: "HT" },
-//         { name: "Honduras", code: "HN" },
-//         { name: "Jamaica", code: "JM" },
-//         { name: "Martinique", code: "MQ" },
-//         { name: "Mexico", code: "MX" },
-//         { name: "Montserrat", code: "MS" },
-//         { name: "Nicaragua", code: "NI" },
-//         { name: "Panama", code: "PA" },
-//         { name: "Puerto Rico", code: "PR" },
-//         { name: "Saint Barthélemy", code: "BL" },
-//         { name: "Saint Kitts and Nevis", code: "KN" },
-//         { name: "Saint Lucia", code: "LC" },
-//         { name: "Saint Martin", code: "MF" },
-//         { name: "Saint Pierre and Miquelon", code: "PM" },
-//         { name: "Saint Vincent and the Grenadines", code: "VC" },
-//         { name: "Sint Maarten", code: "SX" },
-//         { name: "Trinidad and Tobago", code: "TT" },
-//         { name: "Turks and Caicos Islands", code: "TC" },
-//         { name: "United States", code: "US" },
-//         { name: "U.S. Virgin Islands", code: "VI" },
-//       ],
-//       Oceania: [
-//         { name: "American Samoa", code: "AS" },
-//         { name: "Australia", code: "AU" },
-//         { name: "Christmas Island", code: "CX" },
-//         { name: "Cocos (Keeling) Islands", code: "CC" },
-//         { name: "Cook Islands", code: "CK" },
-//         { name: "Fiji", code: "FJ" },
-//         { name: "French Polynesia", code: "PF" },
-//         { name: "Guam", code: "GU" },
-//         { name: "Kiribati", code: "KI" },
-//         { name: "Marshall Islands", code: "MH" },
-//         { name: "Micronesia", code: "FM" },
-//         { name: "Nauru", code: "NR" },
-//         { name: "New Caledonia", code: "NC" },
-//         { name: "New Zealand", code: "NZ" },
-//         { name: "Niue", code: "NU" },
-//         { name: "Norfolk Island", code: "NF" },
-//         { name: "Northern Mariana Islands", code: "MP" },
-//         { name: "Palau", code: "PW" },
-//         { name: "Papua New Guinea", code: "PG" },
-//         { name: "Pitcairn", code: "PN" },
-//         { name: "Samoa", code: "WS" },
-//         { name: "Solomon Islands", code: "SB" },
-//         { name: "Tokelau", code: "TK" },
-//         { name: "Tonga", code: "TO" },
-//         { name: "Tuvalu", code: "TV" },
-//         { name: "U.S. Minor Outlying Islands", code: "UM" },
-//         { name: "Vanuatu", code: "VU" },
-//         { name: "Wallis and Futuna", code: "WF" },
-//       ],
-//       "South America": [
-//         { name: "Argentina", code: "AR" },
-//         { name: "Bolivia", code: "BO" },
-//         { name: "Brazil", code: "BR" },
-//         { name: "Chile", code: "CL" },
-//         { name: "Colombia", code: "CO" },
-//         { name: "Ecuador", code: "EC" },
-//         { name: "Falkland Islands", code: "FK" },
-//         { name: "French Guiana", code: "GF" },
-//         { name: "Guyana", code: "GY" },
-//         { name: "Paraguay", code: "PY" },
-//         { name: "Peru", code: "PE" },
-//         { name: "Suriname", code: "SR" },
-//         { name: "Uruguay", code: "UY" },
-//         { name: "Venezuela", code: "VE" },
-//       ],
-//     };
-//     const totalCountries = Object.values(territoriesByRegion).reduce(
-//       (sum, region) => sum + region.length,
-//       0
-//     );
-//     let sortState = { key: null, direction: "asc" };
+    function parseViews(views) {
+      if (typeof views !== "string") return 0;
+      const num = parseFloat(views.toUpperCase());
+      return views.toUpperCase().includes("K") ? num * 1000 : num;
+    }
 
-//     // --- HELPER FUNCTIONS ---
-//     function getStatusBadge(status) {
-//       let badgeClass = "bg-secondary-subtle text-secondary-emphasis"; // Default
-//       if (status === "Action Required")
-//         badgeClass = "bg-danger-subtle text-danger-emphasis";
-//       else if (status === "Resolved")
-//         badgeClass = "bg-success-subtle text-success-emphasis";
-//       else if (status === "In Review")
-//         badgeClass = "bg-warning-subtle text-warning-emphasis";
-//       return `<span class="badge rounded-pill border ${badgeClass}">${status}</span>`;
-//     }
+    function parseExpiry(expiry) {
+      if (typeof expiry !== "string" || expiry === "-") return Infinity;
+      return parseInt(expiry);
+    }
 
-//     function parseViews(views) {
-//       if (typeof views !== "string") return 0;
-//       const num = parseFloat(views.toUpperCase());
-//       return views.toUpperCase().includes("K") ? num * 1000 : num;
-//     }
-//     function parseExpiry(expiry) {
-//       if (typeof expiry !== "string" || expiry === "-") return Infinity;
-//       return parseInt(expiry);
-//     }
-//     function updateTerritoryCounter() {
-//       const container = document.getElementById("conflictResolutionOffcanvas");
-//       if (!container) return;
-//       const selectedCount = container.querySelectorAll(
-//         ".country-checkbox:checked"
-//       ).length;
-//       container.querySelector(
-//         "#territoryCounter"
-//       ).textContent = `${selectedCount} contested countries out of ${totalCountries} delivered`;
-//     }
-//     function updateSortIcons() {
-//       document
-//         .querySelectorAll(".sort-icon")
-//         .forEach((icon) => icon.classList.remove("active", "asc", "desc"));
-//       if (sortState.key) {
-//         const activeHeader = document.querySelector(
-//           `.sortable-header[data-sort="${sortState.key}"]`
-//         );
-//         if (activeHeader)
-//           activeHeader
-//             .querySelector(".sort-icon")
-//             .classList.add("active", sortState.direction);
-//       }
-//     }
-//     function addTerritoryEventListeners() {
-//       const container = document.getElementById("conflictResolutionOffcanvas");
-//       if (!container) return;
-//       container.querySelectorAll(".region-checkbox").forEach((rcb) =>
-//         rcb.addEventListener("change", function () {
-//           const region = this.dataset.region;
-//           container
-//             .querySelectorAll(`.country-checkbox[data-region="${region}"]`)
-//             .forEach((ccb) => (ccb.checked = this.checked));
-//           updateTerritoryCounter();
-//         })
-//       );
-//       container.querySelectorAll(".country-checkbox").forEach((ccb) =>
-//         ccb.addEventListener("change", function () {
-//           const region = this.dataset.region;
-//           const allInRegion = Array.from(
-//             container.querySelectorAll(
-//               `.country-checkbox[data-region="${region}"]`
-//             )
-//           ).every((cb) => cb.checked);
-//           container.querySelector(
-//             `.region-checkbox[data-region="${region}"]`
-//           ).checked = allInRegion;
-//           updateTerritoryCounter();
-//         })
-//       );
-//     }
+    function updateSortIcons() {
+      document
+        .querySelectorAll(".sort-icon")
+        .forEach((icon) => icon.classList.remove("active", "asc", "desc"));
+      if (sortState.key) {
+        const activeHeader = document.querySelector(
+          `.sortable-header[data-sort="${sortState.key}"]`
+        );
+        if (activeHeader)
+          activeHeader
+            .querySelector(".sort-icon")
+            .classList.add("active", sortState.direction);
+      }
+    }
 
-//     // --- RENDER FUNCTIONS ---
-//     function renderTable(data) {
-//       const tableBody = document.getElementById("youtubeTableBody");
-//       tableBody.innerHTML =
-//         !data || data.length === 0
-//           ? `<tr><td colspan="10" class="text-center p-5"><h5>No matching conflicts found.</h5></td></tr>`
-//           : data
-//               .map(
-//                 (req) => `
-//                 <tr style="cursor: pointer;" data-bs-toggle="offcanvas" data-bs-target="#conflictResolutionOffcanvas"
-//                     data-song-name="${req.assetTitle}" data-artist-name="${
-//                   req.artist
-//                 }" data-isrc="${req.isrc}" 
-//                     data-cover-url="${req.albumCoverUrl}" data-category="${
-//                   req.category
-//                 }" data-other-party="${req.otherParty}">
-//                     <td class="text-center"><i class="bi bi-youtube text-danger fs-5"></i></td>
-//                     <td>${req.category}</td>
-//                     <td>${req.assetTitle}</td>
-//                     <td><div class="fw-bold">${
-//                       req.artist
-//                     }</div><small class="text-muted">Asset ID: ${
-//                   req.assetId
-//                 }</small></td>
-//                     <td>${req.upc}</td>
-//                     <td>${req.otherParty}</td>
-//                     <td>${req.dailyViews}</td>
-//                     <td>${req.expiry}</td>
-//                     <td>${getStatusBadge(req.status)}</td>
-//                     <td><i class="bi bi-chevron-right text-muted"></i></td>
-//                 </tr>`
-//               )
-//               .join("");
-//       document.getElementById(
-//         "pagination-text"
-//       ).textContent = `${data.length} of ${conflictRequests.length} results`;
-//     }
+    function getRightsOwnedLabel(value) {
+      switch (value) {
+        case "original_exclusive":
+          return "My content is Original and I own exclusive rights";
+        case "non_exclusive":
+          return "I own non-exclusive rights only (license granted by a third party)";
+        case "cid_exclusive":
+          return "I have granted exclusive license for Content-ID stores only";
+        case "soundalike":
+          return "It is soundalike recording (e.g., cover or remix)";
+        case "public_domain":
+          return "It is Public Domain recording";
+        case "no_rights":
+          return "I don't own rights for the selected content";
+        default:
+          return value || "";
+      }
+    }
 
-//     function renderTerritoryAccordion() {
-//       const accordionContainer = document.getElementById("territoryAccordion");
-//       if (!accordionContainer) return;
-//       accordionContainer.innerHTML = Object.entries(territoriesByRegion)
-//         .map(([region, countries]) => {
-//           const regionId = region.replace(/[^a-zA-Z0-9]/g, "");
-//           return `
-//                 <div class="accordion-item">
-//                     <h2 class="accordion-header" id="heading-${regionId}">
-//                         <button class="accordion-button collapsed d-flex align-items-center" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-${regionId}" aria-expanded="false">
-//                             <div class="form-check me-auto pe-2"><input class="form-check-input region-checkbox" type="checkbox" id="region-${regionId}" data-region="${region}" checked><label class="form-check-label fw-bold" for="region-${regionId}">${region}</label></div>
-//                             <span class="text-muted small me-2">${
-//                               countries.length
-//                             } countries</span>
-//                         </button>
-//                     </h2>
-//                     <div id="collapse-${regionId}" class="accordion-collapse collapse" data-bs-parent="#territoryAccordion">
-//                         <div class="accordion-body"><div class="territory-list-inner">${countries
-//                           .map(
-//                             (country) =>
-//                               `<div class="form-check"><input class="form-check-input country-checkbox" type="checkbox" value="${country.code}" id="country-${country.code}" data-region="${region}" checked><label class="form-check-label" for="country-${country.code}">${country.name}</label></div>`
-//                           )
-//                           .join("")}</div></div>
-//                     </div>
-//                 </div>`;
-//         })
-//         .join("");
-//       addTerritoryEventListeners();
-//       updateTerritoryCounter();
-//     }
+    // --- RENDER ---
+    function renderTable(data) {
+      const tableBody = document.getElementById("youtubeTableBody");
+      tableBody.innerHTML =
+        !data || data.length === 0
+          ? `<tr><td colspan="10" class="text-center p-5"><h5>No matching conflicts found.</h5></td></tr>`
+          : data
+              .map(
+                (req) => `
+                <tr style="cursor: pointer;" data-bs-toggle="offcanvas" data-bs-target="#conflictResolutionOffcanvas"
+                    data-id="${req.id}"
+                    data-song-name="${req.songName}" 
+                    data-artist-name="${req.artistName}" 
+                    data-isrc="${req.isrc}" 
+                    data-cover-url="${req.albumCoverUrl}" 
+                    data-category="${req.category}" 
+                    data-other-party="${req.otherParty}"
+                    data-status="${req.status}"
+                    data-rights-owned="${req.rightsOwned || ""}"
+                    data-supporting-file="${req.supportingFile || ""}"
+                    data-resolution-data="${encodeURIComponent(
+                      JSON.stringify(req.resolutionData || {})
+                    )}">
+                    <td class="text-center"><i class="bi bi-youtube text-danger fs-5"></i></td>
+                    <td>${req.category}</td>
+                    <td>${req.assetTitle}</td>
+                    <td><div class="fw-bold">${
+                      req.artist
+                    }</div><small class="text-muted">Asset ID: ${
+                  req.assetId
+                }</small></td>
+                    <td>${req.upc}</td>
+                    <td>${req.otherParty}</td>
+                    <td>${req.dailyViews}</td>
+                    <td>${req.expiry}</td>
+                    <td>${getStatusBadge(req.status)}</td>
+                    <td><i class="bi bi-chevron-right text-muted"></i></td>
+                </tr>`
+              )
+              .join("");
+      document.getElementById(
+        "pagination-text"
+      ).textContent = `${data.length} of ${conflictRequests.length} results`;
+    }
 
-//     // --- EVENT HANDLERS & INITIALIZATION ---
-//     const conflictOffcanvasEl = document.getElementById(
-//       "conflictResolutionOffcanvas"
-//     );
-//     const conflictOffcanvas = new bootstrap.Offcanvas(conflictOffcanvasEl);
-//     const conflictForm = document.getElementById("youtubeConflictForm");
-//     const steps = Array.from(conflictForm.querySelectorAll(".form-step"));
-//     const nextBtn = conflictOffcanvasEl.querySelector("#nextBtn");
-//     const backBtn = conflictOffcanvasEl.querySelector("#backBtn");
-//     const submitBtn = conflictOffcanvasEl.querySelector("#submitBtn");
-//     const fileInput = conflictOffcanvasEl.querySelector("#formFile");
-//     const fileDisplay = conflictOffcanvasEl.querySelector("#selectedFileName");
-//     let currentStep = 0;
+    // --- OFFCANVAS ---
+    const conflictOffcanvasEl = document.getElementById(
+      "conflictResolutionOffcanvas"
+    );
+    const conflictOffcanvas = new bootstrap.Offcanvas(conflictOffcanvasEl);
+    const conflictForm = document.getElementById("youtubeConflictForm");
+    const steps = Array.from(conflictForm.querySelectorAll(".form-step"));
+    const nextBtn = conflictOffcanvasEl.querySelector("#nextBtn");
+    const backBtn = conflictOffcanvasEl.querySelector("#backBtn");
+    const submitBtn = conflictOffcanvasEl.querySelector("#submitBtn");
+    const fileInput = conflictOffcanvasEl.querySelector("#formFile");
+    const fileDisplay = conflictOffcanvasEl.querySelector("#selectedFileName");
+    let currentStep = 0;
+    let activeConflictId = null;
+    let isInReviewMode = false;
 
-//     document
-//       .getElementById("releasesTable")
-//       .querySelector("thead")
-//       .addEventListener("click", (e) => {
-//         const headerCell = e.target.closest(".sortable-header");
-//         if (!headerCell) return;
-//         const sortKey = headerCell.dataset.sort;
-//         if (sortState.key === sortKey) {
-//           sortState.direction = sortState.direction === "asc" ? "desc" : "asc";
-//         } else {
-//           sortState.key = sortKey;
-//           sortState.direction = "asc";
-//         }
-//         conflictRequests.sort((a, b) => {
-//           let valA = a[sortState.key],
-//             valB = b[sortState.key];
-//           if (sortState.key === "dailyViews") {
-//             valA = parseViews(valA);
-//             valB = parseViews(valB);
-//           } else if (sortState.key === "expiry") {
-//             valA = parseExpiry(valA);
-//             valB = parseExpiry(valB);
-//           }
-//           let comparison = 0;
-//           if (valA > valB) comparison = 1;
-//           else if (valA < valB) comparison = -1;
-//           return sortState.direction === "desc" ? comparison * -1 : comparison;
-//         });
-//         renderTable(conflictRequests);
-//         updateSortIcons();
-//       });
+    // --- TABLE SORTING ---
+    document
+      .getElementById("releasesTable")
+      .querySelector("thead")
+      .addEventListener("click", (e) => {
+        const headerCell = e.target.closest(".sortable-header");
+        if (!headerCell) return;
+        const sortKey = headerCell.dataset.sort;
+        if (sortState.key === sortKey) {
+          sortState.direction = sortState.direction === "asc" ? "desc" : "asc";
+        } else {
+          sortState.key = sortKey;
+          sortState.direction = "asc";
+        }
+        conflictRequests.sort((a, b) => {
+          let valA = a[sortState.key],
+            valB = b[sortState.key];
+          if (sortState.key === "dailyViews") {
+            valA = parseViews(valA);
+            valB = parseViews(valB);
+          } else if (sortState.key === "expiry") {
+            valA = parseExpiry(valA);
+            valB = parseExpiry(valB);
+          }
+          let comparison = 0;
+          if (valA > valB) comparison = 1;
+          else if (valA < valB) comparison = -1;
+          return sortState.direction === "desc" ? comparison * -1 : comparison;
+        });
+        renderTable(conflictRequests);
+        updateSortIcons();
+      });
 
-//     function showStep(stepIndex) {
-//       steps.forEach((step, index) =>
-//         step.classList.toggle("d-none", index !== stepIndex)
-//       );
-//       backBtn.classList.toggle("d-none", stepIndex === 0);
-//       nextBtn.classList.toggle("d-none", stepIndex === steps.length - 1);
-//       submitBtn.classList.toggle("d-none", stepIndex !== steps.length - 1);
-//       currentStep = stepIndex;
-//     }
+    // --- STEP NAVIGATION ---
+    function showStep(stepIndex) {
+      steps.forEach((step, index) =>
+        step.classList.toggle("d-none", index !== stepIndex)
+      );
+      backBtn.classList.toggle("d-none", stepIndex === 0 || isInReviewMode);
+      nextBtn.classList.toggle(
+        "d-none",
+        stepIndex === steps.length - 1 || isInReviewMode
+      );
+      submitBtn.classList.toggle(
+        "d-none",
+        stepIndex !== steps.length - 1 && !isInReviewMode
+      );
+      currentStep = stepIndex;
+    }
 
-//     nextBtn.addEventListener("click", () => {
-//       if (
-//         currentStep === 0 &&
-//         !conflictForm.querySelector('input[name="rightsOwned"]:checked')
-//       )
-//         return alert("Please select a rights option.");
-//       if (
-//         currentStep === 1 &&
-//         !conflictForm.querySelector(".country-checkbox:checked")
-//       )
-//         return alert("Please select at least one territory.");
-//       if (currentStep < steps.length - 1) showStep(currentStep + 1);
-//     });
+    // --- IN REVIEW DISPLAY ---
+    function showInReviewDisplay(resolutionData) {
+      // Hide all regular form steps
+      steps.forEach((step) => step.classList.add("d-none"));
 
-//     backBtn.addEventListener("click", () => showStep(currentStep - 1));
+      // Show the In Review step
+      const inReviewStep =
+        conflictOffcanvasEl.querySelector("#formStepInReview");
+      if (inReviewStep) {
+        inReviewStep.classList.remove("d-none");
+      }
 
-//     conflictOffcanvasEl.addEventListener("show.bs.offcanvas", function (event) {
-//       const data = event.relatedTarget.dataset;
-//       ["", "2", "3"].forEach((s) => {
-//         conflictOffcanvasEl.querySelector(`#modalAlbumCover${s}`).src =
-//           data.coverUrl;
-//         conflictOffcanvasEl.querySelector(`#modalSongName${s}`).textContent =
-//           data.songName;
-//         conflictOffcanvasEl.querySelector(`#modalArtistName${s}`).textContent =
-//           data.artistName;
-//       });
-//       conflictOffcanvasEl.querySelector(
-//         "#modalIsrc"
-//       ).textContent = `ISRC: ${data.isrc}`;
-//       conflictOffcanvasEl.querySelector("#offcanvasTitle").textContent =
-//         data.category;
-//       conflictOffcanvasEl.querySelector(
-//         "#offcanvasSubtitle"
-//       ).textContent = `VS. ${data.otherParty}`;
-//       conflictForm.reset();
-//       conflictOffcanvasEl
-//         .querySelectorAll(".radio-card")
-//         .forEach((c) => c.classList.remove("selected"));
-//       fileDisplay.classList.add("d-none");
-//       conflictOffcanvasEl
-//         .querySelectorAll('#territoryAccordion input[type="checkbox"]')
-//         .forEach((cb) => (cb.checked = true));
-//       updateTerritoryCounter();
-//       showStep(0);
-//     });
+      // Populate rights owned
+      const rightsOwnedText = conflictOffcanvasEl.querySelector(
+        "#resolutionRightsOwned"
+      );
+      if (rightsOwnedText) {
+        rightsOwnedText.textContent =
+          resolutionData.rightsOwnedDisplay ||
+          getRightsOwnedLabel(resolutionData.rightsOwned) ||
+          "N/A";
+      }
 
-//     conflictForm.addEventListener("submit", function (e) {
-//       e.preventDefault();
-//       if (!fileInput.files.length && currentStep === 2)
-//         return alert("Please upload a supporting document.");
-//       alert("Resolution submitted successfully!");
-//       conflictOffcanvas.hide();
-//     });
+      // Populate supporting document
+      const supportingDoc = conflictOffcanvasEl.querySelector(
+        "#supportingDocumentInfo"
+      );
+      if (supportingDoc) {
+        if (
+          resolutionData.supportingDocumentPath ||
+          resolutionData.supportingFile
+        ) {
+          const filePath =
+            resolutionData.supportingDocumentPath ||
+            resolutionData.supportingFile;
+          const fileName = filePath.split("/").pop();
+          supportingDoc.innerHTML = `
+            <a href="${filePath}" target="_blank" class="text-decoration-none">
+              <i class="bi bi-file-earmark-text me-2"></i>${fileName}
+            </a>`;
+        } else {
+          supportingDoc.textContent = "No supporting document uploaded";
+        }
+      }
 
-//     conflictOffcanvasEl.querySelectorAll(".radio-card").forEach((c) =>
-//       c.addEventListener("click", function () {
-//         conflictOffcanvasEl
-//           .querySelectorAll(".radio-card")
-//           .forEach((el) => el.classList.remove("selected"));
-//         this.classList.add("selected");
-//         this.querySelector('input[type="radio"]').checked = true;
-//       })
-//     );
+      // Populate submission date
+      const resolutionDate =
+        conflictOffcanvasEl.querySelector("#resolutionDate");
+      if (resolutionDate && resolutionData.resolutionDate) {
+        resolutionDate.textContent = new Date(
+          resolutionData.resolutionDate
+        ).toLocaleString();
+      } else if (resolutionDate) {
+        resolutionDate.textContent = "N/A";
+      }
 
-//     conflictOffcanvasEl
-//       .querySelector("#fileUploadContainer")
-//       .addEventListener("click", () => fileInput.click());
-//     fileInput.addEventListener("change", () => {
-//       if (fileInput.files.length > 0) {
-//         fileDisplay.querySelector("span").textContent = fileInput.files[0].name;
-//         fileDisplay.classList.remove("d-none");
-//       }
-//     });
-//     fileDisplay.querySelector(".btn-close").addEventListener("click", () => {
-//       fileInput.value = "";
-//       fileDisplay.classList.add("d-none");
-//     });
+      // Switch footer buttons
+      backBtn.classList.add("d-none");
+      nextBtn.classList.add("d-none");
+      submitBtn.classList.add("d-none");
+      const closeBtnInReview =
+        conflictOffcanvasEl.querySelector("#closeBtnInReview");
+      if (closeBtnInReview) {
+        closeBtnInReview.classList.remove("d-none");
+      }
 
-//     // --- INITIAL RENDER ---
-//     renderTable(conflictRequests);
-//     renderTerritoryAccordion();
-//     updateSortIcons();
-//   }
-// });
+      // Mark as in review mode
+      isInReviewMode = true;
+    }
 
+    nextBtn.addEventListener("click", () => {
+      if (isInReviewMode) return;
+
+      // Step 0: Rights owned check
+      if (currentStep === 0) {
+        const existingRights = conflictOffcanvasEl.dataset.rightsOwned;
+        const radioSelected = conflictForm.querySelector(
+          'input[name="rightsOwned"]:checked'
+        );
+
+        if (existingRights) {
+          // Show readonly text and skip validation
+          const rightsTextEl = document.getElementById("rightsOwnedText");
+          rightsTextEl.textContent = getRightsOwnedLabel(existingRights);
+          rightsTextEl.classList.remove("d-none");
+          document.getElementById("rightsOwnedOptions").classList.add("d-none");
+        } else {
+          // If no existing rights, enforce validation
+          if (!radioSelected) {
+            alert("Please select a rights option.");
+            return;
+          }
+        }
+      }
+
+      // Move to next step if validations passed
+      if (currentStep < steps.length - 1) {
+        showStep(currentStep + 1);
+      }
+    });
+
+    backBtn.addEventListener("click", () => {
+      if (isInReviewMode) return;
+      if (currentStep > 0) showStep(currentStep - 1);
+    });
+
+    // --- OFFCANVAS EVENT HANDLERS ---
+    conflictOffcanvasEl.addEventListener("show.bs.offcanvas", function (event) {
+      const data = event.relatedTarget.dataset;
+      activeConflictId = data.id;
+      const status = data.status;
+      isInReviewMode = status === "In Review";
+
+      // Parse resolution data with better error handling
+      let resolutionData = {};
+      try {
+        if (
+          data.resolutionData &&
+          data.resolutionData !== "{}" &&
+          data.resolutionData !== ""
+        ) {
+          // Decode HTML entities first
+          const decodedData = decodeURIComponent(data.resolutionData);
+          resolutionData = JSON.parse(decodedData);
+
+          console.log("Parsed resolution data:", resolutionData);
+        }
+      } catch (e) {
+        console.warn("Failed to parse resolution data:", e);
+        console.log("Raw resolution data:", data.resolutionData);
+        resolutionData = {};
+      }
+
+      // Populate album covers and song info for all steps
+      ["", "2", "InReview"].forEach((suffix) => {
+        const albumCover = conflictOffcanvasEl.querySelector(
+          `#modalAlbumCover${suffix}`
+        );
+        const songName = conflictOffcanvasEl.querySelector(
+          `#modalSongName${suffix}`
+        );
+        const artistName = conflictOffcanvasEl.querySelector(
+          `#modalArtistName${suffix}`
+        );
+        const isrcEl =
+          suffix === "InReview"
+            ? conflictOffcanvasEl.querySelector(`#modalIsrcInReview`)
+            : null;
+
+        if (albumCover) {
+          albumCover.src =
+            data.coverUrl || "https://placehold.co/80x80/ff0000/ffffff?text=YT";
+        }
+        if (songName) songName.textContent = data.songName || "Unknown";
+        if (artistName) artistName.textContent = data.artistName || "Unknown";
+        if (isrcEl) isrcEl.textContent = `ISRC: ${data.isrc || "N/A"}`;
+      });
+
+      // Set ISRC for regular steps
+      const modalIsrc = conflictOffcanvasEl.querySelector("#modalIsrc");
+      if (modalIsrc) modalIsrc.textContent = `ISRC: ${data.isrc || "N/A"}`;
+
+      // Set title and subtitle
+      conflictOffcanvasEl.querySelector("#offcanvasTitle").textContent =
+        data.category || "YouTube Conflict";
+      conflictOffcanvasEl.querySelector(
+        "#offcanvasSubtitle"
+      ).textContent = `VS. ${data.otherParty || "Unknown"}`;
+
+      if (isInReviewMode) {
+        // Show resolution data for "In Review" status
+        showInReviewDisplay(resolutionData);
+      } else {
+        // Show regular form for other statuses
+        isInReviewMode = false;
+        conflictForm.reset();
+        conflictOffcanvasEl
+          .querySelectorAll(".radio-card")
+          .forEach((c) => c.classList.remove("selected"));
+        fileDisplay.classList.add("d-none");
+        showStep(0);
+
+        // Rights owned logic
+        const rightsOptions = conflictOffcanvasEl.querySelector(
+          "#rightsOwnedOptions"
+        );
+        const rightsText =
+          conflictOffcanvasEl.querySelector("#rightsOwnedText");
+        if (data.rightsOwned) {
+          rightsOptions.classList.add("d-none");
+          rightsText.textContent = getRightsOwnedLabel(data.rightsOwned);
+          rightsText.classList.remove("d-none");
+        } else {
+          rightsOptions.classList.remove("d-none");
+          rightsText.classList.add("d-none");
+        }
+
+        // File logic
+        const fileUploadContainer = conflictOffcanvasEl.querySelector(
+          "#fileUploadContainer"
+        );
+        const fileLinkBox = conflictOffcanvasEl.querySelector("#fileLinkBox");
+        if (data.supportingFile) {
+          fileUploadContainer.classList.add("d-none");
+          fileDisplay.classList.add("d-none");
+          if (fileLinkBox) {
+            fileLinkBox.innerHTML = `<a href="${data.supportingFile}" target="_blank" class="btn btn-outline-primary btn-sm">View Supporting Document</a>`;
+            fileLinkBox.classList.remove("d-none");
+          }
+        } else {
+          fileUploadContainer.classList.remove("d-none");
+          if (fileLinkBox) fileLinkBox.classList.add("d-none");
+        }
+      }
+    });
+
+    // --- FORM SUBMISSION ---
+    conflictForm.addEventListener("submit", function (e) {
+      e.preventDefault();
+
+      if (isInReviewMode) return; // Prevent form submission in review mode
+
+      if (!activeConflictId) {
+        return alert("Error: Conflict ID missing.");
+      }
+      if (!fileInput.files.length && currentStep === 1) {
+        return alert("Please upload a supporting document.");
+      }
+
+      const formData = new FormData(conflictForm);
+      if (fileInput.files.length > 0) {
+        formData.append("file", fileInput.files[0]);
+      }
+
+      // Show loading state
+      const originalText = submitBtn.innerHTML;
+      submitBtn.innerHTML =
+        '<i class="spinner-border spinner-border-sm me-1"></i>Submitting...';
+      submitBtn.disabled = true;
+
+      fetch(`/superadmin/youtube-conflicts/update/${activeConflictId}`, {
+        method: "POST",
+        body: formData,
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          if (data.status === "success") {
+            alert("Resolution saved successfully!");
+            conflictOffcanvas.hide();
+            loadConflictsData();
+          } else {
+            alert("Update failed: " + data.message);
+          }
+        })
+        .catch((err) => {
+          console.error("Update error:", err);
+          alert("Update failed. Try again.");
+        })
+        .finally(() => {
+          // Restore button state
+          submitBtn.innerHTML = originalText;
+          submitBtn.disabled = false;
+        });
+    });
+
+    // --- FILE UPLOAD HANDLERS ---
+    const fileUploadContainer = conflictOffcanvasEl.querySelector(
+      "#fileUploadContainer"
+    );
+    if (fileUploadContainer) {
+      fileUploadContainer.addEventListener("click", () => {
+        if (!isInReviewMode) fileInput.click();
+      });
+    }
+
+    if (fileInput) {
+      fileInput.addEventListener("change", () => {
+        if (fileInput.files.length > 0) {
+          const span = fileDisplay.querySelector("span");
+          if (span) span.textContent = fileInput.files[0].name;
+          fileDisplay.classList.remove("d-none");
+        }
+      });
+    }
+
+    if (fileDisplay) {
+      const closeBtn = fileDisplay.querySelector(".btn-close");
+      if (closeBtn) {
+        closeBtn.addEventListener("click", (e) => {
+          e.stopPropagation();
+          fileInput.value = "";
+          fileDisplay.classList.add("d-none");
+        });
+      }
+    }
+
+    // --- RADIO CARD INTERACTIONS ---
+    conflictOffcanvasEl.addEventListener("click", function (e) {
+      if (isInReviewMode) return; // Disable interactions in review mode
+
+      if (e.target.closest(".radio-card")) {
+        const card = e.target.closest(".radio-card");
+        conflictOffcanvasEl
+          .querySelectorAll(".radio-card")
+          .forEach((c) => c.classList.remove("selected"));
+        card.classList.add("selected");
+        const radioInput = card.querySelector('input[type="radio"]');
+        if (radioInput) radioInput.checked = true;
+      }
+    });
+
+    // --- DATA LOADING ---
+    function loadConflictsData() {
+      fetch("/superadmin/youtube-conflicts/json")
+        .then((response) => response.json())
+        .then((result) => {
+          conflictRequests = result.data || [];
+          renderTable(conflictRequests);
+          updateSortIcons();
+        })
+        .catch((error) => {
+          console.error("Error loading conflicts data:", error);
+          conflictRequests = [];
+          renderTable([]);
+        });
+    }
+
+    // INITIALIZATION
+    loadConflictsData();
+    updateSortIcons();
+  }
+});
+
+// Import functionality
+document.addEventListener("DOMContentLoaded", function () {
+  const importBtn = document.getElementById("importYoutubeCsv");
+
+  if (importBtn) {
+    importBtn.addEventListener("click", function () {
+      const fileInput = document.createElement("input");
+      fileInput.type = "file";
+      fileInput.accept = ".csv";
+      fileInput.style.display = "none";
+
+      fileInput.addEventListener("change", function (e) {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        const formData = new FormData();
+        formData.append("file", file);
+
+        const originalText = importBtn.innerHTML;
+        importBtn.innerHTML =
+          '<i class="spinner-border spinner-border-sm me-1"></i>Importing...';
+        importBtn.disabled = true;
+
+        fetch("/superadmin/youtube-conflicts/import", {
+          method: "POST",
+          body: formData,
+        })
+          .then((res) => res.json())
+          .then((data) => {
+            if (data.status === "success") {
+              alert(
+                `Import successful!\nProcessed: ${data.processed_rows}\nInserted: ${data.inserted_rows}`
+              );
+              location.reload();
+            } else {
+              alert("Import failed: " + data.message);
+            }
+          })
+          .catch((err) => {
+            console.error("Import error:", err);
+            alert("Import failed. Please try again.");
+          })
+          .finally(() => {
+            importBtn.innerHTML = originalText;
+            importBtn.disabled = false;
+            document.body.removeChild(fileInput);
+          });
+      });
+
+      document.body.appendChild(fileInput);
+      fileInput.click();
+    });
+  }
+});
 
 // facebook-page js
 // Add this entire new block to your app.js file
@@ -3328,23 +3692,23 @@ document.addEventListener("DOMContentLoaded", function () {
         processing: true,
         serverSide: false,
         ajax: {
-          url: '/superadmin/facebook/list-json',
-          type: 'GET',
+          url: "/superadmin/facebook/list-json",
+          type: "GET",
           dataSrc: function (json) {
             console.log("Raw response:", json);
             return json.data;
           },
-          error: function(xhr, error, thrown) {
-            console.error('DataTable Ajax Error:', error, thrown);
-            alert('Error loading conflict data. Please refresh the page.');
-          }
+          error: function (xhr, error, thrown) {
+            console.error("DataTable Ajax Error:", error, thrown);
+            alert("Error loading conflict data. Please refresh the page.");
+          },
         },
         paging: true,
         searching: true,
         info: true,
         lengthChange: true,
         autoWidth: false,
-        order: [[1, 'desc']], // Order by ID/date descending
+        order: [[1, "desc"]], // Order by ID/date descending
         columns: [
           {
             data: null,
@@ -3358,30 +3722,34 @@ document.addEventListener("DOMContentLoaded", function () {
             data: null,
             title: "Artist / Asset ID",
             render: (data, type, row) =>
-              `<div class="fw-bold">${row.artist || 'N/A'}</div><small class="text-muted">Asset ID: ${row.assetId || 'N/A'}</small>`,
+              `<div class="fw-bold">${
+                row.artist || "N/A"
+              }</div><small class="text-muted">Asset ID: ${
+                row.assetId || "N/A"
+              }</small>`,
           },
           { data: "upc", title: "UPC" },
           { data: "otherParty", title: "Other Party" },
           {
             data: "dailyViews",
             title: "Daily Views",
-            render: { 
-              _: (data) => data || '0', 
-              sort: (data) => parseViews(data) 
+            render: {
+              _: (data) => data || "0",
+              sort: (data) => parseViews(data),
             },
           },
           {
             data: "expiry",
             title: "Expiry",
-            render: { 
-              _: (data) => data || '-', 
-              sort: (data) => parseExpiry(data) 
+            render: {
+              _: (data) => data || "-",
+              sort: (data) => parseExpiry(data),
             },
           },
-          { 
+          {
             data: "status",
-            title: "Status", 
-            render: (data) => getStatusBadge(data || 'Action Required')
+            title: "Status",
+            render: (data) => getStatusBadge(data || "Action Required"),
           },
           {
             data: null,
@@ -3399,11 +3767,15 @@ document.addEventListener("DOMContentLoaded", function () {
             "data-song-name": data.assetTitle || data.songName,
             "data-artist-name": data.artist || data.artistName,
             "data-isrc": data.isrc,
-            "data-cover-url": data.albumCoverUrl || "https://placehold.co/80x80/3b5998/ffffff?text=FB",
+            "data-cover-url":
+              data.albumCoverUrl ||
+              "https://placehold.co/80x80/3b5998/ffffff?text=FB",
             "data-category": data.category,
             "data-other-party": data.otherParty,
             "data-conflict-state": data.conflictState,
-            "data-countries": JSON.stringify(data.countries || {})
+            "data-countries": JSON.stringify(data.countries || {}),
+            "data-status": data.status,
+            "data-resolution-data": JSON.stringify(data.resolutionData || {}),
           });
         },
         language: {
@@ -3414,7 +3786,7 @@ document.addEventListener("DOMContentLoaded", function () {
           emptyTable: "No conflicts available",
           search: "_INPUT_",
           searchPlaceholder: "Search conflicts...",
-          processing: "Loading conflicts..."
+          processing: "Loading conflicts...",
         },
       });
     }
@@ -3422,150 +3794,283 @@ document.addEventListener("DOMContentLoaded", function () {
     // Initialize the DataTable
     initializeDataTable();
 
-
     // --- IMPORT CSV FUNCTIONALITY ---
     const importBtn = document.getElementById("importFacebookCsv");
     if (importBtn) {
-      importBtn.addEventListener("click", function() {
+      importBtn.addEventListener("click", function () {
         // Create file input dynamically
         const fileInput = document.createElement("input");
         fileInput.type = "file";
         fileInput.accept = ".csv";
         fileInput.style.display = "none";
-        
-        fileInput.addEventListener("change", function(e) {
+
+        fileInput.addEventListener("change", function (e) {
           const file = e.target.files[0];
           if (!file) return;
-          
+
           const formData = new FormData();
           formData.append("file", file);
-          
+
           // Show loading state
           const originalText = importBtn.innerHTML;
-          importBtn.innerHTML = '<i class="spinner-border spinner-border-sm me-1"></i>Importing...';
+          importBtn.innerHTML =
+            '<i class="spinner-border spinner-border-sm me-1"></i>Importing...';
           importBtn.disabled = true;
-          
-          fetch('/superadmin/facebook/import', {
-            method: 'POST',
-            body: formData
+
+          fetch("/superadmin/facebook/import", {
+            method: "POST",
+            body: formData,
           })
-          .then(response => response.json())
-          .then(data => {
-            if (data.status === 'success') {
-              alert(`Import successful!\nProcessed: ${data.processed_rows}\nInserted: ${data.inserted_rows}`);
-              // Refresh the DataTable
-              dataTableInstance.ajax.reload();
-            } else {
-              alert(`Import failed: ${data.message}`);
-            }
-          })
-          .catch(error => {
-            console.error('Import error:', error);
-            alert('Import failed. Please try again.');
-          })
-          .finally(() => {
-            // Restore button state
-            importBtn.innerHTML = originalText;
-            importBtn.disabled = false;
-            document.body.removeChild(fileInput);
-          });
+            .then((response) => response.json())
+            .then((data) => {
+              if (data.status === "success") {
+                alert(
+                  `Import successful!\nProcessed: ${data.processed_rows}\nInserted: ${data.inserted_rows}`
+                );
+                // Refresh the DataTable
+                dataTableInstance.ajax.reload();
+              } else {
+                alert(`Import failed: ${data.message}`);
+              }
+            })
+            .catch((error) => {
+              console.error("Import error:", error);
+              alert("Import failed. Please try again.");
+            })
+            .finally(() => {
+              // Restore button state
+              importBtn.innerHTML = originalText;
+              importBtn.disabled = false;
+              document.body.removeChild(fileInput);
+            });
         });
-        
+
         document.body.appendChild(fileInput);
         fileInput.click();
       });
     }
 
     // --- OFFCANVAS LOGIC ---
-    const conflictOffcanvasEl = document.getElementById("facebookConflictOffcanvas");
+    const conflictOffcanvasEl = document.getElementById(
+      "facebookConflictOffcanvas"
+    );
     if (conflictOffcanvasEl) {
       const conflictForm = document.getElementById("facebookConflictForm");
-      const steps = Array.from(conflictOffcanvasEl.querySelectorAll(".form-step"));
+      const steps = Array.from(
+        conflictOffcanvasEl.querySelectorAll(".form-step")
+      );
       const nextBtn = document.getElementById("nextBtn");
       const backBtn = document.getElementById("backBtn");
       const submitBtn = document.getElementById("submitBtn");
       let currentStep = 0;
       let currentConflictId = null;
       let conflictCountries = {};
+      let isInReviewMode = false;
 
       function showStep(stepIndex) {
         steps.forEach((step, index) =>
           step.classList.toggle("d-none", index !== stepIndex)
         );
-        backBtn.classList.toggle("d-none", stepIndex === 0);
-        nextBtn.classList.toggle("d-none", stepIndex === steps.length - 1);
-        submitBtn.classList.toggle("d-none", stepIndex !== steps.length - 1);
+        backBtn.classList.toggle("d-none", stepIndex === 0 || isInReviewMode);
+        nextBtn.classList.toggle(
+          "d-none",
+          stepIndex === steps.length - 1 || isInReviewMode
+        );
+        submitBtn.classList.toggle(
+          "d-none",
+          stepIndex !== steps.length - 1 && !isInReviewMode
+        );
         currentStep = stepIndex;
+      }
+      function showInReviewDisplay(resolutionData) {
+        // Hide all form steps
+        steps.forEach((step) => step.classList.add("d-none"));
+
+        // Show the In Review block
+        const inReviewStep =
+          conflictOffcanvasEl.querySelector("#formStepInReview");
+        if (inReviewStep) {
+          inReviewStep.classList.remove("d-none");
+        }
+
+        // Populate rights owned
+        const rightsOwnedText = conflictOffcanvasEl.querySelector(
+          "#resolutionRightsOwned"
+        );
+        if (rightsOwnedText) {
+          rightsOwnedText.textContent =
+            resolutionData.rightsOwnedDisplay || "N/A";
+        }
+
+        // Populate countries
+        const countriesText = conflictOffcanvasEl.querySelector(
+          "#resolutionCountries"
+        );
+        if (countriesText) {
+          countriesText.textContent =
+            resolutionData.countryDisplayText || "N/A";
+        }
+
+        // Populate date
+        const resolutionDate =
+          conflictOffcanvasEl.querySelector("#resolutionDate");
+        if (resolutionDate && resolutionData.resolutionDate) {
+          resolutionDate.textContent = new Date(
+            resolutionData.resolutionDate
+          ).toLocaleString();
+        } else if (resolutionDate) {
+          resolutionDate.textContent = "N/A";
+        }
+
+        // Populate supporting doc
+        const supportingDoc = conflictOffcanvasEl.querySelector(
+          "#supportingDocumentInfo"
+        );
+        if (supportingDoc) {
+          if (resolutionData.supportingDocumentPath) {
+            const fileName = resolutionData.supportingDocumentPath
+              .split("/")
+              .pop();
+            supportingDoc.innerHTML = `
+        <a href="${resolutionData.supportingDocumentPath}" target="_blank" class="text-decoration-none">
+          <i class="bi bi-file-earmark-text me-2"></i>${fileName}
+        </a>`;
+            supportingDoc.classList.remove("d-none");
+          } else {
+            supportingDoc.textContent = "No supporting document uploaded";
+            supportingDoc.classList.remove("d-none");
+          }
+        }
+
+        // Switch footer buttons
+        document.getElementById("prevBtn").classList.add("d-none");
+        document.getElementById("nextBtn").classList.add("d-none");
+        document.getElementById("submitBtn").classList.add("d-none");
+        document.getElementById("closeBtnInReview").classList.remove("d-none");
+
+        // Mark mode
+        isInReviewMode = true;
       }
 
       nextBtn.addEventListener("click", () => {
-        if (
-          currentStep === 0 &&
-          !conflictForm.querySelector('input[name="rightsOwned"]:checked')
-        )
-          return alert("Please select a rights option.");
-        if (
-          currentStep === 1 &&
-          !conflictForm.querySelector(".country-checkbox:checked")
-        )
-          return alert("Please select at least one territory.");
-        if (currentStep < steps.length - 1) showStep(currentStep + 1);
+        if (isInReviewMode) return;
+
+        if (currentStep === 0) {
+          const hasExistingRights = !!conflictOffcanvasEl.dataset.rightsOwned;
+          const radioSelected = conflictForm.querySelector(
+            'input[name="rightsOwned"]:checked'
+          );
+
+          if (!hasExistingRights && !radioSelected) {
+            return alert("Please select a rights option.");
+          }
+        }
+
+        if (currentStep === 1) {
+          if (!conflictForm.querySelector(".country-checkbox:checked")) {
+            return alert("Please select at least one territory.");
+          }
+        }
+
+        if (currentStep < steps.length - 1) {
+          showStep(currentStep + 1);
+        }
       });
 
       backBtn.addEventListener("click", () => {
+        if (isInReviewMode) return;
         if (currentStep > 0) showStep(currentStep - 1);
       });
 
-      conflictOffcanvasEl.addEventListener("show.bs.offcanvas", function (event) {
-        const trigger = event.relatedTarget;
-        const data = trigger.dataset;
-        
-        // Store current conflict ID
-        currentConflictId = data.conflictId;
-        
-        // Parse countries data
-        try {
-          conflictCountries = JSON.parse(data.countries || '{}');
-        } catch (e) {
-          console.warn('Failed to parse countries data:', e);
-          conflictCountries = {};
+      conflictOffcanvasEl.addEventListener(
+        "show.bs.offcanvas",
+        function (event) {
+          const trigger = event.relatedTarget;
+          const data = trigger.dataset;
+
+          // Store current conflict ID and status
+          currentConflictId = data.conflictId;
+          const status = data.status;
+          isInReviewMode = status == "In Review";
+
+          // Parse countries data and resolution data
+          try {
+            conflictCountries = JSON.parse(data.countries || "{}");
+          } catch (e) {
+            console.warn("Failed to parse countries data:", e);
+            conflictCountries = {};
+          }
+
+          let resolutionData = {};
+          try {
+            resolutionData = JSON.parse(data.resolutionData || "{}");
+          } catch (e) {
+            console.warn("Failed to parse resolution data:", e);
+          }
+
+          // Populate offcanvas fields
+          ["", "2", "3", "InReview"].forEach((s) => {
+            const suffix = s
+              ? s === "InReview"
+                ? "InReview"
+                : parseInt(s)
+              : "";
+            const albumCover = conflictOffcanvasEl.querySelector(
+              `#modalAlbumCover${suffix}`
+            );
+            const songName = conflictOffcanvasEl.querySelector(
+              `#modalSongName${suffix}`
+            );
+            const artistName = conflictOffcanvasEl.querySelector(
+              `#modalArtistName${suffix}`
+            );
+
+            if (albumCover)
+              albumCover.src =
+                data.coverUrl ||
+                "https://placehold.co/80x80/3b5998/ffffff?text=FB";
+            if (songName) songName.textContent = data.songName || "Unknown";
+            if (artistName)
+              artistName.textContent = data.artistName || "Unknown";
+          });
+
+          const isrcEl = conflictOffcanvasEl.querySelector("#modalIsrc");
+          if (isrcEl) isrcEl.textContent = `ISRC: ${data.isrc || "N/A"}`;
+
+          const titleEl = conflictOffcanvasEl.querySelector("#offcanvasTitle");
+          if (titleEl)
+            titleEl.textContent = data.category || "Ownership Conflict";
+
+          const subtitleEl =
+            conflictOffcanvasEl.querySelector("#offcanvasSubtitle");
+          if (subtitleEl)
+            subtitleEl.textContent = `VS. ${data.otherParty || "Unknown"}`;
+
+          if (isInReviewMode) {
+            // Show resolution data for "In Review" status
+            showInReviewDisplay(resolutionData);
+          } else {
+            // Show regular form for other statuses
+            // Render accordion and reset form state
+            renderTerritoryAccordion();
+            conflictForm.reset();
+            conflictForm
+              .querySelectorAll(".radio-card")
+              .forEach((c) => c.classList.remove("selected"));
+
+            const fileDisplay = document.getElementById("selectedFileName");
+            if (fileDisplay) fileDisplay.classList.add("d-none");
+
+            showStep(0);
+          }
         }
-
-        // Populate offcanvas fields
-        ["", "2", "3"].forEach((s) => {
-          const suffix = s ? parseInt(s) : "";
-          const albumCover = conflictOffcanvasEl.querySelector(`#modalAlbumCover${suffix}`);
-          const songName = conflictOffcanvasEl.querySelector(`#modalSongName${suffix}`);
-          const artistName = conflictOffcanvasEl.querySelector(`#modalArtistName${suffix}`);
-          
-          if (albumCover) albumCover.src = data.coverUrl || "https://placehold.co/80x80/3b5998/ffffff?text=FB";
-          if (songName) songName.textContent = data.songName || 'Unknown';
-          if (artistName) artistName.textContent = data.artistName || 'Unknown';
-        });
-
-        const isrcEl = conflictOffcanvasEl.querySelector("#modalIsrc");
-        if (isrcEl) isrcEl.textContent = `ISRC: ${data.isrc || 'N/A'}`;
-        
-        const titleEl = conflictOffcanvasEl.querySelector("#offcanvasTitle");
-        if (titleEl) titleEl.textContent = data.category || 'Ownership Conflict';
-        
-        const subtitleEl = conflictOffcanvasEl.querySelector("#offcanvasSubtitle");
-        if (subtitleEl) subtitleEl.textContent = `VS. ${data.otherParty || 'Unknown'}`;
-
-        // Render accordion and reset form state
-        renderTerritoryAccordion();
-        conflictForm.reset();
-        conflictForm.querySelectorAll(".radio-card").forEach((c) => c.classList.remove("selected"));
-        
-        const fileDisplay = document.getElementById("selectedFileName");
-        if (fileDisplay) fileDisplay.classList.add("d-none");
-        
-        showStep(0);
-      });
+      );
 
       conflictForm.addEventListener("submit", function (e) {
         e.preventDefault();
-        
+
+        if (isInReviewMode) return; // Prevent form submission in review mode
+
         const formFile = document.getElementById("formFile");
         if (currentStep === 2 && formFile && !formFile.files.length) {
           return alert("Please upload a supporting document.");
@@ -3573,89 +4078,102 @@ document.addEventListener("DOMContentLoaded", function () {
 
         // Collect form data
         const formData = new FormData();
-        const rightsOwned = conflictForm.querySelector('input[name="rightsOwned"]:checked')?.value || '';
-        const selectedTerritories = Array.from(conflictForm.querySelectorAll('.country-checkbox:checked'))
-          .map(cb => cb.value);
+        const rightsOwned =
+          conflictForm.querySelector('input[name="rightsOwned"]:checked')
+            ?.value || "";
+        const selectedTerritories = Array.from(
+          conflictForm.querySelectorAll(".country-checkbox:checked")
+        ).map((cb) => cb.value);
 
         // Debug logging
-        console.log('Submitting data:', {
+        console.log("Submitting data:", {
           conflict_id: currentConflictId,
           rights_owned: rightsOwned,
           territories: selectedTerritories,
-          has_file: formFile && formFile.files[0] ? true : false
+          has_file: formFile && formFile.files[0] ? true : false,
         });
 
-        formData.append('conflict_id', currentConflictId);
-        formData.append('rights_owned', rightsOwned);
-        formData.append('territories', JSON.stringify(selectedTerritories));
-        
+        formData.append("conflict_id", currentConflictId);
+        formData.append("rights_owned", rightsOwned);
+        formData.append("territories", JSON.stringify(selectedTerritories));
+
         if (formFile && formFile.files[0]) {
-          formData.append('supporting_document', formFile.files[0]);
+          formData.append("supporting_document", formFile.files[0]);
         }
 
         // Show loading state
         const originalText = submitBtn.innerHTML;
-        submitBtn.innerHTML = '<i class="spinner-border spinner-border-sm me-1"></i>Submitting...';
+        submitBtn.innerHTML =
+          '<i class="spinner-border spinner-border-sm me-1"></i>Submitting...';
         submitBtn.disabled = true;
 
-        fetch('/superadmin/facebook/update-resolution', {
-          method: 'POST',
-          body: formData
+        fetch("/superadmin/facebook/update-resolution", {
+          method: "POST",
+          body: formData,
         })
-        .then(response => response.json())
-        .then(data => {
-          if (data.status === 'success') {
-            alert("Resolution submitted successfully!");
-            bootstrap.Offcanvas.getInstance(conflictOffcanvasEl).hide();
-            // Refresh the DataTable to show updated status
-            dataTableInstance.ajax.reload();
-          } else {
-            alert(`Failed to submit resolution: ${data.message}`);
-          }
-        })
-        .catch(error => {
-          console.error('Submit error:', error);
-          alert('Failed to submit resolution. Please try again.');
-        })
-        .finally(() => {
-          // Restore button state
-          submitBtn.innerHTML = originalText;
-          submitBtn.disabled = false;
-        });
+          .then((response) => response.json())
+          .then((data) => {
+            if (data.status === "success") {
+              alert("Resolution submitted successfully!");
+              bootstrap.Offcanvas.getInstance(conflictOffcanvasEl).hide();
+              // Refresh the DataTable to show updated status
+              dataTableInstance.ajax.reload();
+            } else {
+              alert(`Failed to submit resolution: ${data.message}`);
+            }
+          })
+          .catch((error) => {
+            console.error("Submit error:", error);
+            alert("Failed to submit resolution. Please try again.");
+          })
+          .finally(() => {
+            // Restore button state
+            submitBtn.innerHTML = originalText;
+            submitBtn.disabled = false;
+          });
       });
 
       function renderTerritoryAccordion() {
-        const accordionContainer = conflictOffcanvasEl.querySelector("#territoryAccordion");
+        if (isInReviewMode) return; // Don't render accordion in review mode
+
+        const accordionContainer = conflictOffcanvasEl.querySelector(
+          "#territoryAccordion"
+        );
         if (!accordionContainer) return;
 
         // Show loading state
-        accordionContainer.innerHTML = '<div class="text-center p-3"><i class="spinner-border spinner-border-sm me-2"></i>Loading territories...</div>';
+        accordionContainer.innerHTML =
+          '<div class="text-center p-3"><i class="spinner-border spinner-border-sm me-2"></i>Loading territories...</div>';
 
         // Fetch all countries grouped by continent
-        fetch('/superadmin/facebook/get-all-countries')
-          .then(response => response.json())
-          .then(data => {
-            if (data.status === 'success') {
+        fetch("/superadmin/facebook/get-all-countries")
+          .then((response) => response.json())
+          .then((data) => {
+            if (data.status === "success") {
               renderCountriesAccordion(data.countries);
             } else {
-              accordionContainer.innerHTML = '<div class="text-center p-3 text-danger">Error loading territories</div>';
+              accordionContainer.innerHTML =
+                '<div class="text-center p-3 text-danger">Error loading territories</div>';
             }
           })
-          .catch(error => {
-            console.error('Error fetching countries:', error);
-            accordionContainer.innerHTML = '<div class="text-center p-3 text-danger">Error loading territories</div>';
+          .catch((error) => {
+            console.error("Error fetching countries:", error);
+            accordionContainer.innerHTML =
+              '<div class="text-center p-3 text-danger">Error loading territories</div>';
           });
       }
 
       function renderCountriesAccordion(allCountries) {
-        const accordionContainer = conflictOffcanvasEl.querySelector("#territoryAccordion");
+        const accordionContainer = conflictOffcanvasEl.querySelector(
+          "#territoryAccordion"
+        );
         if (!accordionContainer) return;
 
         // Create a set of country IDs that should be checked (from conflict data)
         const checkedCountryIds = new Set();
-        Object.values(conflictCountries).forEach(countries => {
+        Object.values(conflictCountries).forEach((countries) => {
           if (Array.isArray(countries)) {
-            countries.forEach(country => {
+            countries.forEach((country) => {
               checkedCountryIds.add(country.id);
             });
           }
@@ -3665,33 +4183,57 @@ document.addEventListener("DOMContentLoaded", function () {
         accordionContainer.innerHTML = Object.entries(allCountries)
           .map(([continent, countries]) => {
             if (!countries || countries.length === 0) return "";
-            
+
             const regionId = continent.replace(/[^a-zA-Z0-9]/g, "");
-            
+
             // Count how many countries in this continent should be checked
-            const checkedCountsInRegion = countries.filter(c => checkedCountryIds.has(c.id)).length;
-            const allCountriesInRegionChecked = checkedCountsInRegion === countries.length && countries.length > 0;
-            
+            const checkedCountsInRegion = countries.filter((c) =>
+              checkedCountryIds.has(c.id)
+            ).length;
+            const allCountriesInRegionChecked =
+              checkedCountsInRegion === countries.length &&
+              countries.length > 0;
+
             return `
               <div class="accordion-item">
                 <h2 class="accordion-header">
                   <button class="accordion-button collapsed d-flex align-items-center" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-fb-${regionId}">
                     <div class="form-check me-auto pe-2">
-                      <input class="form-check-input region-checkbox" type="checkbox" id="region-fb-${regionId}" data-region="${continent}" ${allCountriesInRegionChecked ? 'checked' : ''}>
+                      <input class="form-check-input region-checkbox" type="checkbox" id="region-fb-${regionId}" data-region="${continent}" ${
+              allCountriesInRegionChecked ? "checked" : ""
+            }>
                       <label class="form-check-label fw-bold" for="region-fb-${regionId}">${continent}</label>
                     </div>
-                    <span class="text-muted small me-2">${countries.length} countries ${checkedCountsInRegion > 0 ? `(${checkedCountsInRegion} selected)` : ''}</span>
+                    <span class="text-muted small me-2">${
+                      countries.length
+                    } countries ${
+              checkedCountsInRegion > 0
+                ? `(${checkedCountsInRegion} selected)`
+                : ""
+            }</span>
                   </button>
                 </h2>
                 <div id="collapse-fb-${regionId}" class="accordion-collapse collapse" data-bs-parent="#territoryAccordion">
                   <div class="accordion-body">
                     <div class="territory-list-inner">
-                      ${countries.map(c => `
+                      ${countries
+                        .map(
+                          (c) => `
                         <div class="form-check">
-                          <input class="form-check-input country-checkbox" type="checkbox" value="${c.id}" id="country-fb-${c.id}" data-region="${continent}" ${checkedCountryIds.has(c.id) ? 'checked' : ''}>
-                          <label class="form-check-label" for="country-fb-${c.id}">${c.name}</label>
+                          <input class="form-check-input country-checkbox" type="checkbox" value="${
+                            c.id
+                          }" id="country-fb-${
+                            c.id
+                          }" data-region="${continent}" ${
+                            checkedCountryIds.has(c.id) ? "checked" : ""
+                          }>
+                          <label class="form-check-label" for="country-fb-${
+                            c.id
+                          }">${c.name}</label>
                         </div>
-                      `).join("")}
+                      `
+                        )
+                        .join("")}
                     </div>
                   </div>
                 </div>
@@ -3699,47 +4241,69 @@ document.addEventListener("DOMContentLoaded", function () {
             `;
           })
           .join("");
-          
+
         addTerritoryEventListeners();
         updateTerritoryCounter();
       }
 
       function updateTerritoryCounter() {
-        const selected = conflictOffcanvasEl.querySelectorAll(".country-checkbox:checked").length;
-        const total = conflictOffcanvasEl.querySelectorAll(".country-checkbox").length;
-        const counterEl = conflictOffcanvasEl.querySelector("#territoryCounter");
+        if (isInReviewMode) return;
+
+        const selected = conflictOffcanvasEl.querySelectorAll(
+          ".country-checkbox:checked"
+        ).length;
+        const total =
+          conflictOffcanvasEl.querySelectorAll(".country-checkbox").length;
+        const counterEl =
+          conflictOffcanvasEl.querySelector("#territoryCounter");
         if (counterEl) {
           counterEl.textContent = `${selected} contested countries out of ${total} delivered`;
         }
       }
 
       function addTerritoryEventListeners() {
-        conflictOffcanvasEl.querySelectorAll(".region-checkbox, .country-checkbox").forEach((cb) => {
-          cb.addEventListener("change", function (e) {
-            const region = e.target.dataset.region;
-            if (e.target.classList.contains("region-checkbox")) {
-              conflictOffcanvasEl.querySelectorAll(`.country-checkbox[data-region="${region}"]`).forEach(
-                (countryCb) => (countryCb.checked = e.target.checked)
-              );
-            } else {
-              const allInRegion = [
-                ...conflictOffcanvasEl.querySelectorAll(`.country-checkbox[data-region="${region}"]`),
-              ].every((c) => c.checked);
-              const regionCheckbox = conflictOffcanvasEl.querySelector(`.region-checkbox[data-region="${region}"]`);
-              if (regionCheckbox) {
-                regionCheckbox.checked = allInRegion;
+        if (isInReviewMode) return;
+
+        conflictOffcanvasEl
+          .querySelectorAll(".region-checkbox, .country-checkbox")
+          .forEach((cb) => {
+            cb.addEventListener("change", function (e) {
+              const region = e.target.dataset.region;
+              if (e.target.classList.contains("region-checkbox")) {
+                conflictOffcanvasEl
+                  .querySelectorAll(
+                    `.country-checkbox[data-region="${region}"]`
+                  )
+                  .forEach(
+                    (countryCb) => (countryCb.checked = e.target.checked)
+                  );
+              } else {
+                const allInRegion = [
+                  ...conflictOffcanvasEl.querySelectorAll(
+                    `.country-checkbox[data-region="${region}"]`
+                  ),
+                ].every((c) => c.checked);
+                const regionCheckbox = conflictOffcanvasEl.querySelector(
+                  `.region-checkbox[data-region="${region}"]`
+                );
+                if (regionCheckbox) {
+                  regionCheckbox.checked = allInRegion;
+                }
               }
-            }
-            updateTerritoryCounter();
+              updateTerritoryCounter();
+            });
           });
-        });
       }
 
       // --- Remaining event listeners for form interactions ---
       conflictOffcanvasEl.addEventListener("click", function (e) {
+        if (isInReviewMode) return; // Disable interactions in review mode
+
         if (e.target.closest(".radio-card")) {
           const card = e.target.closest(".radio-card");
-          conflictOffcanvasEl.querySelectorAll(".radio-card").forEach((c) => c.classList.remove("selected"));
+          conflictOffcanvasEl
+            .querySelectorAll(".radio-card")
+            .forEach((c) => c.classList.remove("selected"));
           card.classList.add("selected");
           const radioInput = card.querySelector('input[type="radio"]');
           if (radioInput) radioInput.checked = true;
@@ -3748,12 +4312,16 @@ document.addEventListener("DOMContentLoaded", function () {
 
       const fileInput = document.getElementById("formFile");
       const fileDisplay = document.getElementById("selectedFileName");
-      const fileUploadContainer = document.getElementById("fileUploadContainer");
-      
+      const fileUploadContainer = document.getElementById(
+        "fileUploadContainer"
+      );
+
       if (fileUploadContainer && fileInput) {
-        fileUploadContainer.addEventListener("click", () => fileInput.click());
+        fileUploadContainer.addEventListener("click", () => {
+          if (!isInReviewMode) fileInput.click();
+        });
       }
-      
+
       if (fileInput && fileDisplay) {
         fileInput.addEventListener("change", () => {
           if (fileInput.files.length > 0) {
@@ -3763,7 +4331,7 @@ document.addEventListener("DOMContentLoaded", function () {
           }
         });
       }
-      
+
       if (fileDisplay) {
         const closeBtn = fileDisplay.querySelector(".btn-close");
         if (closeBtn) {
@@ -3778,7 +4346,7 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 });
 
-//facebook conflict import 
+//facebook conflict import
 // document.getElementById("importFacebookCsv").addEventListener("click", function () {
 //   const input = document.createElement("input");
 //   input.type = "file";
@@ -3899,65 +4467,65 @@ $(document).ready(function () {
         { data: "actions", orderable: false, searchable: false },
       ],
     });
-  function showAlert(type, message) {
-    // type = "success", "danger", "warning", "info"
-    let alertHtml = `
+    function showAlert(type, message) {
+      // type = "success", "danger", "warning", "info"
+      let alertHtml = `
         <div class="alert alert-${type} alert-dismissible fade show" role="alert">
             ${message}
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
     `;
-    $("#alertBox").html(alertHtml);
+      $("#alertBox").html(alertHtml);
 
-    setTimeout(() => {
-      $(".alert").alert("close");
-    }, 3000);
-  }
+      setTimeout(() => {
+        $(".alert").alert("close");
+      }, 3000);
+    }
 
-  $(document).on("click", ".viewSupportBtn", function () {
-    let id = $(this).data("id");
-    let message = $(this).data("message");
-    let status = $(this).data("status");
+    $(document).on("click", ".viewSupportBtn", function () {
+      let id = $(this).data("id");
+      let message = $(this).data("message");
+      let status = $(this).data("status");
 
-    $("#supportModal").data("id", id);
-    $("#supportMessage").text(message);
-    $("#supportStatus").val(status);
+      $("#supportModal").data("id", id);
+      $("#supportMessage").text(message);
+      $("#supportStatus").val(status);
 
-    let modal = new bootstrap.Modal(document.getElementById("supportModal"));
-    modal.show();
-  });
-
-  // Save status change
-  $("#saveSupportStatus").on("click", function () {
-    let id = $("#supportModal").data("id");
-    let status = $("#supportStatus").val();
-
-    $.ajax({
-      url: "/superadmin/support/update-status/" + id,
-      type: "POST",
-      data: {
-        status: status,
-        _token: $('meta[name="csrf-token"]').attr("content"),
-      },
-      success: function (res) {
-        if (res.success) {
-          showAlert("success", res.message);
-        } else {
-          showAlert("danger", res.message);
-        }
-        $("#supportModal").modal("hide");
-        table.ajax.reload();
-      },
-      error: function (xhr) {
-        let msg = "Something went wrong!";
-        if (xhr.responseJSON && xhr.responseJSON.message) {
-          msg = xhr.responseJSON.message;
-        }
-        showAlert("danger", msg);
-      },
+      let modal = new bootstrap.Modal(document.getElementById("supportModal"));
+      modal.show();
     });
-  });
-}
+
+    // Save status change
+    $("#saveSupportStatus").on("click", function () {
+      let id = $("#supportModal").data("id");
+      let status = $("#supportStatus").val();
+
+      $.ajax({
+        url: "/superadmin/support/update-status/" + id,
+        type: "POST",
+        data: {
+          status: status,
+          _token: $('meta[name="csrf-token"]').attr("content"),
+        },
+        success: function (res) {
+          if (res.success) {
+            showAlert("success", res.message);
+          } else {
+            showAlert("danger", res.message);
+          }
+          $("#supportModal").modal("hide");
+          table.ajax.reload();
+        },
+        error: function (xhr) {
+          let msg = "Something went wrong!";
+          if (xhr.responseJSON && xhr.responseJSON.message) {
+            msg = xhr.responseJSON.message;
+          }
+          showAlert("danger", msg);
+        },
+      });
+    });
+  }
 });
 
 // Enhanced Multi-Step Form Validation System
@@ -5371,5 +5939,33 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 });
 
+document.getElementById("showRejectionMessagesBtn")
+    .addEventListener("click", function () {
+        fetch("/superadmin/releases/rejections", {
+            headers: { "X-Requested-With": "XMLHttpRequest" }
+        })
+            .then(res => res.json())
+            .then(json => {
+                const tbody = document.getElementById("rejectionMessagesBody");
+                tbody.innerHTML = "";
 
+                json.data.forEach(item => {
+                    tbody.innerHTML += `
+                        <tr>
+                            <td>${item.upc || "-"}</td>
+                            <td>${item.isrc || "-"}</td>
+                            <td>${item.rejectionMessage || "-"}</td>
+                        </tr>
+                    `;
+                });
 
+                const modal = new bootstrap.Modal(
+                    document.getElementById("rejectionMessagesModal")
+                );
+                modal.show();
+            })
+            .catch(err => {
+                console.error("Error fetching rejection messages:", err);
+                alert("Unable to load rejection messages.");
+            });
+    });

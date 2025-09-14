@@ -55,9 +55,15 @@
                     </a>
                 </li>
                 <li>
-                    <a href="<?= base_url() . getUserRoleSlug() ?>/ownership-data" class="tp-link">
-                        <i data-feather="user"></i>
-                        <span> Ownership Data </span>
+                    <a href="<?= base_url() . getUserRoleSlug() ?>/facebook-ownership-data" class="tp-link">
+                        <i data-feather="facebook"></i>
+                        <span> Facebook Ownership Data </span>
+                    </a>
+                </li>
+                <li>
+                    <a href="<?= base_url() . getUserRoleSlug() ?>/youtube-ownership-data" class="tp-link">
+                        <i data-feather="youtube"></i>
+                        <span> Youtube Ownership Data </span>
                     </a>
                 </li>
                 <li>

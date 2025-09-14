@@ -28,7 +28,7 @@ $routes->group('superadmin', ['filter' => 'role:superadmin'], function ($routes)
     // $routes->get('claiming-data', 'SuperAdmin::claiming_data');
     $routes->get('relocation-data', 'SuperAdmin::relocation_data');
     // $routes->get('merge-data', 'SuperAdmin::merge_data');
-    $routes->get('ownership-data', 'SuperAdmin::ownership_data');
+    // $routes->get('ownership-data', 'SuperAdmin::ownership_data');
     // $routes->get('releases', 'SuperAdmin::releases');
     // $routes->get('artists', 'SuperAdmin::artists');
     // $routes->get('labels', 'SuperAdmin::labels');
@@ -36,7 +36,7 @@ $routes->group('superadmin', ['filter' => 'role:superadmin'], function ($routes)
     // $routes->get('claiming-request', 'SuperAdmin::claiming_request');
     // $routes->get('relocation-request', 'SuperAdmin::relocation_request');
     // $routes->get('merge-request', 'SuperAdmin::merge_request');
-    $routes->get('youtube', 'SuperAdmin::youtube');
+    // $routes->get('youtube', 'SuperAdmin::youtube');
 
     $routes->get('add-release', 'Backend\Release\ReleaseController::addRelease');
     // $routes->get('support', 'SuperAdmin::support');//will comment later
@@ -59,6 +59,8 @@ $routes->group('superadmin', ['filter' => 'role:superadmin'], function ($routes)
     $routes->post('releases/update/(:num)', 'Backend\Release\ReleaseController::update/$1');
     $routes->post('releases/takedown/(:num)', 'Backend\Release\ReleaseController::takedown_release/$1');
     $routes->get('api/labels', 'Backend\Label\LabelController::getLabelsJson');
+    $routes->get('releases/rejections', 'Backend\Release\ReleaseController::rejectedReleases');
+
     $routes->get('api/accounts', 'RegisterController::getAccountsJson');
     $routes->get('pages-profile', 'RegisterController::index');
     $routes->get('support', 'Backend\Support\SupportController::index');
@@ -103,6 +105,19 @@ $routes->group('superadmin', ['filter' => 'role:superadmin'], function ($routes)
         $routes->post('update-resolution', 'Backend\FacebookConflict\FacebookConflictController::updateResolution');
     });
     $routes->get('facebook/get-all-countries', 'Backend\FacebookConflict\FacebookConflictController::getAllCountries');
+    $routes->post('youtube-conflicts/import', 'Backend\YoutubeConflict\YoutubeConflictController::import');
+    $routes->get('youtube', 'Backend\YoutubeConflict\YoutubeConflictController::index');
+    $routes->get('youtube-conflicts/json', 'Backend\YoutubeConflict\YoutubeConflictController::listConflictsJson');
+    $routes->post('youtube-conflicts/update/(:num)', '::update/$1');
+
+    $routes->get('facebook-ownership-data', 'Backend\FacebookConflict\FacebookConflictController::ownershipIndex');
+    $routes->get('facebook-ownership/list', 'Backend\FacebookConflict\FacebookConflictController::listOwnershipConflictsJson');
+    $routes->post('facebook-ownership/update/(:num)', 'Backend\FacebookConflict\FacebookConflictController::updateOwnership/$1');
+
+    $routes->get('youtube-ownership-data', 'Backend\YoutubeConflict\YoutubeConflictController::youtubeOwnershipIndex');
+    $routes->get('youtube-ownership/list', 'Backend\YoutubeConflict\YoutubeConflictController::listYouTubeOwnershipConflictsJson');
+    $routes->post('youtube-ownership/update/(:num)', 'Backend\YoutubeConflict\YoutubeConflictController::updateYouTubeConflictStatus/$1');
+
 });
 
 

@@ -6,41 +6,16 @@ use CodeIgniter\Model;
 
 class YoutubeConflictModel extends Model
 {
-    protected $table            = 'youtubeconflicts';
-    protected $primaryKey       = 'id';
-    protected $useAutoIncrement = true;
-    protected $returnType       = 'array';
-    protected $useSoftDeletes   = false;
-    protected $protectFields    = true;
-    protected $allowedFields    = [];
-
-    protected bool $allowEmptyInserts = false;
-    protected bool $updateOnlyChanged = true;
-
-    protected array $casts = [];
-    protected array $castHandlers = [];
-
-    // Dates
-    protected $useTimestamps = false;
-    protected $dateFormat    = 'datetime';
-    protected $createdField  = 'created_at';
-    protected $updatedField  = 'updated_at';
-    protected $deletedField  = 'deleted_at';
-
-    // Validation
-    protected $validationRules      = [];
-    protected $validationMessages   = [];
-    protected $skipValidation       = false;
-    protected $cleanValidationRules = true;
-
-    // Callbacks
-    protected $allowCallbacks = true;
-    protected $beforeInsert   = [];
-    protected $afterInsert    = [];
-    protected $beforeUpdate   = [];
-    protected $afterUpdate    = [];
-    protected $beforeFind     = [];
-    protected $afterFind      = [];
-    protected $beforeDelete   = [];
-    protected $afterDelete    = [];
+    protected $table = 'g_youtube_conflicts';
+    protected $primaryKey = 'id';
+    protected $allowedFields = [
+        'issue_id','issue_type','other_party','expiry_date','expiry_time',
+        'asset_name','asset_type','asset_created_on','asset_id','reference_id',
+        'isrc','upc','custom_id','labels','iswc','overlapping_asset_id',
+        'overlapping_asset_name','video_id','video_title','channel_name','channel_id',
+        'claim_id','match_type','engaged_views_affected_daily','engaged_views_lifetime',
+        'claimed_videos_affected','duration_time_seconds','duration_percentage_reference',
+        'duration_percentage_video','status','status_detail','link_to_issue','resolution_rights_owned','resolution_date'
+        ,'supporting_document_path','resolution_status'
+    ];
 }
