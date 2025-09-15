@@ -127,7 +127,7 @@ class YoutubeConflictController extends BaseController
     {
         $youtubeConflict = new YoutubeConflictModel();
         $conflicts = $youtubeConflict
-            ->orderBy('id', 'DESC')->whereIn('status', ['In Review', 'Action Required'])
+            ->orderBy('id', 'DESC')->whereIn('status', ['In Review', 'Action Required','Rejected'])
             ->findAll();
 
         $data = [];

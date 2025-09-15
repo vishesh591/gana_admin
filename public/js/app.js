@@ -5787,11 +5787,11 @@ document.addEventListener("DOMContentLoaded", function () {
 
 //Toggle Password  Functionlity
 document.addEventListener("DOMContentLoaded", () => {
+  // EXISTING PASSWORD FIELD
   const passwordInput = document.getElementById("password");
   const togglePassword = document.getElementById("togglePassword");
   const toggleIcon = document.getElementById("toggleIcon");
 
-  // run only if all elements exist
   if (passwordInput && togglePassword && toggleIcon) {
     togglePassword.addEventListener("click", function () {
       const isPassword = passwordInput.type === "password";
@@ -5799,6 +5799,51 @@ document.addEventListener("DOMContentLoaded", () => {
 
       toggleIcon.classList.toggle("bi-eye");
       toggleIcon.classList.toggle("bi-eye-slash");
+    });
+  }
+
+  // OLD PASSWORD FIELD
+  const oldPasswordInput = document.getElementById("old_password");
+  const toggleOldPassword = document.getElementById("toggleOldPassword");
+  const toggleOldIcon = document.getElementById("toggleOldIcon");
+
+  if (oldPasswordInput && toggleOldPassword && toggleOldIcon) {
+    toggleOldPassword.addEventListener("click", function () {
+      const isPassword = oldPasswordInput.type === "password";
+      oldPasswordInput.type = isPassword ? "text" : "password";
+
+      toggleOldIcon.classList.toggle("bi-eye");
+      toggleOldIcon.classList.toggle("bi-eye-slash");
+    });
+  }
+
+  // NEW PASSWORD FIELD
+  const newPasswordInput = document.getElementById("new_password");
+  const toggleNewPassword = document.getElementById("toggleNewPassword");
+  const toggleNewIcon = document.getElementById("toggleNewIcon");
+
+  if (newPasswordInput && toggleNewPassword && toggleNewIcon) {
+    toggleNewPassword.addEventListener("click", function () {
+      const isPassword = newPasswordInput.type === "password";
+      newPasswordInput.type = isPassword ? "text" : "password";
+
+      toggleNewIcon.classList.toggle("bi-eye");
+      toggleNewIcon.classList.toggle("bi-eye-slash");
+    });
+  }
+
+  // CONFIRM PASSWORD FIELD
+  const confirmPasswordInput = document.getElementById("confirm_password");
+  const toggleConfirmPassword = document.getElementById("toggleConfirmPassword");
+  const toggleConfirmIcon = document.getElementById("toggleConfirmIcon");
+
+  if (confirmPasswordInput && toggleConfirmPassword && toggleConfirmIcon) {
+    toggleConfirmPassword.addEventListener("click", function () {
+      const isPassword = confirmPasswordInput.type === "password";
+      confirmPasswordInput.type = isPassword ? "text" : "password";
+
+      toggleConfirmIcon.classList.toggle("bi-eye");
+      toggleConfirmIcon.classList.toggle("bi-eye-slash");
     });
   }
 });

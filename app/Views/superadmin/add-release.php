@@ -131,7 +131,7 @@
                                 <div class="invalid-feedback" id="artistError"></div>
                             </div>
                             <div class="col-md-6 mb-3">
-                                <label for="featuringArtist" class="form-label required-field">Featuring Artist</label>
+                                <label for="featuringArtist" class="form-label">Featuring Artist</label>
                                 <select class="form-select searchable-select" id="featuringArtist" name="featuringArtist"
                                     data-placeholder="Search and select a label...">
                                     <option value="">Featuring Artist</option>

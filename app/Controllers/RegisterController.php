@@ -24,6 +24,7 @@ class RegisterController extends BaseController
             'email'                => 'required|valid_email|is_unique[g_users.email]',
             'password'             => 'required|min_length[6]',
             'profile_picture'      => 'if_exist|uploaded[profile_picture]|max_size[profile_picture,2048]|is_image[profile_picture]|mime_in[profile_picture,image/jpg,image/jpeg,image/png]',
+            'agreement_file'       => 'if_exist|uploaded[agreement_file]|max_size[agreement_file,5120]|mime_in[agreement_file,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,image/jpg,image/jpeg,image/png]',
             'company_name'         => 'required|min_length[3]',
             'primary_label_name'   => 'required|min_length[3]',
             'phone'                => 'required|regex_match[/^\+?[0-9]{10,15}$/]',
@@ -60,24 +61,35 @@ class RegisterController extends BaseController
         }
 
         $validated['role_id'] = $role->id;
-        unset($validated['role']); // remove role name, only save role_id
+        unset($validated['role']);
 
-        // Handle file upload
-        $file = $this->request->getFile('profile_picture');
-        if ($file && $file->isValid() && !$file->hasMoved()) {
-            $validated['profile_picture'] = $file->store('uploads');
+        // --- Profile Picture Upload ---
+        $profileFile = $this->request->getFile('profile_picture');
+        if ($profileFile && $profileFile->isValid() && ! $profileFile->hasMoved()) {
+            $newName = $profileFile->getRandomName();
+            $profileFile->move(FCPATH . 'uploads/profile_pictures', $newName);
+            $validated['profile_picture'] = 'uploads/profile_pictures/' . $newName;
         } else {
             $validated['profile_picture'] = null;
         }
 
-        // Hash password
+        // --- Agreement File Upload ---
+        $agreementFile = $this->request->getFile('agreement_file');
+        if ($agreementFile && $agreementFile->isValid() && ! $agreementFile->hasMoved()) {
+            $newName = $agreementFile->getRandomName();
+            $agreementFile->move(FCPATH . 'uploads/agreements', $newName);
+            $validated['agreement_document'] = 'uploads/agreements/' . $newName;
+        } else {
+            $validated['agreement_document'] = null;
+        }
+
         $validated['password'] = password_hash($validated['password'], PASSWORD_DEFAULT);
 
-        // Insert
         $this->userModel->insert($validated);
 
         return redirect()->back()->with('success', 'User registered successfully');
     }
+
 
     public function accounts()
     {

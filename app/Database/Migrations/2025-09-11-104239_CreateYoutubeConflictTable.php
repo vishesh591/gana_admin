@@ -44,7 +44,7 @@ class CreateYoutubeConflictTable extends Migration
             'duration_time_seconds' => ['type' => 'INT', 'null' => true],
             'duration_percentage_reference' => ['type' => 'VARCHAR', 'constraint' => 50, 'null' => true],
             'duration_percentage_video' => ['type' => 'VARCHAR', 'constraint' => 50, 'null' => true],
-            'status' => ['type' => 'VARCHAR', 'constraint' => 255, 'null' => true],
+            'status' => ['type' => 'VARCHAR', 'constraint' => 255, 'null' => true, 'default' => 'Action Required'],
             'status_detail' => ['type' => 'VARCHAR', 'constraint' => 1000, 'null' => true],
             'link_to_issue' => ['type' => 'TEXT', 'null' => true],
             'created_at' => ['type' => 'DATETIME', 'null' => true],

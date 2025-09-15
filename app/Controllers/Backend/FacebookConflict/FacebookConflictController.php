@@ -68,7 +68,7 @@ class FacebookConflictController extends BaseController
     private function getConflictsData()
     {
         $conflicts = $this->facebookConflictModel
-            ->orderBy('id', 'DESC')->whereIn('status', ['In Review', 'Action Required'])
+            ->orderBy('id', 'DESC')->whereIn('status', ['In Review', 'Action Required', 'Rejected'])
             ->findAll();
 
         $data = [];

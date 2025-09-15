@@ -150,21 +150,39 @@
                                                     <div class="form-group mb-3 row">
                                                         <label class="form-label">Old Password</label>
                                                         <div class="col-lg-12 col-xl-12">
-                                                            <input class="form-control" id="old_password" type="password" placeholder="Old Password">
+                                                            <div class="input-group">
+                                                                <input class="form-control rounded-start-pill p-3" id="old_password" type="password" placeholder="Old Password" style="border-right: none;">
+                                                                <button class="btn btn-outline-secondary rounded-end-pill" type="button" id="toggleOldPassword" style="border-left: none;">
+                                                                    <i class="bi bi-eye-slash" id="toggleOldIcon"></i>
+                                                                </button>
+                                                            </div>
                                                         </div>
                                                     </div>
+
                                                     <div class="form-group mb-3 row">
                                                         <label class="form-label">New Password</label>
                                                         <div class="col-lg-12 col-xl-12">
-                                                            <input class="form-control" id="new_password" type="password" placeholder="New Password">
+                                                            <div class="input-group">
+                                                                <input class="form-control rounded-start-pill p-3" id="new_password" type="password" placeholder="New Password" style="border-right: none;">
+                                                                <button class="btn btn-outline-secondary rounded-end-pill" type="button" id="toggleNewPassword" style="border-left: none;">
+                                                                    <i class="bi bi-eye-slash" id="toggleNewIcon"></i>
+                                                                </button>
+                                                            </div>
                                                         </div>
                                                     </div>
+
                                                     <div class="form-group mb-3 row">
                                                         <label class="form-label">Confirm Password</label>
                                                         <div class="col-lg-12 col-xl-12">
-                                                            <input class="form-control" id="confirm_password" type="password" placeholder="Confirm Password">
+                                                            <div class="input-group">
+                                                                <input class="form-control rounded-start-pill p-3" id="confirm_password" type="password" placeholder="Confirm Password" style="border-right: none;">
+                                                                <button class="btn btn-outline-secondary rounded-end-pill" type="button" id="toggleConfirmPassword" style="border-left: none;">
+                                                                    <i class="bi bi-eye-slash" id="toggleConfirmIcon"></i>
+                                                                </button>
+                                                            </div>
                                                         </div>
                                                     </div>
+
                                                     <div class="form-group row">
                                                         <div class="col-lg-12 col-xl-12">
                                                             <button type="button" id="changePasswordBtn" class="btn btn-primary">Change Password</button>
@@ -241,19 +259,49 @@
                                                 <div class="card border">
                                                     <div class="card-body">
                                                         <h6 class="text-uppercase fs-13 mb-3">Agreement Status</h6>
+
+                                                        <?php
+                                                        $isActive = false;
+                                                        $today = date('Y-m-d');
+
+                                                        if (!empty($user['agreement_start_date']) && !empty($user['agreement_end_date'])) {
+                                                            $isActive = ($today >= $user['agreement_start_date'] && $today <= $user['agreement_end_date']);
+                                                        }
+                                                        ?>
+
                                                         <div class="d-flex justify-content-between align-items-center">
                                                             <div>
-                                                                <p class="mb-1">Current Status: <span class="badge bg-success">Active</span></p>
-                                                                <p class="mb-0 text-muted">Duration: <span id="agreementDuration"></span></p>
+                                                                <p class="mb-1">
+                                                                    Current Status:
+                                                                    <?php if ($isActive): ?>
+                                                                        <span class="badge bg-success">Active</span>
+                                                                    <?php else: ?>
+                                                                        <span class="badge bg-danger">Inactive</span>
+                                                                    <?php endif; ?>
+                                                                </p>
+                                                                <p class="mb-0 text-muted">
+                                                                    Duration:
+                                                                    <?= esc($user['agreement_start_date']) ?> → <?= esc($user['agreement_end_date']) ?>
+                                                                </p>
                                                             </div>
+
                                                             <div>
-                                                                <button class="btn btn-outline-primary btn-sm">View Agreement</button>
+                                                                <?php if (!empty($user['agreement_document'])): ?>
+                                                                    <a href="<?= base_url($user['agreement_document']) ?>"
+                                                                        class="btn btn-outline-primary btn-sm"
+                                                                        target="_blank">
+                                                                        View Agreement
+                                                                    </a>
+                                                                <?php else: ?>
+                                                                    <span class="text-muted">No Document</span>
+                                                                <?php endif; ?>
                                                             </div>
                                                         </div>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
+
                                     </div>
                                 </div>
                             </div>

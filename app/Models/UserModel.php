@@ -26,6 +26,7 @@ class UserModel extends Model
         'branch_name',
         'agreement_start_date',
         'agreement_end_date',
+        'agreement_document',
         'role_id',
         'created_at',
         'updated_at'
