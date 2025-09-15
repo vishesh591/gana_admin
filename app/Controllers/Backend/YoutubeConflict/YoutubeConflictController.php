@@ -123,7 +123,7 @@ class YoutubeConflictController extends BaseController
             'inserted_rows' => $inserted
         ]);
     }
-        private function getConflictsData()
+    private function getConflictsData()
     {
         $youtubeConflict = new YoutubeConflictModel();
         $conflicts = $youtubeConflict
@@ -162,8 +162,8 @@ class YoutubeConflictController extends BaseController
             $resolutionData = [
                 'rightsOwned' => $conflict['resolution_rights_owned'] ?? '',
                 'rightsOwnedDisplay' => $rightsOwnedDisplay,
-                'supportingDocumentPath' => base_url() . '/' . ($conflict['supporting_document_path'] ?? ''),
-                'supportingFile' => base_url() . '/' . $conflict['supporting_document_path'] ?? '',
+                'supportingDocumentPath' => base_url() . ($conflict['supporting_document_path'] ?? ''),
+                'supportingFile' => base_url() . $conflict['supporting_document_path'] ?? '',
                 'resolutionDate' => $conflict['resolution_date'] ?? $conflict['updated_at'] ?? '',
             ];
 
@@ -234,8 +234,15 @@ class YoutubeConflictController extends BaseController
         // Handle file upload
         $file = $this->request->getFile('file');
         if ($file && $file->isValid() && !$file->hasMoved()) {
+            $uploadPath = FCPATH . 'uploads/youtube_conflicts';
+
+            if (!is_dir($uploadPath)) {
+                mkdir($uploadPath, 0755, true);
+            }
+
             $newName = $file->getRandomName();
-            $file->move(WRITEPATH . 'uploads/youtube_conflicts', $newName);
+            $file->move($uploadPath, $newName);
+
             $supportingDoc = 'uploads/youtube_conflicts/' . $newName;
         }
 

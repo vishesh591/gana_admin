@@ -5939,33 +5939,34 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 });
 
-document.getElementById("showRejectionMessagesBtn")
-    .addEventListener("click", function () {
-        fetch("/superadmin/releases/rejections", {
-            headers: { "X-Requested-With": "XMLHttpRequest" }
-        })
-            .then(res => res.json())
-            .then(json => {
-                const tbody = document.getElementById("rejectionMessagesBody");
-                tbody.innerHTML = "";
+document
+  .getElementById("showRejectionMessagesBtn")
+  .addEventListener("click", function () {
+    fetch("/superadmin/releases/rejections", {
+      headers: { "X-Requested-With": "XMLHttpRequest" },
+    })
+      .then((res) => res.json())
+      .then((json) => {
+        const tbody = document.getElementById("rejectionMessagesBody");
+        tbody.innerHTML = "";
 
-                json.data.forEach(item => {
-                    tbody.innerHTML += `
+        json.data.forEach((item) => {
+          tbody.innerHTML += `
                         <tr>
                             <td>${item.upc || "-"}</td>
                             <td>${item.isrc || "-"}</td>
                             <td>${item.rejectionMessage || "-"}</td>
                         </tr>
                     `;
-                });
+        });
 
-                const modal = new bootstrap.Modal(
-                    document.getElementById("rejectionMessagesModal")
-                );
-                modal.show();
-            })
-            .catch(err => {
-                console.error("Error fetching rejection messages:", err);
-                alert("Unable to load rejection messages.");
-            });
-    });
+        const modal = new bootstrap.Modal(
+          document.getElementById("rejectionMessagesModal")
+        );
+        modal.show();
+      })
+      .catch((err) => {
+        console.error("Error fetching rejection messages:", err);
+        alert("Unable to load rejection messages.");
+      });
+  });

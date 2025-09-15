@@ -165,7 +165,7 @@ class FacebookConflictController extends BaseController
                     'rightsOwned' => $conflict['resolution_rights_owned'] ?? '',
                     'rightsOwnedDisplay' => $rightsOwnedDisplay,
                     'resolutionDate' => $conflict['resolution_date'] ?? '',
-                    'supportingDocumentPath' => base_url() . '/' . $conflict['supporting_document_path'] ?? '',
+                    'supportingDocumentPath' => base_url() . $conflict['supporting_document_path'] ?? '',
                     'countryDisplayText' => trim($countryDisplayText)
                 ]
             ];
@@ -470,7 +470,7 @@ class FacebookConflictController extends BaseController
                         'rightsOwned' => $conflict['resolution_rights_owned'] ?? '',
                         'rightsOwnedDisplay' => $rightsOwnedDisplay,
                         'resolutionDate' => $conflict['resolution_date'] ?? '',
-                        'supportingDocumentPath' => base_url() . '/' . $conflict['supporting_document_path'] ?? '',
+                        'supportingDocumentPath' => base_url() .  $conflict['supporting_document_path'] ?? '',
                         'countryDisplayText' => trim($countryDisplayText),
                         'rejectionMessage' => $conflict['message'] ?? '',
                     ]
@@ -711,7 +711,9 @@ class FacebookConflictController extends BaseController
 
     private function uploadSupportingDocument($file)
     {
-        $uploadPath = WRITEPATH . 'uploads/supporting_docs';
+        // Save directly inside public/uploads/supporting_docs
+        $uploadPath = FCPATH . 'uploads/supporting_docs';
+
         if (!is_dir($uploadPath)) {
             mkdir($uploadPath, 0755, true);
         }
@@ -719,7 +721,8 @@ class FacebookConflictController extends BaseController
         $newName = time() . '_' . $file->getRandomName();
         $file->move($uploadPath, $newName);
 
-        return 'supporting_docs/' . $newName;
+        // Return relative public URL path
+        return 'uploads/supporting_docs/' . $newName;
     }
 
     private function safeInt($v)

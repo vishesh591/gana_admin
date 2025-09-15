@@ -108,7 +108,7 @@ $routes->group('superadmin', ['filter' => 'role:superadmin'], function ($routes)
     $routes->post('youtube-conflicts/import', 'Backend\YoutubeConflict\YoutubeConflictController::import');
     $routes->get('youtube', 'Backend\YoutubeConflict\YoutubeConflictController::index');
     $routes->get('youtube-conflicts/json', 'Backend\YoutubeConflict\YoutubeConflictController::listConflictsJson');
-    $routes->post('youtube-conflicts/update/(:num)', '::update/$1');
+    $routes->post('youtube-conflicts/update/(:num)', 'Backend\YoutubeConflict\YoutubeConflictController::update/$1');
 
     $routes->get('facebook-ownership-data', 'Backend\FacebookConflict\FacebookConflictController::ownershipIndex');
     $routes->get('facebook-ownership/list', 'Backend\FacebookConflict\FacebookConflictController::listOwnershipConflictsJson');
