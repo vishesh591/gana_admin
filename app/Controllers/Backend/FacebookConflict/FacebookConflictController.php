@@ -143,6 +143,7 @@ class FacebookConflictController extends BaseController
                 'dailyViews' => $this->formatViewCount($conflict['last_28_days_view_count']),
                 'expiry' => $this->formatExpiryDate($conflict['conflict_expiration_date']),
                 'status' => $conflict['status'] ?? 'Action Required',
+                'rejectionMessage' => $conflict['message'] ?? '',
 
                 // Additional data for the form
                 'songName' => $conflict['reference_copyright_title'],
@@ -166,7 +167,7 @@ class FacebookConflictController extends BaseController
                     'rightsOwnedDisplay' => $rightsOwnedDisplay,
                     'resolutionDate' => $conflict['resolution_date'] ?? '',
                     'supportingDocumentPath' => base_url() . $conflict['supporting_document_path'] ?? '',
-                    'countryDisplayText' => trim($countryDisplayText)
+                    'countryDisplayText' => trim($countryDisplayText),
                 ]
             ];
         }

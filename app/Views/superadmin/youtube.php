@@ -101,6 +101,16 @@
     </div>
 
     <div class="offcanvas-body">
+        <div class="offcanvas-body">
+    <div id="statusMessageBox" class="alert d-none mb-3">
+        <div class="d-flex align-items-center">
+            <i id="statusIcon" class="me-3 fs-5"></i>
+            <div>
+                <div class="fw-bold" id="statusTitle">Status</div>
+                <small id="statusMessage" class="text-muted">Message</small>
+            </div>
+        </div>
+    </div>
         <form id="youtubeConflictForm" novalidate>
             <!-- Step 1: Rights Ownership -->
             <div id="formStep1" class="form-step">
@@ -193,14 +203,6 @@
                             <span id="modalIsrcInReview">ISRC: N/A</span> - 
                             <span>YouTube</span>
                         </div>
-                    </div>
-                </div>
-
-                <div class="alert alert-success d-flex align-items-center mb-4">
-                    <i class="bi bi-check-circle-fill me-3 fs-5"></i>
-                    <div>
-                        <div class="fw-bold">Resolution Submitted</div>
-                        <small class="text-muted">This conflict resolution is currently under review</small>
                     </div>
                 </div>
 

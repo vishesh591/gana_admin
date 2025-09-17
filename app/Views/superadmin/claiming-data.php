@@ -107,10 +107,21 @@
             <label class="form-label">UPC</label>
             <input type="text" class="form-control" id="upcCode" readonly>
           </div>
+          
           <div class="mb-3">
             <label class="form-label">Reason</label>
             <input type="text" class="form-control" id="removalReason" readonly>
           </div>
+
+          <!-- NEW: Video Links Section -->
+          <div class="mb-3">
+            <label class="form-label fw-bold">Video Links</label>
+            <div id="videoLinksContainer" class="border rounded p-3" style="background-color: #f8f9fa;">
+              <!-- Video links will be populated here by JavaScript -->
+              <p class="text-muted">Loading video links...</p>
+            </div>
+          </div>
+
           <div class="mb-3">
             <label class="form-label">Status</label>
             <select class="form-select" id="statusDropdown">
@@ -128,3 +139,4 @@
     </div>
   </div>
 </div>
+

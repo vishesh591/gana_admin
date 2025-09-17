@@ -1153,7 +1153,6 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 // claim-data-page js
-// In your app.js, replace the entire .admin-claim-data-page block with this:
 document.addEventListener("DOMContentLoaded", function () {
   const page = document.querySelector(".admin-claim-data-page");
   if (!page) return;
@@ -1167,7 +1166,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // Check if table element exists
   if (table.length === 0) {
-    console.error("DataTable element #datatable not found");
+    console.error("DataTable element #claimDatatable not found");
     return;
   }
 
@@ -1199,11 +1198,6 @@ document.addEventListener("DOMContentLoaded", function () {
       }[s] || "bg-secondary";
     return `<span class="badge status-badge ${cls}">${s.toUpperCase()}</span>`;
   };
-
-  const createLink = (url, iconClass) =>
-    url && url !== "N/A" && url !== ""
-      ? `<a href="${url}" target="_blank" class="link-icon me-2"><i class="bi ${iconClass}"></i></a>`
-      : "";
 
   // Filter data based on status
   function getFilteredData() {
@@ -1364,26 +1358,23 @@ document.addEventListener("DOMContentLoaded", function () {
             return data || "";
           },
         },
-        // Action column (only video links + View button)
+        // Action column (ONLY View button - no video buttons)[67]
         {
           data: null,
           className: "text-center",
           orderable: false,
           searchable: false,
-          width: "200px",
+          width: "120px",
           render: (data, type, row) => {
             if (type === "display") {
-              let linksHtml = "";
-              if (Array.isArray(row.videoLinks)) {
-                row.videoLinks.forEach((url, i) => {
-                  linksHtml += `<a href="${url}" target="_blank" class="btn btn-sm btn-outline-secondary me-1">Video ${
-                    i + 1
-                  }</a>`;
-                });
-              }
+              // Show number of videos as badge next to View button
+              const videoCount = Array.isArray(row.videoLinks) ? row.videoLinks.length : 0;
+              const videoBadge = videoCount > 0 ? `<span class="badge bg-secondary ms-1">${videoCount}</span>` : '';
+              
               return `
-                ${linksHtml}
-                <button class="btn btn-sm btn-primary view-btn" data-id="${row.id}">View</button>
+                <button class="btn btn-sm btn-primary view-btn" data-id="${row.id}">
+                  <i class="bi bi-eye me-1"></i>View${videoBadge}
+                </button>
               `;
             }
             return "";
@@ -1406,7 +1397,7 @@ document.addEventListener("DOMContentLoaded", function () {
     return;
   }
 
-  // Modal Open
+  // Modal Open - UPDATED TO SHOW VIDEO LINKS[66]
   function openReleaseModal(id) {
     const r = claimingRequests.find((x) => x.id === id);
     if (!r) {
@@ -1423,8 +1414,28 @@ document.addEventListener("DOMContentLoaded", function () {
     document.getElementById("removalReason").value = r.removalReason || "N/A";
     document.getElementById("statusDropdown").value = r.status || "Pending";
 
-    // Show video links (optional: display in console or append somewhere in modal)
-    console.log("Video Links:", r.videoLinks);
+    // Display video links in the modal
+    const videoLinksContainer = document.getElementById("videoLinksContainer");
+    if (videoLinksContainer) {
+      if (Array.isArray(r.videoLinks) && r.videoLinks.length > 0) {
+        let videoLinksHtml = "";
+        r.videoLinks.forEach((url, index) => {
+          if (url && url !== "N/A" && url !== "") {
+            videoLinksHtml += `
+              <div class="mb-2">
+                <a href="${url}" target="_blank" class="btn btn-outline-primary btn-sm me-2">
+                  <i class="bi bi-play-circle me-1"></i>Video ${index + 1}
+                </a>
+                <small class="text-muted">${url}</small>
+              </div>
+            `;
+          }
+        });
+        videoLinksContainer.innerHTML = videoLinksHtml || '<p class="text-muted">No video links available</p>';
+      } else {
+        videoLinksContainer.innerHTML = '<p class="text-muted">No video links available</p>';
+      }
+    }
 
     releaseModal.show();
   }
@@ -1495,6 +1506,7 @@ document.addEventListener("DOMContentLoaded", function () {
   console.log("Starting to fetch claiming data...");
   fetchClaimingData();
 });
+
 
 // merge-data-page js
 // Add this entire new block to your app.js file
@@ -3084,7 +3096,7 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 });
 
-// youtube js - Updated with In Review functionality
+//youtube js for conflict resolution
 document.addEventListener("DOMContentLoaded", function () {
   const youtubePageContainer = document.querySelector(".admin-youtube-page");
 
@@ -3097,10 +3109,12 @@ document.addEventListener("DOMContentLoaded", function () {
       let badgeClass = "bg-secondary-subtle text-secondary-emphasis";
       if (status === "Action Required")
         badgeClass = "bg-danger-subtle text-danger-emphasis";
-      else if (status === "Resolved")
+      else if (status === "Approved")
         badgeClass = "bg-success-subtle text-success-emphasis";
       else if (status === "In Review")
         badgeClass = "bg-warning-subtle text-warning-emphasis";
+      else if (status === "Rejected")
+        badgeClass = "bg-danger-subtle text-danger-emphasis";
       return `<span class="badge rounded-pill border ${badgeClass}">${status}</span>`;
     }
 
@@ -3167,6 +3181,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     data-category="${req.category}" 
                     data-other-party="${req.otherParty}"
                     data-status="${req.status}"
+                    data-rejection-message="${req.rejectionMessage || ""}"
                     data-rights-owned="${req.rightsOwned || ""}"
                     data-supporting-file="${req.supportingFile || ""}"
                     data-resolution-data="${encodeURIComponent(
@@ -3195,26 +3210,429 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     // --- OFFCANVAS ---
-    const conflictOffcanvasEl = document.getElementById(
-      "conflictResolutionOffcanvas"
-    );
+    const conflictOffcanvasEl = document.getElementById("conflictResolutionOffcanvas");
     const conflictOffcanvas = new bootstrap.Offcanvas(conflictOffcanvasEl);
     const conflictForm = document.getElementById("youtubeConflictForm");
-    const steps = Array.from(conflictForm.querySelectorAll(".form-step"));
+    const formStep1 = document.getElementById("formStep1");
+    const formStep2 = document.getElementById("formStep2");
+    const formStepInReview = document.getElementById("formStepInReview");
+    
+    // The main form steps - YouTube only has 2 steps + preview (using InReview step)
+    const formSteps = [formStep1, formStep2, formStepInReview]; // Step 2 is the InReview step used as preview
+    
     const nextBtn = conflictOffcanvasEl.querySelector("#nextBtn");
     const backBtn = conflictOffcanvasEl.querySelector("#backBtn");
     const submitBtn = conflictOffcanvasEl.querySelector("#submitBtn");
+    const closeBtnInReview = conflictOffcanvasEl.querySelector("#closeBtnInReview");
     const fileInput = conflictOffcanvasEl.querySelector("#formFile");
     const fileDisplay = conflictOffcanvasEl.querySelector("#selectedFileName");
+    
     let currentStep = 0;
     let activeConflictId = null;
-    let isInReviewMode = false;
+    let currentStatus = "";
+    let isReadOnlyMode = false;
+    let formSubmitted = false;
+
+    // --- OFFCANVAS CLOSE EVENT LISTENERS FOR PAGE RELOAD ---
+    conflictOffcanvasEl.addEventListener('hidden.bs.offcanvas', function (event) {
+      if (!formSubmitted) {
+        console.log('Offcanvas closed - reloading page');
+        window.location.reload();
+      }
+      formSubmitted = false;
+    });
+
+    // Add click event to cross button (×) in header
+    const closeBtn = conflictOffcanvasEl.querySelector('.btn-close');
+    if (closeBtn) {
+      closeBtn.addEventListener('click', function() {
+        console.log('Cross button clicked - offcanvas will close and page will reload');
+      });
+    }
+
+    // Add click event to "Close" button in footer
+    if (closeBtnInReview) {
+      closeBtnInReview.addEventListener('click', function() {
+        console.log('Close button clicked - offcanvas will close and page will reload');
+      });
+    }
+
+    // Create status message dynamically if it doesn't exist
+    function createStatusMessage() {
+      const existingMsg = conflictOffcanvasEl.querySelector("#statusMessageBox");
+      if (!existingMsg) {
+        const statusMessageHTML = `
+          <div id="statusMessageBox" class="alert d-none mb-3">
+            <div class="d-flex align-items-center">
+              <i id="statusIcon" class="me-3 fs-5"></i>
+              <div>
+                <div class="fw-bold" id="statusTitle">Status</div>
+                <small id="statusMessage" class="text-muted">Message</small>
+              </div>
+            </div>
+          </div>
+        `;
+        const offcanvasBody = conflictOffcanvasEl.querySelector('.offcanvas-body');
+        offcanvasBody.insertAdjacentHTML('afterbegin', statusMessageHTML);
+      }
+    }
+
+    // --- STEP NAVIGATION ---
+    function showStep(stepIndex) {
+      // Hide all steps
+      formSteps.forEach((step, index) => {
+        if (step) step.classList.toggle("d-none", index !== stepIndex);
+      });
+      
+      // Button visibility logic
+      if (backBtn) backBtn.classList.toggle("d-none", stepIndex === 0 || isReadOnlyMode);
+      if (nextBtn) nextBtn.classList.toggle("d-none", stepIndex === 2 || isReadOnlyMode); // Step 2 is the final preview step
+      if (submitBtn) submitBtn.classList.toggle("d-none", stepIndex !== 2 || isReadOnlyMode); // Show submit only on step 2 (preview)
+      if (closeBtnInReview) closeBtnInReview.classList.toggle("d-none", !isReadOnlyMode);
+      
+      currentStep = stepIndex;
+    }
+
+    function showStatusMessage(status, message = "") {
+      createStatusMessage();
+      
+      const statusMessageBox = document.getElementById("statusMessageBox");
+      const statusIcon = document.getElementById("statusIcon");
+      const statusTitle = document.getElementById("statusTitle");
+      const statusMessageText = document.getElementById("statusMessage");
+
+      if (status === "Rejected" && message) {
+        statusMessageBox.className = "alert alert-danger d-flex align-items-center mb-3";
+        statusIcon.className = "bi bi-x-circle-fill me-3 fs-5 text-danger";
+        statusTitle.textContent = "Resolution Rejected";
+        statusMessageText.textContent = message;
+        statusMessageBox.classList.remove("d-none");
+      } else {
+        statusMessageBox.classList.add("d-none");
+      }
+    }
+
+    // --- READ-ONLY DISPLAY FOR IN REVIEW/APPROVED ---
+    function showReadOnlyDisplay(resolutionData) {
+      // Hide all form steps except the In Review step
+      formStep1.classList.add("d-none");
+      formStep2.classList.add("d-none");
+      formStepInReview.classList.remove("d-none");
+
+      // Populate read-only data using existing elements
+      const rightsOwnedEl = document.getElementById("resolutionRightsOwned");
+      if (rightsOwnedEl) {
+        rightsOwnedEl.textContent = resolutionData.rightsOwnedDisplay || getRightsOwnedLabel(resolutionData.rightsOwned) || "N/A";
+      }
+      
+      const supportingDocEl = document.getElementById("supportingDocumentInfo");
+      if (supportingDocEl) {
+        if (resolutionData.supportingDocumentPath || resolutionData.supportingFile) {
+          const filePath = resolutionData.supportingDocumentPath || resolutionData.supportingFile;
+          const fileName = filePath.split("/").pop();
+          supportingDocEl.innerHTML = `
+            <a href="${filePath}" target="_blank" class="text-decoration-none">
+              <i class="bi bi-file-earmark-text me-2"></i>${fileName}
+            </a>`;
+        } else {
+          supportingDocEl.textContent = "No supporting document uploaded";
+        }
+      }
+
+      const dateEl = document.getElementById("resolutionDate");
+      if (dateEl) {
+        dateEl.textContent = resolutionData.resolutionDate ? 
+          new Date(resolutionData.resolutionDate).toLocaleString() : "N/A";
+      }
+
+      isReadOnlyMode = true;
+      // Set button visibility for read-only mode
+      if (backBtn) backBtn.classList.add("d-none");
+      if (nextBtn) nextBtn.classList.add("d-none");
+      if (submitBtn) submitBtn.classList.add("d-none");
+      if (closeBtnInReview) closeBtnInReview.classList.remove("d-none");
+    }
+
+    function populatePreviewStep() {
+      // Use the existing formStepInReview as preview step but populate it with current form data
+      const rightsOwned = conflictForm.querySelector('input[name="rightsOwned"]:checked')?.value;
+      const rightsOwnedEl = document.getElementById("resolutionRightsOwned");
+      if (rightsOwnedEl) {
+        rightsOwnedEl.textContent = getRightsOwnedLabel(rightsOwned) || "Not selected";
+      }
+
+      const supportingDocEl = document.getElementById("supportingDocumentInfo");
+      if (supportingDocEl) {
+        if (fileInput && fileInput.files.length > 0) {
+          supportingDocEl.innerHTML = `<i class="bi bi-file-earmark-text me-2"></i>${fileInput.files[0].name}`;
+        } else {
+          supportingDocEl.textContent = "No document selected";
+        }
+      }
+
+      const dateEl = document.getElementById("resolutionDate");
+      if (dateEl) {
+        dateEl.textContent = "Will be submitted: " + new Date().toLocaleString();
+      }
+    }
+
+    // --- EVENT LISTENERS ---
+    if (nextBtn) {
+      nextBtn.addEventListener("click", () => {
+        if (isReadOnlyMode) return;
+
+        // Step 0: Rights owned check[60]
+        if (currentStep === 0) {
+          const existingRights = conflictOffcanvasEl.dataset.rightsOwned;
+          const radioSelected = conflictForm.querySelector('input[name="rightsOwned"]:checked');
+
+          // For rejected status, always require selection (even if there was previous data)
+          if (currentStatus === "Rejected") {
+            if (!radioSelected) {
+              alert("Please select a rights option.");
+              return;
+            }
+          } else if (existingRights) {
+            // For non-rejected status with existing rights, show readonly text and skip validation
+            const rightsTextEl = document.getElementById("rightsOwnedText");
+            if (rightsTextEl) {
+              rightsTextEl.textContent = getRightsOwnedLabel(existingRights);
+              rightsTextEl.classList.remove("d-none");
+            }
+            const rightsOptionsEl = document.getElementById("rightsOwnedOptions");
+            if (rightsOptionsEl) rightsOptionsEl.classList.add("d-none");
+          } else {
+            // If no existing rights, enforce validation
+            if (!radioSelected) {
+              alert("Please select a rights option.");
+              return;
+            }
+          }
+        }
+
+        // Step 1: File upload check
+        if (currentStep === 1) {
+          if (!fileInput.files.length) {
+            // For rejected status, file upload is optional if there's a previous file
+            if (currentStatus === "Rejected") {
+              // Allow proceeding even without new file upload for rejected status
+              // The user can choose to keep the existing file or upload a new one
+            } else {
+              // Check if there's an existing file for non-rejected status
+              const existingFile = conflictOffcanvasEl.dataset.supportingFile;
+              if (!existingFile) {
+                alert("Please upload a supporting document.");
+                return;
+              }
+            }
+          }
+        }
+
+        // Move to next step if validations passed
+        if (currentStep < 2) { // Step 2 is the preview step (using formStepInReview)
+          if (currentStep === 1) {
+            populatePreviewStep(); // Populate preview before showing it
+          }
+          showStep(currentStep + 1);
+        }
+      });
+    }
+
+    if (backBtn) {
+      backBtn.addEventListener("click", () => {
+        if (isReadOnlyMode) return;
+        if (currentStep > 0) showStep(currentStep - 1);
+      });
+    }
+
+    // --- OFFCANVAS EVENT HANDLERS ---
+    conflictOffcanvasEl.addEventListener("show.bs.offcanvas", function (event) {
+      const data = event.relatedTarget.dataset;
+      activeConflictId = data.id;
+      currentStatus = data.status;
+      isReadOnlyMode = false;
+      formSubmitted = false;
+
+      // Parse resolution data with better error handling
+      let resolutionData = {};
+      try {
+        if (data.resolutionData && data.resolutionData !== "{}" && data.resolutionData !== "") {
+          const decodedData = decodeURIComponent(data.resolutionData);
+          resolutionData = JSON.parse(decodedData);
+          console.log("Parsed resolution data:", resolutionData);
+        }
+      } catch (e) {
+        console.warn("Failed to parse resolution data:", e);
+        console.log("Raw resolution data:", data.resolutionData);
+        resolutionData = {};
+      }
+
+      // Populate album covers and song info for all steps
+      ["", "2", "InReview"].forEach((suffix) => {
+        const albumCover = conflictOffcanvasEl.querySelector(`#modalAlbumCover${suffix}`);
+        const songName = conflictOffcanvasEl.querySelector(`#modalSongName${suffix}`);
+        const artistName = conflictOffcanvasEl.querySelector(`#modalArtistName${suffix}`);
+        const isrcEl = suffix === "InReview" ? conflictOffcanvasEl.querySelector(`#modalIsrcInReview`) : null;
+
+        if (albumCover) {
+          albumCover.src = data.coverUrl || "https://placehold.co/80x80/ff0000/ffffff?text=YT";
+        }
+        if (songName) songName.textContent = data.songName || "Unknown";
+        if (artistName) artistName.textContent = data.artistName || "Unknown";
+        if (isrcEl) isrcEl.textContent = `ISRC: ${data.isrc || "N/A"}`;
+      });
+
+      // Set ISRC for regular steps
+      const modalIsrc = conflictOffcanvasEl.querySelector("#modalIsrc");
+      if (modalIsrc) modalIsrc.textContent = `ISRC: ${data.isrc || "N/A"}`;
+
+      // Set title and subtitle
+      conflictOffcanvasEl.querySelector("#offcanvasTitle").textContent = data.category || "YouTube Conflict";
+      conflictOffcanvasEl.querySelector("#offcanvasSubtitle").textContent = `VS. ${data.otherParty || "Unknown"}`;
+
+      // Handle different status flows
+      if (currentStatus === "In Review" || currentStatus === "Approved") {
+        showReadOnlyDisplay(resolutionData);
+      } else {
+        // Action Required or Rejected - show fillable form
+        if (currentStatus === "Rejected") {
+          showStatusMessage("Rejected", data.rejectionMessage);
+        } else {
+          showStatusMessage(""); // Hide status message for Action Required
+        }
+
+        isReadOnlyMode = false;
+        conflictForm.reset();
+        conflictOffcanvasEl.querySelectorAll(".radio-card").forEach((c) => c.classList.remove("selected"));
+        if (fileDisplay) fileDisplay.classList.add("d-none");
+        showStep(0);
+
+        // Rights owned logic - FIXED FOR REJECTED STATUS[58][60]
+        const rightsOptions = conflictOffcanvasEl.querySelector("#rightsOwnedOptions");
+        const rightsText = conflictOffcanvasEl.querySelector("#rightsOwnedText");
+        
+        // For REJECTED status, always show the editable form regardless of existing data
+        if (currentStatus === "Rejected") {
+          if (rightsOptions) rightsOptions.classList.remove("d-none");
+          if (rightsText) rightsText.classList.add("d-none");
+          delete conflictOffcanvasEl.dataset.rightsOwned;
+          
+          // Pre-select the previously submitted rights option if available
+          if (data.rightsOwned) {
+            const radioInput = conflictForm.querySelector(`input[name="rightsOwned"][value="${data.rightsOwned}"]`);
+            if (radioInput) {
+              radioInput.checked = true;
+              radioInput.closest('.radio-card').classList.add('selected');
+            }
+          }
+        } else if (data.rightsOwned) {
+          // For non-rejected statuses with existing rights, show readonly
+          if (rightsOptions) rightsOptions.classList.add("d-none");
+          if (rightsText) {
+            rightsText.textContent = getRightsOwnedLabel(data.rightsOwned);
+            rightsText.classList.remove("d-none");
+          }
+          conflictOffcanvasEl.dataset.rightsOwned = data.rightsOwned;
+        } else {
+          // For Action Required without existing rights, show editable
+          if (rightsOptions) rightsOptions.classList.remove("d-none");
+          if (rightsText) rightsText.classList.add("d-none");
+          delete conflictOffcanvasEl.dataset.rightsOwned;
+        }
+
+        // File logic - FIXED FOR REJECTED STATUS
+        const fileUploadContainer = conflictOffcanvasEl.querySelector("#fileUploadContainer");
+        const fileLinkBox = conflictOffcanvasEl.querySelector("#fileLinkBox");
+        
+        // For REJECTED status, always show file upload container (allow re-upload)
+        if (currentStatus === "Rejected") {
+          if (fileUploadContainer) fileUploadContainer.classList.remove("d-none");
+          if (fileLinkBox) {
+            if (data.supportingFile) {
+              fileLinkBox.innerHTML = `
+                <div class="alert alert-info p-2 mb-2">
+                  <small><strong>Previously uploaded:</strong> 
+                  <a href="${data.supportingFile}" target="_blank" class="text-decoration-none">
+                    <i class="bi bi-file-earmark-text me-1"></i>View Document
+                  </a></small>
+                </div>`;
+              fileLinkBox.classList.remove("d-none");
+            } else {
+              fileLinkBox.classList.add("d-none");
+            }
+          }
+          delete conflictOffcanvasEl.dataset.supportingFile;
+        } else if (data.supportingFile) {
+          // For non-rejected statuses with existing file, show link only
+          if (fileUploadContainer) fileUploadContainer.classList.add("d-none");
+          if (fileDisplay) fileDisplay.classList.add("d-none");
+          if (fileLinkBox) {
+            fileLinkBox.innerHTML = `<a href="${data.supportingFile}" target="_blank" class="btn btn-outline-primary btn-sm">View Supporting Document</a>`;
+            fileLinkBox.classList.remove("d-none");
+          }
+          conflictOffcanvasEl.dataset.supportingFile = data.supportingFile;
+        } else {
+          // For Action Required without existing file, show upload
+          if (fileUploadContainer) fileUploadContainer.classList.remove("d-none");
+          if (fileLinkBox) fileLinkBox.classList.add("d-none");
+          delete conflictOffcanvasEl.dataset.supportingFile;
+        }
+      }
+    });
+
+    // --- FORM SUBMISSION ---
+    if (conflictForm) {
+      conflictForm.addEventListener("submit", function (e) {
+        e.preventDefault();
+        if (isReadOnlyMode) return;
+
+        if (!activeConflictId) {
+          return alert("Error: Conflict ID missing.");
+        }
+
+        const formData = new FormData(conflictForm);
+        if (fileInput && fileInput.files.length > 0) {
+          formData.append("file", fileInput.files[0]);
+        }
+
+        const originalText = submitBtn.innerHTML;
+        submitBtn.innerHTML = '<i class="spinner-border spinner-border-sm me-1"></i>Submitting...';
+        submitBtn.disabled = true;
+        formSubmitted = true;
+
+        fetch(`/superadmin/youtube-conflicts/update/${activeConflictId}`, {
+          method: "POST",
+          body: formData,
+        })
+          .then((res) => res.json())
+          .then((data) => {
+            if (data.status === "success") {
+              alert("Resolution saved successfully!");
+              conflictOffcanvas.hide();
+              setTimeout(() => {
+                window.location.reload();
+              }, 100);
+            } else {
+              alert("Update failed: " + data.message);
+              formSubmitted = false;
+            }
+          })
+          .catch((err) => {
+            console.error("Update error:", err);
+            alert("Update failed. Try again.");
+            formSubmitted = false;
+          })
+          .finally(() => {
+            submitBtn.innerHTML = originalText;
+            submitBtn.disabled = false;
+          });
+      });
+    }
 
     // --- TABLE SORTING ---
-    document
-      .getElementById("releasesTable")
-      .querySelector("thead")
-      .addEventListener("click", (e) => {
+    const releasesTable = document.getElementById("releasesTable");
+    if (releasesTable) {
+      releasesTable.querySelector("thead").addEventListener("click", (e) => {
         const headerCell = e.target.closest(".sortable-header");
         if (!headerCell) return;
         const sortKey = headerCell.dataset.sort;
@@ -3242,300 +3660,17 @@ document.addEventListener("DOMContentLoaded", function () {
         renderTable(conflictRequests);
         updateSortIcons();
       });
-
-    // --- STEP NAVIGATION ---
-    function showStep(stepIndex) {
-      steps.forEach((step, index) =>
-        step.classList.toggle("d-none", index !== stepIndex)
-      );
-      backBtn.classList.toggle("d-none", stepIndex === 0 || isInReviewMode);
-      nextBtn.classList.toggle(
-        "d-none",
-        stepIndex === steps.length - 1 || isInReviewMode
-      );
-      submitBtn.classList.toggle(
-        "d-none",
-        stepIndex !== steps.length - 1 && !isInReviewMode
-      );
-      currentStep = stepIndex;
     }
-
-    // --- IN REVIEW DISPLAY ---
-    function showInReviewDisplay(resolutionData) {
-      // Hide all regular form steps
-      steps.forEach((step) => step.classList.add("d-none"));
-
-      // Show the In Review step
-      const inReviewStep =
-        conflictOffcanvasEl.querySelector("#formStepInReview");
-      if (inReviewStep) {
-        inReviewStep.classList.remove("d-none");
-      }
-
-      // Populate rights owned
-      const rightsOwnedText = conflictOffcanvasEl.querySelector(
-        "#resolutionRightsOwned"
-      );
-      if (rightsOwnedText) {
-        rightsOwnedText.textContent =
-          resolutionData.rightsOwnedDisplay ||
-          getRightsOwnedLabel(resolutionData.rightsOwned) ||
-          "N/A";
-      }
-
-      // Populate supporting document
-      const supportingDoc = conflictOffcanvasEl.querySelector(
-        "#supportingDocumentInfo"
-      );
-      if (supportingDoc) {
-        if (
-          resolutionData.supportingDocumentPath ||
-          resolutionData.supportingFile
-        ) {
-          const filePath =
-            resolutionData.supportingDocumentPath ||
-            resolutionData.supportingFile;
-          const fileName = filePath.split("/").pop();
-          supportingDoc.innerHTML = `
-            <a href="${filePath}" target="_blank" class="text-decoration-none">
-              <i class="bi bi-file-earmark-text me-2"></i>${fileName}
-            </a>`;
-        } else {
-          supportingDoc.textContent = "No supporting document uploaded";
-        }
-      }
-
-      // Populate submission date
-      const resolutionDate =
-        conflictOffcanvasEl.querySelector("#resolutionDate");
-      if (resolutionDate && resolutionData.resolutionDate) {
-        resolutionDate.textContent = new Date(
-          resolutionData.resolutionDate
-        ).toLocaleString();
-      } else if (resolutionDate) {
-        resolutionDate.textContent = "N/A";
-      }
-
-      // Switch footer buttons
-      backBtn.classList.add("d-none");
-      nextBtn.classList.add("d-none");
-      submitBtn.classList.add("d-none");
-      const closeBtnInReview =
-        conflictOffcanvasEl.querySelector("#closeBtnInReview");
-      if (closeBtnInReview) {
-        closeBtnInReview.classList.remove("d-none");
-      }
-
-      // Mark as in review mode
-      isInReviewMode = true;
-    }
-
-    nextBtn.addEventListener("click", () => {
-      if (isInReviewMode) return;
-
-      // Step 0: Rights owned check
-      if (currentStep === 0) {
-        const existingRights = conflictOffcanvasEl.dataset.rightsOwned;
-        const radioSelected = conflictForm.querySelector(
-          'input[name="rightsOwned"]:checked'
-        );
-
-        if (existingRights) {
-          // Show readonly text and skip validation
-          const rightsTextEl = document.getElementById("rightsOwnedText");
-          rightsTextEl.textContent = getRightsOwnedLabel(existingRights);
-          rightsTextEl.classList.remove("d-none");
-          document.getElementById("rightsOwnedOptions").classList.add("d-none");
-        } else {
-          // If no existing rights, enforce validation
-          if (!radioSelected) {
-            alert("Please select a rights option.");
-            return;
-          }
-        }
-      }
-
-      // Move to next step if validations passed
-      if (currentStep < steps.length - 1) {
-        showStep(currentStep + 1);
-      }
-    });
-
-    backBtn.addEventListener("click", () => {
-      if (isInReviewMode) return;
-      if (currentStep > 0) showStep(currentStep - 1);
-    });
-
-    // --- OFFCANVAS EVENT HANDLERS ---
-    conflictOffcanvasEl.addEventListener("show.bs.offcanvas", function (event) {
-      const data = event.relatedTarget.dataset;
-      activeConflictId = data.id;
-      const status = data.status;
-      isInReviewMode = status === "In Review";
-
-      // Parse resolution data with better error handling
-      let resolutionData = {};
-      try {
-        if (
-          data.resolutionData &&
-          data.resolutionData !== "{}" &&
-          data.resolutionData !== ""
-        ) {
-          // Decode HTML entities first
-          const decodedData = decodeURIComponent(data.resolutionData);
-          resolutionData = JSON.parse(decodedData);
-
-          console.log("Parsed resolution data:", resolutionData);
-        }
-      } catch (e) {
-        console.warn("Failed to parse resolution data:", e);
-        console.log("Raw resolution data:", data.resolutionData);
-        resolutionData = {};
-      }
-
-      // Populate album covers and song info for all steps
-      ["", "2", "InReview"].forEach((suffix) => {
-        const albumCover = conflictOffcanvasEl.querySelector(
-          `#modalAlbumCover${suffix}`
-        );
-        const songName = conflictOffcanvasEl.querySelector(
-          `#modalSongName${suffix}`
-        );
-        const artistName = conflictOffcanvasEl.querySelector(
-          `#modalArtistName${suffix}`
-        );
-        const isrcEl =
-          suffix === "InReview"
-            ? conflictOffcanvasEl.querySelector(`#modalIsrcInReview`)
-            : null;
-
-        if (albumCover) {
-          albumCover.src =
-            data.coverUrl || "https://placehold.co/80x80/ff0000/ffffff?text=YT";
-        }
-        if (songName) songName.textContent = data.songName || "Unknown";
-        if (artistName) artistName.textContent = data.artistName || "Unknown";
-        if (isrcEl) isrcEl.textContent = `ISRC: ${data.isrc || "N/A"}`;
-      });
-
-      // Set ISRC for regular steps
-      const modalIsrc = conflictOffcanvasEl.querySelector("#modalIsrc");
-      if (modalIsrc) modalIsrc.textContent = `ISRC: ${data.isrc || "N/A"}`;
-
-      // Set title and subtitle
-      conflictOffcanvasEl.querySelector("#offcanvasTitle").textContent =
-        data.category || "YouTube Conflict";
-      conflictOffcanvasEl.querySelector(
-        "#offcanvasSubtitle"
-      ).textContent = `VS. ${data.otherParty || "Unknown"}`;
-
-      if (isInReviewMode) {
-        // Show resolution data for "In Review" status
-        showInReviewDisplay(resolutionData);
-      } else {
-        // Show regular form for other statuses
-        isInReviewMode = false;
-        conflictForm.reset();
-        conflictOffcanvasEl
-          .querySelectorAll(".radio-card")
-          .forEach((c) => c.classList.remove("selected"));
-        fileDisplay.classList.add("d-none");
-        showStep(0);
-
-        // Rights owned logic
-        const rightsOptions = conflictOffcanvasEl.querySelector(
-          "#rightsOwnedOptions"
-        );
-        const rightsText =
-          conflictOffcanvasEl.querySelector("#rightsOwnedText");
-        if (data.rightsOwned) {
-          rightsOptions.classList.add("d-none");
-          rightsText.textContent = getRightsOwnedLabel(data.rightsOwned);
-          rightsText.classList.remove("d-none");
-        } else {
-          rightsOptions.classList.remove("d-none");
-          rightsText.classList.add("d-none");
-        }
-
-        // File logic
-        const fileUploadContainer = conflictOffcanvasEl.querySelector(
-          "#fileUploadContainer"
-        );
-        const fileLinkBox = conflictOffcanvasEl.querySelector("#fileLinkBox");
-        if (data.supportingFile) {
-          fileUploadContainer.classList.add("d-none");
-          fileDisplay.classList.add("d-none");
-          if (fileLinkBox) {
-            fileLinkBox.innerHTML = `<a href="${data.supportingFile}" target="_blank" class="btn btn-outline-primary btn-sm">View Supporting Document</a>`;
-            fileLinkBox.classList.remove("d-none");
-          }
-        } else {
-          fileUploadContainer.classList.remove("d-none");
-          if (fileLinkBox) fileLinkBox.classList.add("d-none");
-        }
-      }
-    });
-
-    // --- FORM SUBMISSION ---
-    conflictForm.addEventListener("submit", function (e) {
-      e.preventDefault();
-
-      if (isInReviewMode) return; // Prevent form submission in review mode
-
-      if (!activeConflictId) {
-        return alert("Error: Conflict ID missing.");
-      }
-      if (!fileInput.files.length && currentStep === 1) {
-        return alert("Please upload a supporting document.");
-      }
-
-      const formData = new FormData(conflictForm);
-      if (fileInput.files.length > 0) {
-        formData.append("file", fileInput.files[0]);
-      }
-
-      // Show loading state
-      const originalText = submitBtn.innerHTML;
-      submitBtn.innerHTML =
-        '<i class="spinner-border spinner-border-sm me-1"></i>Submitting...';
-      submitBtn.disabled = true;
-
-      fetch(`/superadmin/youtube-conflicts/update/${activeConflictId}`, {
-        method: "POST",
-        body: formData,
-      })
-        .then((res) => res.json())
-        .then((data) => {
-          if (data.status === "success") {
-            alert("Resolution saved successfully!");
-            conflictOffcanvas.hide();
-            loadConflictsData();
-          } else {
-            alert("Update failed: " + data.message);
-          }
-        })
-        .catch((err) => {
-          console.error("Update error:", err);
-          alert("Update failed. Try again.");
-        })
-        .finally(() => {
-          // Restore button state
-          submitBtn.innerHTML = originalText;
-          submitBtn.disabled = false;
-        });
-    });
 
     // --- FILE UPLOAD HANDLERS ---
-    const fileUploadContainer = conflictOffcanvasEl.querySelector(
-      "#fileUploadContainer"
-    );
+    const fileUploadContainer = conflictOffcanvasEl.querySelector("#fileUploadContainer");
     if (fileUploadContainer) {
       fileUploadContainer.addEventListener("click", () => {
-        if (!isInReviewMode) fileInput.click();
+        if (!isReadOnlyMode && fileInput) fileInput.click();
       });
     }
 
-    if (fileInput) {
+    if (fileInput && fileDisplay) {
       fileInput.addEventListener("change", () => {
         if (fileInput.files.length > 0) {
           const span = fileDisplay.querySelector("span");
@@ -3550,7 +3685,7 @@ document.addEventListener("DOMContentLoaded", function () {
       if (closeBtn) {
         closeBtn.addEventListener("click", (e) => {
           e.stopPropagation();
-          fileInput.value = "";
+          if (fileInput) fileInput.value = "";
           fileDisplay.classList.add("d-none");
         });
       }
@@ -3558,13 +3693,11 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // --- RADIO CARD INTERACTIONS ---
     conflictOffcanvasEl.addEventListener("click", function (e) {
-      if (isInReviewMode) return; // Disable interactions in review mode
+      if (isReadOnlyMode) return;
 
       if (e.target.closest(".radio-card")) {
         const card = e.target.closest(".radio-card");
-        conflictOffcanvasEl
-          .querySelectorAll(".radio-card")
-          .forEach((c) => c.classList.remove("selected"));
+        conflictOffcanvasEl.querySelectorAll(".radio-card").forEach((c) => c.classList.remove("selected"));
         card.classList.add("selected");
         const radioInput = card.querySelector('input[type="radio"]');
         if (radioInput) radioInput.checked = true;
@@ -3593,7 +3726,7 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 });
 
-// Import functionality
+// Import functionality remains the same
 document.addEventListener("DOMContentLoaded", function () {
   const importBtn = document.getElementById("importYoutubeCsv");
 
@@ -3612,8 +3745,7 @@ document.addEventListener("DOMContentLoaded", function () {
         formData.append("file", file);
 
         const originalText = importBtn.innerHTML;
-        importBtn.innerHTML =
-          '<i class="spinner-border spinner-border-sm me-1"></i>Importing...';
+        importBtn.innerHTML = '<i class="spinner-border spinner-border-sm me-1"></i>Importing...';
         importBtn.disabled = true;
 
         fetch("/superadmin/youtube-conflicts/import", {
@@ -3623,9 +3755,7 @@ document.addEventListener("DOMContentLoaded", function () {
           .then((res) => res.json())
           .then((data) => {
             if (data.status === "success") {
-              alert(
-                `Import successful!\nProcessed: ${data.processed_rows}\nInserted: ${data.inserted_rows}`
-              );
+              alert(`Import successful!\nProcessed: ${data.processed_rows}\nInserted: ${data.inserted_rows}`);
               location.reload();
             } else {
               alert("Import failed: " + data.message);
@@ -3648,6 +3778,8 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 });
 
+
+
 // facebook-page js
 // Add this entire new block to your app.js file
 document.addEventListener("DOMContentLoaded", function () {
@@ -3655,7 +3787,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
   if (facebookPageContainer) {
     // --- DOM ELEMENTS ---
-    const table = $("#facebookDatatable"); // updated selector
+    const table = $("#facebookDatatable");
     let dataTableInstance = null;
 
     // --- HELPER & PARSING FUNCTIONS ---
@@ -3663,10 +3795,12 @@ document.addEventListener("DOMContentLoaded", function () {
       let badgeClass = "bg-secondary-subtle text-secondary-emphasis";
       if (status === "Action Required")
         badgeClass = "bg-danger-subtle text-danger-emphasis";
-      else if (status === "Resolved")
+      else if (status === "Approved")
         badgeClass = "bg-success-subtle text-success-emphasis";
       else if (status === "In Review")
         badgeClass = "bg-warning-subtle text-warning-emphasis";
+      else if (status === "Rejected")
+        badgeClass = "bg-danger-subtle text-danger-emphasis";
       return `<span class="badge rounded-pill border ${badgeClass}">${status}</span>`;
     };
 
@@ -3708,7 +3842,7 @@ document.addEventListener("DOMContentLoaded", function () {
         info: true,
         lengthChange: true,
         autoWidth: false,
-        order: [[1, "desc"]], // Order by ID/date descending
+        order: [[1, "desc"]],
         columns: [
           {
             data: null,
@@ -3775,6 +3909,7 @@ document.addEventListener("DOMContentLoaded", function () {
             "data-conflict-state": data.conflictState,
             "data-countries": JSON.stringify(data.countries || {}),
             "data-status": data.status,
+            "data-rejection-message": data.rejectionMessage || "",
             "data-resolution-data": JSON.stringify(data.resolutionData || {}),
           });
         },
@@ -3798,7 +3933,6 @@ document.addEventListener("DOMContentLoaded", function () {
     const importBtn = document.getElementById("importFacebookCsv");
     if (importBtn) {
       importBtn.addEventListener("click", function () {
-        // Create file input dynamically
         const fileInput = document.createElement("input");
         fileInput.type = "file";
         fileInput.accept = ".csv";
@@ -3811,7 +3945,6 @@ document.addEventListener("DOMContentLoaded", function () {
           const formData = new FormData();
           formData.append("file", file);
 
-          // Show loading state
           const originalText = importBtn.innerHTML;
           importBtn.innerHTML =
             '<i class="spinner-border spinner-border-sm me-1"></i>Importing...';
@@ -3827,7 +3960,6 @@ document.addEventListener("DOMContentLoaded", function () {
                 alert(
                   `Import successful!\nProcessed: ${data.processed_rows}\nInserted: ${data.inserted_rows}`
                 );
-                // Refresh the DataTable
                 dataTableInstance.ajax.reload();
               } else {
                 alert(`Import failed: ${data.message}`);
@@ -3838,7 +3970,6 @@ document.addEventListener("DOMContentLoaded", function () {
               alert("Import failed. Please try again.");
             })
             .finally(() => {
-              // Restore button state
               importBtn.innerHTML = originalText;
               importBtn.disabled = false;
               document.body.removeChild(fileInput);
@@ -3851,325 +3982,399 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     // --- OFFCANVAS LOGIC ---
-    const conflictOffcanvasEl = document.getElementById(
-      "facebookConflictOffcanvas"
-    );
+    const conflictOffcanvasEl = document.getElementById("facebookConflictOffcanvas");
     if (conflictOffcanvasEl) {
       const conflictForm = document.getElementById("facebookConflictForm");
-      const steps = Array.from(
-        conflictOffcanvasEl.querySelectorAll(".form-step")
-      );
+      const formStep1 = document.getElementById("formStep1");
+      const formStep2 = document.getElementById("formStep2"); 
+      const formStep3 = document.getElementById("formStep3");
+      const formStepInReview = document.getElementById("formStepInReview");
+      
+      // The main form steps (excluding the In Review step)
+      const formSteps = [formStep1, formStep2, formStep3, formStepInReview]; // Step 4 is the InReview step used as preview
+      
       const nextBtn = document.getElementById("nextBtn");
       const backBtn = document.getElementById("backBtn");
+      const prevBtn = document.getElementById("prevBtn"); // Use prevBtn instead of backBtn
       const submitBtn = document.getElementById("submitBtn");
+      const closeBtnInReview = document.getElementById("closeBtnInReview");
+      
       let currentStep = 0;
       let currentConflictId = null;
       let conflictCountries = {};
-      let isInReviewMode = false;
+      let currentStatus = "";
+      let isReadOnlyMode = false;
+      let formSubmitted = false; // Flag to track if form was submitted
+
+      // --- OFFCANVAS CLOSE EVENT LISTENERS FOR PAGE RELOAD ---
+      // Listen for offcanvas hidden event to reload page[40][42]
+      conflictOffcanvasEl.addEventListener('hidden.bs.offcanvas', function (event) {
+        // Only reload if form was not submitted (to avoid double reload)
+        if (!formSubmitted) {
+          console.log('Offcanvas closed - reloading page');
+          window.location.reload();
+        }
+        // Reset the flag for next time
+        formSubmitted = false;
+      });
+
+      // Add click event to cross button (×) in header
+      const closeBtn = conflictOffcanvasEl.querySelector('.btn-close');
+      if (closeBtn) {
+        closeBtn.addEventListener('click', function() {
+          console.log('Cross button clicked - offcanvas will close and page will reload');
+        });
+      }
+
+      // Add click event to "Close" button in footer
+      if (closeBtnInReview) {
+        closeBtnInReview.addEventListener('click', function() {
+          console.log('Close button clicked - offcanvas will close and page will reload');
+        });
+      }
+
+      // Rights owned display mapping
+      const rightsOwnedLabels = {
+        original_exclusive: "Original and exclusive rights on all or part of the territories",
+        non_exclusive: "Non-exclusive rights only (license granted by a third party)",
+        cid_exclusive: "Exclusive license for Content-ID stores only",
+        soundalike: "Soundalike recording (e.g., cover or remix)",
+        public_domain: "Public Domain recording",
+        no_rights: "No rights for the selected content"
+      };
+
+      // Create status message dynamically if it doesn't exist
+      function createStatusMessage() {
+        const existingMsg = conflictOffcanvasEl.querySelector("#statusMessageBox");
+        if (!existingMsg) {
+          const statusMessageHTML = `
+            <div id="statusMessageBox" class="alert d-none mb-3">
+              <div class="d-flex align-items-center">
+                <i id="statusIcon" class="me-3 fs-5"></i>
+                <div>
+                  <div class="fw-bold" id="statusTitle">Status</div>
+                  <small id="statusMessage" class="text-muted">Message</small>
+                </div>
+              </div>
+            </div>
+          `;
+          const offcanvasBody = conflictOffcanvasEl.querySelector('.offcanvas-body');
+          offcanvasBody.insertAdjacentHTML('afterbegin', statusMessageHTML);
+        }
+      }
 
       function showStep(stepIndex) {
-        steps.forEach((step, index) =>
-          step.classList.toggle("d-none", index !== stepIndex)
-        );
-        backBtn.classList.toggle("d-none", stepIndex === 0 || isInReviewMode);
-        nextBtn.classList.toggle(
-          "d-none",
-          stepIndex === steps.length - 1 || isInReviewMode
-        );
-        submitBtn.classList.toggle(
-          "d-none",
-          stepIndex !== steps.length - 1 && !isInReviewMode
-        );
+        // Hide all steps
+        formSteps.forEach((step, index) => {
+          if (step) step.classList.toggle("d-none", index !== stepIndex);
+        });
+        
+        // Button visibility logic - use prevBtn instead of backBtn
+        if (prevBtn) prevBtn.classList.toggle("d-none", stepIndex === 0 || isReadOnlyMode);
+        if (backBtn) backBtn.classList.add("d-none"); // Always hide backBtn to avoid confusion
+        if (nextBtn) nextBtn.classList.toggle("d-none", stepIndex === 3 || isReadOnlyMode); // Step 3 is the final preview step
+        if (submitBtn) submitBtn.classList.toggle("d-none", stepIndex !== 3 || isReadOnlyMode); // Show submit only on step 3 (preview)
+        if (closeBtnInReview) closeBtnInReview.classList.toggle("d-none", !isReadOnlyMode);
+        
         currentStep = stepIndex;
       }
-      function showInReviewDisplay(resolutionData) {
-        // Hide all form steps
-        steps.forEach((step) => step.classList.add("d-none"));
 
-        // Show the In Review block
-        const inReviewStep =
-          conflictOffcanvasEl.querySelector("#formStepInReview");
-        if (inReviewStep) {
-          inReviewStep.classList.remove("d-none");
+      function showStatusMessage(status, message = "") {
+        createStatusMessage();
+        
+        const statusMessageBox = document.getElementById("statusMessageBox");
+        const statusIcon = document.getElementById("statusIcon");
+        const statusTitle = document.getElementById("statusTitle");
+        const statusMessageText = document.getElementById("statusMessage");
+
+        if (status === "Rejected" && message) {
+          statusMessageBox.className = "alert alert-danger d-flex align-items-center mb-3";
+          statusIcon.className = "bi bi-x-circle-fill me-3 fs-5 text-danger";
+          statusTitle.textContent = "Resolution Rejected";
+          statusMessageText.textContent = message;
+          statusMessageBox.classList.remove("d-none");
+        } else {
+          statusMessageBox.classList.add("d-none");
         }
-
-        // Populate rights owned
-        const rightsOwnedText = conflictOffcanvasEl.querySelector(
-          "#resolutionRightsOwned"
-        );
-        if (rightsOwnedText) {
-          rightsOwnedText.textContent =
-            resolutionData.rightsOwnedDisplay || "N/A";
-        }
-
-        // Populate countries
-        const countriesText = conflictOffcanvasEl.querySelector(
-          "#resolutionCountries"
-        );
-        if (countriesText) {
-          countriesText.textContent =
-            resolutionData.countryDisplayText || "N/A";
-        }
-
-        // Populate date
-        const resolutionDate =
-          conflictOffcanvasEl.querySelector("#resolutionDate");
-        if (resolutionDate && resolutionData.resolutionDate) {
-          resolutionDate.textContent = new Date(
-            resolutionData.resolutionDate
-          ).toLocaleString();
-        } else if (resolutionDate) {
-          resolutionDate.textContent = "N/A";
-        }
-
-        // Populate supporting doc
-        const supportingDoc = conflictOffcanvasEl.querySelector(
-          "#supportingDocumentInfo"
-        );
-        if (supportingDoc) {
-          if (resolutionData.supportingDocumentPath) {
-            const fileName = resolutionData.supportingDocumentPath
-              .split("/")
-              .pop();
-            supportingDoc.innerHTML = `
-        <a href="${resolutionData.supportingDocumentPath}" target="_blank" class="text-decoration-none">
-          <i class="bi bi-file-earmark-text me-2"></i>${fileName}
-        </a>`;
-            supportingDoc.classList.remove("d-none");
-          } else {
-            supportingDoc.textContent = "No supporting document uploaded";
-            supportingDoc.classList.remove("d-none");
-          }
-        }
-
-        // Switch footer buttons
-        document.getElementById("prevBtn").classList.add("d-none");
-        document.getElementById("nextBtn").classList.add("d-none");
-        document.getElementById("submitBtn").classList.add("d-none");
-        document.getElementById("closeBtnInReview").classList.remove("d-none");
-
-        // Mark mode
-        isInReviewMode = true;
       }
 
-      nextBtn.addEventListener("click", () => {
-        if (isInReviewMode) return;
+      function showReadOnlyDisplay(resolutionData) {
+        // Hide all form steps except the In Review step
+        formStep1.classList.add("d-none");
+        formStep2.classList.add("d-none"); 
+        formStep3.classList.add("d-none");
+        formStepInReview.classList.remove("d-none");
 
-        if (currentStep === 0) {
-          const hasExistingRights = !!conflictOffcanvasEl.dataset.rightsOwned;
-          const radioSelected = conflictForm.querySelector(
-            'input[name="rightsOwned"]:checked'
-          );
+        // Hide rejection message box for read-only mode
+        const rejectionBox = document.getElementById("rejectionMessageBox");
+        if (rejectionBox) rejectionBox.classList.add("d-none");
 
-          if (!hasExistingRights && !radioSelected) {
-            return alert("Please select a rights option.");
-          }
+        // Populate read-only data using existing elements
+        const rightsOwnedEl = document.getElementById("resolutionRightsOwned");
+        if (rightsOwnedEl) {
+          rightsOwnedEl.textContent = rightsOwnedLabels[resolutionData.rightsOwned] || resolutionData.rightsOwned || "N/A";
         }
-
-        if (currentStep === 1) {
-          if (!conflictForm.querySelector(".country-checkbox:checked")) {
-            return alert("Please select at least one territory.");
-          }
+        
+        const countriesEl = document.getElementById("resolutionCountries");
+        if (countriesEl) {
+          countriesEl.textContent = resolutionData.territories ? resolutionData.territories.join(", ") : "N/A";
         }
-
-        if (currentStep < steps.length - 1) {
-          showStep(currentStep + 1);
-        }
-      });
-
-      backBtn.addEventListener("click", () => {
-        if (isInReviewMode) return;
-        if (currentStep > 0) showStep(currentStep - 1);
-      });
-
-      conflictOffcanvasEl.addEventListener(
-        "show.bs.offcanvas",
-        function (event) {
-          const trigger = event.relatedTarget;
-          const data = trigger.dataset;
-
-          // Store current conflict ID and status
-          currentConflictId = data.conflictId;
-          const status = data.status;
-          isInReviewMode = status == "In Review";
-
-          // Parse countries data and resolution data
-          try {
-            conflictCountries = JSON.parse(data.countries || "{}");
-          } catch (e) {
-            console.warn("Failed to parse countries data:", e);
-            conflictCountries = {};
-          }
-
-          let resolutionData = {};
-          try {
-            resolutionData = JSON.parse(data.resolutionData || "{}");
-          } catch (e) {
-            console.warn("Failed to parse resolution data:", e);
-          }
-
-          // Populate offcanvas fields
-          ["", "2", "3", "InReview"].forEach((s) => {
-            const suffix = s
-              ? s === "InReview"
-                ? "InReview"
-                : parseInt(s)
-              : "";
-            const albumCover = conflictOffcanvasEl.querySelector(
-              `#modalAlbumCover${suffix}`
-            );
-            const songName = conflictOffcanvasEl.querySelector(
-              `#modalSongName${suffix}`
-            );
-            const artistName = conflictOffcanvasEl.querySelector(
-              `#modalArtistName${suffix}`
-            );
-
-            if (albumCover)
-              albumCover.src =
-                data.coverUrl ||
-                "https://placehold.co/80x80/3b5998/ffffff?text=FB";
-            if (songName) songName.textContent = data.songName || "Unknown";
-            if (artistName)
-              artistName.textContent = data.artistName || "Unknown";
-          });
-
-          const isrcEl = conflictOffcanvasEl.querySelector("#modalIsrc");
-          if (isrcEl) isrcEl.textContent = `ISRC: ${data.isrc || "N/A"}`;
-
-          const titleEl = conflictOffcanvasEl.querySelector("#offcanvasTitle");
-          if (titleEl)
-            titleEl.textContent = data.category || "Ownership Conflict";
-
-          const subtitleEl =
-            conflictOffcanvasEl.querySelector("#offcanvasSubtitle");
-          if (subtitleEl)
-            subtitleEl.textContent = `VS. ${data.otherParty || "Unknown"}`;
-
-          if (isInReviewMode) {
-            // Show resolution data for "In Review" status
-            showInReviewDisplay(resolutionData);
+        
+        const supportingDocEl = document.getElementById("supportingDocumentInfo");
+        if (supportingDocEl) {
+          if (resolutionData.supportingDocumentPath) {
+            const fileName = resolutionData.supportingDocumentPath.split("/").pop();
+            supportingDocEl.innerHTML = `
+              <a href="${resolutionData.supportingDocumentPath}" target="_blank" class="text-decoration-none">
+                <i class="bi bi-file-earmark-text me-2"></i>${fileName}
+              </a>`;
           } else {
-            // Show regular form for other statuses
-            // Render accordion and reset form state
-            renderTerritoryAccordion();
-            conflictForm.reset();
-            conflictForm
-              .querySelectorAll(".radio-card")
-              .forEach((c) => c.classList.remove("selected"));
-
-            const fileDisplay = document.getElementById("selectedFileName");
-            if (fileDisplay) fileDisplay.classList.add("d-none");
-
-            showStep(0);
+            supportingDocEl.textContent = "No supporting document uploaded";
           }
         }
-      );
 
-      conflictForm.addEventListener("submit", function (e) {
-        e.preventDefault();
-
-        if (isInReviewMode) return; // Prevent form submission in review mode
-
-        const formFile = document.getElementById("formFile");
-        if (currentStep === 2 && formFile && !formFile.files.length) {
-          return alert("Please upload a supporting document.");
+        const dateEl = document.getElementById("resolutionDate");
+        if (dateEl) {
+          dateEl.textContent = resolutionData.resolutionDate ? 
+            new Date(resolutionData.resolutionDate).toLocaleString() : "N/A";
         }
 
-        // Collect form data
-        const formData = new FormData();
-        const rightsOwned =
-          conflictForm.querySelector('input[name="rightsOwned"]:checked')
-            ?.value || "";
+        isReadOnlyMode = true;
+        // Set button visibility for read-only mode
+        if (prevBtn) prevBtn.classList.add("d-none");
+        if (nextBtn) nextBtn.classList.add("d-none");
+        if (submitBtn) submitBtn.classList.add("d-none");
+        if (closeBtnInReview) closeBtnInReview.classList.remove("d-none");
+      }
+
+      function populatePreviewStep() {
+        // Use the existing formStepInReview as preview step but populate it with current form data
+        const rightsOwned = conflictForm.querySelector('input[name="rightsOwned"]:checked')?.value;
+        const rightsOwnedEl = document.getElementById("resolutionRightsOwned");
+        if (rightsOwnedEl) {
+          rightsOwnedEl.textContent = rightsOwnedLabels[rightsOwned] || "Not selected";
+        }
+
         const selectedTerritories = Array.from(
           conflictForm.querySelectorAll(".country-checkbox:checked")
-        ).map((cb) => cb.value);
-
-        // Debug logging
-        console.log("Submitting data:", {
-          conflict_id: currentConflictId,
-          rights_owned: rightsOwned,
-          territories: selectedTerritories,
-          has_file: formFile && formFile.files[0] ? true : false,
-        });
-
-        formData.append("conflict_id", currentConflictId);
-        formData.append("rights_owned", rightsOwned);
-        formData.append("territories", JSON.stringify(selectedTerritories));
-
-        if (formFile && formFile.files[0]) {
-          formData.append("supporting_document", formFile.files[0]);
+        ).map((cb) => cb.nextElementSibling.textContent);
+        
+        const countriesEl = document.getElementById("resolutionCountries");
+        if (countriesEl) {
+          countriesEl.textContent = selectedTerritories.length > 0 ? selectedTerritories.join(", ") : "None selected";
         }
 
-        // Show loading state
-        const originalText = submitBtn.innerHTML;
-        submitBtn.innerHTML =
-          '<i class="spinner-border spinner-border-sm me-1"></i>Submitting...';
-        submitBtn.disabled = true;
+        const fileInput = document.getElementById("formFile");
+        const supportingDocEl = document.getElementById("supportingDocumentInfo");
+        if (supportingDocEl) {
+          if (fileInput && fileInput.files.length > 0) {
+            supportingDocEl.innerHTML = `<i class="bi bi-file-earmark-text me-2"></i>${fileInput.files[0].name}`;
+          } else {
+            supportingDocEl.textContent = "No document selected";
+          }
+        }
 
-        fetch("/superadmin/facebook/update-resolution", {
-          method: "POST",
-          body: formData,
-        })
-          .then((response) => response.json())
-          .then((data) => {
-            if (data.status === "success") {
-              alert("Resolution submitted successfully!");
-              bootstrap.Offcanvas.getInstance(conflictOffcanvasEl).hide();
-              // Refresh the DataTable to show updated status
-              dataTableInstance.ajax.reload();
-            } else {
-              alert(`Failed to submit resolution: ${data.message}`);
+        const dateEl = document.getElementById("resolutionDate");
+        if (dateEl) {
+          dateEl.textContent = "Will be submitted: " + new Date().toLocaleString();
+        }
+      }
+
+      if (nextBtn) {
+        nextBtn.addEventListener("click", () => {
+          if (isReadOnlyMode) return;
+
+          // Validation for each step
+          if (currentStep === 0) {
+            const radioSelected = conflictForm.querySelector('input[name="rightsOwned"]:checked');
+            if (!radioSelected) {
+              return alert("Please select a rights option.");
             }
-          })
-          .catch((error) => {
-            console.error("Submit error:", error);
-            alert("Failed to submit resolution. Please try again.");
-          })
-          .finally(() => {
-            // Restore button state
-            submitBtn.innerHTML = originalText;
-            submitBtn.disabled = false;
-          });
+          }
+
+          if (currentStep === 1) {
+            if (!conflictForm.querySelector(".country-checkbox:checked")) {
+              return alert("Please select at least one territory.");
+            }
+          }
+
+          if (currentStep === 2) {
+            const fileInput = document.getElementById("formFile");
+            if (!fileInput.files.length) {
+              return alert("Please upload a supporting document.");
+            }
+          }
+
+          if (currentStep < 3) { // Step 3 is the preview step (using formStepInReview)
+            if (currentStep === 2) {
+              populatePreviewStep(); // Populate preview before showing it
+            }
+            showStep(currentStep + 1);
+          }
+        });
+      }
+
+      if (prevBtn) {
+        prevBtn.addEventListener("click", () => {
+          if (isReadOnlyMode) return;
+          if (currentStep > 0) showStep(currentStep - 1);
+        });
+      }
+
+      conflictOffcanvasEl.addEventListener("show.bs.offcanvas", function (event) {
+        const trigger = event.relatedTarget;
+        const data = trigger.dataset;
+
+        // Reset state
+        currentConflictId = data.conflictId;
+        currentStatus = data.status;
+        isReadOnlyMode = false;
+        formSubmitted = false; // Reset form submission flag
+
+        // Parse data
+        try {
+          conflictCountries = JSON.parse(data.countries || "{}");
+        } catch (e) {
+          console.warn("Failed to parse countries data:", e);
+          conflictCountries = {};
+        }
+
+        let resolutionData = {};
+        try {
+          resolutionData = JSON.parse(data.resolutionData || "{}");
+        } catch (e) {
+          console.warn("Failed to parse resolution data:", e);
+        }
+
+        // Populate album info for all steps
+        ["", "2", "3", "InReview"].forEach((suffix) => {
+          const albumCover = document.getElementById(`modalAlbumCover${suffix}`);
+          const songName = document.getElementById(`modalSongName${suffix}`);
+          const artistName = document.getElementById(`modalArtistName${suffix}`);
+
+          if (albumCover) albumCover.src = data.coverUrl || "https://placehold.co/80x80/3b5998/ffffff?text=FB";
+          if (songName) songName.textContent = data.songName || "Unknown";
+          if (artistName) artistName.textContent = data.artistName || "Unknown";
+        });
+
+        // Set title and subtitle
+        const titleEl = document.getElementById("offcanvasTitle");
+        const subtitleEl = document.getElementById("offcanvasSubtitle");
+        if (titleEl) titleEl.textContent = data.category || "Ownership Conflict";
+        if (subtitleEl) subtitleEl.textContent = `VS. ${data.otherParty || "Unknown"}`;
+        
+        const isrcEl = document.getElementById("modalIsrc");
+        if (isrcEl) isrcEl.textContent = `ISRC: ${data.isrc || "N/A"}`;
+
+        // Handle different status flows
+        if (currentStatus === "In Review" || currentStatus === "Approved") {
+          showReadOnlyDisplay(resolutionData);
+        } else {
+          // Action Required or Rejected - show fillable form
+          if (currentStatus === "Rejected") {
+            showStatusMessage("Rejected", data.rejectionMessage);
+          } else {
+            showStatusMessage(""); // Hide status message for Action Required
+          }
+
+          // Reset form and show step 1
+          renderTerritoryAccordion();
+          conflictForm.reset();
+          conflictForm.querySelectorAll(".radio-card").forEach((c) => c.classList.remove("selected"));
+          
+          const fileDisplay = document.getElementById("selectedFileName");
+          if (fileDisplay) fileDisplay.classList.add("d-none");
+
+          isReadOnlyMode = false;
+          showStep(0);
+        }
       });
 
-      function renderTerritoryAccordion() {
-        if (isInReviewMode) return; // Don't render accordion in review mode
+      if (conflictForm) {
+        conflictForm.addEventListener("submit", function (e) {
+          e.preventDefault();
+          if (isReadOnlyMode) return;
 
-        const accordionContainer = conflictOffcanvasEl.querySelector(
-          "#territoryAccordion"
-        );
+          const formData = new FormData();
+          const rightsOwned = conflictForm.querySelector('input[name="rightsOwned"]:checked')?.value || "";
+          const selectedTerritories = Array.from(
+            conflictForm.querySelectorAll(".country-checkbox:checked")
+          ).map((cb) => cb.value);
+          const formFile = document.getElementById("formFile");
+
+          formData.append("conflict_id", currentConflictId);
+          formData.append("rights_owned", rightsOwned);
+          formData.append("territories", JSON.stringify(selectedTerritories));
+
+          if (formFile && formFile.files[0]) {
+            formData.append("supporting_document", formFile.files[0]);
+          }
+
+          const originalText = submitBtn.innerHTML;
+          submitBtn.innerHTML = '<i class="spinner-border spinner-border-sm me-1"></i>Submitting...';
+          submitBtn.disabled = true;
+
+          // Set flag to indicate form is being submitted
+          formSubmitted = true;
+
+          fetch("/superadmin/facebook/update-resolution", {
+            method: "POST",
+            body: formData,
+          })
+            .then((response) => response.json())
+            .then((data) => {
+              if (data.status === "success") {
+                alert("Resolution submitted successfully!");
+                // Close offcanvas and reload will happen via the hidden event
+                bootstrap.Offcanvas.getInstance(conflictOffcanvasEl).hide();
+                // Add a small delay to ensure the hidden event fires before reload
+                setTimeout(() => {
+                  window.location.reload();
+                }, 100);
+              } else {
+                alert(`Failed to submit resolution: ${data.message}`);
+                formSubmitted = false; // Reset flag if submission failed
+              }
+            })
+            .catch((error) => {
+              console.error("Submit error:", error);
+              alert("Failed to submit resolution. Please try again.");
+              formSubmitted = false; // Reset flag if submission failed
+            })
+            .finally(() => {
+              submitBtn.innerHTML = originalText;
+              submitBtn.disabled = false;
+            });
+        });
+      }
+
+      function renderTerritoryAccordion() {
+        if (isReadOnlyMode) return;
+
+        const accordionContainer = document.getElementById("territoryAccordion");
         if (!accordionContainer) return;
 
-        // Show loading state
-        accordionContainer.innerHTML =
-          '<div class="text-center p-3"><i class="spinner-border spinner-border-sm me-2"></i>Loading territories...</div>';
+        accordionContainer.innerHTML = '<div class="text-center p-3"><i class="spinner-border spinner-border-sm me-2"></i>Loading territories...</div>';
 
-        // Fetch all countries grouped by continent
         fetch("/superadmin/facebook/get-all-countries")
           .then((response) => response.json())
           .then((data) => {
             if (data.status === "success") {
               renderCountriesAccordion(data.countries);
             } else {
-              accordionContainer.innerHTML =
-                '<div class="text-center p-3 text-danger">Error loading territories</div>';
+              accordionContainer.innerHTML = '<div class="text-center p-3 text-danger">Error loading territories</div>';
             }
           })
           .catch((error) => {
             console.error("Error fetching countries:", error);
-            accordionContainer.innerHTML =
-              '<div class="text-center p-3 text-danger">Error loading territories</div>';
+            accordionContainer.innerHTML = '<div class="text-center p-3 text-danger">Error loading territories</div>';
           });
       }
 
       function renderCountriesAccordion(allCountries) {
-        const accordionContainer = conflictOffcanvasEl.querySelector(
-          "#territoryAccordion"
-        );
+        const accordionContainer = document.getElementById("territoryAccordion");
         if (!accordionContainer) return;
 
-        // Create a set of country IDs that should be checked (from conflict data)
         const checkedCountryIds = new Set();
         Object.values(conflictCountries).forEach((countries) => {
           if (Array.isArray(countries)) {
@@ -4179,146 +4384,99 @@ document.addEventListener("DOMContentLoaded", function () {
           }
         });
 
-        // Render accordion with all countries, checking only the ones in conflict data
         accordionContainer.innerHTML = Object.entries(allCountries)
           .map(([continent, countries]) => {
             if (!countries || countries.length === 0) return "";
 
             const regionId = continent.replace(/[^a-zA-Z0-9]/g, "");
-
-            // Count how many countries in this continent should be checked
-            const checkedCountsInRegion = countries.filter((c) =>
-              checkedCountryIds.has(c.id)
-            ).length;
-            const allCountriesInRegionChecked =
-              checkedCountsInRegion === countries.length &&
-              countries.length > 0;
+            const checkedCountsInRegion = countries.filter((c) => checkedCountryIds.has(c.id)).length;
+            const allCountriesInRegionChecked = checkedCountsInRegion === countries.length && countries.length > 0;
 
             return `
               <div class="accordion-item">
                 <h2 class="accordion-header">
                   <button class="accordion-button collapsed d-flex align-items-center" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-fb-${regionId}">
                     <div class="form-check me-auto pe-2">
-                      <input class="form-check-input region-checkbox" type="checkbox" id="region-fb-${regionId}" data-region="${continent}" ${
-              allCountriesInRegionChecked ? "checked" : ""
-            }>
+                      <input class="form-check-input region-checkbox" type="checkbox" id="region-fb-${regionId}" data-region="${continent}" ${allCountriesInRegionChecked ? "checked" : ""}>
                       <label class="form-check-label fw-bold" for="region-fb-${regionId}">${continent}</label>
                     </div>
-                    <span class="text-muted small me-2">${
-                      countries.length
-                    } countries ${
-              checkedCountsInRegion > 0
-                ? `(${checkedCountsInRegion} selected)`
-                : ""
-            }</span>
+                    <span class="text-muted small me-2">${countries.length} countries ${checkedCountsInRegion > 0 ? `(${checkedCountsInRegion} selected)` : ""}</span>
                   </button>
                 </h2>
                 <div id="collapse-fb-${regionId}" class="accordion-collapse collapse" data-bs-parent="#territoryAccordion">
                   <div class="accordion-body">
                     <div class="territory-list-inner">
-                      ${countries
-                        .map(
-                          (c) => `
+                      ${countries.map((c) => `
                         <div class="form-check">
-                          <input class="form-check-input country-checkbox" type="checkbox" value="${
-                            c.id
-                          }" id="country-fb-${
-                            c.id
-                          }" data-region="${continent}" ${
-                            checkedCountryIds.has(c.id) ? "checked" : ""
-                          }>
-                          <label class="form-check-label" for="country-fb-${
-                            c.id
-                          }">${c.name}</label>
+                          <input class="form-check-input country-checkbox" type="checkbox" value="${c.id}" id="country-fb-${c.id}" data-region="${continent}" ${checkedCountryIds.has(c.id) ? "checked" : ""}>
+                          <label class="form-check-label" for="country-fb-${c.id}">${c.name}</label>
                         </div>
-                      `
-                        )
-                        .join("")}
+                      `).join("")}
                     </div>
                   </div>
                 </div>
               </div>
             `;
-          })
-          .join("");
+          }).join("");
 
         addTerritoryEventListeners();
         updateTerritoryCounter();
       }
 
       function updateTerritoryCounter() {
-        if (isInReviewMode) return;
+        if (isReadOnlyMode) return;
 
-        const selected = conflictOffcanvasEl.querySelectorAll(
-          ".country-checkbox:checked"
-        ).length;
-        const total =
-          conflictOffcanvasEl.querySelectorAll(".country-checkbox").length;
-        const counterEl =
-          conflictOffcanvasEl.querySelector("#territoryCounter");
+        const selected = conflictOffcanvasEl.querySelectorAll(".country-checkbox:checked").length;
+        const total = conflictOffcanvasEl.querySelectorAll(".country-checkbox").length;
+        const counterEl = document.getElementById("territoryCounter");
         if (counterEl) {
           counterEl.textContent = `${selected} contested countries out of ${total} delivered`;
         }
       }
 
       function addTerritoryEventListeners() {
-        if (isInReviewMode) return;
+        if (isReadOnlyMode) return;
 
-        conflictOffcanvasEl
-          .querySelectorAll(".region-checkbox, .country-checkbox")
-          .forEach((cb) => {
-            cb.addEventListener("change", function (e) {
-              const region = e.target.dataset.region;
-              if (e.target.classList.contains("region-checkbox")) {
-                conflictOffcanvasEl
-                  .querySelectorAll(
-                    `.country-checkbox[data-region="${region}"]`
-                  )
-                  .forEach(
-                    (countryCb) => (countryCb.checked = e.target.checked)
-                  );
-              } else {
-                const allInRegion = [
-                  ...conflictOffcanvasEl.querySelectorAll(
-                    `.country-checkbox[data-region="${region}"]`
-                  ),
-                ].every((c) => c.checked);
-                const regionCheckbox = conflictOffcanvasEl.querySelector(
-                  `.region-checkbox[data-region="${region}"]`
-                );
-                if (regionCheckbox) {
-                  regionCheckbox.checked = allInRegion;
-                }
+        conflictOffcanvasEl.querySelectorAll(".region-checkbox, .country-checkbox").forEach((cb) => {
+          cb.addEventListener("change", function (e) {
+            const region = e.target.dataset.region;
+            if (e.target.classList.contains("region-checkbox")) {
+              conflictOffcanvasEl.querySelectorAll(`.country-checkbox[data-region="${region}"]`).forEach(
+                (countryCb) => (countryCb.checked = e.target.checked)
+              );
+            } else {
+              const allInRegion = [...conflictOffcanvasEl.querySelectorAll(`.country-checkbox[data-region="${region}"]`)].every((c) => c.checked);
+              const regionCheckbox = conflictOffcanvasEl.querySelector(`.region-checkbox[data-region="${region}"]`);
+              if (regionCheckbox) {
+                regionCheckbox.checked = allInRegion;
               }
-              updateTerritoryCounter();
-            });
+            }
+            updateTerritoryCounter();
           });
+        });
       }
 
-      // --- Remaining event listeners for form interactions ---
+      // Form interaction event listeners
       conflictOffcanvasEl.addEventListener("click", function (e) {
-        if (isInReviewMode) return; // Disable interactions in review mode
+        if (isReadOnlyMode) return;
 
         if (e.target.closest(".radio-card")) {
           const card = e.target.closest(".radio-card");
-          conflictOffcanvasEl
-            .querySelectorAll(".radio-card")
-            .forEach((c) => c.classList.remove("selected"));
+          conflictOffcanvasEl.querySelectorAll(".radio-card").forEach((c) => c.classList.remove("selected"));
           card.classList.add("selected");
           const radioInput = card.querySelector('input[type="radio"]');
           if (radioInput) radioInput.checked = true;
         }
       });
 
+      // File upload handling
       const fileInput = document.getElementById("formFile");
       const fileDisplay = document.getElementById("selectedFileName");
-      const fileUploadContainer = document.getElementById(
-        "fileUploadContainer"
-      );
+      const fileUploadContainer = document.getElementById("fileUploadContainer");
 
       if (fileUploadContainer && fileInput) {
         fileUploadContainer.addEventListener("click", () => {
-          if (!isInReviewMode) fileInput.click();
+          if (!isReadOnlyMode) fileInput.click();
         });
       }
 
@@ -4345,6 +4503,9 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   }
 });
+
+
+
 
 //facebook conflict import
 // document.getElementById("importFacebookCsv").addEventListener("click", function () {

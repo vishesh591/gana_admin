@@ -123,11 +123,13 @@ class YoutubeConflictController extends BaseController
             'inserted_rows' => $inserted
         ]);
     }
+
     private function getConflictsData()
     {
         $youtubeConflict = new YoutubeConflictModel();
         $conflicts = $youtubeConflict
-            ->orderBy('id', 'DESC')->whereIn('status', ['In Review', 'Action Required','Rejected'])
+            ->orderBy('id', 'DESC')
+            ->whereIn('status', ['In Review', 'Action Required', 'Rejected'])
             ->findAll();
 
         $data = [];
@@ -158,7 +160,7 @@ class YoutubeConflictController extends BaseController
                     $rightsOwnedDisplay = $conflict['resolution_rights_owned'] ?? '';
             }
 
-            // Create resolution data object - ensure all values are properly sanitized
+            // Create resolution data object
             $resolutionData = [
                 'rightsOwned' => $conflict['resolution_rights_owned'] ?? '',
                 'rightsOwnedDisplay' => $rightsOwnedDisplay,
@@ -180,6 +182,8 @@ class YoutubeConflictController extends BaseController
                 'dailyViews' => $this->formatViewCount($conflict['engaged_views_affected_daily']),
                 'expiry' => $this->formatExpiryDate($conflict['expiry_date']),
                 'status' => $this->formatStatus($conflict['status']),
+
+                'rejectionMessage' => $conflict['rejection_message'] ?? '',
 
                 'songName' => $conflict['asset_name'] ?? '',
                 'artistName' => $this->extractArtistFromLabels($conflict['labels']),
@@ -212,6 +216,7 @@ class YoutubeConflictController extends BaseController
         return $data;
     }
 
+
     /**
      * Update conflict resolution
      */
@@ -229,6 +234,7 @@ class YoutubeConflictController extends BaseController
 
         $rightsOwned = $this->request->getPost('rightsOwned');
         $resolutionDate = date('Y-m-d H:i:s');
+        
         $supportingDoc = null;
 
         // Handle file upload
@@ -366,6 +372,7 @@ class YoutubeConflictController extends BaseController
                 // Rights + file info for existing resolutions
                 'rightsOwned' => $conflict['resolution_rights_owned'] ?? '',
                 'supportingFile' => base_url() . '/' . $conflict['supporting_document_path'] ?? '',
+                'rejectionMessage' => $conflict['rejection_message'] ?? '',
 
                 // Resolution data for "In Review" status
                 'resolutionData' => $resolutionData,

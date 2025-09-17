@@ -166,17 +166,17 @@
                     </div>
                 </div>
 
-                <div class="alert alert-success d-flex align-items-center mb-4">
-                    <i class="bi bi-check-circle-fill me-3 fs-5"></i>
+                <div id="rejectionMessageBox" class="alert alert-danger d-flex align-items-center mb-3 d-none">
+                    <i class="bi bi-x-circle-fill me-3 fs-5"></i>
                     <div>
-                        <div class="fw-bold">Resolution Submitted</div>
-                        <small class="text-muted">This conflict resolution is currently under review</small>
+                        <div class="fw-bold">Resolution Rejected</div>
+                        <small id="rejectionMessageText" class="text-muted">Reason not available</small>
                     </div>
                 </div>
 
                 <div class="mb-4">
                     <h6 class="fw-bold mb-3">Resolution Details:</h6>
-                    
+
                     <div class="mb-3">
                         <label class="form-label fw-bold small">Rights Ownership:</label>
                         <div class="p-2 bg-light rounded" id="resolutionRightsOwned">Loading...</div>
@@ -224,4 +224,3 @@
         </div>
     </div>
 </div>
-

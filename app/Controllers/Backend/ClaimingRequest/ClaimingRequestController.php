@@ -216,9 +216,9 @@ class ClaimingRequestController extends BaseController
     private function getStatusText($status)
     {
         $map = [
-            'Pending'  => 'pending',
-            'Approved' => 'approved',
-            'Rejected' => 'rejected',
+            'Pending'  => 'Pending',
+            'Approved' => 'Approved',
+            'Rejected' => 'Rejected',
             'pending'  => 'pending',
             'approved' => 'approved',
             'rejected' => 'rejected',
