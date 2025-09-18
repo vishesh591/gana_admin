@@ -76,7 +76,7 @@
 
 
             <div class="row g-3 mb-3">
-                <div class="col-xl-8 col-lg-7">
+                <div class="col-12">
                     <div class="card h-100">
                         <div class="card-header">
                             <div class="d-flex align-items-center">
@@ -88,11 +88,12 @@
                         </div>
                         <div class="card-body">
                             <div class="table-responsive">
-                                <table class="table table-hover mb-0">
+                                <table class="table table-hover mb-0" id="datatable">
                                     <thead>
                                         <tr>
                                             <th>Title</th>
                                             <th>Artists</th>
+                                            <th>Label Name</th>
                                             <th>Last Modified</th>
                                             <th>Actions</th>
                                         </tr>
@@ -101,143 +102,71 @@
                                         <tr>
                                             <td>Unfinished Symphony</td>
                                             <td>DJ Harmony</td>
+                                            <td>Harmony Records</td>
                                             <td>2023-06-10</td>
                                             <td>
-                                                <button class="btn btn-sm btn-primary me-1">Edit</button>
-                                                <button class="btn btn-sm btn-outline-secondary">Delete</button>
+                                                <button class="btn btn-sm btn-primary me-1">
+                                                    <i data-feather="edit-3"></i> Edit
+                                                </button>
+                                                <button class="btn btn-sm btn-outline-secondary">
+                                                    <i data-feather="trash-2"></i> Delete
+                                                </button>
                                             </td>
                                         </tr>
                                         <tr>
                                             <td>Demo Track 2023</td>
                                             <td>The Beats</td>
+                                            <td>Beat Masters</td>
                                             <td>2023-06-05</td>
                                             <td>
-                                                <button class="btn btn-sm btn-primary me-1">Edit</button>
-                                                <button class="btn btn-sm btn-outline-secondary">Delete</button>
+                                                <button class="btn btn-sm btn-primary me-1">
+                                                    <i data-feather="edit-3"></i> Edit
+                                                </button>
+                                                <button class="btn btn-sm btn-outline-secondary">
+                                                    <i data-feather="trash-2"></i> Delete
+                                                </button>
                                             </td>
                                         </tr>
                                         <tr>
                                             <td>Midnight Groove</td>
                                             <td>Luna & The Stars</td>
+                                            <td>Lunar Sounds</td>
                                             <td>2023-05-28</td>
                                             <td>
-                                                <button class="btn btn-sm btn-primary me-1">Edit</button>
-                                                <button class="btn btn-sm btn-outline-secondary">Delete</button>
+                                                <button class="btn btn-sm btn-primary me-1">
+                                                    <i data-feather="edit-3"></i> Edit
+                                                </button>
+                                                <button class="btn btn-sm btn-outline-secondary">
+                                                    <i data-feather="trash-2"></i> Delete
+                                                </button>
                                             </td>
                                         </tr>
                                         <tr>
                                             <td>Summer Vibes</td>
                                             <td>Solar Flare</td>
+                                            <td>Sun Records</td>
                                             <td>2023-05-20</td>
                                             <td>
-                                                <button class="btn btn-sm btn-primary me-1">Edit</button>
-                                                <button class="btn btn-sm btn-outline-secondary">Delete</button>
+                                                <button class="btn btn-sm btn-primary me-1">
+                                                    <i data-feather="edit-3"></i> Edit
+                                                </button>
+                                                <button class="btn btn-sm btn-outline-secondary">
+                                                    <i data-feather="trash-2"></i> Delete
+                                                </button>
                                             </td>
                                         </tr>
                                         <tr>
                                             <td>Urban Dreams</td>
                                             <td>City Lights</td>
+                                            <td>City Records</td>
                                             <td>2023-05-15</td>
                                             <td>
-                                                <button class="btn btn-sm btn-primary me-1">Edit</button>
-                                                <button class="btn btn-sm btn-outline-secondary">Delete</button>
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-xl-4 col-lg-5">
-                    <div class="card h-100">
-                        <div class="card-header">
-                            <div class="d-flex align-items-center">
-                                <div class="border border-dark rounded-2 me-2 widget-icons-sections">
-                                    <i data-feather="pie-chart" class="widgets-icons"></i>
-                                </div>
-                                <h5 class="card-title mb-0">Genre Distribution</h5>
-                            </div>
-                        </div>
-                        <div class="card-body">
-                            <div id="genre-distribution" class="apex-charts" style="min-height: 300px;"></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <!-- End Analytics Charts -->
-
-            <!-- Start Pending Releases -->
-            <div class="row">
-                <div class="col-md-12 col-xl-12">
-                    <div class="card">
-                        <div class="card-header">
-                            <div class="d-flex align-items-center justify-content-between">
-                                <div class="d-flex align-items-center">
-                                    <div class="border border-dark rounded-2 me-2 widget-icons-sections">
-                                        <i data-feather="clock" class="widgets-icons"></i>
-                                    </div>
-                                    <h5 class="card-title mb-0">Pending Releases</h5>
-                                </div>
-                                <span class="badge bg-primary rounded-pill">5 new</span>
-                            </div>
-                        </div>
-                        <div class="card-body">
-                            <div class="table-responsive">
-                                <table class="table table-hover mb-0">
-                                    <thead>
-                                        <tr>
-                                            <th>Cover</th>
-                                            <th>Title</th>
-                                            <th>Artist</th>
-                                            <th>Release Date</th>
-                                            <th>Genre</th>
-                                            <th>Status</th>
-                                            <th>Actions</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                            <td>
-                                                <img src="/images/logo-sm.png" alt="album cover" class="rounded" width="40">
-                                            </td>
-                                            <td>Summer Vibes</td>
-                                            <td>DJ Sunshine</td>
-                                            <td>2023-06-15</td>
-                                            <td>Electronic</td>
-                                            <td><span class="badge bg-warning">Pending</span></td>
-                                            <td>
-                                                <button class="btn btn-sm btn-success me-1">Approve</button>
-                                                <button class="btn btn-sm btn-danger">Reject</button>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>
-                                                <img src="/images/logo-sm.png" alt="album cover" class="rounded" width="40">
-                                            </td>
-                                            <td>Midnight Dreams</td>
-                                            <td>Luna</td>
-                                            <td>2023-06-18</td>
-                                            <td>R&B</td>
-                                            <td><span class="badge bg-warning">Pending</span></td>
-                                            <td>
-                                                <button class="btn btn-sm btn-success me-1">Approve</button>
-                                                <button class="btn btn-sm btn-danger">Reject</button>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>
-                                                <img src="/images/logo-sm.png" alt="album cover" class="rounded" width="40">
-                                            </td>
-                                            <td>Urban Flow</td>
-                                            <td>The Streets</td>
-                                            <td>2023-06-20</td>
-                                            <td>Hip Hop</td>
-                                            <td><span class="badge bg-warning">Pending</span></td>
-                                            <td>
-                                                <button class="btn btn-sm btn-success me-1">Approve</button>
-                                                <button class="btn btn-sm btn-danger">Reject</button>
+                                                <button class="btn btn-sm btn-primary me-1">
+                                                    <i data-feather="edit-3"></i> Edit
+                                                </button>
+                                                <button class="btn btn-sm btn-outline-secondary">
+                                                    <i data-feather="trash-2"></i> Delete
+                                                </button>
                                             </td>
                                         </tr>
                                     </tbody>
@@ -247,10 +176,9 @@
                     </div>
                 </div>
             </div>
-            <!-- End Pending Releases -->
+            <!-- End Drafts Charts -->
 
-
-        </div> <!-- container-fluid -->
+        </div> <!-- container-xxl-->
     </div> <!-- content -->
 
     <?= $this->include('partials/footer') ?>

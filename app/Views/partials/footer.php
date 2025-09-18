@@ -5,7 +5,7 @@
       <div class="col fs-13 text-muted text-center">
         &copy; <script>
           document.write(new Date().getFullYear())
-        </script> - Made with <span class="mdi mdi-heart text-danger"></span> by <a href="#!" class="text-reset fw-semibold">XYZ</a>
+        </script> - Made with <span class="mdi mdi-heart text-danger"></span> by <a href="https://www.fuelxdigital.com/" target="_blank" class="text-reset fw-semibold">FuelX Digital</a>
       </div>
     </div>
   </div>

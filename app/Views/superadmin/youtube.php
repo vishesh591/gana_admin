@@ -101,16 +101,15 @@
     </div>
 
     <div class="offcanvas-body">
-        <div class="offcanvas-body">
-    <div id="statusMessageBox" class="alert d-none mb-3">
-        <div class="d-flex align-items-center">
-            <i id="statusIcon" class="me-3 fs-5"></i>
-            <div>
-                <div class="fw-bold" id="statusTitle">Status</div>
-                <small id="statusMessage" class="text-muted">Message</small>
+        <div id="statusMessageBox" class="alert d-none mb-3">
+            <div class="d-flex align-items-center">
+                <i id="statusIcon" class="me-3 fs-5"></i>
+                <div>
+                    <div class="fw-bold" id="statusTitle">Status</div>
+                    <small id="statusMessage" class="text-muted">Message</small>
+                </div>
             </div>
         </div>
-    </div>
         <form id="youtubeConflictForm" novalidate>
             <!-- Step 1: Rights Ownership -->
             <div id="formStep1" class="form-step">
@@ -120,17 +119,17 @@
                         <div class="fw-bold" id="modalSongName"></div>
                         <div class="small text-muted" id="modalArtistName"></div>
                         <div class="small text-muted">
-                            <span id="modalIsrc"></span> - 
+                            <span id="modalIsrc"></span> -
                             <span id="modalPlatform">YouTube</span>
                         </div>
                     </div>
                 </div>
-                
+
                 <div class="notice-box mb-4 p-3 rounded" style="background-color: #e3f2fd; border-left: 4px solid #2196f3;">
                     <i class="bi bi-info-circle fs-5 me-3 text-info"></i>
                     <small>By default, your answer will impact all ISRCs involved in this issue</small>
                 </div>
-                
+
                 <div class="mb-3 radio-card-group" id="rightsOwnedSection">
                     <label class="form-label fw-bold d-block mb-3">Could you please confirm on the type of rights owned</label>
                     <div id="rightsOwnedOptions">
@@ -173,7 +172,7 @@
                         <div class="small text-muted" id="modalArtistName2"></div>
                     </div>
                 </div>
-                
+
                 <div class="mb-3">
                     <label class="form-label fw-bold">Please provide supporting documentation.</label>
                     <div id="fileUploadContainer" class="file-upload-box border rounded p-4 text-center" role="button" tabindex="0" style="cursor: pointer; background-color: #f8f9fa; border-style: dashed !important;">
@@ -200,7 +199,7 @@
                         <div class="fw-bold" id="modalSongNameInReview">Song Title</div>
                         <div class="small text-muted" id="modalArtistNameInReview">Artist Name</div>
                         <div class="small text-muted">
-                            <span id="modalIsrcInReview">ISRC: N/A</span> - 
+                            <span id="modalIsrcInReview">ISRC: N/A</span> -
                             <span>YouTube</span>
                         </div>
                     </div>
@@ -208,7 +207,7 @@
 
                 <div class="mb-4">
                     <h6 class="fw-bold mb-3">Resolution Details:</h6>
-                    
+
                     <div class="mb-3">
                         <label class="form-label fw-bold small">Rights Ownership:</label>
                         <div class="p-2 bg-light rounded" id="resolutionRightsOwned">Loading...</div>
