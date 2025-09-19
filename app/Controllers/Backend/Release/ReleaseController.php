@@ -59,42 +59,59 @@ class ReleaseController extends BaseController
         return view('superadmin/index', $page_array);
     }
 
-    public function rejectedReleases()
+    /**
+     * Get rejection messages for a release
+     */
+    public function getRejectionMessages($releaseId)
     {
-        if ($this->request->isAJAX()) {
-            $releases = $this->releaseRepo->findAll();
-
-            $statusMap = [
-                1 => 'review',
-                2 => 'takedown',
-                3 => 'delivered',
-                4 => 'rejected',
-                5 => 'approved',
-            ];
-
-            $artistModel = new \App\Models\Backend\ArtistModel();
-
-            $rejectedData = array_values(array_filter(array_map(function ($r) use ($statusMap, $artistModel) {
-                $artist = $artistModel->find($r['artist_id']);
-                $artistName = $artist ? $artist['name'] : $r['author'];
-                return [
-                    'id' => $r['id'],
-                    'title' => $r['title'],
-                    'artist' => $artistName,
-                    'upc' => $r['upc_ean'],
-                    'isrc' => $r['isrc'],
-                    'status' => $statusMap[$r['status']] ?? 'review',
-                    'rejectionMessage' => $r['message'] ?? ''
-                ];
-            }, $releases), function ($item) {
-                return $item['status'] === 'rejected';
-            }));
-
-            return $this->response->setJSON(['data' => $rejectedData]);
+        if (!$this->request->isAJAX()) {
+            return redirect()->back();
         }
 
-        return $this->response->setJSON(['data' => []]); // fallback
+        try {
+            // You'll need to create a rejection_messages table or get from releases table
+            // For now, assuming you store rejection messages in releases table
+            $release = $this->releaseRepo->find($releaseId);
+
+            if (!$release) {
+                return $this->response->setJSON([
+                    'success' => false,
+                    'error' => 'Release not found'
+                ]);
+            }
+
+            // If you have a separate rejection_messages table:
+            /*
+        $rejectionMessages = $this->db->table('rejection_messages')
+                                     ->where('release_id', $releaseId)
+                                     ->orderBy('created_at', 'DESC')
+                                     ->get()
+                                     ->getResultArray();
+        */
+
+            // For now, assuming single rejection message in releases table:
+            $messages = [];
+            if (!empty($release['message'])) {
+                $messages[] = [
+                    'message' => $release['message'],
+                    'created_at' => $release['updated_at'],
+                    'admin_name' => 'Admin' // You can join with users table to get actual admin name
+                ];
+            }
+
+            return $this->response->setJSON([
+                'success' => true,
+                'messages' => $messages
+            ]);
+        } catch (\Exception $e) {
+            log_message('error', 'Error getting rejection messages: ' . $e->getMessage());
+            return $this->response->setJSON([
+                'success' => false,
+                'error' => 'Failed to load rejection messages'
+            ]);
+        }
     }
+
 
     // public function show($id)
     // {

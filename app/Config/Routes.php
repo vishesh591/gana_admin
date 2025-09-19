@@ -23,7 +23,6 @@ $routes->group('', ['filter' => 'auth'], function ($routes) {
 // Routes only for super admins
 $routes->group('superadmin', ['filter' => 'role:superadmin'], function ($routes) {
     $routes->get('/', 'SuperAdmin::dashboard');
-    $routes->get('dashboard', 'SuperAdmin::dashboard');
     // $routes->get('accounts', 'SuperAdmin::accounts');
     // $routes->get('claiming-data', 'SuperAdmin::claiming_data');
     $routes->get('relocation-data', 'SuperAdmin::relocation_data');
@@ -59,7 +58,13 @@ $routes->group('superadmin', ['filter' => 'role:superadmin'], function ($routes)
     $routes->post('releases/update/(:num)', 'Backend\Release\ReleaseController::update/$1');
     $routes->post('releases/takedown/(:num)', 'Backend\Release\ReleaseController::takedown_release/$1');
     $routes->get('api/labels', 'Backend\Label\LabelController::getLabelsJson');
-    $routes->get('releases/rejections', 'Backend\Release\ReleaseController::rejectedReleases');
+    // $routes->get('releases/rejections', 'Backend\Release\ReleaseController::rejectedReleases');
+    $routes->post('releases/drafts/save', 'Backend\Release\ReleaseDraftsController::saveDraft');
+    $routes->get('releases/drafts', 'Backend\Release\ReleaseDraftsController::getDrafts');
+    $routes->get('releases/drafts/load/(:num)', 'Backend\Release\ReleaseDraftsController::loadDraft/$1');
+    $routes->delete('releases/drafts/(:num)', 'Backend\Release\ReleaseDraftsController::deleteDraft/$1');
+
+    $routes->get('releases/(:num)/rejection-messages', 'Backend\Release\ReleaseController::getRejectionMessages/$1');
 
     $routes->get('api/accounts', 'RegisterController::getAccountsJson');
     $routes->get('pages-profile', 'RegisterController::index');
@@ -117,6 +122,8 @@ $routes->group('superadmin', ['filter' => 'role:superadmin'], function ($routes)
     $routes->get('youtube-ownership-data', 'Backend\YoutubeConflict\YoutubeConflictController::youtubeOwnershipIndex');
     $routes->get('youtube-ownership/list', 'Backend\YoutubeConflict\YoutubeConflictController::listYouTubeOwnershipConflictsJson');
     $routes->post('youtube-ownership/update/(:num)', 'Backend\YoutubeConflict\YoutubeConflictController::updateYouTubeConflictStatus/$1');
+   
+    $routes->get('dashboard', 'Backend\Release\ReleaseDraftsController::dashboard');
 
 });
 

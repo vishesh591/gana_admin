@@ -72,4 +72,16 @@ class ReleaseRepository
     ")
             ->first();
     }
+
+    /**
+     * Get total revenue from sale_price
+     */
+    public function getTotalRevenue()
+    {
+        return $this->model
+            ->select("SUM(CAST(sale_price AS DECIMAL(10,2))) as total_revenue")
+            ->where('sale_price IS NOT NULL')
+            ->where('sale_price !=', '')
+            ->first();
+    }
 }

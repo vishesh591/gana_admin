@@ -4933,240 +4933,227 @@ const step5ValidationRules = {
 };
 
 document.addEventListener("DOMContentLoaded", function () {
-  const addReleasePageContainer = document.querySelector(
-    ".admin-add-releases-form"
-  );
+  const addReleasePageContainer = document.querySelector(".admin-add-releases-form");
   if (!addReleasePageContainer) return;
 
   const totalSteps = 5;
   const stepTitles = {
     1: "Metadata",
-    2: "Uploads",
+    2: "Uploads", 
     3: "Stores",
     4: "Date & Price",
     5: "Terms",
   };
+
   let currentStep = 1;
-
-  // CRITICAL FIX: Track which button was clicked
   let submittingButton = null;
-  let rejectionMessage = null; // Track rejection message
+  let rejectionMessage = null;
+  let isDraftSaving = false; // NEW: Draft saving flag
 
-  if (typeof feather !== "undefined") {
+  if (typeof feather !== 'undefined') {
     feather.replace();
   }
 
   // FIXED: Initialize form data for edit mode
-  const isEditMode =
-    document.querySelector('input[name="releaseTitle"]')?.value !== "";
+  const isEditMode = document.querySelector('input[name="releaseTitle"]')?.value !== '';
 
   // Initialize rejection modal
-  const rejectionModal = document.getElementById("rejectionModal")
-    ? new bootstrap.Modal(document.getElementById("rejectionModal"))
-    : null;
+  const rejectionModal = document.getElementById('rejectionModal') ? 
+    new bootstrap.Modal(document.getElementById('rejectionModal')) : null;
+
+  // NEW: Initialize rejection messages modal
+  const rejectionMessagesModal = document.getElementById('rejectionMessagesModal') ? 
+    new bootstrap.Modal(document.getElementById('rejectionMessagesModal')) : null;
+
+  // NEW: SAVE DRAFT FUNCTIONALITY
+  const saveDraftBtn = document.getElementById('saveDraftBtn');
+  const draftSuccessToast = document.getElementById('draftSuccessToast');
+  const toastInstance = draftSuccessToast ? new bootstrap.Toast(draftSuccessToast) : null;
+
+  if (saveDraftBtn) {
+    saveDraftBtn.addEventListener('click', function() {
+      if (isDraftSaving) return;
+      saveDraft();
+    });
+  }
+
+  // NEW: REJECTION MESSAGES FUNCTIONALITY  
+  const showRejectionMessagesBtn = document.getElementById('showRejectionMessagesBtn');
+  if (showRejectionMessagesBtn && rejectionMessagesModal) {
+    showRejectionMessagesBtn.addEventListener('click', function() {
+      loadRejectionMessages();
+      rejectionMessagesModal.show();
+    });
+  }
 
   function updateStepIndicator(step) {
-    const steps = document.querySelectorAll(".step");
-    const progressLine = document.getElementById("progressLine");
-
+    const steps = document.querySelectorAll('.step');
+    const progressLine = document.getElementById('progressLine');
+    
     steps.forEach((stepEl, index) => {
       const stepNum = index + 1;
-      stepEl.classList.remove("active", "completed");
-
+      stepEl.classList.remove('active', 'completed');
+      
       if (stepNum < step) {
-        stepEl.classList.add("completed");
+        stepEl.classList.add('completed');
       } else if (stepNum === step) {
-        stepEl.classList.add("active");
+        stepEl.classList.add('active');
       }
     });
 
     if (progressLine) {
       const progressWidth = ((step - 1) / (totalSteps - 1)) * 100;
-      progressLine.style.width = progressWidth + "%";
+      progressLine.style.width = `${progressWidth}%`;
     }
   }
 
   function showStep(step) {
-    document.querySelectorAll(".step-content").forEach((content) => {
-      content.classList.remove("active");
+    document.querySelectorAll('.step-content').forEach(content => {
+      content.classList.remove('active');
     });
 
     setTimeout(() => {
       const targetStep = document.getElementById(`step-${step}`);
       if (targetStep) {
-        targetStep.classList.add("active");
+        targetStep.classList.add('active');
       }
     }, 150);
 
     updateStepIndicator(step);
-
-    const currentStepTitleEl = document.querySelector(".current-step-title");
+    
+    const currentStepTitleEl = document.querySelector('.current-step-title');
     if (currentStepTitleEl) {
       currentStepTitleEl.textContent = stepTitles[step];
     }
-
+    
     currentStep = step;
   }
 
   function createStepValidator(stepRules, stepNumber) {
-    Object.keys(stepRules).forEach((fieldId) => {
+    Object.keys(stepRules).forEach(fieldId => {
       const field = document.getElementById(fieldId);
       if (!field) return;
 
       const rule = stepRules[fieldId];
 
-      if (rule.type === "radio") {
-        document
-          .querySelectorAll(`input[name="${field.name}"]`)
-          .forEach((radio) => {
-            radio.addEventListener("change", () =>
-              validateStepField(fieldId, stepRules[fieldId])
-            );
+      if (rule.type === 'radio') {
+        document.querySelectorAll(`input[name="${field.name}"]`).forEach(radio => {
+          radio.addEventListener('change', () => validateStepField(fieldId, stepRules[fieldId]));
+        });
+      } else if (rule.type === 'checkbox') {
+        if (field.name && document.querySelectorAll(`input[name="${field.name}"]`).length > 1) {
+          document.querySelectorAll(`input[name="${field.name}"]`).forEach(checkbox => {
+            checkbox.addEventListener('change', () => validateStepField(fieldId, stepRules[fieldId]));
           });
-      } else if (rule.type === "checkbox") {
-        if (
-          field.name &&
-          document.querySelectorAll(`input[name="${field.name}"]`).length > 1
-        ) {
-          document
-            .querySelectorAll(`input[name="${field.name}"]`)
-            .forEach((checkbox) => {
-              checkbox.addEventListener("change", () =>
-                validateStepField(fieldId, stepRules[fieldId])
-              );
-            });
         } else {
-          field.addEventListener("change", () =>
-            validateStepField(fieldId, stepRules[fieldId])
-          );
+          field.addEventListener('change', () => validateStepField(fieldId, stepRules[fieldId]));
         }
-      } else if (rule.type === "file") {
-        field.addEventListener("change", () =>
-          validateStepField(fieldId, stepRules[fieldId])
-        );
+      } else if (rule.type === 'file') {
+        field.addEventListener('change', () => validateStepField(fieldId, stepRules[fieldId]));
       } else {
-        field.addEventListener("input", () =>
-          validateStepField(fieldId, stepRules[fieldId])
-        );
-        field.addEventListener("change", () =>
-          validateStepField(fieldId, stepRules[fieldId])
-        );
-        field.addEventListener("blur", () =>
-          validateStepField(fieldId, stepRules[fieldId])
-        );
+        field.addEventListener('input', () => validateStepField(fieldId, stepRules[fieldId]));
+        field.addEventListener('change', () => validateStepField(fieldId, stepRules[fieldId]));
+        field.addEventListener('blur', () => validateStepField(fieldId, stepRules[fieldId]));
       }
     });
 
     if (stepNumber === 4) {
-      ["releaseDate", "preSaleDate", "originalReleaseDate"].forEach((id) => {
+      ['releaseDate', 'preSaleDate', 'originalReleaseDate'].forEach(id => {
         const field = document.getElementById(id);
         if (field) {
-          field.addEventListener("change", validateStep4Dates);
+          field.addEventListener('change', validateStep4Dates);
         }
       });
     }
 
     return function validateStep() {
       let allValid = true;
-      Object.keys(stepRules).forEach((fieldId) => {
+      Object.keys(stepRules).forEach(fieldId => {
         const isValid = validateStepField(fieldId, stepRules[fieldId]);
         if (!isValid) allValid = false;
       });
 
       if (stepNumber === 4) {
-        if (!validateStep4Dates()) {
-          allValid = false;
-        }
+        if (!validateStep4Dates()) allValid = false;
       }
+
       return allValid;
     };
   }
 
   function validateStepField(fieldId, rules) {
-    if (fieldId === "artworkFile") {
-      return validateArtworkFile();
-    }
-    if (fieldId === "audioFile") {
-      return validateAudioFile();
-    }
-    if (fieldId === "freeStores") {
-      return validateStoreSelection();
-    }
-
+    if (fieldId === 'artworkFile') return validateArtworkFile();
+    if (fieldId === 'audioFile') return validateAudioFile();  
+    if (fieldId === 'freeStores') return validateStoreSelection();
+    
     return FormValidator.validateField(fieldId, rules);
   }
 
   // FIXED: Artwork validation for edit mode
   function validateArtworkFile() {
-    const artworkFile = document.getElementById("artworkFile");
-    const artworkFileError = document.getElementById("artworkFileError");
-    const artworkUpload = document.getElementById("artworkUpload");
-    const artworkPreview = document.getElementById("artworkPreview");
+    const artworkFile = document.getElementById('artworkFile');
+    const artworkFileError = document.getElementById('artworkFileError');
+    const artworkUpload = document.getElementById('artworkUpload');
+    const artworkPreview = document.getElementById('artworkPreview');
 
     if (!artworkFile || !artworkFileError || !artworkUpload) return true;
 
-    artworkUpload.classList.remove("is-invalid", "is-valid");
-    artworkFileError.textContent = "";
-    artworkFileError.style.display = "none";
+    artworkUpload.classList.remove('is-invalid', 'is-valid');
+    artworkFileError.textContent = '';
+    artworkFileError.style.display = 'none';
 
     // In edit mode: valid if preview exists and no new file selected
-    if (
-      isEditMode &&
-      artworkPreview &&
-      !artworkPreview.classList.contains("d-none") &&
-      (!artworkFile.files || artworkFile.files.length === 0)
-    ) {
-      artworkUpload.classList.add("is-valid");
+    if (isEditMode && artworkPreview && !artworkPreview.classList.contains('d-none') && 
+        (!artworkFile.files || artworkFile.files.length === 0)) {
+      artworkUpload.classList.add('is-valid');
       return true;
     }
 
     if (!artworkFile.files || artworkFile.files.length === 0) {
       if (!isEditMode) {
-        artworkUpload.classList.add("is-invalid");
-        artworkFileError.textContent = "Please select an artwork file.";
-        artworkFileError.style.display = "block";
+        artworkUpload.classList.add('is-invalid');
+        artworkFileError.textContent = 'Please select an artwork file.';
+        artworkFileError.style.display = 'block';
         return false;
       }
       return true;
     }
 
     const file = artworkFile.files[0];
-    const allowedTypes = ["image/jpeg", "image/jpg", "image/png"];
+    const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png'];
     const maxSize = 10 * 1024 * 1024;
 
     if (!allowedTypes.includes(file.type)) {
-      artworkUpload.classList.add("is-invalid");
-      artworkFileError.textContent =
-        "Please select a valid image file (JPG, JPEG, or PNG).";
-      artworkFileError.style.display = "block";
+      artworkUpload.classList.add('is-invalid');
+      artworkFileError.textContent = 'Please select a valid image file (JPG, JPEG, or PNG).';
+      artworkFileError.style.display = 'block';
       return false;
     }
 
     if (file.size > maxSize) {
-      artworkUpload.classList.add("is-invalid");
-      artworkFileError.textContent = "File size should not exceed 10MB.";
-      artworkFileError.style.display = "block";
+      artworkUpload.classList.add('is-invalid');
+      artworkFileError.textContent = 'File size should not exceed 10MB.';
+      artworkFileError.style.display = 'block';
       return false;
     }
 
-    return new Promise((resolve) => {
+    return new Promise(resolve => {
       const img = new Image();
-      img.onload = function () {
+      img.onload = function() {
         if (this.width !== 3000 || this.height !== 3000) {
-          artworkUpload.classList.add("is-invalid");
-          artworkFileError.textContent =
-            "Artwork must be exactly 3000 x 3000 pixels.";
-          artworkFileError.style.display = "block";
+          artworkUpload.classList.add('is-invalid');
+          artworkFileError.textContent = 'Artwork must be exactly 3000 x 3000 pixels.';
+          artworkFileError.style.display = 'block';
           resolve(false);
         } else {
-          artworkUpload.classList.add("is-valid");
+          artworkUpload.classList.add('is-valid');
           resolve(true);
         }
       };
-      img.onerror = function () {
-        artworkUpload.classList.add("is-invalid");
-        artworkFileError.textContent = "Invalid image file.";
-        artworkFileError.style.display = "block";
+      img.onerror = function() {
+        artworkUpload.classList.add('is-invalid');
+        artworkFileError.textContent = 'Invalid image file.';
+        artworkFileError.style.display = 'block';
         resolve(false);
       };
       img.src = URL.createObjectURL(file);
@@ -5175,51 +5162,44 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // FIXED: Audio validation for edit mode
   function validateAudioFile() {
-    const audioFile = document.getElementById("audioFile");
-    const audioFileError = document.getElementById("audioFileError");
-    const audioUpload = document.getElementById("audioUpload");
-    const audioPreviewContainer = document.getElementById(
-      "audioPreviewContainer"
-    );
+    const audioFile = document.getElementById('audioFile');
+    const audioFileError = document.getElementById('audioFileError');
+    const audioUpload = document.getElementById('audioUpload');
+    const audioPreviewContainer = document.getElementById('audioPreviewContainer');
 
     if (!audioFile || !audioUpload) return true;
 
-    audioUpload.classList.remove("is-invalid", "is-valid");
+    audioUpload.classList.remove('is-invalid', 'is-valid');
     if (audioFileError) {
-      audioFileError.textContent = "";
-      audioFileError.style.display = "none";
+      audioFileError.textContent = '';
+      audioFileError.style.display = 'none';
     }
 
     // FIXED: In edit mode, if preview exists and no new file selected, it's valid
-    if (
-      isEditMode &&
-      audioPreviewContainer &&
-      !audioPreviewContainer.classList.contains("d-none") &&
-      (!audioFile.files || audioFile.files.length === 0)
-    ) {
-      audioUpload.classList.add("is-valid");
+    if (isEditMode && audioPreviewContainer && !audioPreviewContainer.classList.contains('d-none') && 
+        (!audioFile.files || audioFile.files.length === 0)) {
+      audioUpload.classList.add('is-valid');
       return true;
     }
 
     if (!audioFile.files || audioFile.files.length === 0) {
-      if (!isEditMode) {
-        // Only show error for new forms
-        audioUpload.classList.add("is-invalid");
+      if (!isEditMode) { // Only show error for new forms
+        audioUpload.classList.add('is-invalid');
         if (audioFileError) {
-          audioFileError.textContent = "Please select an audio file.";
-          audioFileError.style.display = "block";
+          audioFileError.textContent = 'Please select an audio file.';
+          audioFileError.style.display = 'block';
         }
         return false;
       }
       return true; // Valid for edit mode without new file
     }
 
-    if (typeof validateAudioFileInternal === "function") {
+    if (typeof validateAudioFileInternal === 'function') {
       const isValid = validateAudioFileInternal(audioFile.files[0]);
       if (isValid) {
-        audioUpload.classList.add("is-valid");
+        audioUpload.classList.add('is-valid');
       } else {
-        audioUpload.classList.add("is-invalid");
+        audioUpload.classList.add('is-invalid');
       }
       return isValid;
     }
@@ -5228,34 +5208,25 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   function validateStep4Dates() {
-    const releaseDate = document.getElementById("releaseDate");
-    const preSaleDate = document.getElementById("preSaleDate");
-    const originalReleaseDate = document.getElementById("originalReleaseDate");
+    const releaseDate = document.getElementById('releaseDate');
+    const preSaleDate = document.getElementById('preSaleDate');
+    const originalReleaseDate = document.getElementById('originalReleaseDate');
 
     let isValid = true;
-
     const rdValue = releaseDate?.value ? new Date(releaseDate.value) : null;
     const psdValue = preSaleDate?.value ? new Date(preSaleDate.value) : null;
-    const ordValue = originalReleaseDate?.value
-      ? new Date(originalReleaseDate.value)
-      : null;
+    const ordValue = originalReleaseDate?.value ? new Date(originalReleaseDate.value) : null;
 
     FormValidator.hideError(preSaleDate);
     FormValidator.hideError(originalReleaseDate);
 
     if (rdValue && ordValue && ordValue > rdValue) {
-      FormValidator.showError(
-        originalReleaseDate,
-        "Original release date cannot be after the release date."
-      );
+      FormValidator.showError('originalReleaseDate', 'Original release date cannot be after the release date.');
       isValid = false;
     }
 
     if (psdValue && rdValue && psdValue >= rdValue) {
-      FormValidator.showError(
-        preSaleDate,
-        "Pre-sale date must be before the release date."
-      );
+      FormValidator.showError(preSaleDate, 'Pre-sale date must be before the release date.');
       isValid = false;
     }
 
@@ -5263,16 +5234,14 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   function validateStoreSelection() {
-    const checkedCount = document.querySelectorAll(
-      'input[name="stores[]"]:checked'
-    ).length;
-    const errorDiv = document.getElementById("storesError");
+    const checkedCount = document.querySelectorAll('input[name="stores[]"]:checked').length;
+    const errorDiv = document.getElementById('storesError');
 
     if (checkedCount === 0) {
-      if (errorDiv) errorDiv.style.display = "block";
+      if (errorDiv) errorDiv.style.display = 'block';
       return false;
     } else {
-      if (errorDiv) errorDiv.style.display = "none";
+      if (errorDiv) errorDiv.style.display = 'none';
       return true;
     }
   }
@@ -5285,24 +5254,168 @@ document.addEventListener("DOMContentLoaded", function () {
     5: createStepValidator(step5ValidationRules, 5),
   };
 
-  // Navigation event listeners
-  document.querySelectorAll(".next-step").forEach((btn) => {
-    btn.addEventListener("click", function () {
-      const nextStep = parseInt(this.dataset.next, 10);
+  // NEW: Save Draft Function
+// NEW: Save Draft Function
+async function saveDraft() {
+  try {
+    isDraftSaving = true;
+    
+    const originalText = saveDraftBtn.innerHTML;
+    saveDraftBtn.innerHTML = '<i data-feather="save" class="me-1"></i> Saving...';
+    saveDraftBtn.disabled = true;
 
+    const form = document.getElementById('releaseForm');
+    const formData = new FormData(form);
+    
+    // Add draft-specific fields
+    const draftName = formData.get('releaseTitle') || `Draft - ${new Date().toLocaleString()}`;
+    formData.set('draft_name', draftName);
+    formData.set('current_step', currentStep.toString());
+    
+    // UPDATED: Use correct endpoint
+    const response = await fetch('/superadmin/releases/drafts/save', {
+      method: 'POST',
+      body: formData,
+      headers: {
+        'X-Requested-With': 'XMLHttpRequest'
+      }
+    });
+
+    const result = await response.json();
+    
+    if (result.success) {
+      // Update draft ID in form
+      const draftIdField = document.getElementById('draftId');
+      if (draftIdField) {
+        draftIdField.value = result.draft_id;
+      }
+      
+      // Show success toast
+      if (toastInstance) {
+        toastInstance.show();
+      }
+      
+      // Update save button with completion percentage
+      if (result.completion_percentage) {
+        saveDraftBtn.innerHTML = `<i data-feather="save" class="me-1"></i> Saved (${result.completion_percentage}%)`;
+      } else {
+        saveDraftBtn.innerHTML = '<i data-feather="save" class="me-1"></i> Saved';
+      }
+      
+      setTimeout(() => {
+        saveDraftBtn.innerHTML = originalText;
+        if (typeof feather !== 'undefined') {
+          feather.replace();
+        }
+      }, 3000);
+      
+    } else {
+      throw new Error(result.error || 'Failed to save draft');
+    }
+
+  } catch (error) {
+    console.error('Draft save error:', error);
+    alert('Failed to save draft: ' + error.message);
+    
+  } finally {
+    isDraftSaving = false;
+    saveDraftBtn.disabled = false;
+    
+    if (typeof feather !== 'undefined') {
+      feather.replace();
+    }
+  }
+}
+
+
+  // NEW: Load Rejection Messages
+  async function loadRejectionMessages() {
+    try {
+      const releaseIdField = document.querySelector('input[name="release_id"]') || 
+                           document.querySelector('form[action*="/update/"]');
+      
+      let releaseId = null;
+      if (releaseIdField && releaseIdField.action) {
+        // Extract ID from form action URL like /superadmin/releases/update/123
+        const matches = releaseIdField.action.match(/\/update\/(\d+)/);
+        releaseId = matches ? matches[1] : null;
+      }
+      
+      if (!releaseId) {
+        throw new Error('Release ID not found');
+      }
+
+      const response = await fetch(`/superadmin/releases/${releaseId}/rejection-messages`, {
+        headers: {
+          'X-Requested-With': 'XMLHttpRequest'
+        }
+      });
+
+      const result = await response.json();
+      const contentDiv = document.getElementById('rejectionMessagesContent');
+      
+      if (result.success && result.messages && result.messages.length > 0) {
+        let html = '';
+        result.messages.forEach((msg, index) => {
+          html += `
+            <div class="card mb-3">
+              <div class="card-header bg-light d-flex justify-content-between align-items-center">
+                <h6 class="mb-0">Rejection #${index + 1}</h6>
+                <small class="text-muted">${new Date(msg.created_at).toLocaleString()}</small>
+              </div>
+              <div class="card-body">
+                <p class="mb-0">${msg.message}</p>
+                ${msg.admin_name ? `<small class="text-muted">By: ${msg.admin_name}</small>` : ''}
+              </div>
+            </div>
+          `;
+        });
+        contentDiv.innerHTML = html;
+      } else {
+        contentDiv.innerHTML = `
+          <div class="text-center p-4">
+            <i data-feather="info" class="text-muted mb-2"></i>
+            <p class="text-muted">No rejection messages found for this release.</p>
+          </div>
+        `;
+        if (typeof feather !== 'undefined') {
+          feather.replace();
+        }
+      }
+
+    } catch (error) {
+      console.error('Error loading rejection messages:', error);
+      const contentDiv = document.getElementById('rejectionMessagesContent');
+      contentDiv.innerHTML = `
+        <div class="text-center p-4 text-danger">
+          <i data-feather="alert-circle" class="mb-2"></i>
+          <p>Failed to load rejection messages: ${error.message}</p>
+        </div>
+      `;
+      if (typeof feather !== 'undefined') {
+        feather.replace();
+      }
+    }
+  }
+
+  // Navigation event listeners
+  document.querySelectorAll('.next-step').forEach(btn => {
+    btn.addEventListener('click', function() {
+      const nextStep = parseInt(this.dataset.next, 10);
+      
       if (stepValidators[currentStep] && !stepValidators[currentStep]()) {
         console.log(`Step ${currentStep} validation failed`);
         return;
       }
-
+      
       if (nextStep <= totalSteps) {
         showStep(nextStep);
       }
     });
   });
 
-  document.querySelectorAll(".prev-step").forEach((btn) => {
-    btn.addEventListener("click", function () {
+  document.querySelectorAll('.prev-step').forEach(btn => {
+    btn.addEventListener('click', function() {
       const prevStep = parseInt(this.dataset.prev, 10);
       if (prevStep >= 1) {
         showStep(prevStep);
@@ -5310,8 +5423,8 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   });
 
-  document.querySelectorAll(".step").forEach((step) => {
-    step.addEventListener("click", function () {
+  document.querySelectorAll('.step').forEach(step => {
+    step.addEventListener('click', function() {
       const stepNum = parseInt(this.dataset.step, 10);
       if (stepNum >= 1 && stepNum <= totalSteps) {
         showStep(stepNum);
@@ -5320,19 +5433,16 @@ document.addEventListener("DOMContentLoaded", function () {
   });
 
   // REJECTION MODAL HANDLERS
-  const rejectBtn = document.getElementById("rejectBtn");
-  const confirmRejectBtn = document.getElementById("confirmRejectBtn");
-  const rejectionMessageInput = document.getElementById("rejectionMessage");
-  const rejectionMessageError = document.getElementById(
-    "rejectionMessageError"
-  );
+  const rejectBtn = document.getElementById('rejectBtn');
+  const confirmRejectBtn = document.getElementById('confirmRejectBtn');
+  const rejectionMessageInput = document.getElementById('rejectionMessage');
+  const rejectionMessageError = document.getElementById('rejectionMessageError');
 
   // Open rejection modal
   if (rejectBtn) {
-    rejectBtn.addEventListener("click", function (e) {
+    rejectBtn.addEventListener('click', function(e) {
       e.preventDefault();
       e.stopPropagation();
-
       if (rejectionModal) {
         rejectionModal.show();
       }
@@ -5341,38 +5451,35 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // Handle rejection confirmation
   if (confirmRejectBtn) {
-    confirmRejectBtn.addEventListener("click", function () {
+    confirmRejectBtn.addEventListener('click', function() {
       const message = rejectionMessageInput.value.trim();
-
+      
       // Validate message
       if (!message) {
-        rejectionMessageInput.classList.add("is-invalid");
-        rejectionMessageError.style.display = "block";
+        rejectionMessageInput.classList.add('is-invalid');
+        rejectionMessageError.style.display = 'block';
         return;
       }
-
+      
       // Clear validation
-      rejectionMessageInput.classList.remove("is-invalid");
-      rejectionMessageError.style.display = "none";
-
+      rejectionMessageInput.classList.remove('is-invalid');
+      rejectionMessageError.style.display = 'none';
+      
       // Store rejection message
       rejectionMessage = message;
-
+      
       // Set submitting button data for rejection
-      submittingButton = {
-        name: "status",
-        value: "4",
-      };
-
+      submittingButton = { name: 'status', value: '4' };
+      
       // Close modal
       if (rejectionModal) {
         rejectionModal.hide();
       }
-
+      
       // Trigger form submission
-      const form = document.getElementById("releaseForm");
+      const form = document.getElementById('releaseForm');
       if (form) {
-        const submitEvent = new Event("submit");
+        const submitEvent = new Event('submit');
         form.dispatchEvent(submitEvent);
       }
     });
@@ -5380,87 +5487,81 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // Clear validation when user types
   if (rejectionMessageInput) {
-    rejectionMessageInput.addEventListener("input", function () {
+    rejectionMessageInput.addEventListener('input', function() {
       if (this.value.trim()) {
-        this.classList.remove("is-invalid");
-        rejectionMessageError.style.display = "none";
+        this.classList.remove('is-invalid');
+        rejectionMessageError.style.display = 'none';
       }
     });
   }
 
   // CRITICAL FIX: Capture submit button clicks BEFORE form submission
-  document.addEventListener("click", function (e) {
-    if (
-      e.target.type === "submit" &&
-      e.target.form &&
-      e.target.form.id === "releaseForm"
-    ) {
-      submittingButton = {
-        name: e.target.name,
-        value: e.target.value,
-      };
-      console.log("CAPTURED SUBMIT BUTTON:", submittingButton);
+  document.addEventListener('click', function(e) {
+    if (e.target.type === 'submit' && e.target.form && e.target.form.id === 'releaseForm') {
+      submittingButton = { name: e.target.name, value: e.target.value };
+      console.log('CAPTURED SUBMIT BUTTON:', submittingButton);
     }
   });
 
   // File upload handlers
-  const audioUpload = document.getElementById("audioUpload");
-  const audioFile = document.getElementById("audioFile");
+  const audioUpload = document.getElementById('audioUpload');
+  const audioFile = document.getElementById('audioFile');
 
   if (audioUpload && audioFile) {
     const newAudioUpload = audioUpload.cloneNode(true);
     audioUpload.parentNode.replaceChild(newAudioUpload, audioUpload);
+    
     let isAudioProcessing = false;
 
-    newAudioUpload.addEventListener("click", function (e) {
+    newAudioUpload.addEventListener('click', function(e) {
       if (isAudioProcessing) return false;
+      
       isAudioProcessing = true;
       e.preventDefault();
       e.stopPropagation();
       audioFile.click();
-      setTimeout(() => {
-        isAudioProcessing = false;
-      }, 1000);
+      
+      setTimeout(() => { isAudioProcessing = false; }, 1000);
       return false;
     });
 
-    audioFile.addEventListener("change", function (e) {
+    audioFile.addEventListener('change', function(e) {
       if (e.target.files && e.target.files.length > 0) {
         const file = e.target.files[0];
+        
         if (validateAudioFileInternal(file)) {
           const reader = new FileReader();
-          reader.onload = function (event) {
-            const audioPreview = document.getElementById("audioPreview");
-            const audioPreviewContainer = document.getElementById(
-              "audioPreviewContainer"
-            );
-            const audioFileName = document.getElementById("audioFileName");
-            const audioFileSize = document.getElementById("audioFileSize");
+          
+          reader.onload = function(event) {
+            const audioPreview = document.getElementById('audioPreview');
+            const audioPreviewContainer = document.getElementById('audioPreviewContainer');
+            const audioFileName = document.getElementById('audioFileName');
+            const audioFileSize = document.getElementById('audioFileSize');
 
             if (audioPreview && audioPreviewContainer) {
               audioPreview.src = event.target.result;
-              audioPreviewContainer.classList.remove("d-none");
+              audioPreviewContainer.classList.remove('d-none');
+            }
 
-              if (audioFileName) {
-                audioFileName.textContent = file.name;
-              }
-              if (audioFileSize) {
-                const sizeInMB = (file.size / (1024 * 1024)).toFixed(2);
-                audioFileSize.textContent = `Size: ${sizeInMB} MB`;
-              }
+            if (audioFileName) {
+              audioFileName.textContent = file.name;
+            }
 
-              if (typeof feather !== "undefined") {
-                feather.replace();
-              }
+            if (audioFileSize) {
+              const sizeInMB = (file.size / (1024 * 1024)).toFixed(2);
+              audioFileSize.textContent = `Size: ${sizeInMB} MB`;
+            }
+
+            if (typeof feather !== 'undefined') {
+              feather.replace();
             }
           };
+          
           reader.readAsDataURL(file);
         } else {
-          const audioPreviewContainer = document.getElementById(
-            "audioPreviewContainer"
-          );
+          const audioPreviewContainer = document.getElementById('audioPreviewContainer');
           if (audioPreviewContainer) {
-            audioPreviewContainer.classList.add("d-none");
+            audioPreviewContainer.classList.add('d-none');
           }
         }
       }
@@ -5470,35 +5571,31 @@ document.addEventListener("DOMContentLoaded", function () {
   function validateAudioFileInternal(file) {
     if (!file) return false;
 
-    const allowedAudioTypes = ["audio/wav", "audio/wave", "audio/x-wav"];
+    const allowedAudioTypes = ['audio/wav', 'audio/wave', 'audio/x-wav'];
     const maxAudioSize = 50 * 1024 * 1024;
+    const fileExtension = file.name.split('.').pop().toLowerCase();
 
-    const fileExtension = file.name.split(".").pop().toLowerCase();
     const isValidType = allowedAudioTypes.includes(file.type);
-    const isValidExtension = fileExtension === "wav";
+    const isValidExtension = fileExtension === 'wav';
 
     if (!isValidType && !isValidExtension) {
-      alert("Only WAV files are accepted!\n\nPlease upload a WAV audio file.");
+      alert('Only WAV files are accepted! Please upload a WAV audio file.');
       return false;
     }
 
     if (!isValidExtension) {
-      alert(
-        "Only .wav files are accepted!\n\nPlease make sure your file has a .wav extension."
-      );
+      alert('Only .wav files are accepted! Please make sure your file has a .wav extension.');
       return false;
     }
 
     if (file.size > maxAudioSize) {
-      alert("File size too large!\n\nYour WAV file should not exceed 50MB.");
+      alert('File size too large! Your WAV file should not exceed 50MB.');
       return false;
     }
 
     const minAudioSize = 1024;
     if (file.size < minAudioSize) {
-      alert(
-        "File appears to be empty or corrupted!\n\nPlease select a valid WAV audio file."
-      );
+      alert('File appears to be empty or corrupted! Please select a valid WAV audio file.');
       return false;
     }
 
@@ -5506,36 +5603,38 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   // Artwork upload handler
-  const artworkUpload = document.getElementById("artworkUpload");
-  const artworkFile = document.getElementById("artworkFile");
+  const artworkUpload = document.getElementById('artworkUpload');
+  const artworkFile = document.getElementById('artworkFile');
 
   if (artworkUpload && artworkFile) {
     const newArtworkUpload = artworkUpload.cloneNode(true);
     artworkUpload.parentNode.replaceChild(newArtworkUpload, artworkUpload);
+    
     let isProcessing = false;
 
-    newArtworkUpload.addEventListener("click", function (e) {
+    newArtworkUpload.addEventListener('click', function(e) {
       if (isProcessing) return false;
+      
       isProcessing = true;
       e.preventDefault();
       e.stopPropagation();
       artworkFile.click();
-      setTimeout(() => {
-        isProcessing = false;
-      }, 1000);
+      
+      setTimeout(() => { isProcessing = false; }, 1000);
       return false;
     });
 
-    artworkFile.addEventListener("change", function (e) {
+    artworkFile.addEventListener('change', function(e) {
       if (e.target.files && e.target.files.length > 0) {
         const file = e.target.files[0];
+        
         if (validateArtworkFileInternal(file)) {
           const reader = new FileReader();
-          reader.onload = function (event) {
-            const preview = document.getElementById("artworkPreview");
+          reader.onload = function(event) {
+            const preview = document.getElementById('artworkPreview');
             if (preview) {
               preview.src = event.target.result;
-              preview.classList.remove("d-none");
+              preview.classList.remove('d-none');
             }
           };
           reader.readAsDataURL(file);
@@ -5547,16 +5646,16 @@ document.addEventListener("DOMContentLoaded", function () {
   function validateArtworkFileInternal(file) {
     if (!file) return false;
 
-    const allowedTypes = ["image/jpeg", "image/jpg", "image/png"];
+    const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png'];
     const maxSize = 10 * 1024 * 1024;
 
     if (!allowedTypes.includes(file.type)) {
-      alert("Please select a valid image file (JPG, JPEG, or PNG).");
+      alert('Please select a valid image file (JPG, JPEG, or PNG).');
       return false;
     }
 
     if (file.size > maxSize) {
-      alert("File size should not exceed 10MB.");
+      alert('File size should not exceed 10MB.');
       return false;
     }
 
@@ -5564,8 +5663,8 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   // Toggle all stores
-  document.querySelectorAll(".toggle-all").forEach((button) => {
-    button.addEventListener("click", function () {
+  document.querySelectorAll('.toggle-all').forEach(button => {
+    button.addEventListener('click', function() {
       const targetId = this.dataset.target;
       const container = document.getElementById(targetId);
       if (!container) return;
@@ -5573,316 +5672,277 @@ document.addEventListener("DOMContentLoaded", function () {
       const checkboxes = container.querySelectorAll('input[type="checkbox"]');
       if (checkboxes.length === 0) return;
 
-      const allChecked = Array.from(checkboxes).every((cb) => cb.checked);
-      checkboxes.forEach((cb) => {
+      const allChecked = Array.from(checkboxes).every(cb => cb.checked);
+      checkboxes.forEach(cb => {
         cb.checked = !allChecked;
       });
 
-      if (targetId === "freeStores") {
+      if (targetId === 'freeStores') {
         validateStoreSelection();
       }
     });
   });
 
   // FIXED: Form submission with proper button capture and rejection message handling
-  document
-    .getElementById("releaseForm")
-    .addEventListener("submit", function (e) {
-      e.preventDefault();
+  document.getElementById('releaseForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    console.log('Form submission started');
+    console.log('Submitting button:', submittingButton);
+    console.log('Rejection message:', rejectionMessage);
 
-      console.log("Form submission started");
-      console.log("Submitting button:", submittingButton);
-      console.log("Rejection message:", rejectionMessage);
-
-      // Validate all steps first (skip for rejection)
-      if (!submittingButton || submittingButton.value !== "4") {
-        let allStepsValid = true;
-        for (let step = 1; step <= totalSteps; step++) {
-          if (stepValidators[step] && !stepValidators[step]()) {
-            allStepsValid = false;
-            showStep(step);
-            break;
-          }
-        }
-
-        if (!allStepsValid) {
-          alert("Please complete all required fields before submitting.");
-          submittingButton = null;
-          return;
+    // Validate all steps first (skip for rejection)
+    if (!submittingButton || submittingButton.value !== '4') {
+      let allStepsValid = true;
+      for (let step = 1; step <= totalSteps; step++) {
+        if (stepValidators[step] && !stepValidators[step]()) {
+          allStepsValid = false;
+          showStep(step);
+          break;
         }
       }
 
-      const form = e.target;
-      const formData = new FormData(form);
-
-      // CRITICAL FIX: Use the captured button data
-      if (submittingButton && submittingButton.name && submittingButton.value) {
-        // Remove any existing status fields first
-        formData.delete("status");
-        // Add the clicked button's status
-        formData.set(submittingButton.name, submittingButton.value);
-        console.log(
-          "ADDED BUTTON STATUS:",
-          submittingButton.name,
-          "=",
-          submittingButton.value
-        );
-
-        // Add rejection message if this is a rejection
-        if (submittingButton.value === "4" && rejectionMessage) {
-          formData.set("message", rejectionMessage);
-          console.log("ADDED REJECTION MESSAGE:", rejectionMessage);
-        }
-      } else {
-        // Fallback: try activeElement
-        const activeBtn = document.activeElement;
-        if (
-          activeBtn &&
-          activeBtn.type === "submit" &&
-          activeBtn.name &&
-          activeBtn.value
-        ) {
-          formData.delete("status");
-          formData.set(activeBtn.name, activeBtn.value);
-          console.log(
-            "FALLBACK - ADDED ACTIVE BUTTON:",
-            activeBtn.name,
-            "=",
-            activeBtn.value
-          );
-        } else {
-          // Last resort: default status
-          console.log("NO BUTTON CAPTURED - USING DEFAULT STATUS 1");
-          formData.set("status", "1");
-        }
-      }
-
-      // Debug: Log all FormData contents
-      console.log("=== FINAL FORMDATA CONTENTS ===");
-      for (let [key, value] of formData.entries()) {
-        if (key === "status" || key.includes("status") || key === "message") {
-          console.log("🔴 " + key + ": " + value);
-        } else {
-          console.log(key + ": " + value);
-        }
-      }
-
-      // Show loading state
-      const submitBtns = form.querySelectorAll(
-        'button[type="submit"], button#rejectBtn'
-      );
-      const originalButtonContent = new Map();
-
-      submitBtns.forEach((btn) => {
-        originalButtonContent.set(btn, btn.innerHTML);
-        btn.disabled = true;
-        btn.innerHTML =
-          '<i class="spinner-border spinner-border-sm me-1"></i> Processing...';
-      });
-
-      fetch(form.action, {
-        method: "POST",
-        body: formData,
-        headers: {
-          "X-Requested-With": "XMLHttpRequest",
-        },
-      })
-        .then((response) => {
-          console.log("Response status:", response.status);
-
-          if (!response.ok) {
-            throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-          }
-
-          return response.text();
-        })
-        .then((text) => {
-          console.log("Raw response:", text);
-
-          if (!text || text.trim() === "") {
-            return {
-              success: true,
-              message: "Release processed successfully!",
-            };
-          }
-
-          try {
-            const parsed = JSON.parse(text);
-            console.log("Parsed JSON:", parsed);
-            return parsed;
-          } catch (parseError) {
-            console.log("JSON parse failed:", parseError.message);
-            throw new Error("Invalid JSON response from server");
-          }
-        })
-        .then((data) => {
-          console.log("Processing response data:", data);
-
-          if (!data) {
-            throw new Error("No response data received from server");
-          }
-
-          if (data.success === true) {
-            const message = data.message || "Release processed successfully!";
-            alert(message);
-            window.location.href = data.redirect || "/superadmin/releases";
-          } else if (data.success === false) {
-            throw new Error(data.error || data.message || "Processing failed");
-          } else if (data.message && !data.hasOwnProperty("success")) {
-            alert(data.message);
-            window.location.href = data.redirect || "/superadmin/releases";
-          } else {
-            console.warn("Unexpected response format:", data);
-            throw new Error("Unexpected response format from server");
-          }
-        })
-        .catch((error) => {
-          console.error("Submission error:", error);
-          alert("Error: " + error.message);
-
-          // Restore buttons
-          submitBtns.forEach((btn) => {
-            btn.disabled = false;
-            const originalContent = originalButtonContent.get(btn);
-            if (originalContent) {
-              btn.innerHTML = originalContent;
-            } else {
-              // Fallback restoration
-              if (
-                btn.innerHTML.includes("Approve") ||
-                (btn.name === "status" && btn.value === "5")
-              ) {
-                btn.innerHTML =
-                  '<i data-feather="check" class="me-1"></i> Approve';
-              } else if (
-                btn.innerHTML.includes("Reject") ||
-                btn.id === "rejectBtn"
-              ) {
-                btn.innerHTML = '<i data-feather="x" class="me-1"></i> Reject';
-              } else {
-                btn.innerHTML =
-                  '<i data-feather="check" class="me-1"></i> Submit Release';
-              }
-            }
-          });
-
-          // Re-initialize feather icons
-          if (typeof feather !== "undefined") {
-            feather.replace();
-          }
-        })
-        .finally(() => {
-          // Reset the captured button and rejection message
-          submittingButton = null;
-          rejectionMessage = null;
-        });
-    });
-});
-
-//release page reject modal code
-document.addEventListener("DOMContentLoaded", function () {
-  const rejectionMessageInput = document.getElementById("rejectionMessage");
-  const charCount = document.getElementById("charCount");
-  const confirmRejectBtn = document.getElementById("confirmRejectBtn");
-  const rejectionMessageError = document.getElementById(
-    "rejectionMessageError"
-  );
-  const rejectionModal = document.getElementById("rejectionModal");
-  const rejectBtn = document.getElementById("rejectBtn"); // reject button on page
-
-  // Character counter
-  if (rejectionMessageInput && charCount) {
-    rejectionMessageInput.addEventListener("input", function () {
-      const currentLength = this.value.length;
-      charCount.textContent = currentLength;
-
-      if (confirmRejectBtn) {
-        if (currentLength >= 10) {
-          confirmRejectBtn.disabled = false;
-          this.classList.remove("is-invalid");
-          rejectionMessageError.style.display = "none";
-        } else {
-          confirmRejectBtn.disabled = true;
-        }
-      }
-    });
-  }
-
-  // Enhanced validation for rejection confirmation
-  if (confirmRejectBtn) {
-    confirmRejectBtn.addEventListener("click", function () {
-      const message = rejectionMessageInput.value.trim();
-
-      if (!message || message.length < 10) {
-        rejectionMessageInput.classList.add("is-invalid");
-        rejectionMessageError.textContent =
-          "Please provide a rejection reason (minimum 10 characters).";
-        rejectionMessageError.style.display = "block";
-        rejectionMessageInput.focus();
+      if (!allStepsValid) {
+        alert('Please complete all required fields before submitting.');
+        submittingButton = null;
         return;
       }
+    }
 
-      rejectionMessageInput.classList.remove("is-invalid");
-      rejectionMessageError.style.display = "none";
+    const form = e.target;
+    const formData = new FormData(form);
 
-      window.rejectionMessage = message;
-      window.submittingButton = {
-        name: "status",
-        value: "4",
-      };
+    // CRITICAL FIX: Use the captured button data
+    if (submittingButton && submittingButton.name && submittingButton.value) {
+      // Remove any existing status fields first
+      formData.delete('status');
+      // Add the clicked button's status
+      formData.set(submittingButton.name, submittingButton.value);
+      console.log(`ADDED BUTTON STATUS: ${submittingButton.name} = ${submittingButton.value}`);
+    }
 
-      // Close modal
-      const modal = bootstrap.Modal.getInstance(rejectionModal);
-      if (modal) {
-        modal.hide();
+    // Add rejection message if this is a rejection
+    if (submittingButton && submittingButton.value === '4' && rejectionMessage) {
+      formData.set('message', rejectionMessage);
+      console.log('ADDED REJECTION MESSAGE:', rejectionMessage);
+    } else {
+      // Fallback: try activeElement
+      const activeBtn = document.activeElement;
+      if (activeBtn && activeBtn.type === 'submit' && activeBtn.name && activeBtn.value) {
+        formData.delete('status');
+        formData.set(activeBtn.name, activeBtn.value);
+        console.log(`FALLBACK - ADDED ACTIVE BUTTON: ${activeBtn.name} = ${activeBtn.value}`);
+      } else {
+        // Last resort: default status
+        console.log('NO BUTTON CAPTURED - USING DEFAULT STATUS 1');
+        formData.set('status', '1');
       }
+    }
 
-      // Trigger form submission
-      const form = document.getElementById("releaseForm");
-      if (form) {
-        const submitEvent = new Event("submit");
-        form.dispatchEvent(submitEvent);
+    // Debug: Log all FormData contents
+    console.log('FINAL FORMDATA CONTENTS:');
+    for (let [key, value] of formData.entries()) {
+      if (key === 'status' || key.includes('status') || key === 'message') {
+        console.log(`${key}: ${value}`);
+      } else {
+        console.log(`${key}: ${value}`);
       }
+    }
+
+    // Show loading state
+    const submitBtns = form.querySelectorAll('button[type="submit"], button[id="rejectBtn"]');
+    const originalButtonContent = new Map();
+    
+    submitBtns.forEach(btn => {
+      originalButtonContent.set(btn, btn.innerHTML);
+      btn.disabled = true;
+      btn.innerHTML = '<i class="spinner-border spinner-border-sm me-1"></i> Processing...';
     });
 
-    confirmRejectBtn.disabled = true;
-  }
+    fetch(form.action, {
+      method: 'POST',
+      body: formData,
+      headers: {
+        'X-Requested-With': 'XMLHttpRequest',
+      },
+    })
+    .then(response => {
+      console.log('Response status:', response.status);
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      }
+      return response.text();
+    })
+    .then(text => {
+      console.log('Raw response:', text);
+      if (!text || !text.trim()) {
+        return { success: true, message: 'Release processed successfully!' };
+      }
+      
+      try {
+        const parsed = JSON.parse(text);
+        console.log('Parsed JSON:', parsed);
+        return parsed;
+      } catch (parseError) {
+        console.log('JSON parse failed:', parseError.message);
+        throw new Error('Invalid JSON response from server');
+      }
+    })
+    .then(data => {
+      console.log('Processing response data:', data);
+      
+      if (!data) {
+        throw new Error('No response data received from server');
+      }
 
-  // Reset modal when closed
-  if (rejectionModal) {
-    rejectionModal.addEventListener("hidden.bs.modal", function () {
-      if (rejectionMessageInput) {
-        rejectionMessageInput.value = "";
-        rejectionMessageInput.classList.remove("is-invalid");
+      if (data.success === true) {
+        const message = data.message || 'Release processed successfully!';
+        alert(message);
+        window.location.href = data.redirect || '/superadmin/releases';
+      } else if (data.success === false) {
+        throw new Error(data.error || data.message || 'Processing failed');
+      } else if (data.message && !data.hasOwnProperty('success')) {
+        alert(data.message);
+        window.location.href = data.redirect || '/superadmin/releases';
+      } else {
+        console.warn('Unexpected response format:', data);
+        throw new Error('Unexpected response format from server');
       }
-      if (rejectionMessageError) {
-        rejectionMessageError.style.display = "none";
-      }
-      if (charCount) {
-        charCount.textContent = "0";
-      }
-      if (confirmRejectBtn) {
-        confirmRejectBtn.disabled = true;
-      }
-    });
+    })
+    .catch(error => {
+      console.error('Submission error:', error);
+      alert('Error: ' + error.message);
+    })
+    .finally(() => {
+      // Restore buttons
+      submitBtns.forEach(btn => {
+        btn.disabled = false;
+        const originalContent = originalButtonContent.get(btn);
+        if (originalContent) {
+          btn.innerHTML = originalContent;
+        } else {
+          // Fallback restoration
+          if (btn.innerHTML.includes('Approve') && btn.name === 'status' && btn.value === '5') {
+            btn.innerHTML = '<i data-feather="check" class="me-1"></i> Approve';
+          } else if (btn.innerHTML.includes('Reject') && btn.id === 'rejectBtn') {
+            btn.innerHTML = '<i data-feather="x" class="me-1"></i> Reject';
+          } else {
+            btn.innerHTML = '<i data-feather="check" class="me-1"></i> Submit Release';
+          }
+        }
+      });
 
-    rejectionModal.addEventListener("shown.bs.modal", function () {
-      if (typeof feather !== "undefined") {
+      // Re-initialize feather icons
+      if (typeof feather !== 'undefined') {
         feather.replace();
       }
-      if (rejectionMessageInput) {
-        rejectionMessageInput.focus();
-      }
+    })
+    .finally(() => {
+      // Reset the captured button and rejection message
+      submittingButton = null;
+      rejectionMessage = null;
     });
-  }
+  });
 
-  // ✅ OPEN modal when Reject button is clicked
-  if (rejectBtn) {
-    rejectBtn.addEventListener("click", function () {
-      const modal = new bootstrap.Modal(rejectionModal);
-      modal.show();
-    });
-  }
+  // Release page reject modal code
+  document.addEventListener("DOMContentLoaded", function () {
+    const rejectionMessageInput = document.getElementById('rejectionMessage');
+    const charCount = document.getElementById('charCount');
+    const confirmRejectBtn = document.getElementById('confirmRejectBtn');
+    const rejectionMessageError = document.getElementById('rejectionMessageError');
+    const rejectionModal = document.getElementById('rejectionModal');
+    const rejectBtn = document.getElementById('rejectBtn');
+
+    // Character counter
+    if (rejectionMessageInput && charCount) {
+      rejectionMessageInput.addEventListener('input', function() {
+        const currentLength = this.value.length;
+        charCount.textContent = currentLength;
+
+        if (confirmRejectBtn) {
+          if (currentLength >= 10) {
+            confirmRejectBtn.disabled = false;
+            this.classList.remove('is-invalid');
+            rejectionMessageError.style.display = 'none';
+          } else {
+            confirmRejectBtn.disabled = true;
+          }
+        }
+      });
+    }
+
+    // Enhanced validation for rejection confirmation
+    if (confirmRejectBtn) {
+      confirmRejectBtn.addEventListener('click', function() {
+        const message = rejectionMessageInput.value.trim();
+        
+        if (!message || message.length < 10) {
+          rejectionMessageInput.classList.add('is-invalid');
+          rejectionMessageError.textContent = 'Please provide a rejection reason (minimum 10 characters).';
+          rejectionMessageError.style.display = 'block';
+          rejectionMessageInput.focus();
+          return;
+        }
+
+        rejectionMessageInput.classList.remove('is-invalid');
+        rejectionMessageError.style.display = 'none';
+
+        window.rejectionMessage = message;
+        window.submittingButton = { name: 'status', value: '4' };
+
+        // Close modal
+        const modal = bootstrap.Modal.getInstance(rejectionModal);
+        if (modal) {
+          modal.hide();
+        }
+
+        // Trigger form submission
+        const form = document.getElementById('releaseForm');
+        if (form) {
+          const submitEvent = new Event('submit');
+          form.dispatchEvent(submitEvent);
+        }
+
+        confirmRejectBtn.disabled = true;
+      });
+    }
+
+    // Reset modal when closed
+    if (rejectionModal) {
+      rejectionModal.addEventListener('hidden.bs.modal', function() {
+        if (rejectionMessageInput) {
+          rejectionMessageInput.value = '';
+          rejectionMessageInput.classList.remove('is-invalid');
+        }
+        if (rejectionMessageError) {
+          rejectionMessageError.style.display = 'none';
+        }
+        if (charCount) {
+          charCount.textContent = '0';
+        }
+        if (confirmRejectBtn) {
+          confirmRejectBtn.disabled = true;
+        }
+      });
+
+      rejectionModal.addEventListener('shown.bs.modal', function() {
+        if (typeof feather !== 'undefined') {
+          feather.replace();
+        }
+        if (rejectionMessageInput) {
+          rejectionMessageInput.focus();
+        }
+      });
+    }
+
+    // OPEN modal when Reject button is clicked
+    if (rejectBtn) {
+      rejectBtn.addEventListener('click', function() {
+        const modal = new bootstrap.Modal(rejectionModal);
+        modal.show();
+      });
+    }
+  });
 });
 
 //User Account Creation Js

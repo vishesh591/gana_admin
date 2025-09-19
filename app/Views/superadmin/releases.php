@@ -11,10 +11,6 @@
                         <a href="<?= base_url('superadmin/add-release') ?>" class="btn btn-primary">
                             <i data-feather="plus" class="me-1"></i> Add New Release
                         </a>
-                        <button type="button" class="btn btn-outline-danger rounded-pill px-4" id="showRejectionMessagesBtn">
-                            <i class="bi bi-x-circle me-1"></i> Rejection Messages
-                        </button>
-
                     </div>
                 </div>
             </div>
