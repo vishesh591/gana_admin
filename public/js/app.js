@@ -2643,7 +2643,7 @@ $(document).ready(function () {
 // accounts-page js
 
 document.addEventListener("DOMContentLoaded", function () {
-  $("#claimingTable").DataTable({
+  $("#userTable").DataTable({
     destroy: true,
     processing: true,
     serverSide: false,
@@ -2687,6 +2687,10 @@ document.addEventListener("DOMContentLoaded", function () {
     },
   });
 });
+
+
+
+
 
 $(document).ready(function () {
   $("#claimingRequestForm").on("submit", function (e) {
@@ -5328,32 +5332,37 @@ async function saveDraft() {
 }
 
 
-  // NEW: Load Rejection Messages
+    // NEW: Load Rejection Messages
   async function loadRejectionMessages() {
     try {
-      const releaseIdField = document.querySelector('input[name="release_id"]') || 
-                           document.querySelector('form[action*="/update/"]');
-      
       let releaseId = null;
-      if (releaseIdField && releaseIdField.action) {
-        // Extract ID from form action URL like /superadmin/releases/update/123
-        const matches = releaseIdField.action.match(/\/update\/(\d+)/);
-        releaseId = matches ? matches[1] : null;
+
+      // First try hidden input
+      const releaseIdInput = document.querySelector('input[name="release_id"]');
+      if (releaseIdInput) {
+        releaseId = releaseIdInput.value;
       }
-      
+
+      // If not found, try extracting from form action
+      if (!releaseId) {
+        const formEl = document.querySelector('form[action*="/update/"]');
+        if (formEl && formEl.action) {
+          const matches = formEl.action.match(/\/update\/(\d+)/);
+          releaseId = matches ? matches[1] : null;
+        }
+      }
+
       if (!releaseId) {
         throw new Error('Release ID not found');
       }
 
       const response = await fetch(`/superadmin/releases/${releaseId}/rejection-messages`, {
-        headers: {
-          'X-Requested-With': 'XMLHttpRequest'
-        }
+        headers: { 'X-Requested-With': 'XMLHttpRequest' }
       });
 
       const result = await response.json();
       const contentDiv = document.getElementById('rejectionMessagesContent');
-      
+
       if (result.success && result.messages && result.messages.length > 0) {
         let html = '';
         result.messages.forEach((msg, index) => {
@@ -5382,7 +5391,6 @@ async function saveDraft() {
           feather.replace();
         }
       }
-
     } catch (error) {
       console.error('Error loading rejection messages:', error);
       const contentDiv = document.getElementById('rejectionMessagesContent');
@@ -5397,6 +5405,7 @@ async function saveDraft() {
       }
     }
   }
+
 
   // Navigation event listeners
   document.querySelectorAll('.next-step').forEach(btn => {

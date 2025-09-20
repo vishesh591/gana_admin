@@ -59,7 +59,7 @@ class Auth extends BaseController
         }
 
         // Redirect based on role
-        return redirect()->to('/' . strtolower($user['role_name']));
+        return redirect()->to(strtolower($user['role_name']).'/dashboard');
     }
 
     public function logout()

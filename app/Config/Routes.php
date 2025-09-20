@@ -22,7 +22,7 @@ $routes->group('', ['filter' => 'auth'], function ($routes) {
 
 // Routes only for super admins
 $routes->group('superadmin', ['filter' => 'role:superadmin'], function ($routes) {
-    $routes->get('/', 'SuperAdmin::dashboard');
+    // $routes->get('/', 'SuperAdmin::dashboard');
     // $routes->get('accounts', 'SuperAdmin::accounts');
     // $routes->get('claiming-data', 'SuperAdmin::claiming_data');
     $routes->get('relocation-data', 'SuperAdmin::relocation_data');
