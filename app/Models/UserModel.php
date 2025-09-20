@@ -53,4 +53,12 @@ class UserModel extends Model
             ->groupEnd()
             ->first();
     }
+
+    public function getUserWithRoleById($userId)
+    {
+        return $this->select('g_users.*, g_roles.role_name')
+                    ->join('g_roles', 'g_users.role_id = g_roles.id', 'left')
+                    ->where('g_users.id', $userId)
+                    ->first();
+    }
 }

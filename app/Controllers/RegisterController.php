@@ -150,4 +150,112 @@ class RegisterController extends BaseController
 
         return view('superadmin/index', $page_array);
     }
+
+    public function editUser($userId)
+    {
+        $user = $this->userModel->getUserWithRoleById($userId);
+
+        if (!$user) {
+            return redirect()->back()->with('error', 'User not found');
+        }
+
+        $page_array = [
+            'file_name' => 'profile_page',
+            'user' => $user
+        ];
+
+        return view('superadmin/index', $page_array);
+    }
+
+    public function updateUserProfile()
+    {
+        try {
+            $userId = $this->request->getPost('user_id');
+
+            if (!$userId) {
+                return $this->response->setJSON([
+                    'status' => 'error',
+                    'message' => 'User ID is required'
+                ]);
+            }
+
+            $updateData = [
+                'name' => $this->request->getPost('name'),
+                'company_name' => $this->request->getPost('company_name'),
+                'primary_label_name' => $this->request->getPost('primary_label_name'),
+                'email' => $this->request->getPost('email'),
+                'phone' => $this->request->getPost('phone'),
+                'holder_name' => $this->request->getPost('holder_name'),
+                'account_number' => $this->request->getPost('account_number'),
+                'ifsc_code' => $this->request->getPost('ifsc_code'),
+                'branch_name' => $this->request->getPost('branch_name'),
+                'agreement_start_date' => $this->request->getPost('agreement_start_date'),
+                'agreement_end_date' => $this->request->getPost('agreement_end_date')
+            ];
+
+            $result = $this->userModel->update($userId, $updateData);
+
+            if ($result) {
+                return $this->response->setJSON([
+                    'status' => 'success',
+                    'message' => 'Profile updated successfully'
+                ]);
+            } else {
+                return $this->response->setJSON([
+                    'status' => 'error',
+                    'message' => 'Failed to update profile'
+                ]);
+            }
+        } catch (\Exception $e) {
+            return $this->response->setJSON([
+                'status' => 'error',
+                'message' => 'Error: ' . $e->getMessage()
+            ]);
+        }
+    }
+
+    public function resetUserPassword()
+    {
+        try {
+            $input = $this->request->getJSON(true);
+
+            $userId = $input['user_id'] ?? null;
+            $newPassword = $input['new_password'] ?? null;
+            $confirmPassword = $input['confirm_password'] ?? null;
+
+            if (!$userId || !$newPassword || !$confirmPassword) {
+                return $this->response->setJSON([
+                    'status' => 'error',
+                    'message' => 'All fields are required'
+                ]);
+            }
+
+            if ($newPassword !== $confirmPassword) {
+                return $this->response->setJSON([
+                    'status' => 'error',
+                    'message' => 'Passwords do not match'
+                ]);
+            }
+
+            $hashedPassword = password_hash($newPassword, PASSWORD_DEFAULT);
+            $result = $this->userModel->update($userId, ['password' => $hashedPassword]);
+
+            if ($result) {
+                return $this->response->setJSON([
+                    'status' => 'success',
+                    'message' => 'Password reset successfully'
+                ]);
+            } else {
+                return $this->response->setJSON([
+                    'status' => 'error',
+                    'message' => 'Failed to reset password'
+                ]);
+            }
+        } catch (\Exception $e) {
+            return $this->response->setJSON([
+                'status' => 'error',
+                'message' => 'Error: ' . $e->getMessage()
+            ]);
+        }
+    }
 }

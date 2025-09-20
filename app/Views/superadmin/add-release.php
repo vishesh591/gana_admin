@@ -9,13 +9,12 @@
                     </h4>
                 </div>
                 <div class="d-flex gap-2">
-                    <?php if (isset($release) && isset($release['status']) && $release['status'] == 1): ?>
+                    <?php if (!isset($release) || !isset($release['status'])): ?>
                         <button type="button" class="btn btn-outline-secondary me-2" id="saveDraftBtn">
                             <i data-feather="save" class="me-1"></i> Save Draft
                         </button>
                     <?php endif; ?>
 
-   
                     <?php if (isset($isEdit) && $isEdit && isset($release)): ?>
                         <?php
                         // Check if release has rejection messages or status is 4

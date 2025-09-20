@@ -1,319 +1,336 @@
 <div class="content-page">
     <div class="content">
-
-        <!-- Start Content-->
         <div class="container-xxl">
             <div class="py-3 d-flex align-items-sm-center flex-sm-row flex-column">
                 <div class="flex-grow-1">
-                    <h4 class="fs-18 fw-semibold m-0">Profile</h4>
+                    <h4 class="fs-18 fw-semibold m-0">User Profile</h4>
                 </div>
-
                 <div class="text-end">
-                    <ol class="breadcrumb m-0 py-0">
-                        <li class="breadcrumb-item"><a href="javascript: void(0);">Home</a></li>
-                        <li class="breadcrumb-item active">Profile</li>
-                    </ol>
+                    <div class="d-flex gap-2">
+                        <button type="button" class="btn btn-success" onclick="saveUserProfile()">
+                            <i class="bi bi-check-circle"></i> Save All Changes
+                        </button>
+                        <a href="<?= base_url('superadmin/accounts') ?>" class="btn btn-secondary">
+                            <i class="bi bi-arrow-left"></i> Back to Accounts
+                        </a>
+                    </div>
                 </div>
             </div>
+
+            <!-- Messages -->
+            <div id="profileAlert"></div>
 
             <div class="row">
                 <div class="col-12">
                     <div class="card">
-
                         <div class="card-body">
-
                             <div class="align-items-center">
                                 <div class="d-flex align-items-center">
-                                    <img src="/images/users/user-11.jpg" class="rounded-circle avatar-xxl img-thumbnail float-start" alt="image profile">
-
+                                    <img src="/images/users/user-11.jpg" class="rounded-circle avatar-xxl img-thumbnail float-start" alt="profile">
                                     <div class="overflow-hidden ms-4">
                                         <h4 class="m-0 text-dark fs-20"><?= esc($user['name']) ?></h4>
                                         <p class="my-1 text-muted fs-16"><?= esc($user['user_name']) ?></p>
+                                        <span class="badge bg-primary">Admin Edit Mode</span>
                                     </div>
                                 </div>
                             </div>
-                            <ul class="nav nav-underline border-bottom pt-2" id="pills-tab" role="tablist">
-                                <li class="nav-item" role="presentation">
-                                    <a class="nav-link active p-2" id="basic_info_tab" data-bs-toggle="tab" href="#basic_info" role="tab">
-                                        <span class="d-block d-sm-none"><i class="mdi mdi-account"></i></span>
+                            
+                            <ul class="nav nav-underline border-bottom pt-2" role="tablist">
+                                <li class="nav-item">
+                                    <a class="nav-link active p-2" data-bs-toggle="tab" href="#basic_info" role="tab">
                                         <span class="d-none d-sm-block">Basic Information</span>
                                     </a>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link p-2" id="login_credentials_tab" data-bs-toggle="tab" href="#login_credentials" role="tab">
-                                        <span class="d-block d-sm-none"><i class="mdi mdi-key"></i></span>
+                                    <a class="nav-link p-2" data-bs-toggle="tab" href="#login_credentials" role="tab">
                                         <span class="d-none d-sm-block">Login Credentials</span>
                                     </a>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link p-2" id="bank_details_tab" data-bs-toggle="tab" href="#bank_details" role="tab">
-                                        <span class="d-block d-sm-none"><i class="mdi mdi-bank"></i></span>
+                                    <a class="nav-link p-2" data-bs-toggle="tab" href="#bank_details" role="tab">
                                         <span class="d-none d-sm-block">Bank Details</span>
                                     </a>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link p-2" id="agreement_period_tab" data-bs-toggle="tab" href="#agreement_period" role="tab">
-                                        <span class="d-block d-sm-none"><i class="mdi mdi-calendar-range"></i></span>
+                                    <a class="nav-link p-2" data-bs-toggle="tab" href="#agreement_period" role="tab">
                                         <span class="d-none d-sm-block">Agreement Period</span>
                                     </a>
                                 </li>
                             </ul>
 
-                            <div class="tab-content text-muted bg-white">
-                                <!-- Basic Information Tab -->
-                                <div class="tab-pane active show pt-4" id="basic_info" role="tabpanel">
-                                    <div class="row">
-                                        <div class="col-md-6 col-sm-6 col-md-6 mb-4">
-                                            <div class="">
-                                                <h5 class="fs-16 text-dark fw-semibold mb-3 text-capitalize">Basic Information</h5>
-
-                                                <div class="row">
-                                                    <div class="col-md-6 col-sm-6 col-lg-6">
-                                                        <div class="profile-email">
-                                                            <h6 class="text-uppercase fs-13">Full Name</h6>
-                                                            <p class="fs-14"><?= esc($user['name']) ?></p>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-md-6 col-sm-6 col-lg-6">
-                                                        <div class="profile-email">
-                                                            <h6 class="text-uppercase fs-13">Company Name</h6>
-                                                            <p class="fs-14"><?= esc($user['company_name']) ?></p>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-md-6 col-sm-6 col-lg-6">
-                                                        <div class="profile-email">
-                                                            <h6 class="text-uppercase fs-13">Primary Label Name</h6>
-                                                            <p class="fs-14"><?= esc($user['primary_label_name']) ?></p>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-md-6 col-sm-6 col-lg-6">
-                                                        <div class="profile-email">
-                                                            <h6 class="text-uppercase fs-13">Email Address</h6>
-                                                            <a href="mailto:[email]" class="text-primary fs-14 text-decoration-underline"><?= esc($user['email']) ?></a>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-md-6 col-sm-6 col-lg-6">
-                                                        <div class="profile-email">
-                                                            <h6 class="text-uppercase fs-13">Phone Number</h6>
-                                                            <p class="fs-14"><?= esc($user['phone']) ?></p>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-md-6 col-sm-6 col-lg-6">
-                                                        <div class="profile-email">
-                                                            <h6 class="text-uppercase fs-13">Role</h6>
-                                                            <span class="badge bg-light px-3 text-dark py-2 fw-semibold text-capitalize"><?= esc($user['role_name']) ?></span>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <!-- Login Credentials Tab -->
-
-                                <div class="tab-pane pt-4" id="login_credentials" role="tabpanel">
-
-                                    <div class="row">
-                                        <div class="col-lg-6 col-xl-6">
-                                            <div class="card border mb-0">
-                                                <div class="card-header">
-                                                    <div class="row align-items-center">
-                                                        <div class="col">
-                                                            <h4 class="card-title mb-0">Login Information</h4>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="card-body">
-                                                    <div class="form-group mb-3 row">
-                                                        <label class="form-label">Username</label>
-                                                        <div class="col-lg-12 col-xl-12">
-                                                            <input class="form-control" type="text" value="<?= esc($user['user_name']) ?>" readonly>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <div class="col-lg-6 col-xl-6">
-                                            <div class="card border mb-0">
-                                                <div class="card-header">
-                                                    <div class="row align-items-center">
-                                                        <div class="col">
-                                                            <h4 class="card-title mb-0">Change Password</h4>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="card-body mb-0">
-                                                    <div id="passwordAlert"></div> <!-- success/error messages -->
-
-                                                    <div class="form-group mb-3 row">
-                                                        <label class="form-label">Old Password</label>
-                                                        <div class="col-lg-12 col-xl-12">
-                                                            <div class="input-group">
-                                                                <input class="form-control rounded-start-pill p-3" id="old_password" type="password" placeholder="Old Password" style="border-right: none;">
-                                                                <button class="btn btn-outline-secondary rounded-end-pill" type="button" id="toggleOldPassword" style="border-left: none;">
-                                                                    <i class="bi bi-eye-slash" id="toggleOldIcon"></i>
-                                                                </button>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-
-                                                    <div class="form-group mb-3 row">
-                                                        <label class="form-label">New Password</label>
-                                                        <div class="col-lg-12 col-xl-12">
-                                                            <div class="input-group">
-                                                                <input class="form-control rounded-start-pill p-3" id="new_password" type="password" placeholder="New Password" style="border-right: none;">
-                                                                <button class="btn btn-outline-secondary rounded-end-pill" type="button" id="toggleNewPassword" style="border-left: none;">
-                                                                    <i class="bi bi-eye-slash" id="toggleNewIcon"></i>
-                                                                </button>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-
-                                                    <div class="form-group mb-3 row">
-                                                        <label class="form-label">Confirm Password</label>
-                                                        <div class="col-lg-12 col-xl-12">
-                                                            <div class="input-group">
-                                                                <input class="form-control rounded-start-pill p-3" id="confirm_password" type="password" placeholder="Confirm Password" style="border-right: none;">
-                                                                <button class="btn btn-outline-secondary rounded-end-pill" type="button" id="toggleConfirmPassword" style="border-left: none;">
-                                                                    <i class="bi bi-eye-slash" id="toggleConfirmIcon"></i>
-                                                                </button>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-
-                                                    <div class="form-group row">
-                                                        <div class="col-lg-12 col-xl-12">
-                                                            <button type="button" id="changePasswordBtn" class="btn btn-primary">Change Password</button>
-                                                            <button type="button" class="btn btn-danger">Cancel</button>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                    </div>
-                                </div>
-
-                                <!-- Bank Details Tab -->
-                                <div class="tab-pane pt-4" id="bank_details" role="tabpanel">
-                                    <div class="row">
-                                        <div class="col-md-12 col-sm-12 col-lg-12">
-                                            <h5 class="fs-16 text-dark fw-semibold mb-3 text-capitalize">Bank Details</h5>
-                                        </div>
-
+                            <form id="userProfileForm">
+                                <input type="hidden" name="user_id" value="<?= $user['id'] ?>">
+                                
+                                <div class="tab-content text-muted bg-white">
+                                    <!-- Basic Information Tab -->
+                                    <div class="tab-pane active show pt-4" id="basic_info">
+                                        <h5 class="fs-16 text-dark fw-semibold mb-3">Basic Information</h5>
                                         <div class="row">
-                                            <div class="col-md-6 col-sm-6 col-lg-6">
-                                                <div class="profile-email mb-3">
-                                                    <h6 class="text-uppercase fs-13">Account Holder Name</h6>
-                                                    <p class="fs-14"><?= esc($user['holder_name']) ?></p>
-                                                </div>
+                                            <div class="col-md-6 mb-3">
+                                                <label class="form-label">Full Name</label>
+                                                <input type="text" class="form-control" name="name" value="<?= esc($user['name']) ?>" required>
                                             </div>
-                                            <div class="col-md-6 col-sm-6 col-lg-6">
-                                                <div class="profile-email mb-3">
-                                                    <h6 class="text-uppercase fs-13">Account Number</h6>
-                                                    <p class="fs-14"><?= esc($user['account_number']) ?></p>
-                                                </div>
+                                            <div class="col-md-6 mb-3">
+                                                <label class="form-label">Company Name</label>
+                                                <input type="text" class="form-control" name="company_name" value="<?= esc($user['company_name']) ?>" required>
                                             </div>
-                                            <div class="col-md-6 col-sm-6 col-lg-6">
-                                                <div class="profile-email mb-3">
-                                                    <h6 class="text-uppercase fs-13">IFSC Code</h6>
-                                                    <p class="fs-14"><?= esc($user['ifsc_code']) ?></p>
-                                                </div>
+                                            <div class="col-md-6 mb-3">
+                                                <label class="form-label">Primary Label Name</label>
+                                                <input type="text" class="form-control" name="primary_label_name" value="<?= esc($user['primary_label_name']) ?>" required>
                                             </div>
-                                            <div class="col-md-6 col-sm-6 col-lg-6">
-                                                <div class="profile-email mb-3">
-                                                    <h6 class="text-uppercase fs-13">Branch Name</h6>
-                                                    <p class="fs-14"><?= esc($user['branch_name']) ?></p>
-                                                </div>
+                                            <div class="col-md-6 mb-3">
+                                                <label class="form-label">Email Address</label>
+                                                <input type="email" class="form-control" name="email" value="<?= esc($user['email']) ?>" required>
+                                            </div>
+                                            <div class="col-md-6 mb-3">
+                                                <label class="form-label">Phone Number</label>
+                                                <input type="text" class="form-control" name="phone" value="<?= esc($user['phone']) ?>" required>
+                                            </div>
+                                            <div class="col-md-6 mb-3">
+                                                <label class="form-label">Role</label>
+                                                <input type="text" class="form-control" value="<?= esc($user['role_name']) ?>" readonly>
                                             </div>
                                         </div>
                                     </div>
-                                </div>
 
-                                <!-- Agreement Period Tab -->
-                                <div class="tab-pane pt-4" id="agreement_period" role="tabpanel">
-                                    <div class="row">
-                                        <div class="col-md-12 col-sm-12 col-lg-12">
-                                            <h5 class="fs-16 text-dark fw-semibold mb-3 text-capitalize">Agreement Period</h5>
-                                        </div>
-
+                                    <!-- Login Credentials Tab -->
+                                    <div class="tab-pane pt-4" id="login_credentials">
                                         <div class="row">
-                                            <div class="col-md-6 col-sm-6 col-lg-6">
-                                                <div class="profile-email mb-3">
-                                                    <h6 class="text-uppercase fs-13">Agreement Start Date</h6>
-                                                    <p class="fs-14"><?= esc($user['agreement_start_date']) ?></p>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-6 col-sm-6 col-lg-6">
-                                                <div class="profile-email mb-3">
-                                                    <h6 class="text-uppercase fs-13">Agreement End Date</h6>
-                                                    <p class="fs-14"><?= esc($user['agreement_end_date']) ?></p>
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <div class="row mt-4">
-                                            <div class="col-12">
+                                            <div class="col-lg-6">
                                                 <div class="card border">
+                                                    <div class="card-header">
+                                                        <h4 class="card-title mb-0">Login Information</h4>
+                                                    </div>
                                                     <div class="card-body">
-                                                        <h6 class="text-uppercase fs-13 mb-3">Agreement Status</h6>
+                                                        <label class="form-label">Username</label>
+                                                        <input class="form-control" type="text" value="<?= esc($user['user_name']) ?>" readonly>
+                                                    </div>
+                                                </div>
+                                            </div>
 
-                                                        <?php
-                                                        $isActive = false;
-                                                        $today = date('Y-m-d');
+                                            <div class="col-lg-6">
+                                                <div class="card border">
+                                                    <div class="card-header">
+                                                        <h4 class="card-title mb-0">Reset Password</h4>
+                                                    </div>
+                                                    <div class="card-body">
+                                                        <div id="passwordAlert"></div>
+                                                        
+                                                        <div class="mb-3">
+                                                            <label class="form-label">New Password</label>
+                                                            <input class="form-control" id="newPassword" type="password" placeholder="New Password">
+                                                        </div>
 
-                                                        if (!empty($user['agreement_start_date']) && !empty($user['agreement_end_date'])) {
-                                                            $isActive = ($today >= $user['agreement_start_date'] && $today <= $user['agreement_end_date']);
-                                                        }
-                                                        ?>
+                                                        <div class="mb-3">
+                                                            <label class="form-label">Confirm Password</label>
+                                                            <input class="form-control" id="confirmPassword" type="password" placeholder="Confirm Password">
+                                                        </div>
 
-                                                        <div class="d-flex justify-content-between align-items-center">
-                                                            <div>
-                                                                <p class="mb-1">
-                                                                    Current Status:
-                                                                    <?php if ($isActive): ?>
-                                                                        <span class="badge bg-success">Active</span>
-                                                                    <?php else: ?>
-                                                                        <span class="badge bg-danger">Inactive</span>
-                                                                    <?php endif; ?>
-                                                                </p>
-                                                                <p class="mb-0 text-muted">
-                                                                    Duration:
-                                                                    <?= esc($user['agreement_start_date']) ?> → <?= esc($user['agreement_end_date']) ?>
-                                                                </p>
-                                                            </div>
+                                                        <button type="button" onclick="resetPassword()" class="btn btn-primary">Reset Password</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
 
-                                                            <div>
-                                                                <?php if (!empty($user['agreement_document'])): ?>
-                                                                    <a href="<?= base_url($user['agreement_document']) ?>"
-                                                                        class="btn btn-outline-primary btn-sm"
-                                                                        target="_blank">
-                                                                        View Agreement
-                                                                    </a>
-                                                                <?php else: ?>
-                                                                    <span class="text-muted">No Document</span>
-                                                                <?php endif; ?>
-                                                            </div>
+                                    <!-- Bank Details Tab -->
+                                    <div class="tab-pane pt-4" id="bank_details">
+                                        <h5 class="fs-16 text-dark fw-semibold mb-3">Bank Details</h5>
+                                        <div class="row">
+                                            <div class="col-md-6 mb-3">
+                                                <label class="form-label">Account Holder Name</label>
+                                                <input type="text" class="form-control" name="holder_name" value="<?= esc($user['holder_name']) ?>">
+                                            </div>
+                                            <div class="col-md-6 mb-3">
+                                                <label class="form-label">Account Number</label>
+                                                <input type="text" class="form-control" name="account_number" value="<?= esc($user['account_number']) ?>">
+                                            </div>
+                                            <div class="col-md-6 mb-3">
+                                                <label class="form-label">IFSC Code</label>
+                                                <input type="text" class="form-control" name="ifsc_code" value="<?= esc($user['ifsc_code']) ?>">
+                                            </div>
+                                            <div class="col-md-6 mb-3">
+                                                <label class="form-label">Branch Name</label>
+                                                <input type="text" class="form-control" name="branch_name" value="<?= esc($user['branch_name']) ?>">
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Agreement Period Tab -->
+                                    <div class="tab-pane pt-4" id="agreement_period">
+                                        <h5 class="fs-16 text-dark fw-semibold mb-3">Agreement Period</h5>
+                                        <div class="row">
+                                            <div class="col-md-6 mb-3">
+                                                <label class="form-label">Agreement Start Date</label>
+                                                <input type="date" class="form-control" name="agreement_start_date" value="<?= esc($user['agreement_start_date']) ?>">
+                                            </div>
+                                            <div class="col-md-6 mb-3">
+                                                <label class="form-label">Agreement End Date</label>
+                                                <input type="date" class="form-control" name="agreement_end_date" value="<?= esc($user['agreement_end_date']) ?>">
+                                            </div>
+                                        </div>
+
+                                        <div class="mt-4">
+                                            <div class="card border">
+                                                <div class="card-body">
+                                                    <h6 class="mb-3">Agreement Status</h6>
+                                                    <?php
+                                                    $isActive = false;
+                                                    $today = date('Y-m-d');
+                                                    if (!empty($user['agreement_start_date']) && !empty($user['agreement_end_date'])) {
+                                                        $isActive = ($today >= $user['agreement_start_date'] && $today <= $user['agreement_end_date']);
+                                                    }
+                                                    ?>
+                                                    <div class="d-flex justify-content-between align-items-center">
+                                                        <div>
+                                                            <p class="mb-1">
+                                                                Current Status:
+                                                                <span class="badge <?= $isActive ? 'bg-success' : 'bg-danger' ?>">
+                                                                    <?= $isActive ? 'Active' : 'Inactive' ?>
+                                                                </span>
+                                                            </p>
+                                                            <p class="mb-0 text-muted">
+                                                                Duration: <?= esc($user['agreement_start_date']) ?> → <?= esc($user['agreement_end_date']) ?>
+                                                            </p>
+                                                        </div>
+                                                        <div>
+                                                            <?php if (!empty($user['agreement_document'])): ?>
+                                                                <a href="<?= base_url($user['agreement_document']) ?>" class="btn btn-outline-primary btn-sm" target="_blank">
+                                                                    View Agreement
+                                                                </a>
+                                                            <?php else: ?>
+                                                                <span class="text-muted">No Document</span>
+                                                            <?php endif; ?>
                                                         </div>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
-
                                     </div>
                                 </div>
-                            </div>
+                            </form>
                         </div>
                     </div>
                 </div>
             </div>
-
         </div>
-        <!-- container-fluid -->
     </div>
-    <!-- content -->
-
-
 </div>
+
+<script>
+// Simple, clean JavaScript - no jQuery conflicts
+function saveUserProfile() {
+    const form = document.getElementById('userProfileForm');
+    const formData = new FormData(form);
+    
+    // Show loading
+    const saveBtn = event.target;
+    const originalText = saveBtn.innerHTML;
+    saveBtn.innerHTML = '<i class="spinner-border spinner-border-sm me-1"></i> Saving...';
+    saveBtn.disabled = true;
+    
+    fetch('/superadmin/users/update-profile', {
+        method: 'POST',
+        body: formData,
+        headers: {
+            'X-Requested-With': 'XMLHttpRequest'
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.status === 'success') {
+            showAlert('success', data.message || 'Profile updated successfully!');
+        } else {
+            showAlert('error', data.message || 'Failed to update profile');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        showAlert('error', 'Failed to update profile');
+    })
+    .finally(() => {
+        saveBtn.innerHTML = originalText;
+        saveBtn.disabled = false;
+    });
+}
+
+function resetPassword() {
+    const newPassword = document.getElementById('newPassword').value;
+    const confirmPassword = document.getElementById('confirmPassword').value;
+    const userId = document.querySelector('input[name="user_id"]').value;
+    
+    if (!newPassword || !confirmPassword) {
+        showPasswordAlert('error', 'Please fill in both password fields');
+        return;
+    }
+    
+    if (newPassword !== confirmPassword) {
+        showPasswordAlert('error', 'Passwords do not match');
+        return;
+    }
+    
+    if (newPassword.length < 6) {
+        showPasswordAlert('error', 'Password must be at least 6 characters long');
+        return;
+    }
+    
+    fetch('/superadmin/users/reset-password', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-Requested-With': 'XMLHttpRequest'
+        },
+        body: JSON.stringify({
+            user_id: userId,
+            new_password: newPassword,
+            confirm_password: confirmPassword
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.status === 'success') {
+            showPasswordAlert('success', data.message || 'Password reset successfully');
+            document.getElementById('newPassword').value = '';
+            document.getElementById('confirmPassword').value = '';
+        } else {
+            showPasswordAlert('error', data.message || 'Failed to reset password');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        showPasswordAlert('error', 'Failed to reset password');
+    });
+}
+
+function showAlert(type, message) {
+    const alertDiv = document.getElementById('profileAlert');
+    const alertClass = type === 'success' ? 'alert-success' : 'alert-danger';
+    const icon = type === 'success' ? 'check-circle' : 'x-circle';
+    
+    alertDiv.innerHTML = `
+        <div class="alert ${alertClass} alert-dismissible fade show" role="alert">
+            <i class="bi bi-${icon} me-2"></i>
+            ${message}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    `;
+    
+    if (type === 'success') {
+        setTimeout(() => {
+            const alert = alertDiv.querySelector('.alert');
+            if (alert) alert.remove();
+        }, 3000);
+    }
+}
+
+function showPasswordAlert(type, message) {
+    const alertDiv = document.getElementById('passwordAlert');
+    const alertClass = type === 'success' ? 'alert-success' : 'alert-danger';
+    
+    alertDiv.innerHTML = `<div class="alert ${alertClass}">${message}</div>`;
+    
+    setTimeout(() => {
+        alertDiv.innerHTML = '';
+    }, 3000);
+}
+</script>

@@ -124,6 +124,11 @@ $routes->group('superadmin', ['filter' => 'role:superadmin'], function ($routes)
     $routes->post('youtube-ownership/update/(:num)', 'Backend\YoutubeConflict\YoutubeConflictController::updateYouTubeConflictStatus/$1');
    
     $routes->get('dashboard', 'Backend\Release\ReleaseDraftsController::dashboard');
+    // Add these routes
+    $routes->get('users/details/(:num)', 'RegisterController::getUserDetails/$1');
+    $routes->get('users/edit/(:num)', 'RegisterController::editUser/$1');
+    $routes->post('users/update-profile', 'RegisterController::updateUserProfile');
+    $routes->post('users/reset-password', 'RegisterController::resetUserPassword');
 
 });
 

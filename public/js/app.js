@@ -2643,53 +2643,150 @@ $(document).ready(function () {
 // accounts-page js
 
 document.addEventListener("DOMContentLoaded", function () {
-  $("#userTable").DataTable({
-    destroy: true,
-    processing: true,
-    serverSide: false,
-    ajax: "/superadmin/api/accounts",
-    columns: [
-      {
-        data: "status",
-        render: function (data) {
-          if (data === "Active") {
-            return '<i data-feather="check-circle" class="text-success"></i>';
-          } else {
-            return '<i data-feather="x-circle" class="text-danger"></i>';
-          }
+    $("#userTable").DataTable({
+        destroy: true,
+        processing: true,
+        serverSide: false,
+        ajax: "/superadmin/api/accounts",
+        columns: [
+            {
+                data: "status",
+                render: function (data) {
+                    if (data === "Active") {
+                        return '<i data-feather="check-circle" class="text-success"></i>';
+                    } else {
+                        return '<i data-feather="x-circle" class="text-danger"></i>';
+                    }
+                },
+                className: "text-center",
+            },
+            { data: "company_name" },
+            { data: "primary_label_name" },
+            { data: "agreement_start_date" },
+            { data: "agreement_end_date" },
+            {
+                data: "status",
+                render: function (data) {
+                    let badge = data === "Active"
+                        ? '<span class="badge bg-success">Active</span>'
+                        : '<span class="badge bg-danger">Inactive</span>';
+                    return badge;
+                },
+            },
+            // NEW: Action column
+            {
+                data: null,
+                render: function (data, type, row) {
+                    return `<button class="btn btn-sm btn-primary view-user-btn" 
+                                    data-user-id="${row.id}" 
+                                    data-bs-toggle="modal" 
+                                    data-bs-target="#userDetailsModal">
+                                <i data-feather="eye"></i> View
+                            </button>`;
+                },
+                orderable: false
+            }
+        ],
+        drawCallback: function () {
+            feather.replace(); // re-render feather icons
         },
-        className: "text-center",
-      },
-      { data: "company_name" },
-      { data: "primary_label_name" },
-      { data: "agreement_start_date" },
-      { data: "agreement_end_date" },
-      {
-        data: "status",
-        render: function (data) {
-          let badge =
-            data === "Active"
-              ? '<span class="badge bg-success">Active</span>'
-              : '<span class="badge bg-danger">Inactive</span>';
-          return badge;
+        paging: true,
+        searching: true,
+        ordering: true,
+        language: {
+            search: "_INPUT_",
+            searchPlaceholder: "Search accounts...",
         },
-      },
-    ],
-    drawCallback: function () {
-      feather.replace(); // re-render feather icons
-    },
-    paging: true,
-    searching: true,
-    ordering: true,
-    language: {
-      search: "_INPUT_",
-      searchPlaceholder: "Search accounts...",
-    },
-  });
+    });
 });
 
+// NEW: Handle view user button click
+$(document).on('click', '.view-user-btn', function() {
+    const userId = $(this).data('user-id');
+    loadUserDetails(userId);
+});
 
+// NEW: Load user details in modal
+function loadUserDetails(userId) {
+    $.ajax({
+        url: `/superadmin/users/details/${userId}`,
+        method: 'GET',
+        dataType: 'json',
+        beforeSend: function() {
+            $('#userDetailsContent').html('<div class="text-center"><div class="spinner-border" role="status"></div></div>');
+        },
+        success: function(response) {
+            if (response.status === 'success') {
+                displayUserDetails(response.user);
+                // Store user ID for edit button
+                $('#editUserBtn').data('user-id', userId);
+            } else {
+                $('#userDetailsContent').html('<div class="alert alert-danger">Failed to load user details.</div>');
+            }
+        },
+        error: function() {
+            $('#userDetailsContent').html('<div class="alert alert-danger">Error loading user details.</div>');
+        }
+    });
+}
 
+// NEW: Display user details in modal
+function displayUserDetails(user) {
+    const isActive = user.status === 'Active';
+    const statusBadge = isActive ? 
+        '<span class="badge bg-success">Active</span>' : 
+        '<span class="badge bg-danger">Inactive</span>';
+
+    const content = `
+        <div class="row">
+            <div class="col-md-6">
+                <h6 class="text-uppercase fs-13">Full Name</h6>
+                <p class="fs-14 mb-3">${user.name}</p>
+            </div>
+            <div class="col-md-6">
+                <h6 class="text-uppercase fs-13">Company Name</h6>
+                <p class="fs-14 mb-3">${user.company_name}</p>
+            </div>
+            <div class="col-md-6">
+                <h6 class="text-uppercase fs-13">Primary Label Name</h6>
+                <p class="fs-14 mb-3">${user.primary_label_name}</p>
+            </div>
+            <div class="col-md-6">
+                <h6 class="text-uppercase fs-13">Email Address</h6>
+                <p class="fs-14 mb-3"><a href="mailto:${user.email}" class="text-primary">${user.email}</a></p>
+            </div>
+            <div class="col-md-6">
+                <h6 class="text-uppercase fs-13">Phone Number</h6>
+                <p class="fs-14 mb-3">${user.phone}</p>
+            </div>
+            <div class="col-md-6">
+                <h6 class="text-uppercase fs-13">Role</h6>
+                <p class="fs-14 mb-3"><span class="badge bg-light text-dark">${user.role_name}</span></p>
+            </div>
+            <div class="col-md-6">
+                <h6 class="text-uppercase fs-13">Agreement Start Date</h6>
+                <p class="fs-14 mb-3">${user.agreement_start_date}</p>
+            </div>
+            <div class="col-md-6">
+                <h6 class="text-uppercase fs-13">Agreement End Date</h6>
+                <p class="fs-14 mb-3">${user.agreement_end_date}</p>
+            </div>
+            <div class="col-12">
+                <h6 class="text-uppercase fs-13">Status</h6>
+                <p class="fs-14 mb-3">${statusBadge}</p>
+            </div>
+        </div>
+    `;
+
+    $('#userDetailsContent').html(content);
+}
+
+// NEW: Handle edit user button click
+$(document).on('click', '#editUserBtn', function() {
+    const userId = $(this).data('user-id');
+    // Redirect to profile page with user ID
+    window.location.href = `/superadmin/users/edit/${userId}`;
+});
 
 
 $(document).ready(function () {

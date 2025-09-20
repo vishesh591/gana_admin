@@ -16,7 +16,7 @@
             <div class="card shadow-sm mt-4 p-4">
                 <div class="card-body p-0">
                     <div class="table-responsive">
-                        <table class="table table-hover mb-0" id="claimingTable">
+                        <table class="table table-hover mb-0" id="userTable">
                             <thead>
                                 <tr>
                                     <th width="50"></th>
@@ -25,24 +25,33 @@
                                     <th>Start Date</th>
                                     <th>End Date</th>
                                     <th>Status</th>
+                                    <th>Action</th> <!-- NEW: Added Action column -->
                                 </tr>
                             </thead>
                         </table>
-
                     </div>
                 </div>
-                <!-- <div class="card-footer bg-white d-flex flex-column flex-md-row justify-content-between align-items-center py-3">
-                    <div class="mb-2 mb-md-0" id="pagination-text">
-                        Showing <strong>1</strong> to <strong>5</strong> of <strong>5</strong> entries
+            </div>
+
+            <!-- NEW: User Details Modal -->
+            <div class="modal fade" id="userDetailsModal" tabindex="-1" aria-labelledby="userDetailsModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="userDetailsModalLabel">User Details</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div id="userDetailsContent">
+                                <!-- User details will be loaded here -->
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            <button type="button" class="btn btn-primary" id="editUserBtn">Edit Details</button>
+                        </div>
                     </div>
-                    <nav>
-                        <ul class="pagination mb-0">
-                            <li class="page-item disabled"><a class="page-link" href="#">Previous</a></li>
-                            <li class="page-item active"><a class="page-link" href="#">1</a></li>
-                            <li class="page-item"><a class="page-link" href="#">Next</a></li>
-                        </ul>
-                    </nav>
-                </div> -->
+                </div>
             </div>
         </div>
     </div>
