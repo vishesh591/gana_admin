@@ -2643,12 +2643,89 @@ $(document).ready(function () {
 // accounts-page js
 
 document.addEventListener("DOMContentLoaded", function () {
+    // Initials avatar generator function
+    function generateInitialsAvatar(fullName, size = 40) {
+        if (!fullName) return '';
+        
+        // Extract initials from full name
+        function getInitials(name) {
+            const names = name.trim().split(' ');
+            if (names.length === 1) {
+                return names[0].charAt(0).toUpperCase();
+            } else if (names.length >= 2) {
+                return (names[0].charAt(0) + names[names.length - 1].charAt(0)).toUpperCase();
+            }
+            return 'U';
+        }
+        
+        // Generate background color based on name
+        function getColorFromName(name) {
+            const colors = [
+                '#007bff', '#6f42c1', '#e83e8c', '#dc3545', '#fd7e14',
+                '#ffc107', '#28a745', '#20c997', '#17a2b8', '#6c757d',
+                '#343a40', '#8b5cf6', '#06b6d4', '#10b981', '#f59e0b'
+            ];
+            
+            let hash = 0;
+            for (let i = 0; i < name.length; i++) {
+                hash = name.charCodeAt(i) + ((hash << 5) - hash);
+            }
+            
+            return colors[Math.abs(hash) % colors.length];
+        }
+        
+        // Get contrasting text color
+        function getContrastColor(backgroundColor) {
+            const hex = backgroundColor.replace('#', '');
+            const r = parseInt(hex.substr(0, 2), 16);
+            const g = parseInt(hex.substr(2, 2), 16);
+            const b = parseInt(hex.substr(4, 2), 16);
+            
+            const brightness = ((r * 299) + (g * 587) + (b * 114)) / 1000;
+            return brightness > 155 ? '#000000' : '#ffffff';
+        }
+        
+        const initials = getInitials(fullName);
+        const backgroundColor = getColorFromName(fullName);
+        const textColor = getContrastColor(backgroundColor);
+        
+        return `
+            <div class="avatar-initials d-flex align-items-center justify-content-center rounded-circle" 
+                 style="background-color: ${backgroundColor}; 
+                        color: ${textColor}; 
+                        width: ${size}px; 
+                        height: ${size}px; 
+                        font-size: ${size * 0.4}px; 
+                        font-weight: 600; 
+                        margin: 0 auto;">
+                ${initials}
+            </div>
+        `;
+    }
+
     $("#userTable").DataTable({
         destroy: true,
         processing: true,
         serverSide: false,
         ajax: "/superadmin/api/accounts",
         columns: [
+            // NEW: Avatar column with initials
+            {
+                data: null, // Use null since we're combining multiple fields
+                render: function (data, type, row) {
+                    if (type === 'display') {
+                        // Combine name fields or use available name field
+                        const fullName = row.name || row.company_name || row.primary_label_name || 'Unknown';
+                        return generateInitialsAvatar(fullName, 40);
+                    }
+                    return ''; // For sorting/filtering, return empty
+                },
+                className: "text-center",
+                orderable: false,
+                searchable: false,
+                width: "60px",
+                title: "Avatar"
+            },
             {
                 data: "status",
                 render: function (data) {
@@ -2659,11 +2736,24 @@ document.addEventListener("DOMContentLoaded", function () {
                     }
                 },
                 className: "text-center",
+                title: "Status Icon"
             },
-            { data: "company_name" },
-            { data: "primary_label_name" },
-            { data: "agreement_start_date" },
-            { data: "agreement_end_date" },
+            { 
+                data: "company_name",
+                title: "Company Name"
+            },
+            { 
+                data: "primary_label_name",
+                title: "Primary Label"
+            },
+            { 
+                data: "agreement_start_date",
+                title: "Start Date"
+            },
+            { 
+                data: "agreement_end_date",
+                title: "End Date"
+            },
             {
                 data: "status",
                 render: function (data) {
@@ -2672,8 +2762,9 @@ document.addEventListener("DOMContentLoaded", function () {
                         : '<span class="badge bg-danger">Inactive</span>';
                     return badge;
                 },
+                title: "Status"
             },
-            // NEW: Action column
+            // Action column
             {
                 data: null,
                 render: function (data, type, row) {
@@ -2684,7 +2775,10 @@ document.addEventListener("DOMContentLoaded", function () {
                                 <i data-feather="eye"></i> View
                             </button>`;
                 },
-                orderable: false
+                orderable: false,
+                searchable: false,
+                className: "text-center",
+                title: "Actions"
             }
         ],
         drawCallback: function () {
@@ -2697,8 +2791,76 @@ document.addEventListener("DOMContentLoaded", function () {
             search: "_INPUT_",
             searchPlaceholder: "Search accounts...",
         },
+        responsive: true,
+        // Optional: Auto width for better column distribution
+        autoWidth: false,
+        // Column widths
+        columnDefs: [
+            { width: "60px", targets: 0 }, // Avatar column
+            { width: "80px", targets: 1 }, // Status icon column
+            { width: "100px", targets: 6 }, // Status badge column
+            { width: "120px", targets: 7 }, // Actions column
+        ]
     });
+
+    // Also initialize the profile page avatar if it exists
+    const profileAvatar = document.getElementById('initialsAvatarProfilePage');
+    if (profileAvatar) {
+        // You can get the name from PHP or a data attribute
+        const userName = profileAvatar.dataset.userName || 'Vishesh Mittal'; // Default or from PHP
+        generateProfilePageAvatar(userName);
+    }
 });
+
+// Function for profile page avatar (larger size)
+function generateProfilePageAvatar(fullName, targetId = 'initialsAvatarProfilePage') {
+    function getInitials(name) {
+        if (!name) return 'U';
+        const names = name.trim().split(' ');
+        if (names.length === 1) {
+            return names[0].charAt(0).toUpperCase();
+        } else if (names.length >= 2) {
+            return (names[0].charAt(0) + names[names.length - 1].charAt(0)).toUpperCase();
+        }
+        return 'U';
+    }
+    
+    function getColorFromName(name) {
+        const colors = [
+            '#007bff', '#6f42c1', '#e83e8c', '#dc3545', '#fd7e14',
+            '#ffc107', '#28a745', '#20c997', '#17a2b8', '#6c757d'
+        ];
+        
+        let hash = 0;
+        for (let i = 0; i < name.length; i++) {
+            hash = name.charCodeAt(i) + ((hash << 5) - hash);
+        }
+        
+        return colors[Math.abs(hash) % colors.length];
+    }
+    
+    function getContrastColor(backgroundColor) {
+        const hex = backgroundColor.replace('#', '');
+        const r = parseInt(hex.substr(0, 2), 16);
+        const g = parseInt(hex.substr(2, 2), 16);
+        const b = parseInt(hex.substr(4, 2), 16);
+        
+        const brightness = ((r * 299) + (g * 587) + (b * 114)) / 1000;
+        return brightness > 155 ? '#000000' : '#ffffff';
+    }
+    
+    const initials = getInitials(fullName);
+    const backgroundColor = getColorFromName(fullName);
+    const textColor = getContrastColor(backgroundColor);
+    
+    const avatarElement = document.getElementById(targetId);
+    if (avatarElement) {
+        avatarElement.textContent = initials;
+        avatarElement.style.backgroundColor = backgroundColor;
+        avatarElement.style.color = textColor;
+    }
+}
+
 
 // NEW: Handle view user button click
 $(document).on('click', '.view-user-btn', function() {
@@ -6372,3 +6534,6 @@ document
         alert("Unable to load rejection messages.");
       });
   });
+
+
+  

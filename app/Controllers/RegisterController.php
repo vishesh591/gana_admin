@@ -197,7 +197,7 @@ class RegisterController extends BaseController
         }
 
         $page_array = [
-            'file_name' => 'profile_page',
+            'file_name' => 'profile-edit',
             'user' => $user
         ];
 

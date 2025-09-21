@@ -87,7 +87,7 @@
                         </div>
                         <div class="card-body">
                             <div class="table-responsive">
-                                <table class="table table-hover mb-0" id="datatable">
+                                <table class="table table-hover mb-0" id="draftsTable">
                                     <thead>
                                         <tr>
                                             <th>Title</th>
@@ -98,51 +98,10 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <?php if (!empty($drafts)): ?>
-                                            <?php foreach ($drafts as $draft): ?>
-                                                <tr>
-                                                    <td><?= $draft['title'] ?? 'Untitled' ?></td>
-                                                    <td><?= $draft['draft_name'] ?? 'Unnamed Draft' ?></td>
-                                                    <td>
-                                                        <div class="progress" style="height: 6px;">
-                                                            <div class="progress-bar bg-primary" role="progressbar" 
-                                                                 style="width: <?= $draft['completion_percentage'] ?? 0 ?>%">
-                                                            </div>
-                                                        </div>
-                                                        <small class="text-muted"><?= $draft['completion_percentage'] ?? 0 ?>% complete</small>
-                                                    </td>
-                                                    <td><?= date('M j, Y', strtotime($draft['updated_at'])) ?></td>
-                                                    <td>
-                                                        <a href="<?= base_url('superadmin/releases/drafts/load/' . $draft['id']) ?>" 
-                                                           class="btn btn-sm btn-primary me-1">
-                                                            <i data-feather="edit-3"></i> Edit
-                                                        </a>
-                                                        <button class="btn btn-sm btn-outline-secondary" 
-                                                                onclick="deleteDraft(<?= $draft['id'] ?>)">
-                                                            <i data-feather="trash-2"></i> Delete
-                                                        </button>
-                                                    </td>
-                                                </tr>
-                                            <?php endforeach; ?>
-                                        <?php else: ?>
-                                            <tr>
-                                                <td colspan="5" class="text-center text-muted py-4">
-                                                    <i data-feather="file-text" class="me-2"></i>
-                                                    No drafts found. <a href="<?= base_url('superadmin/add-release') ?>">Create your first release</a>
-                                                </td>
-                                            </tr>
-                                        <?php endif; ?>
+                                        <!-- DataTables will populate this via AJAX -->
                                     </tbody>
                                 </table>
                             </div>
-                            
-                            <?php if (!empty($drafts) && count($drafts) >= 10): ?>
-                                <div class="text-center mt-3">
-                                    <a href="<?= base_url('superadmin/releases/drafts') ?>" class="btn btn-outline-primary">
-                                        View All Drafts
-                                    </a>
-                                </div>
-                            <?php endif; ?>
                         </div>
                     </div>
                 </div>
@@ -156,26 +115,154 @@
 </div>
 
 <script>
-function deleteDraft(draftId) {
-    if (confirm('Are you sure you want to delete this draft?')) {
-        fetch(`/superadmin/releases/drafts/${draftId}`, {
-            method: 'DELETE',
-            headers: {
-                'X-Requested-With': 'XMLHttpRequest'
-            }
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                location.reload(); // Reload the page to update the table
-            } else {
-                alert('Failed to delete draft: ' + data.error);
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            alert('Failed to delete draft');
+    document.addEventListener("DOMContentLoaded", function() {
+        $("#draftsTable").DataTable({
+            destroy: true,
+            processing: true,
+            serverSide: false,
+            ajax: {
+                url: "/superadmin/releases/drafts", // Using your existing route
+                type: "GET",
+                dataSrc: "data", // Explicitly specify data source
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest' // This triggers isAJAX() in your controller
+                },
+                error: function(xhr, error, thrown) {
+                    console.error('DataTables AJAX Error:', error, thrown);
+                    console.log('Response:', xhr.responseText);
+                    alert('Failed to load drafts data. Please check the console for details.');
+                }
+            },
+            columns: [{
+                    data: "title",
+                    render: function(data, type, row) {
+                        return data || 'Untitled';
+                    }
+                },
+                {
+                    data: "draft_name",
+                    render: function(data, type, row) {
+                        return data || 'Unnamed Draft';
+                    }
+                },
+                {
+                    data: "completion_percentage",
+                    render: function(data, type, row) {
+                        const percentage = data || 0;
+                        return `
+                        <div class="progress" style="height: 6px;">
+                            <div class="progress-bar bg-primary" role="progressbar" 
+                                 style="width: ${percentage}%">
+                            </div>
+                        </div>
+                        <small class="text-muted">${percentage}% complete</small>
+                    `;
+                    },
+                    orderable: true,
+                    type: 'num'
+                },
+                {
+                    data: "updated_at",
+                    render: function(data, type, row) {
+                        if (!data) return 'N/A';
+                        const date = new Date(data);
+                        return date.toLocaleDateString('en-US', {
+                            year: 'numeric',
+                            month: 'short',
+                            day: 'numeric'
+                        });
+                    },
+                    type: 'date'
+                },
+                {
+                    data: null,
+                    render: function(data, type, row) {
+                        if (!row.id) return 'No actions available';
+                        return `
+                        <div class="btn-group" role="group">
+                            <a href="/superadmin/releases/drafts/load/${row.id}" 
+                               class="btn btn-sm btn-primary" title="Edit Draft">
+                                <i data-feather="edit-3"></i> Edit
+                            </a>
+                            <button class="btn btn-sm btn-outline-danger delete-draft-btn" 
+                                    data-draft-id="${row.id}" title="Delete Draft">
+                                <i data-feather="trash-2"></i> Delete
+                            </button>
+                        </div>
+                    `;
+                    },
+                    orderable: false,
+                    searchable: false,
+                    className: "text-center"
+                }
+            ],
+            drawCallback: function() {
+                feather.replace(); // re-render feather icons
+
+                // Re-attach delete event listeners
+                $('.delete-draft-btn').off('click').on('click', function() {
+                    const draftId = $(this).data('draft-id');
+                    deleteDraft(draftId);
+                });
+            },
+            paging: true,
+            searching: true,
+            ordering: true,
+            pageLength: 10,
+            lengthMenu: [
+                [5, 10, 25, 50, -1],
+                [5, 10, 25, 50, "All"]
+            ],
+            order: [
+                [3, 'desc']
+            ], // Order by Last Modified desc
+            language: {
+                search: "_INPUT_",
+                searchPlaceholder: "Search drafts...",
+                emptyTable: "No drafts found. <a href='/superadmin/add-release'>Create your first release</a>",
+                zeroRecords: "No matching drafts found",
+                info: "Showing _START_ to _END_ of _TOTAL_ drafts",
+                infoEmpty: "No drafts available",
+                infoFiltered: "(filtered from _MAX_ total drafts)",
+                lengthMenu: "Show _MENU_ drafts per page",
+                loadingRecords: "Loading drafts...",
+                processing: "Processing..."
+            },
+            responsive: true
         });
+    });
+
+    // Delete draft function
+    function deleteDraft(draftId) {
+        if (confirm('Are you sure you want to delete this draft?')) {
+            const btn = $(`.delete-draft-btn[data-draft-id="${draftId}"]`);
+            const originalHtml = btn.html();
+            btn.html('<i data-feather="loader" class="spin"></i> Deleting...').prop('disabled', true);
+
+            fetch(`/superadmin/releases/drafts/${draftId}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'Content-Type': 'application/json'
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        $('#draftsTable').DataTable().ajax.reload(null, false);
+                        console.log('Draft deleted successfully');
+                    } else {
+                        alert('Failed to delete draft: ' + (data.error || 'Unknown error'));
+                        btn.html(originalHtml).prop('disabled', false);
+                        feather.replace();
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Failed to delete draft');
+                    btn.html(originalHtml).prop('disabled', false);
+                    feather.replace();
+                });
+        }
     }
-}
 </script>

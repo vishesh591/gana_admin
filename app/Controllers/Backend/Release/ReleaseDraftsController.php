@@ -184,24 +184,60 @@ class ReleaseDraftsController extends BaseController
         $userId = $session->get('user_id') ?: $session->get('user.id');
 
         if (!$userId) {
+            if ($this->request->isAJAX()) {
+                return $this->response->setJSON([
+                    'data' => [], // DataTables expects 'data' property
+                    'error' => 'Unauthorized'
+                ])->setStatusCode(200); // Use 200 for DataTables compatibility
+            }
             return redirect()->to('/login');
         }
 
-        $drafts = $this->draftModel->where('user_id', $userId)
-            ->orderBy('updated_at', 'DESC')
-            ->findAll();
+        try {
+            $drafts = $this->draftModel->where('user_id', $userId)
+                ->orderBy('updated_at', 'DESC')
+                ->findAll();
 
-        if ($this->request->isAJAX()) {
-            return $this->response->setJSON([
-                'success' => true,
+            if ($this->request->isAJAX()) {
+                // Format data for DataTables
+                $formattedDrafts = [];
+                foreach ($drafts as $draft) {
+                    $formattedDrafts[] = [
+                        'id' => $draft['id'] ?? '',
+                        'title' => $draft['title'] ?? 'Untitled',
+                        'draft_name' => $draft['draft_name'] ?? 'Unnamed Draft',
+                        'completion_percentage' => intval($draft['completion_percentage'] ?? 0),
+                        'updated_at' => $draft['updated_at'] ?? date('Y-m-d H:i:s'),
+                        // Add any other fields you need
+                    ];
+                }
+
+                // IMPORTANT: DataTables expects this exact format
+                return $this->response->setJSON([
+                    'data' => $formattedDrafts // Changed from 'drafts' to 'data'
+                ]);
+            }
+
+            return view('admin/releases/drafts', [
                 'drafts' => $drafts
             ]);
-        }
+        } catch (\Exception $e) {
+            log_message('error', 'Error fetching drafts: ' . $e->getMessage());
 
-        return view('admin/releases/drafts', [
-            'drafts' => $drafts
-        ]);
+            if ($this->request->isAJAX()) {
+                // Even on error, return proper DataTables format
+                return $this->response->setJSON([
+                    'data' => [],
+                    'error' => 'Failed to fetch drafts'
+                ]);
+            }
+
+            return view('admin/releases/drafts', [
+                'drafts' => []
+            ]);
+        }
     }
+
 
     /**
      * Load draft data into form
