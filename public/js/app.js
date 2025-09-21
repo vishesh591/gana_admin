@@ -3204,6 +3204,7 @@ document.addEventListener("DOMContentLoaded", function () {
   if (youtubePageContainer) {
     let conflictRequests = [];
     let sortState = { key: null, direction: "asc" };
+    let dataTable; // DataTable instance
 
     // --- HELPERS ---
     function getStatusBadge(status) {
@@ -3230,21 +3231,6 @@ document.addEventListener("DOMContentLoaded", function () {
       return parseInt(expiry);
     }
 
-    function updateSortIcons() {
-      document
-        .querySelectorAll(".sort-icon")
-        .forEach((icon) => icon.classList.remove("active", "asc", "desc"));
-      if (sortState.key) {
-        const activeHeader = document.querySelector(
-          `.sortable-header[data-sort="${sortState.key}"]`
-        );
-        if (activeHeader)
-          activeHeader
-            .querySelector(".sort-icon")
-            .classList.add("active", sortState.direction);
-      }
-    }
-
     function getRightsOwnedLabel(value) {
       switch (value) {
         case "original_exclusive":
@@ -3264,50 +3250,126 @@ document.addEventListener("DOMContentLoaded", function () {
       }
     }
 
-    // --- RENDER ---
-    function renderTable(data) {
+    // --- RENDER WITH DATATABLES ---
+    function initializeDataTable(data) {
       const tableBody = document.getElementById("youtubeTableBody");
-      tableBody.innerHTML =
-        !data || data.length === 0
-          ? `<tr><td colspan="10" class="text-center p-5"><h5>No matching conflicts found.</h5></td></tr>`
-          : data
-              .map(
-                (req) => `
-                <tr style="cursor: pointer;" data-bs-toggle="offcanvas" data-bs-target="#conflictResolutionOffcanvas"
-                    data-id="${req.id}"
-                    data-song-name="${req.songName}" 
-                    data-artist-name="${req.artistName}" 
-                    data-isrc="${req.isrc}" 
-                    data-cover-url="${req.albumCoverUrl}" 
-                    data-category="${req.category}" 
-                    data-other-party="${req.otherParty}"
-                    data-status="${req.status}"
-                    data-rejection-message="${req.rejectionMessage || ""}"
-                    data-rights-owned="${req.rightsOwned || ""}"
-                    data-supporting-file="${req.supportingFile || ""}"
-                    data-resolution-data="${encodeURIComponent(
-                      JSON.stringify(req.resolutionData || {})
-                    )}">
-                    <td class="text-center"><i class="bi bi-youtube text-danger fs-5"></i></td>
-                    <td>${req.category}</td>
-                    <td>${req.assetTitle}</td>
-                    <td><div class="fw-bold">${
-                      req.artist
-                    }</div><small class="text-muted">Asset ID: ${
-                  req.assetId
-                }</small></td>
-                    <td>${req.upc}</td>
-                    <td>${req.otherParty}</td>
-                    <td>${req.dailyViews}</td>
-                    <td>${req.expiry}</td>
-                    <td>${getStatusBadge(req.status)}</td>
-                    <td><i class="bi bi-chevron-right text-muted"></i></td>
-                </tr>`
-              )
-              .join("");
-      document.getElementById(
-        "pagination-text"
-      ).textContent = `${data.length} of ${conflictRequests.length} results`;
+      const table = document.getElementById("releasesTable");
+      
+      // Destroy existing DataTable if it exists
+      if (dataTable) {
+        dataTable.destroy();
+        dataTable = null;
+      }
+
+      // Clear existing data
+      tableBody.innerHTML = "";
+
+      // If no data, show empty message and initialize empty DataTable
+      if (!data || data.length === 0) {
+        tableBody.innerHTML = `<tr><td colspan="10" class="text-center p-5"><h5>No matching conflicts found.</h5></td></tr>`;
+        
+        // Initialize DataTable even with empty data
+        dataTable = $(table).DataTable({
+          searching: true,
+          paging: false,
+          info: false,
+          ordering: false,
+          language: {
+            emptyTable: "No conflicts available",
+            zeroRecords: "No matching conflicts found"
+          }
+        });
+        return;
+      }
+
+      // Prepare data array for DataTables
+      const tableData = data.map((req) => {
+        return [
+          '<i class="bi bi-youtube text-danger fs-5"></i>', // Platform icon
+          req.category || '', // Category
+          req.assetTitle || '', // Asset Title
+          `<div class="fw-bold">${req.artist || ''}</div><small class="text-muted">Asset ID: ${req.assetId || ''}</small>`, // Artist
+          req.upc || '', // UPC
+          req.otherParty || '', // Other Party
+          req.dailyViews || '', // Daily Views
+          req.expiry || '', // Expiry
+          getStatusBadge(req.status), // Status
+          '<i class="bi bi-chevron-right text-muted"></i>' // Action icon
+        ];
+      });
+
+      // Initialize DataTable with data
+      dataTable = $(table).DataTable({
+        data: tableData, // Use data array instead of DOM
+        searching: true, // Enable search functionality
+        paging: true, // Enable pagination
+        pageLength: 25, // Show 25 entries per page
+        lengthChange: true, // Allow user to change page length
+        info: true, // Show information
+        ordering: true, // Enable column sorting
+        responsive: true, // Make table responsive
+        destroy: true, // Allow reinitializing
+        language: {
+          search: "Search conflicts:", // Custom search label
+          searchPlaceholder: "Type to search...",
+          lengthMenu: "Show _MENU_ conflicts per page",
+          info: "Showing _START_ to _END_ of _TOTAL_ conflicts",
+          infoEmpty: "No conflicts found",
+          infoFiltered: "(filtered from _MAX_ total conflicts)",
+          emptyTable: "No conflicts available",
+          zeroRecords: "No matching conflicts found"
+        },
+        columnDefs: [
+          { orderable: false, targets: [0, 9] }, // Disable sorting on first and last columns
+          { searchable: false, targets: [0, 9] }, // Disable search on icon and action columns
+          { className: "text-center", targets: [0] }, // Center align first column
+        ],
+        order: [[1, 'asc']], // Default sort by category
+        dom: '<"row"<"col-sm-12 col-md-6"l><"col-sm-12 col-md-6"f>>t<"row"<"col-sm-12 col-md-5"i><"col-sm-12 col-md-7"p>>', // Layout
+        drawCallback: function(settings) {
+          // Update pagination text after each draw
+          const api = this.api();
+          const info = api.page.info();
+          const paginationTextEl = document.getElementById("pagination-text");
+          if (paginationTextEl) {
+            paginationTextEl.textContent = `${info.recordsDisplay} of ${info.recordsTotal} results`;
+          }
+
+          // Re-attach click events to rows after each draw
+          attachRowClickEvents();
+        },
+        createdRow: function(row, data, dataIndex) {
+          // Add data attributes to each row for the offcanvas
+          const req = conflictRequests[dataIndex];
+          if (req) {
+            $(row).attr({
+              'data-bs-toggle': 'offcanvas',
+              'data-bs-target': '#conflictResolutionOffcanvas',
+              'data-id': req.id,
+              'data-song-name': req.songName || '',
+              'data-artist-name': req.artistName || '',
+              'data-isrc': req.isrc || '',
+              'data-cover-url': req.albumCoverUrl || '',
+              'data-category': req.category || '',
+              'data-other-party': req.otherParty || '',
+              'data-status': req.status || '',
+              'data-rejection-message': req.rejectionMessage || '',
+              'data-rights-owned': req.rightsOwned || '',
+              'data-supporting-file': req.supportingFile || '',
+              'data-resolution-data': encodeURIComponent(JSON.stringify(req.resolutionData || {}))
+            });
+            $(row).css('cursor', 'pointer');
+          }
+        }
+      });
+    }
+
+    // Function to attach click events to table rows
+    function attachRowClickEvents() {
+      $('#releasesTable tbody tr').off('click').on('click', function() {
+        // This handles the row click for opening offcanvas
+        // The Bootstrap data attributes will handle the rest
+      });
     }
 
     // --- OFFCANVAS ---
@@ -3482,7 +3544,7 @@ document.addEventListener("DOMContentLoaded", function () {
       nextBtn.addEventListener("click", () => {
         if (isReadOnlyMode) return;
 
-        // Step 0: Rights owned check[60]
+        // Step 0: Rights owned check
         if (currentStep === 0) {
           const existingRights = conflictOffcanvasEl.dataset.rightsOwned;
           const radioSelected = conflictForm.querySelector('input[name="rightsOwned"]:checked');
@@ -3608,7 +3670,7 @@ document.addEventListener("DOMContentLoaded", function () {
         if (fileDisplay) fileDisplay.classList.add("d-none");
         showStep(0);
 
-        // Rights owned logic - FIXED FOR REJECTED STATUS[58][60]
+        // Rights owned logic - FIXED FOR REJECTED STATUS
         const rightsOptions = conflictOffcanvasEl.querySelector("#rightsOwnedOptions");
         const rightsText = conflictOffcanvasEl.querySelector("#rightsOwnedText");
         
@@ -3730,39 +3792,6 @@ document.addEventListener("DOMContentLoaded", function () {
       });
     }
 
-    // --- TABLE SORTING ---
-    const releasesTable = document.getElementById("releasesTable");
-    if (releasesTable) {
-      releasesTable.querySelector("thead").addEventListener("click", (e) => {
-        const headerCell = e.target.closest(".sortable-header");
-        if (!headerCell) return;
-        const sortKey = headerCell.dataset.sort;
-        if (sortState.key === sortKey) {
-          sortState.direction = sortState.direction === "asc" ? "desc" : "asc";
-        } else {
-          sortState.key = sortKey;
-          sortState.direction = "asc";
-        }
-        conflictRequests.sort((a, b) => {
-          let valA = a[sortState.key],
-            valB = b[sortState.key];
-          if (sortState.key === "dailyViews") {
-            valA = parseViews(valA);
-            valB = parseViews(valB);
-          } else if (sortState.key === "expiry") {
-            valA = parseExpiry(valA);
-            valB = parseExpiry(valB);
-          }
-          let comparison = 0;
-          if (valA > valB) comparison = 1;
-          else if (valA < valB) comparison = -1;
-          return sortState.direction === "desc" ? comparison * -1 : comparison;
-        });
-        renderTable(conflictRequests);
-        updateSortIcons();
-      });
-    }
-
     // --- FILE UPLOAD HANDLERS ---
     const fileUploadContainer = conflictOffcanvasEl.querySelector("#fileUploadContainer");
     if (fileUploadContainer) {
@@ -3811,21 +3840,22 @@ document.addEventListener("DOMContentLoaded", function () {
         .then((response) => response.json())
         .then((result) => {
           conflictRequests = result.data || [];
-          renderTable(conflictRequests);
-          updateSortIcons();
+          console.log("Loaded conflicts:", conflictRequests); // Debug log
+          initializeDataTable(conflictRequests); // Use DataTable instead of custom render
         })
         .catch((error) => {
           console.error("Error loading conflicts data:", error);
           conflictRequests = [];
-          renderTable([]);
+          initializeDataTable([]); // Use DataTable instead of custom render
         });
     }
 
     // INITIALIZATION
     loadConflictsData();
-    updateSortIcons();
   }
 });
+
+
 
 // Import functionality remains the same
 document.addEventListener("DOMContentLoaded", function () {

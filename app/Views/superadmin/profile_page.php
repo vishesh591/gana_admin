@@ -34,7 +34,7 @@
                                     </div>
                                 </div>
                             </div>
-                            
+
                             <ul class="nav nav-underline border-bottom pt-2" role="tablist">
                                 <li class="nav-item">
                                     <a class="nav-link active p-2" data-bs-toggle="tab" href="#basic_info" role="tab">
@@ -60,7 +60,7 @@
 
                             <form id="userProfileForm">
                                 <input type="hidden" name="user_id" value="<?= $user['id'] ?>">
-                                
+
                                 <div class="tab-content text-muted bg-white">
                                     <!-- Basic Information Tab -->
                                     <div class="tab-pane active show pt-4" id="basic_info">
@@ -115,7 +115,7 @@
                                                     </div>
                                                     <div class="card-body">
                                                         <div id="passwordAlert"></div>
-                                                        
+
                                                         <div class="mb-3">
                                                             <label class="form-label">New Password</label>
                                                             <input class="form-control" id="newPassword" type="password" placeholder="New Password">
@@ -181,156 +181,170 @@
                                                         $isActive = ($today >= $user['agreement_start_date'] && $today <= $user['agreement_end_date']);
                                                     }
                                                     ?>
-                                                    <div class="d-flex justify-content-between align-items-center">
-                                                        <div>
-                                                            <p class="mb-1">
-                                                                Current Status:
-                                                                <span class="badge <?= $isActive ? 'bg-success' : 'bg-danger' ?>">
-                                                                    <?= $isActive ? 'Active' : 'Inactive' ?>
-                                                                </span>
-                                                            </p>
-                                                            <p class="mb-0 text-muted">
-                                                                Duration: <?= esc($user['agreement_start_date']) ?> → <?= esc($user['agreement_end_date']) ?>
-                                                            </p>
+
+                                                    <div class="row">
+                                                        <div class="col-md-6 mb-3">
+                                                            <label class="form-label">Agreement Status</label>
+                                                            <select class="form-select" name="status" id="agreement_status" required>
+                                                                <option value="">-- Select Status --</option>
+                                                                <option value="active" <?= $isActive ? 'selected' : '' ?>>Active</option>
+                                                                <option value="inactive" <?= !$isActive ? 'selected' : '' ?>>Inactive</option>
+                                                            </select>
                                                         </div>
-                                                        <div>
-                                                            <?php if (!empty($user['agreement_document'])): ?>
-                                                                <a href="<?= base_url($user['agreement_document']) ?>" class="btn btn-outline-primary btn-sm" target="_blank">
-                                                                    View Agreement
-                                                                </a>
-                                                            <?php else: ?>
-                                                                <span class="text-muted">No Document</span>
-                                                            <?php endif; ?>
+
+                                                        <div class="col-md-6 mb-3 d-flex align-items-center">
+                                                            <div>
+                                                                <p class="mb-1">
+                                                                    Current Status:
+                                                                    <span class="badge <?= $isActive ? 'bg-success' : 'bg-danger' ?>">
+                                                                        <?= $isActive ? 'Active' : 'Inactive' ?>
+                                                                    </span>
+                                                                </p>
+                                                                <p class="mb-0 text-muted">
+                                                                    Duration: <?= esc($user['agreement_start_date']) ?> → <?= esc($user['agreement_end_date']) ?>
+                                                                </p>
+                                                            </div>
                                                         </div>
+                                                    </div>
+
+                                                    <div>
+                                                        <?php if (!empty($user['agreement_document'])): ?>
+                                                            <a href="<?= base_url($user['agreement_document']) ?>" class="btn btn-outline-primary btn-sm" target="_blank">
+                                                                View Agreement
+                                                            </a>
+                                                        <?php else: ?>
+                                                            <span class="text-muted">No Document</span>
+                                                        <?php endif; ?>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-                            </form>
                         </div>
+                        </form>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
+</div>
 
 <script>
-// Simple, clean JavaScript - no jQuery conflicts
-function saveUserProfile() {
-    const form = document.getElementById('userProfileForm');
-    const formData = new FormData(form);
-    
-    // Show loading
-    const saveBtn = event.target;
-    const originalText = saveBtn.innerHTML;
-    saveBtn.innerHTML = '<i class="spinner-border spinner-border-sm me-1"></i> Saving...';
-    saveBtn.disabled = true;
-    
-    fetch('/superadmin/users/update-profile', {
-        method: 'POST',
-        body: formData,
-        headers: {
-            'X-Requested-With': 'XMLHttpRequest'
-        }
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.status === 'success') {
-            showAlert('success', data.message || 'Profile updated successfully!');
-        } else {
-            showAlert('error', data.message || 'Failed to update profile');
-        }
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        showAlert('error', 'Failed to update profile');
-    })
-    .finally(() => {
-        saveBtn.innerHTML = originalText;
-        saveBtn.disabled = false;
-    });
-}
+    // Simple, clean JavaScript - no jQuery conflicts
+    function saveUserProfile() {
+        const form = document.getElementById('userProfileForm');
+        const formData = new FormData(form);
 
-function resetPassword() {
-    const newPassword = document.getElementById('newPassword').value;
-    const confirmPassword = document.getElementById('confirmPassword').value;
-    const userId = document.querySelector('input[name="user_id"]').value;
-    
-    if (!newPassword || !confirmPassword) {
-        showPasswordAlert('error', 'Please fill in both password fields');
-        return;
-    }
-    
-    if (newPassword !== confirmPassword) {
-        showPasswordAlert('error', 'Passwords do not match');
-        return;
-    }
-    
-    if (newPassword.length < 6) {
-        showPasswordAlert('error', 'Password must be at least 6 characters long');
-        return;
-    }
-    
-    fetch('/superadmin/users/reset-password', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'X-Requested-With': 'XMLHttpRequest'
-        },
-        body: JSON.stringify({
-            user_id: userId,
-            new_password: newPassword,
-            confirm_password: confirmPassword
-        })
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.status === 'success') {
-            showPasswordAlert('success', data.message || 'Password reset successfully');
-            document.getElementById('newPassword').value = '';
-            document.getElementById('confirmPassword').value = '';
-        } else {
-            showPasswordAlert('error', data.message || 'Failed to reset password');
-        }
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        showPasswordAlert('error', 'Failed to reset password');
-    });
-}
+        // Show loading
+        const saveBtn = event.target;
+        const originalText = saveBtn.innerHTML;
+        saveBtn.innerHTML = '<i class="spinner-border spinner-border-sm me-1"></i> Saving...';
+        saveBtn.disabled = true;
 
-function showAlert(type, message) {
-    const alertDiv = document.getElementById('profileAlert');
-    const alertClass = type === 'success' ? 'alert-success' : 'alert-danger';
-    const icon = type === 'success' ? 'check-circle' : 'x-circle';
-    
-    alertDiv.innerHTML = `
+        fetch('/superadmin/users/update-profile', {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    showAlert('success', data.message || 'Profile updated successfully!');
+                } else {
+                    showAlert('error', data.message || 'Failed to update profile');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showAlert('error', 'Failed to update profile');
+            })
+            .finally(() => {
+                saveBtn.innerHTML = originalText;
+                saveBtn.disabled = false;
+            });
+    }
+
+    function resetPassword() {
+        const newPassword = document.getElementById('newPassword').value;
+        const confirmPassword = document.getElementById('confirmPassword').value;
+        const userId = document.querySelector('input[name="user_id"]').value;
+
+        if (!newPassword || !confirmPassword) {
+            showPasswordAlert('error', 'Please fill in both password fields');
+            return;
+        }
+
+        if (newPassword !== confirmPassword) {
+            showPasswordAlert('error', 'Passwords do not match');
+            return;
+        }
+
+        if (newPassword.length < 6) {
+            showPasswordAlert('error', 'Password must be at least 6 characters long');
+            return;
+        }
+
+        fetch('/superadmin/users/reset-password', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                body: JSON.stringify({
+                    user_id: userId,
+                    new_password: newPassword,
+                    confirm_password: confirmPassword
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    showPasswordAlert('success', data.message || 'Password reset successfully');
+                    document.getElementById('newPassword').value = '';
+                    document.getElementById('confirmPassword').value = '';
+                } else {
+                    showPasswordAlert('error', data.message || 'Failed to reset password');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showPasswordAlert('error', 'Failed to reset password');
+            });
+    }
+
+    function showAlert(type, message) {
+        const alertDiv = document.getElementById('profileAlert');
+        const alertClass = type === 'success' ? 'alert-success' : 'alert-danger';
+        const icon = type === 'success' ? 'check-circle' : 'x-circle';
+
+        alertDiv.innerHTML = `
         <div class="alert ${alertClass} alert-dismissible fade show" role="alert">
             <i class="bi bi-${icon} me-2"></i>
             ${message}
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
     `;
-    
-    if (type === 'success') {
+
+        if (type === 'success') {
+            setTimeout(() => {
+                const alert = alertDiv.querySelector('.alert');
+                if (alert) alert.remove();
+            }, 3000);
+        }
+    }
+
+    function showPasswordAlert(type, message) {
+        const alertDiv = document.getElementById('passwordAlert');
+        const alertClass = type === 'success' ? 'alert-success' : 'alert-danger';
+
+        alertDiv.innerHTML = `<div class="alert ${alertClass}">${message}</div>`;
+
         setTimeout(() => {
-            const alert = alertDiv.querySelector('.alert');
-            if (alert) alert.remove();
+            alertDiv.innerHTML = '';
         }, 3000);
     }
-}
-
-function showPasswordAlert(type, message) {
-    const alertDiv = document.getElementById('passwordAlert');
-    const alertClass = type === 'success' ? 'alert-success' : 'alert-danger';
-    
-    alertDiv.innerHTML = `<div class="alert ${alertClass}">${message}</div>`;
-    
-    setTimeout(() => {
-        alertDiv.innerHTML = '';
-    }, 3000);
-}
 </script>

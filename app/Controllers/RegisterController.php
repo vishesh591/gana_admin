@@ -151,6 +151,43 @@ class RegisterController extends BaseController
         return view('superadmin/index', $page_array);
     }
 
+    public function getUserDetails($userId)
+    {
+        try {
+            $user = $this->userModel->getUserWithRoleById($userId);
+
+            if (!$user) {
+                return $this->response->setJSON([
+                    'status' => 'error',
+                    'message' => 'User not found'
+                ]);
+            }
+
+            // Calculate status
+            $currentDate = date('Y-m-d');
+            if (
+                !empty($user['agreement_start_date']) &&
+                !empty($user['agreement_end_date']) &&
+                $user['agreement_start_date'] <= $currentDate &&
+                $user['agreement_end_date'] >= $currentDate
+            ) {
+                $user['status'] = 'Active';
+            } else {
+                $user['status'] = 'Inactive';
+            }
+
+            return $this->response->setJSON([
+                'status' => 'success',
+                'user' => $user
+            ]);
+        } catch (\Exception $e) {
+            return $this->response->setJSON([
+                'status' => 'error',
+                'message' => 'Failed to load user details'
+            ]);
+        }
+    }
+
     public function editUser($userId)
     {
         $user = $this->userModel->getUserWithRoleById($userId);
@@ -179,6 +216,9 @@ class RegisterController extends BaseController
                 ]);
             }
 
+            $status = $this->request->getPost('status');
+            $endDate = $this->request->getPost('agreement_end_date');
+
             $updateData = [
                 'name' => $this->request->getPost('name'),
                 'company_name' => $this->request->getPost('company_name'),
@@ -190,8 +230,20 @@ class RegisterController extends BaseController
                 'ifsc_code' => $this->request->getPost('ifsc_code'),
                 'branch_name' => $this->request->getPost('branch_name'),
                 'agreement_start_date' => $this->request->getPost('agreement_start_date'),
-                'agreement_end_date' => $this->request->getPost('agreement_end_date')
             ];
+
+            if ($status == 'inactive') {
+                // Force end date to now if inactive
+                $updateData['agreement_end_date'] = date('Y-m-d', strtotime('-1 day'));
+            } elseif ($status == 'active') {
+                if (empty($endDate)) {
+                    return $this->response->setJSON([
+                        'status' => 'error',
+                        'message' => 'Agreement End Date is required for active status'
+                    ]);
+                }
+                $updateData['agreement_end_date'] = $endDate;
+            }
 
             $result = $this->userModel->update($userId, $updateData);
 
@@ -213,6 +265,7 @@ class RegisterController extends BaseController
             ]);
         }
     }
+
 
     public function resetUserPassword()
     {

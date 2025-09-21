@@ -14,15 +14,15 @@ class Home extends BaseController
 
             switch (strtolower($roleName)) {
                 case 'superadmin':
-                    return redirect()->to('/superadmin');
+                    return redirect()->to('/dashboard');
                 case 'subadmin':
-                    return redirect()->to('/subadmin');
+                    return redirect()->to('/dashboard');
                 case 'distributor':
-                    return redirect()->to('/distributor');
+                    return redirect()->to('/dashboard');
                 case 'label':
-                    return redirect()->to('/label');
+                    return redirect()->to('/dashboard');
                 case 'artist':
-                    return redirect()->to('/artist');
+                    return redirect()->to('/dashboard');
                 default:
                     return redirect()->to('/unauthorized');
             }

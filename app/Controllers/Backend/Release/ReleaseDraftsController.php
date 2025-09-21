@@ -251,7 +251,7 @@ class ReleaseDraftsController extends BaseController
             'genre_type' => $draft['genre_type'],
             'upc_ean' => $draft['upc_ean'],
             'language' => $draft['language'],
-            'artwork' => $draft['artwork'],
+            'artwork' => isset($draft['artwork']) ? $draft['artwork'] : null,
 
             // Track Information
             'track_title' => $draft['track_title'],
@@ -272,7 +272,7 @@ class ReleaseDraftsController extends BaseController
             'track_title_language' => $draft['track_title_language'],
             'explicit_song' => $draft['explicit_song'],
             'lyrics' => $draft['lyrics'],
-            'audio_file' => $draft['audio_file'],
+            'audio_file' => isset($draft['audio_file']) ? $draft['audio_file'] : null,
 
             'stores_ids' => $draft['stores_ids'] ? $draft['stores_ids'] : [],
             'rights' => $draft['rights_management'] ? json_decode($draft['rights_management'], true) : [],
@@ -434,25 +434,28 @@ class ReleaseDraftsController extends BaseController
 
     private function handleFileUpload($files, $fieldName, $folder)
     {
-        if (!isset($files[$fieldName]) || !$files[$fieldName]->isValid()) {
+        if (!isset($files[$fieldName]) || !$files[$fieldName]->isValid() || $files[$fieldName]->hasMoved()) {
             return null;
         }
 
         $file = $files[$fieldName];
-        $uploadPath = WRITEPATH . 'uploads/drafts/' . $folder . '/';
+        $uploadPath = FCPATH . 'uploads/drafts/' . $folder . '/';
 
         if (!is_dir($uploadPath)) {
             mkdir($uploadPath, 0777, true);
         }
 
-        $newName = uniqid() . '.' . $file->getClientExtension();
+        // Generate a random safe filename
+        $newName = $file->getRandomName();
 
         if ($file->move($uploadPath, $newName)) {
-            return $uploadPath . $newName;
+            // Return relative path instead of absolute
+            return 'uploads/drafts/' . $folder . '/' . $newName;
         }
 
         return null;
     }
+
 
     public function dashboard()
     {
