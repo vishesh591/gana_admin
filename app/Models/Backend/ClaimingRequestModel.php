@@ -16,5 +16,6 @@ class ClaimingRequestModel extends Model
         'video_links',
         'removal_reason',
         'status',
+        'created_by' 
     ];
 }

@@ -16,7 +16,10 @@ class LabelModel extends Model
         'user_id',
         'created_at',
         'updated_at',
-        'user_id'
+        'user_id',
+        'created_by',
+        'status',
+        'updated_by'
     ];
 
     protected $useTimestamps = true;

@@ -8,7 +8,7 @@
                     <h4 class="fs-18 fw-semibold m-0">Welcome <?= session()->get('user')['name'] ?></h4>
                 </div>
                 <div>
-                    <a href="<?= base_url('superadmin/add-release') ?>" class="btn btn-primary">
+                    <a href="<?= base_url('add-release') ?>" class="btn btn-primary">
                         <i data-feather="plus" class="me-1"></i> Add New Release
                     </a>
                 </div>
@@ -121,7 +121,7 @@
             processing: true,
             serverSide: false,
             ajax: {
-                url: "/superadmin/releases/drafts", // Using your existing route
+                url: "/releases/drafts", // Using your existing route
                 type: "GET",
                 dataSrc: "data", // Explicitly specify data source
                 headers: {
@@ -180,7 +180,7 @@
                         if (!row.id) return 'No actions available';
                         return `
                         <div class="btn-group" role="group">
-                            <a href="/superadmin/releases/drafts/load/${row.id}" 
+                            <a href="/releases/drafts/load/${row.id}" 
                                class="btn btn-sm btn-primary" title="Edit Draft">
                                 <i data-feather="edit-3"></i> Edit
                             </a>
@@ -219,7 +219,7 @@
             language: {
                 search: "_INPUT_",
                 searchPlaceholder: "Search drafts...",
-                emptyTable: "No drafts found. <a href='/superadmin/add-release'>Create your first release</a>",
+                emptyTable: "No drafts found. <a href='/add-release'>Create your first release</a>",
                 zeroRecords: "No matching drafts found",
                 info: "Showing _START_ to _END_ of _TOTAL_ drafts",
                 infoEmpty: "No drafts available",
@@ -239,7 +239,7 @@
             const originalHtml = btn.html();
             btn.html('<i data-feather="loader" class="spin"></i> Deleting...').prop('disabled', true);
 
-            fetch(`/superadmin/releases/drafts/${draftId}`, {
+            fetch(`/releases/drafts/${draftId}`, {
                     method: 'DELETE',
                     headers: {
                         'X-Requested-With': 'XMLHttpRequest',

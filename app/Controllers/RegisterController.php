@@ -84,7 +84,7 @@ class RegisterController extends BaseController
         }
 
         $validated['password'] = password_hash($validated['password'], PASSWORD_DEFAULT);
-
+        $validated['created_by'] = session()->get('user')['id'] ?? null;
         $this->userModel->insert($validated);
 
         return redirect()->back()->with('success', 'User registered successfully');
@@ -93,8 +93,26 @@ class RegisterController extends BaseController
 
     public function accounts()
     {
+        $session = session();
+        $user = $session->get('user');
+        
+        // Check if user role is NOT superadmin (1) or subadmin (2)
+        if (!in_array($user['role_id'] ?? 3, [1, 2])) {
+            // Show profile page instead of user list for artist, label, distributor
+            $userId = session()->get('user')['email'];
+            $userWithRole = $this->userModel->getUserWithRoleByEmail($userId);
+            
+            $page_array = [
+                'file_name' => 'profile_page',  // or 'profile_page' - use whatever filename you need
+                'user' => $userWithRole
+            ];
+            return view('superadmin/index', $page_array);
+        }
+        
+        // Continue with original logic for superadmin and subadmin
         $users = $this->userModel->findAll();
         $currentDate = date('Y-m-d');
+        
         foreach ($users as &$user) {
             if (
                 !empty($user['agreement_start_date']) &&
@@ -107,6 +125,7 @@ class RegisterController extends BaseController
                 $user['status'] = 'Inactive';
             }
         }
+        
         $page_array = [
             'file_name' => 'user_list',
             'users' => $users
@@ -114,6 +133,8 @@ class RegisterController extends BaseController
 
         return view('superadmin/index', $page_array);
     }
+
+
 
     public function getAccountsJson()
     {

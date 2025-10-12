@@ -43,7 +43,7 @@
 <div class="modal fade" id="relocationRequestModal" tabindex="-1" aria-labelledby="relocationRequestModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg modal-dialog-centered">
         <div class="modal-content rounded-4">
-            <form action="<?= site_url('superadmin/relocation-request/store') ?>" method="POST">
+            <form action="<?= site_url('relocation-request/store') ?>" method="POST">
                 <div class="modal-body p-4">
                     <div class="mb-4">
                         <label for="releaseSelect" class="form-label d-flex align-items-center">

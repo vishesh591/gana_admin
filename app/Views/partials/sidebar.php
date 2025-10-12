@@ -1,3 +1,8 @@
+<?php 
+helper('auth'); // Load our auth helper
+$userRole = get_user_role(); 
+?>
+
 <!-- Left Sidebar Start -->
 <div class="app-sidebar-menu">
     <div class="h-100" data-simplebar>
@@ -28,102 +33,107 @@
 
                 <li class="menu-title">Menu</li>
 
+                <!-- Dashboard - visible to all -->
                 <li>
-                    <a href="<?= base_url() . getUserRoleSlug() ?>/dashboard" class="tp-link">
+                    <a href="<?= base_url() ?>dashboard" class="tp-link">
                         <i data-feather="home"></i>
                         <span> Dashboard </span>
                     </a>
                 </li>
-                <li class="menu-title">Submisson</li>
+
+                <!-- DATA SECTION - Only for superadmin and subadmin -->
+                <?php if (user_has_role(['superadmin', 'subadmin'])): ?>
+                <li class="menu-title">Data Management</li>
 
                 <li>
-                    <a href="<?= base_url() . getUserRoleSlug() ?>/claiming-data" class="tp-link">
+                    <a href="<?= base_url() ?>claiming-data" class="tp-link">
                         <i data-feather="check-circle"></i>
                         <span>Claiming Data</span>
                     </a>
                 </li>
                 <li>
-                    <a href="<?= base_url() . getUserRoleSlug() ?>/relocation-data" class="tp-link">
+                    <a href="<?= base_url() ?>relocation-data" class="tp-link">
                         <i data-feather="refresh-cw"></i>
                         <span>Relocation Data</span>
                     </a>
                 </li>
                 <li>
-                    <a href="<?= base_url() . getUserRoleSlug() ?>/merge-data" class="tp-link">
+                    <a href="<?= base_url() ?>merge-data" class="tp-link">
                         <i data-feather="tag"></i>
                         <span> Claim/Reel Data </span>
                     </a>
                 </li>
                 <li>
-                    <a href="<?= base_url() . getUserRoleSlug() ?>/facebook-ownership-data" class="tp-link">
+                    <a href="<?= base_url() ?>facebook-ownership-data" class="tp-link">
                         <i data-feather="facebook"></i>
                         <span> Facebook Ownership Data </span>
                     </a>
                 </li>
                 <li>
-                    <a href="<?= base_url() . getUserRoleSlug() ?>/youtube-ownership-data" class="tp-link">
+                    <a href="<?= base_url() ?>youtube-ownership-data" class="tp-link">
                         <i data-feather="youtube"></i>
                         <span> Youtube Ownership Data </span>
                     </a>
                 </li>
+                                <!-- SUPPORT - visible to all -->
                 <li>
-                    <a href="<?= base_url() . getUserRoleSlug() ?>/support" class="tp-link">
+                    <a href="<?= base_url() ?>support" class="tp-link">
                         <i data-feather="help-circle"></i>
-                        <span> Support List </span>
+                        <span> Support List</span>
                     </a>
                 </li>
-                </li>
+                <?php endif; ?>
 
                 <li class="menu-title mt-2">Music Distribution</li>
 
                 <li>
-                    <a href="<?= base_url() . getUserRoleSlug() ?>/releases">
+                    <a href="<?= base_url() ?>releases">
                         <i data-feather="music"></i>
                         <span class="menu-text"> Releases </span>
                     </a>
                 </li>
 
-
                 <li>
-                    <a href="<?= base_url() . getUserRoleSlug() ?>/artists" class="tp-link">
+                    <a href="<?= base_url() ?>artists" class="tp-link">
                         <i data-feather="user"></i>
                         <span> Artists </span>
                     </a>
                 </li>
 
                 <li>
-                    <a href="<?= base_url() . getUserRoleSlug() ?>/labels" class="tp-link">
+                    <a href="<?= base_url() ?>labels" class="tp-link">
                         <i data-feather="tag"></i>
                         <span> Labels </span>
                     </a>
                 </li>
 
                 <li>
-                    <a href="<?= base_url() . getUserRoleSlug() ?>/sales-report">
+                    <a href="<?= base_url() ?>sales-report">
                         <i data-feather="bar-chart-2"></i>
                         <span> Sales Reports </span>
                     </a>
-
                 </li>
 
 
+
+                <!-- REQUESTS SECTION - Only for superadmin and subadmin -->
                 <li class="menu-title mt-2">Requests</li>
 
                 <li>
-                    <a href="<?= base_url() . getUserRoleSlug() ?>/claiming-request" class="tp-link">
+                    <a href="<?= base_url() ?>claiming-request" class="tp-link">
                         <i data-feather="check-circle"></i>
                         <span> Claiming Requests </span>
                     </a>
                 </li>
 
                 <li>
-                    <a href="<?= base_url() . getUserRoleSlug() ?>/relocation-request" class="tp-link">
+                    <a href="<?= base_url() ?>relocation-request" class="tp-link">
                         <i data-feather="refresh-cw"></i>
                         <span> Relocation Requests </span>
                     </a>
                 </li>
                 <li>
-                    <a href="<?= base_url() . getUserRoleSlug() ?>/merge-request" class="tp-link">
+                    <a href="<?= base_url() ?>merge-request" class="tp-link">
                         <i data-feather="git-merge"></i>
                         <span>Claim/Reel Merge</span>
                     </a>
@@ -132,35 +142,37 @@
                 <li class="menu-title mt-2">Ownership Conflict</li>
 
                 <li>
-                    <a href="<?= base_url() . getUserRoleSlug() ?>/youtube" class="tp-link">
+                    <a href="<?= base_url() ?>youtube" class="tp-link">
                         <i data-feather="youtube"></i>
                         <span> Youtube </span>
                     </a>
                 </li>
 
                 <li>
-                    <a href="<?= base_url() . getUserRoleSlug() ?>/facebook" class="tp-link">
+                    <a href="<?= base_url() ?>facebook" class="tp-link">
                         <i data-feather="facebook"></i>
                         <span> Facebook </span>
                     </a>
                 </li>
 
-                <li class="menu-title mt-2">User</li>
+                <!-- USER MANAGEMENT - Only superadmin -->
+                <li class="menu-title mt-2">User Management</li>
 
                 <li>
-                    <a href="<?= base_url() . getUserRoleSlug() ?>/accounts">
+                    <a href="<?= base_url() ?>accounts">
                         <i data-feather="settings"></i>
-                        <span> Account </span>
+                        <span> Accounts </span>
                     </a>
                 </li>
 
                 <li>
-                    <a href="<?= base_url() . getUserRoleSlug() ?>/support_user" class="tp-link">
+                    <a href="<?= base_url() ?>support_user" class="tp-link">
                         <i data-feather="help-circle"></i>
-                        <span> Support </span>
+                        <span> Support</span>
                     </a>
                 </li>
 
+             
             </ul>
 
         </div>

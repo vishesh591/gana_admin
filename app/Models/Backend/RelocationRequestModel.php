@@ -15,7 +15,8 @@ class RelocationRequestModel extends Model
         'instagram_link',
         'instagram_audio',
         'facebook_link',
-        'status'
+        'status',
+        'created_by',
     ];
     protected $useTimestamps    = true;
 }

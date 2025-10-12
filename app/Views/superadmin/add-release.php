@@ -67,10 +67,10 @@
             <?php
             // Set form action and method based on edit mode
             if (isset($isEdit) && $isEdit && isset($release)) {
-                $formAction = base_url('superadmin/releases/update/' . $release['id']);
+                $formAction = base_url('releases/update/' . $release['id']);
                 $formMethod = 'post';
             } else {
-                $formAction = base_url('superadmin/releases/store');
+                $formAction = base_url('releases/store');
                 $formMethod = 'post';
             }
             ?>

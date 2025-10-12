@@ -44,6 +44,8 @@ class ArtistController extends BaseController
             'name'        => $this->request->getPost('artist_name'),
             'spotify_id'  => $spotifyId, // Use the actual Spotify ID, not empty string
             'apple_id'    => $this->request->getPost('apple_id'),
+            'label_name'  => $this->request->getPost('label_name'),
+            'label_id'    => $this->request->getPost('label_id') ? (int)$this->request->getPost('label_id') : null,
         ];
 
         $img = $this->request->getFile('profile_image');
@@ -52,7 +54,7 @@ class ArtistController extends BaseController
             $img->move(FCPATH . 'uploads/artist', $newName);
             $data['profile_image'] = 'uploads/artist/' . $newName;
         }
-
+        $data['created_by'] = session()->get('user')['id'];
         $this->artistRepo->create($data);
 
         if ($this->request->isAJAX()) {
@@ -106,27 +108,76 @@ class ArtistController extends BaseController
 
     public function index()
     {
-        $data['artists'] = $this->artistRepo->findAll();
+        $session = session();
+        $user = $session->get('user');
+        
+        if (!in_array($user['role_id'] ?? 3, [1, 2])) {
+            $userPrimaryLabel = $user['primary_label_name'] ?? null;
+            
+            if ($userPrimaryLabel) {
+                $artistModel = new \App\Models\Backend\ArtistModel();
 
+                $data['artists'] = $artistModel
+                    ->where('label_name', $userPrimaryLabel)
+                    ->findAll();
+            } else {
+                $data['artists'] = [];
+            }
+        } else {
+            $data['artists'] = $this->artistRepo->findAll();
+        }
+
+        $userModel = new \App\Models\UserModel();
+        $primaryLabels = $userModel->select('id, primary_label_name')
+            ->where('primary_label_name IS NOT NULL')
+            ->findAll();
+            
         $page_array = [
             'file_name' => 'artists',
+            'primaryLabels' => $primaryLabels,
+            'user' => $user,
             'data' => $data
         ];
 
         return view('superadmin/index', $page_array);
     }
 
+
     public function getArtistsJson()
     {
-        $artists = $this->artistRepo->findAll();
-        $data = array_map(function ($artist) {
+        $session = session();
+        $user = $session->get('user');
+        
+        if (!in_array($user['role_id'] ?? 3, [1, 2])) {
+            $userPrimaryLabel = $user['primary_label_name'] ?? null;
+            
+            if ($userPrimaryLabel) {
+                $artistModel = new \App\Models\Backend\ArtistModel();
+                $artists = $artistModel
+                    ->where('label_name', $userPrimaryLabel)
+                    ->findAll();
+            } else {
+                $artists = [];
+            }
+        } else {
+            $artists = $this->artistRepo->findAll();
+        }
+
+        $releaseModel = new \App\Models\Backend\ReleaseModel();
+
+        $data = array_map(function ($artist) use ($releaseModel) {
+            $releaseCount = $releaseModel->where('artist_id', $artist['id'])->countAllResults();
+
             return [
                 'id'            => $artist['id'],
                 'name'          => $artist['name'],
                 'profile_image' => !empty($artist['profile_image'])
                     ? base_url($artist['profile_image'])
                     : '/images/default.png',
-                'release_count' => $artist['release_count'] ?? 0,
+                'spotify_id'    => $artist['spotify_id'],
+                'apple_id'      => $artist['apple_id'],
+                'release_count' => $releaseCount, // Use actual count from ReleaseModel
+                'label_name'    => $artist['label_name'] ?? 'N/A',
             ];
         }, $artists);
 

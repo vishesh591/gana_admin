@@ -163,7 +163,7 @@
                         </div>
 
                         <!-- item-->
-                        <a href="<?= base_url('superadmin/pages-profile') ?>" class="dropdown-item notify-item">
+                        <a href="<?= base_url('pages-profile') ?>" class="dropdown-item notify-item">
                             <i class="mdi mdi-account-circle-outline fs-16 align-middle"></i>
                             <span>My Account</span>
                         </a>
@@ -171,7 +171,7 @@
                         <div class="dropdown-divider"></div>
 
                         <!-- item-->
-                        <a href="<?= base_url('superadmin/auth-logout') ?>" class="dropdown-item notify-item">
+                        <a href="<?= base_url('auth-logout') ?>" class="dropdown-item notify-item">
                             <i class="mdi mdi-location-exit fs-16 align-middle"></i>
                             <span>Logout</span>
                         </a>

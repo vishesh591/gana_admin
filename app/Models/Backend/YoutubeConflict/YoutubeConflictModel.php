@@ -16,6 +16,6 @@ class YoutubeConflictModel extends Model
         'claim_id','match_type','engaged_views_affected_daily','engaged_views_lifetime',
         'claimed_videos_affected','duration_time_seconds','duration_percentage_reference',
         'duration_percentage_video','status','status_detail','link_to_issue','resolution_rights_owned','resolution_date'
-        ,'supporting_document_path','resolution_status','rejection_message'
+        ,'supporting_document_path','resolution_status','rejection_message','created_by'
     ];
 }

@@ -19,7 +19,8 @@ class ClaimReelMergeModel extends Model
         'matching_time',
         'status',
         'created_at',
-        'updated_at'
+        'updated_at',
+        'created_by'
     ];
 
     protected $useTimestamps = true;

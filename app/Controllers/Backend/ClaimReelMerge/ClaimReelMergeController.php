@@ -57,6 +57,7 @@ class ClaimReelMergeController extends BaseController
             'reel_merge'      => $this->request->getPost('reel_merge'),
             'matching_time'   => $this->request->getPost('matching_time'),
             'status'          => 'Pending',
+            'created_by'      => session()->get('user')['id'],
         ];
 
         $this->claimRepo->create($data);
@@ -70,8 +71,19 @@ class ClaimReelMergeController extends BaseController
     public function list()
     {
         try {
+            $session = session();
+            $user = $session->get('user');
+            $userId = $user['id'];
+            $userRole = $user['role_id'] ?? 3;
+            
             $model = new ClaimReelMergeModel();
-            $rows = $model->findAll();
+            
+            if (in_array($userRole, [1, 2])) {
+                $rows = $model->findAll();
+            } else {
+                $rows = $model->where('created_by', $userId)->findAll();
+            }
+            
             $data = array_map(function ($r) {
                 return [
                     'id'             => (int) $r['id'],
@@ -100,6 +112,8 @@ class ClaimReelMergeController extends BaseController
             ]);
         }
     }
+
+
 
     // Page for Claim Reel Merge Data
     public function mergeData()

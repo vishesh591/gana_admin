@@ -39,6 +39,8 @@
                                 </th>
                                 <th>Artist</th>
                                 <th class="text-center">Releases</th>
+                                <th class="text-center">Spotify ID</th>
+                                <th class="text-center">Apple ID</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -63,13 +65,36 @@
 
             <div class="modal-body">
                 <form id="createArtistForm"
-                    action="<?= base_url('superadmin/create-artist') ?>"
+                    action="<?= base_url('create-artist') ?>"
                     method="post"
                     enctype="multipart/form-data">
                     <div class="mb-3">
                         <label class="form-label">Artist Name</label>
                         <input type="text" class="form-control" id="artistName" name="artist_name" required>
                     </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Label Name</label>
+                        <?php if (in_array($user['role_id'], [1, 2])): ?>
+                            <select class="form-control" id="labelName" name="label_name" required>
+                                <option value="">Select Label</option>
+                                <?php foreach ($primaryLabels as $primaryLabel): ?>
+                                    <option value="<?= esc($primaryLabel['primary_label_name']) ?>">
+                                        <?= esc($primaryLabel['primary_label_name']) ?>
+                                    </option>
+                                <?php endforeach; ?>
+                            </select>
+                        <?php else: ?>
+                            <!-- Non-admin users: readonly field -->
+                            <input type="text"
+                                class="form-control"
+                                id="labelName"
+                                name="label_name"
+                                value="<?= esc($user['primary_label_name']) ?>"
+                                readonly>
+                        <?php endif; ?>
+                    </div>
+                    
                     <div class="mb-3">
                         <label for="artist_search" class="form-label">Spotify Artist</label>
                         <div class="position-relative">
@@ -77,9 +102,7 @@
                                 placeholder="Type artist name to search..." autocomplete="off">
                             <input type="hidden" id="spotify_id" name="spotify_id">
 
-                            <!-- Dropdown for search results -->
                             <div id="spotify_dropdown" class="dropdown-menu w-100" style="display: none; max-height: 300px; overflow-y: auto;">
-                                <!-- Search results will appear here -->
                             </div>
                         </div>
 
@@ -102,6 +125,7 @@
                             Search and select a Spotify artist
                         </div>
                     </div>
+                    
                     <div class="mb-3">
                         <label for="apple_artist_search" class="form-label">Apple Music Artist</label>
                         <div class="position-relative">
@@ -109,9 +133,7 @@
                                 placeholder="Type artist name to search..." autocomplete="off">
                             <input type="hidden" id="apple_id" name="apple_id">
 
-                            <!-- Dropdown for search results -->
                             <div id="apple_dropdown" class="dropdown-menu w-100" style="display: none; max-height: 300px; overflow-y: auto;">
-                                <!-- Search results will appear here -->
                             </div>
                         </div>
 
@@ -145,7 +167,6 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                <!-- Submit button -->
                 <button type="submit" form="createArtistForm" class="btn btn-create">
                     <i data-feather="plus" class="me-1"></i>
                     Create Artist
@@ -154,6 +175,7 @@
         </div>
     </div>
 </div>
+
 
 
 <!-- <div class="modal fade" id="createArtistModal" tabindex="-1">

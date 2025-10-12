@@ -571,7 +571,7 @@ function initializeOwnershipPage(config) {
         return;
       }
 
-      fetch(`/superadmin/facebook-ownership/update/${currentConflictId}`, {
+      fetch(`/facebook-ownership/update/${currentConflictId}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/x-www-form-urlencoded",
@@ -626,7 +626,7 @@ function initializeOwnershipPage(config) {
 }
 
 document.addEventListener("DOMContentLoaded", function () {
-  fetch("/superadmin/facebook-ownership/list")
+  fetch("/facebook-ownership/list")
     .then((res) => res.json())
     .then((json) => {
       console.log("Fetched data:", json.data); // Debug log
@@ -1049,7 +1049,7 @@ function initializeYouTubeOwnershipPage(config) {
         return;
       }
 
-      fetch(`/superadmin/youtube-ownership/update/${currentConflictId}`, {
+      fetch(`/youtube-ownership/update/${currentConflictId}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/x-www-form-urlencoded",
@@ -1114,7 +1114,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
   console.log("Loading YouTube ownership data...");
 
-  fetch("/superadmin/youtube-ownership/list")
+  fetch("/youtube-ownership/list")
     .then((res) => {
       if (!res.ok) {
         throw new Error(`HTTP error! status: ${res.status}`);
@@ -1212,7 +1212,7 @@ document.addEventListener("DOMContentLoaded", function () {
   // Fetch data
   async function fetchClaimingData() {
     try {
-      const res = await fetch("/superadmin/api/claiming-data");
+      const res = await fetch("/api/claiming-data");
       if (!res.ok) {
         throw new Error(`HTTP ${res.status}: ${res.statusText}`);
       }
@@ -1242,7 +1242,7 @@ document.addEventListener("DOMContentLoaded", function () {
   // Update status (Approve/Reject/Pending)
   async function updateClaimingStatus(id, status) {
     try {
-      const res = await fetch(`/superadmin/api/claiming-data/${id}/status`, {
+      const res = await fetch(`/api/claiming-data/${id}/status`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -1494,7 +1494,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // Export button
   document.getElementById("exportCsvBtn")?.addEventListener("click", () => {
-    window.location.href = "/superadmin/claiming-data/export-csv";
+    window.location.href = "/claiming-data/export-csv";
   });
 
   // Debug function to check if search is working
@@ -1518,7 +1518,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const mergeModal = new bootstrap.Modal(mergeModalEl);
 
     const table = $("#mergeDataTable").DataTable({
-      ajax: { url: "/superadmin/merge-data/list", dataSrc: "data" },
+      ajax: { url: "/merge-data/list", dataSrc: "data" },
       columns: [
         {
           data: "status",
@@ -1609,7 +1609,7 @@ document.addEventListener("DOMContentLoaded", function () {
         const id = $(this).data("id");
 
         try {
-          const response = await fetch(`/superadmin/merge-data/detail/${id}`);
+          const response = await fetch(`/merge-data/detail/${id}`);
           const result = await response.json();
           if (result.success) {
             const d = result.data;
@@ -1643,7 +1643,7 @@ document.addEventListener("DOMContentLoaded", function () {
       .getElementById("approveBtn")
       .addEventListener("click", async () => {
         const id = mergeModalEl.dataset.currentId;
-        await fetch(`/superadmin/merge-data/update-status/${id}`, {
+        await fetch(`/merge-data/update-status/${id}`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ status: "approved" }),
@@ -1654,7 +1654,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     document.getElementById("rejectBtn").addEventListener("click", async () => {
       const id = mergeModalEl.dataset.currentId;
-      await fetch(`/superadmin/merge-data/update-status/${id}`, {
+      await fetch(`/merge-data/update-status/${id}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ status: "rejected" }),
@@ -1728,7 +1728,7 @@ document.addEventListener("DOMContentLoaded", function () {
         document.getElementById("releaseModal")
       );
 
-      const response = await fetch(`/superadmin/api/relocation-data/${id}`);
+      const response = await fetch(`/api/relocation-data/${id}`);
       const result = await response.json();
 
       if (!result.success) {
@@ -1857,7 +1857,7 @@ document.addEventListener("DOMContentLoaded", function () {
       }
 
       const response = await fetch(
-        `/superadmin/api/relocation-data/${id}/status`,
+        `/api/relocation-data/${id}/status`,
         {
           method: "POST",
           headers: {
@@ -1901,7 +1901,7 @@ document.addEventListener("DOMContentLoaded", function () {
   const dataTableInstance = $("#relocationdataDatatable").DataTable({
     destroy: true,
     ajax: {
-      url: "/superadmin/api/relocation-data",
+      url: "/api/relocation-data",
       dataSrc: "data",
     },
     paging: true,
@@ -2057,7 +2057,7 @@ document.addEventListener("DOMContentLoaded", function () {
   const exportBtn = document.getElementById("exportCsvBtn");
   if (exportBtn) {
     exportBtn.addEventListener("click", function () {
-      window.location.href = "/superadmin/api/relocation-data/export";
+      window.location.href = "/api/relocation-data/export";
     });
   }
 });
@@ -2103,7 +2103,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const dataTableInstance = table.DataTable({
       destroy: true,
       ajax: {
-        url: "/superadmin/releases", // adjust route as needed
+        url: "/releases", // adjust route as needed
         type: "GET",
         dataSrc: "data",
       },
@@ -2127,8 +2127,8 @@ document.addEventListener("DOMContentLoaded", function () {
             // For others, show edit page
             const url =
               row.status_numeric == 3 || row.status_numeric == 2
-                ? `/superadmin/releases/view/${row.id}`
-                : `/superadmin/releases/edit/${row.id}`;
+                ? `/releases/view/${row.id}`
+                : `/releases/edit/${row.id}`;
 
             return `
               <div>     
@@ -2225,7 +2225,7 @@ document.addEventListener("DOMContentLoaded", function () {
 $(document).ready(function () {
   let table = $("#artistTable").DataTable({
     destroy: true,
-    ajax: "/superadmin/api/artists", // backend route returning JSON
+    ajax: "/api/artists", // backend route returning JSON
     columns: [
       {
         data: "id",
@@ -2238,37 +2238,53 @@ $(document).ready(function () {
         data: null,
         render: function (row) {
           return `
-                        <div class="artist-profile d-flex align-items-center">
-                            <img src="${row.profile_image}" alt="${row.name}" class="artist-image me-2">
-                            <div class="artist-name fw-bold">${row.name}</div>
-                        </div>
-                    `;
+            <div class="artist-profile d-flex align-items-center">
+                <img src="${row.profile_image}" alt="${row.name}" 
+                     class="artist-image me-2 rounded-circle" 
+                     style="width:40px; height:40px; object-fit:cover;">
+                <div class="artist-name fw-bold">${row.name}</div>
+            </div>
+          `;
         },
       },
       {
         data: "release_count",
         className: "text-center",
         render: function (d) {
-          return `<span class="releases-badge badge">${d} releases</span>`;
+          return d ? `<span class="badge bg-primary">${d}</span>` : "-";
+        },
+      },
+      {
+        data: "spotify_id",
+        className: "text-center",
+        render: function (d) {
+          return d
+            ? `<a href="https://open.spotify.com/artist/${d}" target="_blank">${d}</a>`
+            : "-";
+        },
+      },
+      {
+        data: "apple_id",
+        className: "text-center",
+        render: function (d) {
+          return d
+            ? `<a href="https://music.apple.com/artist/${d}" target="_blank">${d}</a>`
+            : "-";
         },
       },
     ],
-    paging: true, // enable pagination
-    searching: true, // enable search box
-    ordering: true, // enable sorting
-    responsive: true, // mobile friendly
-    autoWidth: false, // keeps column width consistent
+    paging: true,
+    searching: true,
+    ordering: true,
+    responsive: true,
+    autoWidth: false,
+
     drawCallback: function () {
-      // Re-bind checkbox events or icon replacements after redraw
       $(".artist-checkbox")
         .off("change")
         .on("change", function () {
           let selected = $(".artist-checkbox:checked").length;
-          if (selected > 0) {
-            $("#deleteSelectedBtn").show();
-          } else {
-            $("#deleteSelectedBtn").hide();
-          }
+          $("#deleteSelectedBtn").toggle(selected > 0);
         });
     },
   });
@@ -2279,6 +2295,7 @@ $(document).ready(function () {
     $(".artist-checkbox").prop("checked", checked).trigger("change");
   });
 });
+
 
 $(document).ready(function () {
   // Show alert helper
@@ -2541,7 +2558,7 @@ $(document).ready(function () {
 $(document).ready(function () {
   let table = $("#labelTable").DataTable({
     destroy: true,
-    ajax: "/superadmin/api/labels", // your controller endpoint
+    ajax: "/api/labels",
     columns: [
       {
         data: "id",
@@ -2554,23 +2571,49 @@ $(document).ready(function () {
         data: null,
         render: function (data) {
           return `
-                        <div class="label-profile">
-                            <img src="${data.logo}" alt="${data.name}" class="label-image">
-                            <div>
-                                <div class="label-name">${data.name}</div>
-                            </div>
-                        </div>
-                    `;
+            <div class="label-profile d-flex align-items-center">
+              <img src="${data.logo}" alt="${data.name}" class="label-image me-2 rounded" style="width: 40px; height: 40px; object-fit: cover;">
+              <div>
+                <div class="label-name fw-bold">${data.name}</div>
+              </div>
+            </div>
+          `;
         },
       },
       {
         data: "release_count",
         className: "text-center",
         render: function (data) {
-          return `<span class="releases-badge">${data} releases</span>`;
+          return `<span class="releases-badge badge">${data} releases</span>`;
         },
       },
+      {
+        data: "status_text",
+        className: "text-center",
+        render: function (data, type, row) {
+          return `<span class="badge bg-${row.status_class}">${data}</span>`;
+        },
+      },
+      {
+        data: "actions",
+        className: "text-center",
+        orderable: false,
+        render: function (data) {
+          return data || '';
+        },
+      }
     ],
+    paging: true,
+    searching: true,
+    ordering: true,
+    responsive: true,
+    autoWidth: false,
+    drawCallback: function () {
+      // Re-initialize feather icons after table redraw
+      if (typeof feather !== 'undefined') {
+        feather.replace();
+      }
+    }
   });
 
   // Handle "Select All"
@@ -2586,7 +2629,7 @@ $(document).ready(function () {
 });
 
 $(document).ready(function () {
-  // show alert helper
+  // Show alert helper
   function showLabelAlert(type, message) {
     let alertHtml = `
       <div class="alert alert-${type} alert-dismissible fade show" role="alert">
@@ -2596,7 +2639,7 @@ $(document).ready(function () {
     $("#labelAlertBox").html(alertHtml);
   }
 
-  // prevent duplicate bindings
+  // Form submission
   $(document).off("submit", 'form[action*="create-label"]');
   $(document).on("submit", 'form[action*="create-label"]', function (e) {
     e.preventDefault();
@@ -2609,12 +2652,24 @@ $(document).ready(function () {
       data: formData,
       contentType: false,
       processData: false,
+      beforeSend: function () {
+        $('button[type="submit"]').prop("disabled", true).text("Submitting...");
+      },
       success: function (res) {
         if (res.success) {
           showLabelAlert("success", res.message);
           $('form[action*="create-label"]')[0].reset();
           $("#imagePreview").hide();
-          $("#createlabelModal").modal("hide"); // optional: auto-close modal
+          
+          // Reload table after successful creation
+          if (typeof window.reloadLabels === 'function') {
+            window.reloadLabels();
+          }
+          
+          // Auto-close modal after 2 seconds
+          setTimeout(() => {
+            $("#createlabelModal").modal("hide");
+          }, 2000);
         } else if (res.errors) {
           let errorMessages = Object.values(res.errors).join("<br>");
           showLabelAlert("danger", errorMessages);
@@ -2627,10 +2682,13 @@ $(document).ready(function () {
         }
         showLabelAlert("danger", msg);
       },
+      complete: function () {
+        $('button[type="submit"]').prop("disabled", false).text("Submit Request");
+      }
     });
   });
 
-  // image preview
+  // Image preview
   $(document).off("change", "#imageInput");
   $(document).on("change", "#imageInput", function () {
     const [file] = this.files;
@@ -2639,6 +2697,78 @@ $(document).ready(function () {
     }
   });
 });
+
+// Global function to update label status (called from action buttons)
+function updateLabelStatus(labelId, status) {
+  const statusText = {
+    1: 'In Review',
+    2: 'Approved',
+    3: 'Rejected'
+  };
+
+  const statusIcons = {
+    1: '🔄',
+    2: '✅',
+    3: '❌'
+  };
+
+  if (confirm(`${statusIcons[status]} Are you sure you want to change the status to "${statusText[status]}"?`)) {
+    $.ajax({
+      url: '/labels/update-status',
+      type: 'POST',
+      data: {
+        label_id: labelId,
+        status: status
+      },
+      beforeSend: function() {
+        // Disable all action buttons temporarily
+        $(`button[onclick*="${labelId}"]`).prop('disabled', true);
+      },
+      success: function (response) {
+        if (response.success) {
+          // Show success message
+          showGlobalAlert('success', response.message);
+          
+          // Reload the table
+          if (typeof window.reloadLabels === 'function') {
+            window.reloadLabels();
+          }
+        } else {
+          showGlobalAlert('danger', response.message || 'Failed to update status');
+        }
+      },
+      error: function (xhr) {
+        let errorMsg = 'An error occurred while updating the status';
+        if (xhr.responseJSON && xhr.responseJSON.message) {
+          errorMsg = xhr.responseJSON.message;
+        }
+        showGlobalAlert('danger', errorMsg);
+      },
+      complete: function() {
+        // Re-enable action buttons
+        $(`button[onclick*="${labelId}"]`).prop('disabled', false);
+      }
+    });
+  }
+}
+
+// Global alert function
+function showGlobalAlert(type, message) {
+  const alertHtml = `
+    <div class="alert alert-${type} alert-dismissible fade show position-fixed" 
+         style="top: 20px; right: 20px; z-index: 9999; min-width: 300px;" role="alert">
+      ${message}
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>`;
+  
+  $('body').append(alertHtml);
+  
+  // Auto-dismiss after 5 seconds
+  setTimeout(() => {
+    $('.alert').alert('close');
+  }, 5000);
+}
+
 
 // accounts-page js
 
@@ -2707,7 +2837,7 @@ document.addEventListener("DOMContentLoaded", function () {
         destroy: true,
         processing: true,
         serverSide: false,
-        ajax: "/superadmin/api/accounts",
+        ajax: "/api/accounts",
         columns: [
             // NEW: Avatar column with initials
             {
@@ -2871,7 +3001,7 @@ $(document).on('click', '.view-user-btn', function() {
 // NEW: Load user details in modal
 function loadUserDetails(userId) {
     $.ajax({
-        url: `/superadmin/users/details/${userId}`,
+        url: `/users/details/${userId}`,
         method: 'GET',
         dataType: 'json',
         beforeSend: function() {
@@ -2947,7 +3077,7 @@ function displayUserDetails(user) {
 $(document).on('click', '#editUserBtn', function() {
     const userId = $(this).data('user-id');
     // Redirect to profile page with user ID
-    window.location.href = `/superadmin/users/edit/${userId}`;
+    window.location.href = `/users/edit/${userId}`;
 });
 
 
@@ -2996,7 +3126,7 @@ $(document).ready(function () {
 $(document).ready(function () {
   let table = $("#claimingRequestTableBody").DataTable({
     destroy: true,
-    ajax: "/superadmin/api/claiming-req",
+    ajax: "/api/claiming-req",
     columns: [
       {
         data: "status",
@@ -3082,7 +3212,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Initialize DataTable with server JSON
     const table = $("#relocationDatatable").DataTable({
-      ajax: "/superadmin/relocation-requests/data",
+      ajax: "/relocation-requests/data",
       processing: true,
       serverSide: false, // you can enable true if you want server pagination
       paging: true,
@@ -3231,7 +3361,7 @@ document.addEventListener("DOMContentLoaded", function () {
       processing: true,
       serverSide: false, // set true if you want Laravel DataTables server-side
       ajax: {
-        url: "/superadmin/claim-reel-merge/list",
+        url: "/claim-reel-merge/list",
         dataSrc: "data",
       },
       columns: [
@@ -3286,7 +3416,7 @@ document.addEventListener("DOMContentLoaded", function () {
       const formData = new FormData(claimForm);
 
       try {
-        const response = await fetch("/superadmin/claim-reel-merge/store", {
+        const response = await fetch("/claim-reel-merge/store", {
           method: "POST",
           body: formData,
           headers: {
@@ -3312,7 +3442,7 @@ document.addEventListener("DOMContentLoaded", function () {
     // --- EXPORT ---
     exportCsvBtn.addEventListener("click", async function () {
       try {
-        const response = await fetch("/superadmin/claim-reel-merge/list");
+        const response = await fetch("/claim-reel-merge/list");
         const result = await response.json();
 
         if (!result.data || result.data.length === 0) {
@@ -3925,7 +4055,7 @@ document.addEventListener("DOMContentLoaded", function () {
         submitBtn.disabled = true;
         formSubmitted = true;
 
-        fetch(`/superadmin/youtube-conflicts/update/${activeConflictId}`, {
+        fetch(`/youtube-conflicts/update/${activeConflictId}`, {
           method: "POST",
           body: formData,
         })
@@ -3998,7 +4128,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // --- DATA LOADING ---
     function loadConflictsData() {
-      fetch("/superadmin/youtube-conflicts/json")
+      fetch("/youtube-conflicts/json")
         .then((response) => response.json())
         .then((result) => {
           conflictRequests = result.data || [];
@@ -4041,7 +4171,7 @@ document.addEventListener("DOMContentLoaded", function () {
         importBtn.innerHTML = '<i class="spinner-border spinner-border-sm me-1"></i>Importing...';
         importBtn.disabled = true;
 
-        fetch("/superadmin/youtube-conflicts/import", {
+        fetch("/youtube-conflicts/import", {
           method: "POST",
           body: formData,
         })
@@ -4119,7 +4249,7 @@ document.addEventListener("DOMContentLoaded", function () {
         processing: true,
         serverSide: false,
         ajax: {
-          url: "/superadmin/facebook/list-json",
+          url: "/facebook/list-json",
           type: "GET",
           dataSrc: function (json) {
             console.log("Raw response:", json);
@@ -4243,7 +4373,7 @@ document.addEventListener("DOMContentLoaded", function () {
             '<i class="spinner-border spinner-border-sm me-1"></i>Importing...';
           importBtn.disabled = true;
 
-          fetch("/superadmin/facebook/import", {
+          fetch("/facebook/import", {
             method: "POST",
             body: formData,
           })
@@ -4610,7 +4740,7 @@ document.addEventListener("DOMContentLoaded", function () {
           // Set flag to indicate form is being submitted
           formSubmitted = true;
 
-          fetch("/superadmin/facebook/update-resolution", {
+          fetch("/facebook/update-resolution", {
             method: "POST",
             body: formData,
           })
@@ -4649,7 +4779,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
         accordionContainer.innerHTML = '<div class="text-center p-3"><i class="spinner-border spinner-border-sm me-2"></i>Loading territories...</div>';
 
-        fetch("/superadmin/facebook/get-all-countries")
+        fetch("/facebook/get-all-countries")
           .then((response) => response.json())
           .then((data) => {
             if (data.status === "success") {
@@ -4910,7 +5040,7 @@ $(document).ready(function () {
   if ($("#datatable").length) {
     let table = $("#datatable").DataTable({
       destroy: true,
-      ajax: "/superadmin/support/data",
+      ajax: "/support/data",
       columns: [
         { data: "id" },
         { data: "full_name" },
@@ -4955,7 +5085,7 @@ $(document).ready(function () {
       let status = $("#supportStatus").val();
 
       $.ajax({
-        url: "/superadmin/support/update-status/" + id,
+        url: "/support/update-status/" + id,
         type: "POST",
         data: {
           status: status,
@@ -5566,7 +5696,7 @@ async function saveDraft() {
     formData.set('current_step', currentStep.toString());
     
     // UPDATED: Use correct endpoint
-    const response = await fetch('/superadmin/releases/drafts/save', {
+    const response = await fetch('/releases/drafts/save', {
       method: 'POST',
       body: formData,
       headers: {
@@ -5645,7 +5775,7 @@ async function saveDraft() {
         throw new Error('Release ID not found');
       }
 
-      const response = await fetch(`/superadmin/releases/${releaseId}/rejection-messages`, {
+      const response = await fetch(`/releases/${releaseId}/rejection-messages`, {
         headers: { 'X-Requested-With': 'XMLHttpRequest' }
       });
 
@@ -6096,12 +6226,12 @@ async function saveDraft() {
       if (data.success === true) {
         const message = data.message || 'Release processed successfully!';
         alert(message);
-        window.location.href = data.redirect || '/superadmin/releases';
+        window.location.href = data.redirect || '/releases';
       } else if (data.success === false) {
         throw new Error(data.error || data.message || 'Processing failed');
       } else if (data.message && !data.hasOwnProperty('success')) {
         alert(data.message);
-        window.location.href = data.redirect || '/superadmin/releases';
+        window.location.href = data.redirect || '/releases';
       } else {
         console.warn('Unexpected response format:', data);
         throw new Error('Unexpected response format from server');
@@ -6405,7 +6535,7 @@ $(document).on("click", "#changePasswordBtn", function () {
 
 //export releases
 document.getElementById("exportCsvBtn").addEventListener("click", function () {
-  window.location.href = "/superadmin/releases/export-csv";
+  window.location.href = "/releases/export-csv";
 });
 
 document.addEventListener("DOMContentLoaded", function () {
@@ -6506,7 +6636,7 @@ document.addEventListener("DOMContentLoaded", function () {
 document
   .getElementById("showRejectionMessagesBtn")
   .addEventListener("click", function () {
-    fetch("/superadmin/releases/rejections", {
+    fetch("/releases/rejections", {
       headers: { "X-Requested-With": "XMLHttpRequest" },
     })
       .then((res) => res.json())

@@ -62,7 +62,7 @@
 
         <div class="modal-content rounded-4">
 
-            <form action="<?= base_url('superadmin/register') ?>" method="POST" enctype="multipart/form-data" id="claimingRequestForm">
+            <form action="<?= base_url('register') ?>" method="POST" enctype="multipart/form-data" id="claimingRequestForm">
                 <?= csrf_field() ?>
                 <div class="modal-header">
                     <h5 class="modal-title" id="claimingRequestModalLabel">New Account Request</h5>

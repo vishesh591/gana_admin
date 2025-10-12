@@ -16,10 +16,8 @@ class Auth extends BaseController
 
     public function index()
     {
-        // If already logged in, redirect to dashboard based on role
         if (session()->get('isLoggedIn')) {
-            $role = session()->get('user')['role'];
-            return redirect()->to('/' . strtolower($role));
+            return redirect()->to('/dashboard');
         }
 
         return view('auth/login');
@@ -58,8 +56,8 @@ class Auth extends BaseController
             setcookie('remember_email', $email, time() + (86400 * 30), "/"); // 30 days
         }
 
-        // Redirect based on role
-        return redirect()->to(strtolower($user['role_name']).'/dashboard');
+        // Redirect to dashboard (NO role prefix in URL!)
+        return redirect()->to('/dashboard');
     }
 
     public function logout()

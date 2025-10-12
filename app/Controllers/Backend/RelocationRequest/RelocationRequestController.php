@@ -32,10 +32,23 @@ class RelocationRequestController extends BaseController
 
     public function getRelocationRequestJson()
     {
-        $rows = $this->relocationModel
-            ->select('id, song_name, artist_name, isrc, status')
-            ->orderBy('created_at', 'DESC')
-            ->findAll();
+        $session = session();
+        $user = $session->get('user');
+        $userId = $user['id'];
+        $userRole = $user['role_id'] ?? 3;
+        
+        if (in_array($userRole, [1, 2])) {
+            $rows = $this->relocationModel
+                ->select('id, song_name, artist_name, isrc, status')
+                ->orderBy('created_at', 'DESC')
+                ->findAll();
+        } else {
+            $rows = $this->relocationModel
+                ->select('id, song_name, artist_name, isrc, status')
+                ->where('created_by', $userId)
+                ->orderBy('created_at', 'DESC')
+                ->findAll();
+        }
 
         $data = array_map(function ($r) {
             return [
@@ -50,6 +63,7 @@ class RelocationRequestController extends BaseController
 
         return $this->response->setJSON(['data' => $data]);
     }
+
     // API for datatable
     public function list()
     {
@@ -81,7 +95,8 @@ class RelocationRequestController extends BaseController
             'instagram_link'  => $this->request->getPost('instagram_link'),
             'instagram_audio' => $this->request->getPost('instagram_audio'),
             'facebook_link'   => $this->request->getPost('facebook_link'),
-            'status'          => 'Pending'
+            'status'          => 'Pending',
+            'created_by'    => session()->get('user')['id'],
         ];
 
         $this->relocationModel->save($data);

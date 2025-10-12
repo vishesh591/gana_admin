@@ -10,7 +10,7 @@
                         <button type="button" class="btn btn-success" onclick="saveUserProfile()">
                             <i class="bi bi-check-circle"></i> Save All Changes
                         </button>
-                        <a href="<?= base_url('superadmin/accounts') ?>" class="btn btn-secondary">
+                        <a href="<?= base_url('accounts') ?>" class="btn btn-secondary">
                             <i class="bi bi-arrow-left"></i> Back to Accounts
                         </a>
                     </div>
@@ -315,7 +315,7 @@
         saveBtn.innerHTML = '<i class="spinner-border spinner-border-sm me-1"></i> Saving...';
         saveBtn.disabled = true;
 
-        fetch('/superadmin/users/update-profile', {
+        fetch('/users/update-profile', {
                 method: 'POST',
                 body: formData,
                 headers: {
@@ -367,7 +367,7 @@
             return;
         }
 
-        fetch('/superadmin/users/reset-password', {
+        fetch('/users/reset-password', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

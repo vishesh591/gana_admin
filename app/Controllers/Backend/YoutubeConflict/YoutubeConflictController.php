@@ -5,7 +5,7 @@ namespace App\Controllers\Backend\YoutubeConflict;
 use App\Controllers\BaseController;
 use CodeIgniter\HTTP\ResponseInterface;
 use App\Models\Backend\YoutubeConflict\YoutubeConflictModel;
-
+use Exception;
 class YoutubeConflictController extends BaseController
 {
 
@@ -104,6 +104,7 @@ class YoutubeConflictController extends BaseController
                 'status'                          => $row[29] ?? null,
                 'status_detail'                   => $row[30] ?? null,
                 'link_to_issue'                   => $row[31] ?? null,
+                'created_by'                      => session()->get('user')['id'] ?? null,
             ];
 
             try {
@@ -307,7 +308,7 @@ class YoutubeConflictController extends BaseController
     private function getYoutubeConflictsData()
     {
         $youtubeConflict = new YoutubeConflictModel();
-        $conflicts = $youtubeConflict
+        $conflicts = $youtubeConflict->whereIn('status', ['In Review', 'Rejected'])
             ->orderBy('id', 'DESC')
             ->findAll();
 

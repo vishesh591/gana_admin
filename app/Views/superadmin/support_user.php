@@ -17,7 +17,7 @@
                             </p>
                             <div id="formAlertBox" class="mt-3"></div>
 
-                            <form id="supportForm" action="<?= base_url('superadmin/support/store') ?>" method="POST">
+                            <form id="supportForm" action="<?= base_url('support/store') ?>" method="POST">
                                 <div class="mb-3">
                                     <label for="fullName" class="form-label">Full Name</label>
                                     <input type="text" class="form-control" id="fullName" name="full_name" placeholder="Enter your full name" required>

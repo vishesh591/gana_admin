@@ -32,7 +32,7 @@ class ReleaseDraftModel extends Model
         'content_guidelines', 'isrc_guidelines', 'youtube_guidelines', 
         'audio_store_guidelines',
         // Meta
-        'form_data_json', 'created_at', 'updated_at'
+        'form_data_json', 'created_at', 'updated_at','created_by'
     ];
 
     protected $useTimestamps = true;

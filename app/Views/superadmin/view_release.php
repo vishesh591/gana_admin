@@ -345,7 +345,7 @@
                         </div>
                         <div class="card-body">
                             <div class="d-flex flex-wrap gap-2">
-                                <a href="<?= base_url('superadmin/releases/edit/' . $release['id']) ?>" class="btn btn-primary">
+                                <a href="<?= base_url('releases/edit/' . $release['id']) ?>" class="btn btn-primary">
                                     <i data-feather="edit-3" class="me-2"></i>Edit Release
                                 </a>
 
@@ -372,7 +372,7 @@
                                     <?php endif; ?>
                                 <?php endif; ?>
 
-                                <a href="<?= base_url('superadmin/releases') ?>" class="btn btn-outline-secondary">
+                                <a href="<?= base_url('releases') ?>" class="btn btn-outline-secondary">
                                     <i data-feather="arrow-left" class="me-2"></i>Back to Releases
                                 </a>
                             </div>
@@ -401,7 +401,7 @@
             // Create a form and submit it for takedown request
             const form = document.createElement('form');
             form.method = 'POST';
-            form.action = '<?= base_url('superadmin/releases/takedown/') ?>' + releaseId;
+            form.action = '<?= base_url('releases/takedown/') ?>' + releaseId;
 
             // Add CSRF token
             const csrfInput = document.createElement('input');

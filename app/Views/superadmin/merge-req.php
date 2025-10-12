@@ -47,7 +47,7 @@
 <div class="modal fade" id="newClaimRequestModal" tabindex="-1" aria-labelledby="newClaimRequestModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg modal-dialog-centered">
         <div class="modal-content rounded-4">
-            <form id="newClaimForm" action="<?= site_url('superadmin/claim-reel-merge/store')?>" method="post">
+            <form id="newClaimForm" action="<?= site_url('claim-reel-merge/store')?>" method="post">
                 <div class="modal-header">
                     <h5 class="modal-title" id="newClaimRequestModalLabel">New Claim/Reel Merge Form</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>

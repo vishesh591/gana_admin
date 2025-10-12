@@ -40,10 +40,26 @@ class ClaimingRequestController extends BaseController
     // DataTable for the “Claiming Request” page (simple list)
     public function getClaimingRequestJson()
     {
-        $rows = $this->claimingRequestModel
-            ->select('id, song_name, artist_name, upc, isrc, status')
-            ->orderBy('created_at', 'DESC')
-            ->findAll();
+        $session = session();
+        $user = $session->get('user');
+        $userId = $user['id'];
+        $userRole = $user['role_id'] ?? 3;
+        
+        // Check if user is admin/superadmin (role_id 1 or 2)
+        if (in_array($userRole, [1, 2])) {
+            // Admin/Superadmin users see all records
+            $rows = $this->claimingRequestModel
+                ->select('id, song_name, artist_name, upc, isrc, status')
+                ->orderBy('created_at', 'DESC')
+                ->findAll();
+        } else {
+            // Non-admin users see only their own records (created_by)
+            $rows = $this->claimingRequestModel
+                ->select('id, song_name, artist_name, upc, isrc, status')
+                ->where('created_by', $userId)
+                ->orderBy('created_at', 'DESC')
+                ->findAll();
+        }
 
         $data = array_map(function ($r) {
             return [
@@ -58,6 +74,7 @@ class ClaimingRequestController extends BaseController
 
         return $this->response->setJSON(['data' => $data]);
     }
+
 
     public function store()
     {
@@ -98,7 +115,8 @@ class ClaimingRequestController extends BaseController
             'isrc'           => $release['isrc'] ?? '',
             'video_links'    => $this->request->getPost('videoLink'),
             'removal_reason' => $this->request->getPost('reason'),
-            'status'         => 'Pending'
+            'status'         => 'Pending',
+            'created_by'     => session()->get('user')['id'],
         ];
 
         $this->claimingRequestRepo->create($data);

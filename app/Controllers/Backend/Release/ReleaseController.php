@@ -281,6 +281,7 @@ class ReleaseController extends BaseController
                 'created_at'                => date('Y-m-d H:i:s'),
                 'updated_at'                => date('Y-m-d H:i:s'),
                 'status'                    => (int)$this->request->getPost('status') ?: 1, // Fixed: Ensure integer
+                'created_by'                => session()->get('user')['id'],
             ];
 
             // Save release
@@ -291,11 +292,11 @@ class ReleaseController extends BaseController
                 return $this->response->setJSON([
                     'success' => true,
                     'message' => 'Release created successfully',
-                    'redirect' => '/superadmin/releases'
+                    'redirect' => '/releases'
                 ]);
             }
 
-            return redirect()->to('/superadmin/releases')
+            return redirect()->to('/releases')
                 ->with('success', 'Release created successfully');
         } catch (\Exception $e) {
             log_message('error', 'Release creation failed: ' . $e->getMessage());
@@ -325,7 +326,7 @@ class ReleaseController extends BaseController
                         'error' => 'Release not found'
                     ]);
                 }
-                return redirect()->to('/superadmin/releases')
+                return redirect()->to('/releases')
                     ->with('error', 'Release not found');
             }
 
@@ -454,9 +455,9 @@ class ReleaseController extends BaseController
             $message = $statusMessages[$status] ?? 'Release updated successfully';
 
             // Determine redirect URL based on status
-            $redirectUrl = '/superadmin/releases';
+            $redirectUrl = '/releases';
             if ($status == 3 || $status == 2) { // For delivered or takedown status
-                $redirectUrl = "/superadmin/releases/view/{$id}";
+                $redirectUrl = "/releases/view/{$id}";
             }
 
             if ($this->request->isAJAX()) {
@@ -528,7 +529,7 @@ class ReleaseController extends BaseController
     {
         try {
             if (!$id || !is_numeric($id)) {
-                return redirect()->to('/superadmin/releases')
+                return redirect()->to('/releases')
                     ->with('error', 'Invalid release ID');
             }
 
@@ -539,7 +540,7 @@ class ReleaseController extends BaseController
             $release = $this->releaseRepo->find($id);
 
             if (!$release) {
-                return redirect()->to('/superadmin/releases')
+                return redirect()->to('/releases')
                     ->with('error', 'Release not found');
             }
 
@@ -729,7 +730,7 @@ class ReleaseController extends BaseController
     {
         try {
             if (!$id || !is_numeric($id)) {
-                return redirect()->to('/superadmin/releases')
+                return redirect()->to('/releases')
                     ->with('error', 'Invalid release ID');
             }
 
@@ -738,12 +739,12 @@ class ReleaseController extends BaseController
 
             $release = $this->releaseRepo->find($id);
             if (!$release) {
-                return redirect()->to('/superadmin/releases')
+                return redirect()->to('/releases')
                     ->with('error', 'Release not found');
             }
 
             if ($release['status'] == 2) {
-                return redirect()->to('/superadmin/releases/view/' . $id)
+                return redirect()->to('/releases/view/' . $id)
                     ->with('warning', 'Release is already taken down');
             }
 
@@ -774,10 +775,10 @@ class ReleaseController extends BaseController
 
             if ($result) {
                 log_message('info', $logMessage);
-                return redirect()->to('/superadmin/releases/view/' . $id)
+                return redirect()->to('/releases/view/' . $id)
                     ->with('success', $successMessage);
             } else {
-                return redirect()->to('/superadmin/releases/view/' . $id)
+                return redirect()->to('/releases/view/' . $id)
                     ->with('error', 'Failed to process takedown request. Please try again');
             }
         } catch (\Exception $e) {

@@ -325,7 +325,7 @@ class ReleaseDraftsController extends BaseController
             'audio_store_guidelines' => $draft['audio_store_guidelines']
         ];
 
-        $formAction = base_url('superadmin/releases/store');
+        $formAction = base_url('releases/store');
         $formMethod = 'post';
 
         $page_array = [

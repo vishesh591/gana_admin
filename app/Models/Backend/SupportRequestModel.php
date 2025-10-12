@@ -14,7 +14,8 @@ class SupportRequestModel extends Model
         'email',
         'subject',
         'message',
-        'status'
+        'status',
+        'created_by'
     ];
 
     protected $useTimestamps = true;

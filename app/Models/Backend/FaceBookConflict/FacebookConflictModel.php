@@ -44,6 +44,7 @@ class FacebookConflictModel extends Model
         'supporting_document_path',
         'created_at',
         'updated_at',
+        'created_by'
     ];
 
     protected $useTimestamps = true;

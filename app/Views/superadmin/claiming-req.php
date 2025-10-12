@@ -46,7 +46,7 @@
 <div class="modal fade" id="claimingRequestModal" tabindex="-1" aria-labelledby="claimingRequestModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg modal-dialog-centered">
         <div class="modal-content rounded-4">
-            <form id="claimRequestForm" action="<?= base_url('superadmin/claiming-requests') ?>" method="POST">
+            <form id="claimRequestForm" action="<?= base_url('claiming-requests') ?>" method="POST">
                 <div class="modal-header">
                     <h5 class="modal-title" id="claimingRequestModalLabel">Claim Removal Request</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>

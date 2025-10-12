@@ -15,16 +15,33 @@ if (!function_exists('getRoleNameById')) {
 }
 
 
-if (!function_exists('getUserRoleSlug')) {
-    function getUserRoleSlug()
+if (!function_exists('user_has_role')) {
+    function user_has_role($allowedRoles = [])
     {
-        $session = session();
-        $user = $session->get('user'); // adjust key as per your session data
+        $user = session()->get('user');
+        $userRole = strtolower($user['role'] ?? '');
+        return in_array($userRole, (array)$allowedRoles);
+    }
+}
 
-        if (!$user || !isset($user['role'])) {
-            return null;
-        }
+if (!function_exists('get_user_role')) {
+    function get_user_role()
+    {
+        $user = session()->get('user');
+        return strtolower($user['role'] ?? '');
+    }
+}
 
-        return $roleMap[$user['role']] ?? $user['role'];
+if (!function_exists('is_admin')) {
+    function is_admin()
+    {
+        return user_has_role(['superadmin', 'subadmin']);
+    }
+}
+
+if (!function_exists('is_content_creator')) {
+    function is_content_creator()
+    {
+        return user_has_role(['superadmin', 'distributor', 'label']);
     }
 }

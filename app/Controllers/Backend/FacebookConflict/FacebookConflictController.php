@@ -374,7 +374,7 @@ class FacebookConflictController extends BaseController
     private function getOwnershipConflictsData()
     {
         $facebookConflict = new FacebookConflictModel();
-        $conflicts = $facebookConflict
+        $conflicts = $facebookConflict->whereIn('status', ['In Review', 'Rejected'])
             ->orderBy('id', 'DESC')
             ->findAll();
 
@@ -583,6 +583,8 @@ class FacebookConflictController extends BaseController
             };
 
             try {
+                $created_by = session()->get('user')['id'] ?? null;
+
                 $insertData = [
                     'reference_copyright_id' => $this->safeBigInt($get('reference_copyright_id')),
                     'reference_copyright_creation_date' => $this->safeDate($get('reference_copyright_creation_date')),
@@ -617,6 +619,7 @@ class FacebookConflictController extends BaseController
                     'reference_asset_id' => $this->safeBigInt($get('reference_asset_id')),
                     'other_party_reference_overlap_percentage' => $this->safeDecimal($get('other_party_reference_overlap_percentage')),
                     'other_party_reference_overlap_duration_ms' => $this->safeBigInt($get('other_party_reference_overlap_duration_ms')),
+                    'created_by' => $created_by,
                 ];
 
                 // insert conflict
