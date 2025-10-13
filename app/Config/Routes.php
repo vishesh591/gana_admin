@@ -346,7 +346,7 @@ $routes->group('', ['filter' => 'role:superadmin,subadmin'], function ($routes) 
     
     $routes->get('support/data', 'Backend\Support\SupportController::data');
     $routes->post('support/update-status/(:num)', 'Backend\Support\SupportController::updateStatus/$1');
-    
+    $routes->get('support', 'Backend\Support\SupportController::index');
     // Label status management - admin only
     $routes->post('labels/update-status', 'Backend\Label\LabelController::updateStatus');
     
