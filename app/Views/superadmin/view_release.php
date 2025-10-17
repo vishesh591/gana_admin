@@ -345,10 +345,11 @@
                         </div>
                         <div class="card-body">
                             <div class="d-flex flex-wrap gap-2">
-                                <a href="<?= base_url('releases/edit/' . $release['id']) ?>" class="btn btn-primary">
-                                    <i data-feather="edit-3" class="me-2"></i>Edit Release
-                                </a>
-
+                                <?php if (in_array($user['role_id'] ?? 3, [1, 2])): ?>
+                                    <a href="<?= base_url('releases/edit/' . $release['id']) ?>" class="btn btn-primary">
+                                        <i data-feather="edit-3" class="me-2"></i>Edit Release
+                                    </a>
+                                <?php endif; ?>
                                 <?php if ($release['status'] == 2): ?>
                                     <!-- Already taken down -->
                                     <span class="badge bg-danger fs-6 px-3 py-2">

@@ -19,16 +19,32 @@ class RelocationRequestController extends BaseController
 
     public function index()
     {
-        $releases = $this->releaseModel
-            ->select('g_release.id, g_release.title, g_release.upc_ean, g_release.isrc, g_artists.name as artist_name')
-            ->join('g_artists', 'g_artists.id = g_release.artist_id', 'left')
-            ->findAll();
+        $session = session();
+        $user = $session->get('user');
+        $userId = $user['id'];
+        $userRole = $user['role_id'] ?? 3;
+        
+       if (in_array($userRole, [1, 2])) {
+            $releases = $this->releaseModel
+                ->select('g_release.id, g_release.title, g_release.upc_ean, g_release.isrc, g_artists.name as artist_name')
+                ->join('g_artists', 'g_artists.id = g_release.artist_id', 'left')
+                ->where('g_release.status', 3) // Only delivered releases
+                ->findAll();
+        } else {
+            $releases = $this->releaseModel
+                ->select('g_release.id, g_release.title, g_release.upc_ean, g_release.isrc, g_artists.name as artist_name')
+                ->join('g_artists', 'g_artists.id = g_release.artist_id', 'left')
+                ->where('g_release.created_by', $userId)
+                ->where('g_release.status', 3) // Only delivered releases
+                ->findAll();
+        }
 
         return view('superadmin/index', [
             'file_name' => 'relocation-req',
             'releases'  => $releases,
         ]);
     }
+
 
     public function getRelocationRequestJson()
     {

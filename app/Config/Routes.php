@@ -275,7 +275,9 @@ $routes->group('', ['filter' => 'auth'], function ($routes) {
     $routes->get('releases/drafts', 'Backend\Release\ReleaseDraftsController::getDrafts');
     $routes->get('releases/drafts/load/(:num)', 'Backend\Release\ReleaseDraftsController::loadDraft/$1');
     $routes->delete('releases/drafts/(:num)', 'Backend\Release\ReleaseDraftsController::deleteDraft/$1');
-    
+    $routes->get('add-release', 'Backend\Release\ReleaseController::addRelease');
+    $routes->post('releases/takedown/(:num)', 'Backend\Release\ReleaseController::takedown_release/$1');
+    $routes->get('releases/export-csv', 'Backend\Release\ReleaseController::exportCsv');
     // Artists and Labels - common for all
     $routes->get('artists', 'Backend\Artist\ArtistController::index');
     $routes->get('api/artists', 'Backend\Artist\ArtistController::getArtistsJson');

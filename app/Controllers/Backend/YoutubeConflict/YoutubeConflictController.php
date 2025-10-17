@@ -127,11 +127,42 @@ class YoutubeConflictController extends BaseController
 
     private function getConflictsData()
     {
+        $session = session();
+        $user = $session->get('user');
+        $userId = $user['id'] ?? null;
+        $userRole = $user['role_id'] ?? 3;
+        
         $youtubeConflict = new YoutubeConflictModel();
-        $conflicts = $youtubeConflict
+        
+        $userISRCs = [];
+        if (!in_array($userRole, [1, 2])) {
+            $releaseModel = new \App\Models\Backend\ReleaseModel();
+            $userReleases = $releaseModel
+                ->select('isrc')
+                ->where('created_by', $userId)
+                ->where('isrc IS NOT NULL')
+                ->where('isrc !=', '')
+                ->findAll();
+            
+            $userISRCs = array_column($userReleases, 'isrc');
+            $userISRCs = array_filter($userISRCs); // Remove empty values
+        }
+        
+        // Build the query
+        $query = $youtubeConflict
             ->orderBy('id', 'DESC')
-            ->whereIn('status', ['In Review', 'Action Required', 'Rejected'])
-            ->findAll();
+            ->whereIn('status', ['In Review', 'Action Required', 'Rejected']);
+        
+        // Apply ISRC filtering for non-admin users
+        if (!in_array($userRole, [1, 2])) {
+            if (empty($userISRCs)) {
+                // User has no releases, return empty data
+                return [];
+            }
+            $query->whereIn('isrc', $userISRCs);
+        }
+        
+        $conflicts = $query->findAll();
 
         $data = [];
 
@@ -216,6 +247,7 @@ class YoutubeConflictController extends BaseController
 
         return $data;
     }
+
 
 
     /**

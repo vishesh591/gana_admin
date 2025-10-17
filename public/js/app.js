@@ -2079,6 +2079,7 @@ document.addEventListener("DOMContentLoaded", function () {
         rejected: "bi-x-circle-fill text-danger",
         review: "bi-hourglass-split text-warning",
         takedown: "bi-x-circle-fill text-secondary", // Updated icon for takedown
+        takedown_requested: "bi-clock-history text-secondary", // New status
       };
       return `<i class="bi ${
         icons[status] || "bi-question-circle-fill text-muted"

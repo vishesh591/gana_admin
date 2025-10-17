@@ -31,7 +31,8 @@ class ReleaseDraftsController extends BaseController
 
         try {
             $session = session();
-            $userId = $session->get('user_id') ?: $session->get('user.id');
+            $user = $session->get('user');
+            $userId = $user['id'] ?? null;
 
             if (!$userId) {
                 return $this->response->setJSON([
@@ -180,8 +181,9 @@ class ReleaseDraftsController extends BaseController
     public function getDrafts()
     {
         $session = session();
-        // FIXED: Use consistent session key
-        $userId = $session->get('user_id') ?: $session->get('user.id');
+        $user = $session->get('user');
+        $userId = $user['id'] ?? null;
+        $userRole = $user['role_id'] ?? 3;
 
         if (!$userId) {
             if ($this->request->isAJAX()) {
@@ -194,9 +196,18 @@ class ReleaseDraftsController extends BaseController
         }
 
         try {
-            $drafts = $this->draftModel->where('user_id', $userId)
-                ->orderBy('updated_at', 'DESC')
-                ->findAll();
+            // Check if user is admin/superadmin (role_id 1 or 2)
+            if (in_array($userRole, [1, 2])) {
+                // Admin users see all drafts
+                $drafts = $this->draftModel
+                    ->orderBy('updated_at', 'DESC')
+                    ->findAll();
+            } else {
+                // Non-admin users see only their own drafts (created_by)
+                $drafts = $this->draftModel->where('user_id', $userId)
+                    ->orderBy('updated_at', 'DESC')
+                    ->findAll();
+            }
 
             if ($this->request->isAJAX()) {
                 // Format data for DataTables
@@ -238,14 +249,15 @@ class ReleaseDraftsController extends BaseController
         }
     }
 
-
     /**
      * Load draft data into form
      */
     public function loadDraft($draftId)
     {
         $session = session();
-        $userId = $session->get('user_id') ?: $session->get('user.id');
+        $user = $session->get('user');
+        $userId = $user['id'] ?? null;
+        $userRole = $user['role_id'] ?? 3;
 
         if (!$userId) {
             return redirect()->to('/login');
@@ -253,8 +265,14 @@ class ReleaseDraftsController extends BaseController
 
         $draft = $this->draftModel->find($draftId);
 
-        if (!$draft || $draft['user_id'] != $userId) {
-            return redirect()->back()->with('error', 'Draft not found or access denied');
+        // Role-based access check
+        if (!$draft) {
+            return redirect()->back()->with('error', 'Draft not found');
+        }
+
+        // Admin can access all drafts, others only their own
+        if (!in_array($userRole, [1, 2]) && $draft['user_id'] != $userId) {
+            return redirect()->back()->with('error', 'Access denied');
         }
 
         $labelModel = new \App\Models\Backend\LabelModel();
@@ -262,17 +280,23 @@ class ReleaseDraftsController extends BaseController
         $genreModel = new \App\Models\Backend\GenreModel();
         $languageModel = new \App\Models\Backend\LanguageModel();
 
-        // Get user info
-        $user = $session->get('user') ?: [];
-
-        if (in_array($user['role_id'] ?? 3, [1, 2])) {
-
+        // Role-based filtering
+        if (in_array($userRole, [1, 2])) {
+            // Admin/Superadmin: all labels and all artists
             $labels = $labelModel->findAll();
+            $artists = $artistModel->findAll();
         } else {
+            // Non-admin: only their labels and artists from their primary label
             $labels = $labelModel->where('user_id', $userId)->findAll();
+            $userPrimaryLabel = $user['primary_label_name'] ?? null;
+
+            if ($userPrimaryLabel) {
+                $artists = $artistModel->where('label_name', $userPrimaryLabel)->findAll();
+            } else {
+                $artists = [];
+            }
         }
 
-        $artists = $artistModel->findAll();
         $genres = $genreModel->findAll();
         $languages = $languageModel->findAll();
 
@@ -339,7 +363,7 @@ class ReleaseDraftsController extends BaseController
             'isDraft' => true,
 
             'labels' => $labels,
-            'artists' => $artists,
+            'artists' => $artists, // Now filtered based on role and primary_label_name
             'genres' => $genres,
             'languages' => $languages,
 
@@ -354,15 +378,15 @@ class ReleaseDraftsController extends BaseController
     }
 
 
-
     /**
      * Delete draft
      */
     public function deleteDraft($draftId)
     {
         $session = session();
-        // FIXED: Use consistent session key
-        $userId = $session->get('user_id') ?: $session->get('user.id');
+        $user = $session->get('user');
+        $userId = $user['id'] ?? null;
+        $userRole = $user['role_id'] ?? 3;
 
         if (!$userId) {
             return $this->response->setJSON([
@@ -373,10 +397,19 @@ class ReleaseDraftsController extends BaseController
 
         $draft = $this->draftModel->find($draftId);
 
-        if (!$draft || $draft['user_id'] != $userId) {
+        // Role-based access check
+        if (!$draft) {
             return $this->response->setJSON([
                 'success' => false,
-                'error' => 'Draft not found or access denied'
+                'error' => 'Draft not found'
+            ]);
+        }
+
+        // Admin can delete all drafts, others only their own
+        if (!in_array($userRole, [1, 2]) && $draft['user_id'] != $userId) {
+            return $this->response->setJSON([
+                'success' => false,
+                'error' => 'Access denied'
             ]);
         }
 
@@ -396,6 +429,47 @@ class ReleaseDraftsController extends BaseController
         ]);
     }
 
+    public function dashboard()
+    {
+        $session = session();
+        $user = $session->get('user');
+        $userId = $user['id'] ?? null;
+        $userRole = $user['role_id'] ?? 3;
+
+        if (!$userId) {
+            return redirect()->to('/login');
+        }
+
+        // Role-based data filtering
+        if (in_array($userRole, [1, 2])) {
+            // Admin users see all data
+            $releaseCounts = $this->releaseRepo->countAllData();
+            $revenueData = $this->releaseRepo->getTotalRevenue();
+            $drafts = $this->draftModel
+                ->orderBy('updated_at', 'DESC')
+                ->limit(10)
+                ->findAll();
+        } else {
+            // Non-admin users see only their own data
+            $releaseCounts = $this->releaseRepo->countAllData($userId); // Pass userId to filter
+            $revenueData = $this->releaseRepo->getTotalRevenue($userId); // Pass userId to filter
+            $drafts = $this->draftModel->where('user_id', $userId)
+                ->orderBy('updated_at', 'DESC')
+                ->limit(10)
+                ->findAll();
+        }
+
+        $totalRevenue = $revenueData['total_revenue'] ?? 0;
+
+        $page_array = [
+            'file_name' => 'dashboard',
+            'releaseCounts' => $releaseCounts,
+            'totalRevenue' => number_format($totalRevenue, 2),
+            'drafts' => $drafts
+        ];
+
+        return view('superadmin/index', $page_array);
+    }
 
     private function calculateCompletionPercentage($formData)
     {
@@ -490,37 +564,5 @@ class ReleaseDraftsController extends BaseController
         }
 
         return null;
-    }
-
-
-    public function dashboard()
-    {
-        $session = session();
-        $userId = $session->get('user_id') ?: $session->get('user.id');
-
-        if (!$userId) {
-            return redirect()->to('/login');
-        }
-
-        $releaseCounts = $this->releaseRepo->countAllData();
-
-        // Get total revenue
-        $revenueData = $this->releaseRepo->getTotalRevenue();
-        $totalRevenue = $revenueData['total_revenue'] ?? 0;
-
-        // Get user's drafts for the table
-        $drafts = $this->draftModel->where('user_id', $userId)
-            ->orderBy('updated_at', 'DESC')
-            ->limit(10)
-            ->findAll();
-
-        $page_array = [
-            'file_name' => 'dashboard',
-            'releaseCounts' => $releaseCounts,
-            'totalRevenue' => number_format($totalRevenue, 2),
-            'drafts' => $drafts
-        ];
-
-        return view('superadmin/index', $page_array);
     }
 }

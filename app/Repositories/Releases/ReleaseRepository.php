@@ -60,28 +60,49 @@ class ReleaseRepository
         return $this->model->update($id, $data);
     }
 
-    public function countAllData()
+    public function countAllData($userId = null)
     {
-        return $this->model->select("
+        $query = $this->model->select("
         COUNT(*) as total,
         SUM(CASE WHEN status = 3 THEN 1 ELSE 0 END) as delivered,
         SUM(CASE WHEN status = 1 THEN 1 ELSE 0 END) as in_review,
         SUM(CASE WHEN status = 4 THEN 1 ELSE 0 END) as rejected,
         SUM(CASE WHEN status = 2 THEN 1 ELSE 0 END) as takedown,
         SUM(CASE WHEN status = 5 THEN 1 ELSE 0 END) as approved
-    ")
-            ->first();
+    ");
+
+        // If userId is provided, filter by created_by
+        if ($userId) {
+            $query->where('created_by', $userId);
+        }
+
+        return $query->first();
     }
 
     /**
      * Get total revenue from sale_price
      */
-    public function getTotalRevenue()
+    public function getTotalRevenue($userId = null)
     {
-        return $this->model
+        $query = $this->model
             ->select("SUM(CAST(sale_price AS DECIMAL(10,2))) as total_revenue")
             ->where('sale_price IS NOT NULL')
-            ->where('sale_price !=', '')
-            ->first();
+            ->where('sale_price !=', '');
+
+        // If userId is provided, filter by created_by
+        if ($userId) {
+            $query->where('created_by', $userId);
+        }
+
+        return $query->first();
     }
+
+    public function findAllByUser($userId)
+    {
+        return $this->model
+            ->where('created_by', $userId)
+            ->orderBy('created_at', 'DESC')
+            ->findAll();
+    }
+
 }

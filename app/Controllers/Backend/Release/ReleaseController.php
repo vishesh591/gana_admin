@@ -17,10 +17,23 @@ class ReleaseController extends BaseController
 
     public function index()
     {
-        $releaseCounts = $this->releaseRepo->countAllData();
+        $session = session();
+        $user = $session->get('user');
+        $userId = $user['id'] ?? null;
+        $userRole = $user['role_id'] ?? 3;
+
+        if (in_array($userRole, [1, 2])) {
+            $releaseCounts = $this->releaseRepo->countAllData();
+        } else {
+            $releaseCounts = $this->releaseRepo->countAllData($userId);
+        }
 
         if ($this->request->isAJAX()) {
-            $releases = $this->releaseRepo->findAll();
+            if (in_array($userRole, [1, 2])) {
+                $releases = $this->releaseRepo->findAll();
+            } else {
+                $releases = $this->releaseRepo->findAllByUser($userId);
+            }
 
             $statusMap = [
                 1 => 'review',
@@ -28,6 +41,7 @@ class ReleaseController extends BaseController
                 3 => 'delivered',
                 4 => 'rejected',
                 5 => 'approved',
+                6 => 'takedown_requested'
             ];
 
             $artistModel = new \App\Models\Backend\ArtistModel();
@@ -58,6 +72,7 @@ class ReleaseController extends BaseController
         ];
         return view('superadmin/index', $page_array);
     }
+
 
     /**
      * Get rejection messages for a release
@@ -144,6 +159,8 @@ class ReleaseController extends BaseController
     //         ]);
     // }
 
+
+
     public function edit($id)
     {
         $session = session();
@@ -156,23 +173,36 @@ class ReleaseController extends BaseController
             throw new PageNotFoundException('Release not found');
         }
 
+        $isAdmin = in_array($user['role_id'], [1, 2]);
+        if (!$isAdmin && $release['status'] !== 4) {
+            return redirect()->to("/releases/view/{$id}");
+        }
+
         // Get labels (same logic as addRelease)
         $labels = [];
         $labelModel = new \App\Models\Backend\LabelModel();
         $artistModel = new \App\Models\Backend\ArtistModel();
         $genreModel = new \App\Models\Backend\GenreModel();
         $languageModel = new \App\Models\Backend\LanguageModel();
+
         if (in_array($user['role_id'], [1, 2])) {
-            // Admins: all labels
+            // Admin/Superadmin: all labels and all artists
             $labels = $labelModel->findAll();
+            $artists = $artistModel->findAll();
         } else {
-            // Normal users: only their labels
             $labels = $labelModel->getLabelsByUser($user['id']);
+            $userPrimaryLabel = $user['primary_label_name'] ?? null;
+
+            if ($userPrimaryLabel) {
+                $artists = $artistModel->where('label_name', $userPrimaryLabel)->findAll();
+            } else {
+                $artists = [];
+            }
         }
-        $artists = $artistModel->findAll();
+
         $genres = $genreModel->findAll();
         $languages = $languageModel->findAll();
-        // FIXED: Decode JSON fields properly
+
         if (!empty($release['stores_ids'])) {
             $storesDecoded = json_decode($release['stores_ids'], true);
             // Handle case where stores are nested in an array
@@ -203,13 +233,15 @@ class ReleaseController extends BaseController
             'labels'         => $labels,
             'release'        => $release,
             'isEdit'         => true,
-            'artists'         => $artists,
-            'genres'          => $genres,
-            'languages'       => $languages
+            'artists'        => $artists,
+            'genres'         => $genres,
+            'languages'      => $languages
         ];
 
         return view('superadmin/index', $page_array);
     }
+
+
 
     // Show create form
     public function create()
@@ -503,23 +535,33 @@ class ReleaseController extends BaseController
         $artistModel = new \App\Models\Backend\ArtistModel();
         $genreModel = new \App\Models\Backend\GenreModel();
         $languageModel = new \App\Models\Backend\LanguageModel();
+
         if (in_array($user['role_id'], [1, 2])) {
             $labels = $labelModel->findAll();
+            $artists = $artistModel->findAll();
         } else {
             $labels = $labelModel->getLabelsByUser($user['id']);
+            $userPrimaryLabel = $user['primary_label_name'] ?? null;
+
+            if ($userPrimaryLabel) {
+                $artists = $artistModel->where('label_name', $userPrimaryLabel)->findAll();
+            } else {
+                $artists = [];
+            }
         }
-        $artists = $artistModel->findAll();
+
         $genres = $genreModel->findAll();
         $languages = $languageModel->findAll();
+
         $page_array = [
             'file_name'      => 'add-release',
             'user'           => $user,
             'labels'         => $labels,
             'release'        => null,
             'isEdit'         => false,
-            'artists'         => $artists,
-            'genres'          => $genres,
-            'languages'       => $languages
+            'artists'        => $artists,
+            'genres'         => $genres,
+            'languages'      => $languages
         ];
 
         return view('superadmin/index', $page_array);
@@ -674,6 +716,7 @@ class ReleaseController extends BaseController
                 3 => 'Delivered',
                 4 => 'Rejected',
                 5 => 'Approved',
+                6 => 'Takedown Requested'
             ];
             $status = $statusMapping[$release['status']] ?? $release['status'];
 

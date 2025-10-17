@@ -28,10 +28,8 @@ class ReleaseDraftModel extends Model
         // Step 4 - Dates & Pricing (FIXED: Match migration fields)
         'release_date', 'pre_sale_date', 'original_release_date', 
         'release_price', 'sale_price',
-        // Step 5 - Terms (FIXED: Match migration fields)
         'content_guidelines', 'isrc_guidelines', 'youtube_guidelines', 
         'audio_store_guidelines',
-        // Meta
         'form_data_json', 'created_at', 'updated_at','created_by'
     ];
 
