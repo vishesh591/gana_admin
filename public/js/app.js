@@ -6114,164 +6114,173 @@ async function saveDraft() {
 
   // FIXED: Form submission with proper button capture and rejection message handling
   document.getElementById('releaseForm').addEventListener('submit', function(e) {
-    e.preventDefault();
-    
-    console.log('Form submission started');
-    console.log('Submitting button:', submittingButton);
-    console.log('Rejection message:', rejectionMessage);
-
-    // Validate all steps first (skip for rejection)
-    if (!submittingButton || submittingButton.value !== '4') {
-      let allStepsValid = true;
-      for (let step = 1; step <= totalSteps; step++) {
-        if (stepValidators[step] && !stepValidators[step]()) {
-          allStepsValid = false;
-          showStep(step);
-          break;
-        }
-      }
-
-      if (!allStepsValid) {
-        alert('Please complete all required fields before submitting.');
-        submittingButton = null;
-        return;
-      }
-    }
-
-    const form = e.target;
-    const formData = new FormData(form);
-
-    // CRITICAL FIX: Use the captured button data
-    if (submittingButton && submittingButton.name && submittingButton.value) {
-      // Remove any existing status fields first
-      formData.delete('status');
-      // Add the clicked button's status
-      formData.set(submittingButton.name, submittingButton.value);
-      console.log(`ADDED BUTTON STATUS: ${submittingButton.name} = ${submittingButton.value}`);
-    }
-
-    // Add rejection message if this is a rejection
-    if (submittingButton && submittingButton.value === '4' && rejectionMessage) {
-      formData.set('message', rejectionMessage);
-      console.log('ADDED REJECTION MESSAGE:', rejectionMessage);
-    } else {
-      // Fallback: try activeElement
-      const activeBtn = document.activeElement;
-      if (activeBtn && activeBtn.type === 'submit' && activeBtn.name && activeBtn.value) {
-        formData.delete('status');
-        formData.set(activeBtn.name, activeBtn.value);
-        console.log(`FALLBACK - ADDED ACTIVE BUTTON: ${activeBtn.name} = ${activeBtn.value}`);
-      } else {
-        // Last resort: default status
-        console.log('NO BUTTON CAPTURED - USING DEFAULT STATUS 1');
-        formData.set('status', '1');
-      }
-    }
-
-    // Debug: Log all FormData contents
-    console.log('FINAL FORMDATA CONTENTS:');
-    for (let [key, value] of formData.entries()) {
-      if (key === 'status' || key.includes('status') || key === 'message') {
-        console.log(`${key}: ${value}`);
-      } else {
-        console.log(`${key}: ${value}`);
-      }
-    }
-
-    // Show loading state
-    const submitBtns = form.querySelectorAll('button[type="submit"], button[id="rejectBtn"]');
-    const originalButtonContent = new Map();
-    
-    submitBtns.forEach(btn => {
-      originalButtonContent.set(btn, btn.innerHTML);
-      btn.disabled = true;
-      btn.innerHTML = '<i class="spinner-border spinner-border-sm me-1"></i> Processing...';
-    });
-
-    fetch(form.action, {
-      method: 'POST',
-      body: formData,
-      headers: {
-        'X-Requested-With': 'XMLHttpRequest',
-      },
-    })
-    .then(response => {
-      console.log('Response status:', response.status);
-      if (!response.ok) {
-        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-      }
-      return response.text();
-    })
-    .then(text => {
-      console.log('Raw response:', text);
-      if (!text || !text.trim()) {
-        return { success: true, message: 'Release processed successfully!' };
-      }
+      e.preventDefault();
       
-      try {
-        const parsed = JSON.parse(text);
-        console.log('Parsed JSON:', parsed);
-        return parsed;
-      } catch (parseError) {
-        console.log('JSON parse failed:', parseError.message);
-        throw new Error('Invalid JSON response from server');
-      }
-    })
-    .then(data => {
-      console.log('Processing response data:', data);
-      
-      if (!data) {
-        throw new Error('No response data received from server');
-      }
+      console.log('Form submission started');
+      console.log('Submitting button:', submittingButton);
+      console.log('Rejection message:', rejectionMessage);
 
-      if (data.success === true) {
-        const message = data.message || 'Release processed successfully!';
-        alert(message);
-        window.location.href = data.redirect || '/releases';
-      } else if (data.success === false) {
-        throw new Error(data.error || data.message || 'Processing failed');
-      } else if (data.message && !data.hasOwnProperty('success')) {
-        alert(data.message);
-        window.location.href = data.redirect || '/releases';
-      } else {
-        console.warn('Unexpected response format:', data);
-        throw new Error('Unexpected response format from server');
-      }
-    })
-    .catch(error => {
-      console.error('Submission error:', error);
-      alert('Error: ' + error.message);
-    })
-    .finally(() => {
-      // Restore buttons
-      submitBtns.forEach(btn => {
-        btn.disabled = false;
-        const originalContent = originalButtonContent.get(btn);
-        if (originalContent) {
-          btn.innerHTML = originalContent;
-        } else {
-          // Fallback restoration
-          if (btn.innerHTML.includes('Approve') && btn.name === 'status' && btn.value === '5') {
-            btn.innerHTML = '<i data-feather="check" class="me-1"></i> Approve';
-          } else if (btn.innerHTML.includes('Reject') && btn.id === 'rejectBtn') {
-            btn.innerHTML = '<i data-feather="x" class="me-1"></i> Reject';
-          } else {
-            btn.innerHTML = '<i data-feather="check" class="me-1"></i> Submit Release';
+      // Validate all steps first (skip for rejection)
+      if (!submittingButton || submittingButton.value !== '4') {
+        let allStepsValid = true;
+        for (let step = 1; step <= totalSteps; step++) {
+          if (stepValidators[step] && !stepValidators[step]()) {
+            allStepsValid = false;
+            showStep(step);
+            break;
           }
         }
+
+        if (!allStepsValid) {
+          alert('Please complete all required fields before submitting.');
+          submittingButton = null;
+          return;
+        }
+      }
+
+      const form = e.target;
+      const formData = new FormData(form);
+
+      // CRITICAL FIX: Use the captured button data
+      if (submittingButton && submittingButton.name && submittingButton.value) {
+        // Remove any existing status fields first
+        formData.delete('status');
+        // Add the clicked button's status
+        formData.set(submittingButton.name, submittingButton.value);
+        console.log(`ADDED BUTTON STATUS: ${submittingButton.name} = ${submittingButton.value}`);
+        
+        // Add rejection message if this is a rejection
+        if (submittingButton.value === '4' && rejectionMessage) {
+          formData.set('message', rejectionMessage);
+          console.log('ADDED REJECTION MESSAGE:', rejectionMessage);
+        }
+      } else {
+        // Fallback: try activeElement
+        const activeBtn = document.activeElement;
+        if (activeBtn && activeBtn.type === 'submit' && activeBtn.name && activeBtn.value) {
+          formData.delete('status');
+          formData.set(activeBtn.name, activeBtn.value);
+          console.log(`FALLBACK - ADDED ACTIVE BUTTON: ${activeBtn.name} = ${activeBtn.value}`);
+        } else {
+          // FIXED: Only set default status for new releases (not edit mode)
+          // Check if this is edit mode by looking for release data
+          const isEditMode = formData.get('release_id') || document.querySelector('input[name="release_id"]');
+          if (!isEditMode) {
+            console.log('NEW RELEASE - USING DEFAULT STATUS 1');
+            formData.set('status', '1');
+          } else {
+            console.log('EDIT MODE - NO DEFAULT STATUS SET (letting backend handle it)');
+            // Don't set any default status in edit mode
+            // Let the backend keep the existing status
+          }
+        }
+      }
+
+      // Debug: Log all FormData contents
+      console.log('FINAL FORMDATA CONTENTS:');
+      for (let [key, value] of formData.entries()) {
+        if (key === 'status' || key.includes('status') || key === 'message') {
+          console.log(`${key}: ${value}`);
+        } else {
+          console.log(`${key}: ${value}`);
+        }
+      }
+
+      // Show loading state
+      const submitBtns = form.querySelectorAll('button[type="submit"], button[id="rejectBtn"]');
+      const originalButtonContent = new Map();
+      
+      submitBtns.forEach(btn => {
+        originalButtonContent.set(btn, btn.innerHTML);
+        btn.disabled = true;
+        btn.innerHTML = '<i class="spinner-border spinner-border-sm me-1"></i> Processing...';
       });
 
-      // Re-initialize feather icons
-      if (typeof feather !== 'undefined') {
-        feather.replace();
-      }
-    })
-    .finally(() => {
-      // Reset the captured button and rejection message
-      submittingButton = null;
-      rejectionMessage = null;
-    });
+      fetch(form.action, {
+        method: 'POST',
+        body: formData,
+        headers: {
+          'X-Requested-With': 'XMLHttpRequest',
+        },
+      })
+      .then(response => {
+        console.log('Response status:', response.status);
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        }
+        return response.text();
+      })
+      .then(text => {
+        console.log('Raw response:', text);
+        if (!text || !text.trim()) {
+          return { success: true, message: 'Release processed successfully!' };
+        }
+        
+        try {
+          const parsed = JSON.parse(text);
+          console.log('Parsed JSON:', parsed);
+          return parsed;
+        } catch (parseError) {
+          console.log('JSON parse failed:', parseError.message);
+          throw new Error('Invalid JSON response from server');
+        }
+      })
+      .then(data => {
+        console.log('Processing response data:', data);
+        
+        if (!data) {
+          throw new Error('No response data received from server');
+        }
+
+        if (data.success === true) {
+          const message = data.message || 'Release processed successfully!';
+          alert(message);
+          window.location.href = data.redirect || '/releases';
+        } else if (data.success === false) {
+          throw new Error(data.error || data.message || 'Processing failed');
+        } else if (data.message && !data.hasOwnProperty('success')) {
+          alert(data.message);
+          window.location.href = data.redirect || '/releases';
+        } else {
+          console.warn('Unexpected response format:', data);
+          throw new Error('Unexpected response format from server');
+        }
+      })
+      .catch(error => {
+        console.error('Submission error:', error);
+        alert('Error: ' + error.message);
+      })
+      .finally(() => {
+        // Restore buttons
+        submitBtns.forEach(btn => {
+          btn.disabled = false;
+          const originalContent = originalButtonContent.get(btn);
+          if (originalContent) {
+            btn.innerHTML = originalContent;
+          } else {
+            // Fallback restoration
+            if (btn.innerHTML.includes('Approve') && btn.name === 'status' && btn.value === '5') {
+              btn.innerHTML = '<i data-feather="check" class="me-1"></i> Approve';
+            } else if (btn.innerHTML.includes('Reject') && btn.id === 'rejectBtn') {
+              btn.innerHTML = '<i data-feather="x" class="me-1"></i> Reject';
+            } else {
+              btn.innerHTML = '<i data-feather="check" class="me-1"></i> Submit Release';
+            }
+          }
+        });
+
+        // Re-initialize feather icons
+        if (typeof feather !== 'undefined') {
+          feather.replace();
+        }
+      })
+      .finally(() => {
+        // Reset the captured button and rejection message
+        submittingButton = null;
+        rejectionMessage = null;
+      });
   });
+
 
   // Release page reject modal code
   document.addEventListener("DOMContentLoaded", function () {

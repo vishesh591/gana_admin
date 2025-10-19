@@ -26,14 +26,12 @@ class ClaimReelMergeController extends BaseController
         $userRole = $user['role_id'] ?? 3;
         
         if (in_array($userRole, [1, 2])) {
-            // Admin users see all delivered releases
             $releases = $this->releaseModel
                 ->select('g_release.id, g_release.title, g_release.upc_ean, g_release.isrc, g_artists.name as artist_name')
                 ->join('g_artists', 'g_artists.id = g_release.artist_id', 'left')
                 ->where('g_release.status', 3)
                 ->findAll();
         } else {
-            // Non-admin users see only their own delivered releases (created_by)
             $releases = $this->releaseModel
                 ->select('g_release.id, g_release.title, g_release.upc_ean, g_release.isrc, g_artists.name as artist_name')
                 ->join('g_artists', 'g_artists.id = g_release.artist_id', 'left')

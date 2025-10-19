@@ -127,10 +127,11 @@
                                     <!-- Normal user: readonly field -->
                                     <?php if (!empty($labels)): ?>
                                         <input type="text" class="form-control" id="labelName" name="labelName" value="<?= esc($labels[0]['label_name']) ?> (<?= esc($labels[0]['primary_label_name']) ?>)" readonly>
-                                        <input type="hidden" name="labelid" value="<?= esc($labels[0]['id']) ?>">
+                                        <input type="hidden" name="label_id" value="<?= esc($labels[0]['id']) ?>">
                                     <?php endif; ?>
                                 <?php endif; ?>
                             </div>
+
                         </div>
 
                         <div class="row">

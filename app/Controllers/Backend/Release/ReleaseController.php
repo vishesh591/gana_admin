@@ -73,7 +73,6 @@ class ReleaseController extends BaseController
         return view('superadmin/index', $page_array);
     }
 
-
     /**
      * Get rejection messages for a release
      */
@@ -127,40 +126,6 @@ class ReleaseController extends BaseController
         }
     }
 
-
-    // public function show($id)
-    // {
-    //     $release = $this->releaseRepo->find($id);
-
-    //     if (!$release) {
-    //         return $this->response
-    //             ->setStatusCode(404)
-    //             ->setJSON(['error' => 'Release not found']);
-    //     }
-
-    //     // Map status integer to readable string
-    //     $statusMap = [
-    //         1 => 'review',
-    //         2 => 'takedown',
-    //         3 => 'delivered',
-    //         4 => 'rejected',
-    //         5 => 'approved',
-    //     ];
-
-    //     $release['status_text'] = isset($statusMap[$release['status']])
-    //         ? $statusMap[$release['status']]
-    //         : 'unknown';
-
-    //     // Optional: include statusMap for frontend buttons
-    //     return $this->response
-    //         ->setJSON([
-    //             'release'   => $release,
-    //             'statusMap' => $statusMap
-    //         ]);
-    // }
-
-
-
     public function edit($id)
     {
         $session = session();
@@ -173,8 +138,10 @@ class ReleaseController extends BaseController
             throw new PageNotFoundException('Release not found');
         }
 
+        // CORRECTED LOGIC: For non-admin users, allow editing ONLY if status is rejected (4)
+        // For all other statuses (1,2,3,5,6), redirect to view mode
         $isAdmin = in_array($user['role_id'], [1, 2]);
-        if (!$isAdmin && $release['status'] !== 4) {
+        if (!$isAdmin && $release['status'] != 4) {
             return redirect()->to("/releases/view/{$id}");
         }
 
@@ -203,6 +170,7 @@ class ReleaseController extends BaseController
         $genres = $genreModel->findAll();
         $languages = $languageModel->findAll();
 
+        // FIXED: Decode JSON fields properly
         if (!empty($release['stores_ids'])) {
             $storesDecoded = json_decode($release['stores_ids'], true);
             // Handle case where stores are nested in an array
@@ -240,7 +208,6 @@ class ReleaseController extends BaseController
 
         return view('superadmin/index', $page_array);
     }
-
 
 
     // Show create form
@@ -345,6 +312,7 @@ class ReleaseController extends BaseController
                 ->with('error', 'Failed to create release: ' . $e->getMessage());
         }
     }
+    
     public function update($id)
     {
         try {
@@ -367,8 +335,6 @@ class ReleaseController extends BaseController
                 $status = (int)$release['status']; // Keep existing status if not provided
             }
 
-            // Special logic: If current status is Delivered (3) and submit button is clicked (status=1), 
-            // change it to Takedown (2) instead of Review (1)
             if ($release['status'] == 3 && $status == 1) {
                 $status = 3; // Change to Takedown instead of Review
                 log_message('debug', 'Status changed from Delivered to Takedown due to submit action');
@@ -443,7 +409,6 @@ class ReleaseController extends BaseController
                 'status'                    => $status, // Use the processed status
             ];
 
-            // Add rejection message if status is rejected
             if ($status == 4 && !empty($rejectionMessage)) {
                 $releaseData['rejected_at'] = date('Y-m-d H:i:s');
                 $releaseData['message'] = $rejectionMessage;
@@ -462,12 +427,16 @@ class ReleaseController extends BaseController
 
             if ($status == 5) {
                 $releaseData['approved_at'] = date('Y-m-d H:i:s');
-                log_message('debug', 'Marking Approved as delivered at: ' . $releaseData['approved_at']);
+                log_message('debug', 'Marking Approved at: ' . $releaseData['approved_at']);
+            }
+
+            if ($status == 6) {
+                $releaseData['takedown_request_at'] = date('Y-m-d H:i:s');
+                log_message('debug', 'Marking release as takedown requested at: ' . $releaseData['takedown_request_at']);
             }
 
             log_message('debug', 'Final release data status: ' . $releaseData['status']);
 
-            // Use model's save method
             $model = new \App\Models\Backend\ReleaseModel();
             $result = $model->save($releaseData);
 
@@ -481,7 +450,8 @@ class ReleaseController extends BaseController
                 2 => 'Release taken down successfully',
                 3 => 'Release marked as delivered successfully',
                 4 => 'Release rejected successfully' . (!empty($rejectionMessage) ? ' with message' : ''),
-                5 => 'Release approved successfully'
+                5 => 'Release approved successfully',
+                6 => 'Takedown request submitted successfully'
             ];
 
             $message = $statusMessages[$status] ?? 'Release updated successfully';
