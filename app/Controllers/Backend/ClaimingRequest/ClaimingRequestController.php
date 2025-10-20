@@ -136,7 +136,7 @@ class ClaimingRequestController extends BaseController
 
         $this->claimingRequestRepo->create($data);
 
-        return redirect()->to('/superadmin/claiming-request')
+        return redirect()->to('/claiming-request')
             ->with('success', 'Claiming Request created successfully');
     }
 
