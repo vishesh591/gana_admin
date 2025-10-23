@@ -124,14 +124,34 @@
                                     </select>
                                     <div class="invalid-feedback" id="labelNameError"></div>
                                 <?php else: ?>
-                                    <!-- Normal user: readonly field -->
                                     <?php if (!empty($labels)): ?>
-                                        <input type="text" class="form-control" id="labelName" name="labelName" value="<?= esc($labels[0]['label_name']) ?> (<?= esc($labels[0]['primary_label_name']) ?>)" readonly>
-                                        <input type="hidden" name="label_id" value="<?= esc($labels[0]['id']) ?>">
+                                        <?php if (count($labels) > 1): ?>
+                                            <select class="form-select" id="labelName" name="label_id" required>
+                                                <option value="">Select Label</option>
+                                                <?php foreach ($labels as $label): ?>
+                                                    <option value="<?= esc($label['id']) ?>" <?= (isset($release) && $release['label_id'] == $label['id']) ? 'selected' : '' ?>>
+                                                        <?= esc($label['label_name']) ?> (<?= esc($label['primary_label_name']) ?>)
+                                                    </option>
+                                                <?php endforeach; ?>
+                                            </select>
+                                        <?php else: ?>
+                                            <!-- Single label: Show dropdown with one option -->
+                                            <select class="form-select" id="labelName" name="label_id" required>
+                                                <option value="<?= esc($labels[0]['id']) ?>" selected>
+                                                    <?= esc($labels[0]['label_name']) ?> (<?= esc($labels[0]['primary_label_name']) ?>)
+                                                </option>
+                                            </select>
+                                        <?php endif; ?>
+                                        <div class="invalid-feedback" id="labelNameError"></div>
+                                    <?php else: ?>
+                                        <!-- No labels available -->
+                                        <select class="form-select" id="labelName" name="label_id" required disabled>
+                                            <option value="">No labels available for your primary label</option>
+                                        </select>
+                                        <div class="invalid-feedback" id="labelNameError">No labels available for your primary label</div>
                                     <?php endif; ?>
                                 <?php endif; ?>
                             </div>
-
                         </div>
 
                         <div class="row">
@@ -343,16 +363,14 @@
                         </div>
 
                         <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label for="productionYear" class="form-label required-field">Production Year</label>
-                                <select class="form-select" id="productionYear" name="productionYear" required>
-                                    <option value="" <?= (!isset($release)) ? 'selected' : '' ?> disabled>Select year</option>
-                                    <option value="2025" <?= (isset($release) && $release['production_year'] == '2025') ? 'selected' : '' ?>>2025</option>
-                                    <option value="2024" <?= (isset($release) && $release['production_year'] == '2024') ? 'selected' : '' ?>>2024</option>
-                                    <option value="2023" <?= (isset($release) && $release['production_year'] == '2023') ? 'selected' : '' ?>>2023</option>
-                                </select>
-                                <div class="invalid-feedback">Please select the production year.</div>
-                            </div>
+    <div class="col-md-6 mb-3">
+    <label for="productionYear" class="form-label required-field">Production Year</label>
+    <input type="text" class="form-control" id="productionYear" name="productionYear"
+           value="<?= isset($release) ? esc($release['production_year']) : '' ?>" required
+           placeholder="Enter production year">
+    <div class="invalid-feedback">Please select the production year.</div>
+</div>
+
                             <div class="col-md-6 mb-3">
                                 <label for="trackLanguage" class="form-label required-field">Track Title Language</label>
                                 <select class="form-select" id="trackLanguage" name="trackLanguage" required>
@@ -641,9 +659,15 @@
                                 </div>
                             <?php elseif (isset($release) && $release['status'] == 4): ?>
                                 <div>
-                                    <button type="submit" name="status" value="5" class="btn btn-success">
-                                        <i data-feather="check" class="me-1"></i> Approve
-                                    </button>
+                                    <?php if (in_array($user['role_id'] ?? 3, [1, 2])): ?>
+                                        <button type="submit" name="status" value="5" class="btn btn-success">
+                                            <i data-feather="check" class="me-1"></i> Approve
+                                        </button>
+                                    <?php else: ?>
+                                        <button type="submit" name="status" value="1" class="btn btn-primary">
+                                            <i data-feather="send" class="me-1"></i> Submit
+                                        </button>
+                                    <?php endif; ?>
                                 </div>
                             <?php else: ?>
                                 <div>

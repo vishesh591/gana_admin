@@ -3,11 +3,14 @@
         <div class="container-fluid">
             <div class="py-3 d-flex align-items-sm-center flex-sm-row flex-column justify-content-between">
                 <h4 class="fs-18 fw-bold m-0">YouTube Owner Conflict</h4>
-                <div>
-                    <button class="btn btn-outline-secondary me-2" id="importYoutubeCsv">
-                        <i data-feather="plus" class="me-1"></i>Import Conflict
-                    </button>
-                </div>
+                <?php if (in_array($user['role_id'] ?? 3, [1, 2])): ?>
+                    <div>
+                        <button class="btn btn-outline-secondary me-2" id="importYoutubeCsv">
+                            <i data-feather="plus" class="me-1"></i>Import Conflict
+                        </button>
+                    </div>
+                <?php endif; ?>
+
             </div>
 
             <div class="card shadow-sm">

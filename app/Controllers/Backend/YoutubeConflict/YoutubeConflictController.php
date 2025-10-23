@@ -12,10 +12,14 @@ class YoutubeConflictController extends BaseController
     public function index()
     {
         $data = $this->getConflictsData();
+        $session = session();
+
+        $user = $session->get('user');
 
         return view('superadmin/index', [
             'file_name' => 'youtube',
             'data' => $data,
+            'user' => $user,
         ]);
     }
 
@@ -131,21 +135,37 @@ class YoutubeConflictController extends BaseController
         $user = $session->get('user');
         $userId = $user['id'] ?? null;
         $userRole = $user['role_id'] ?? 3;
+        $userPrimaryLabel = $user['primary_label_name'] ?? null;
         
         $youtubeConflict = new YoutubeConflictModel();
         
         $userISRCs = [];
         if (!in_array($userRole, [1, 2])) {
             $releaseModel = new \App\Models\Backend\ReleaseModel();
-            $userReleases = $releaseModel
-                ->select('isrc')
-                ->where('created_by', $userId)
-                ->where('isrc IS NOT NULL')
-                ->where('isrc !=', '')
-                ->findAll();
+            $labelModel = new \App\Models\Backend\LabelModel();
             
-            $userISRCs = array_column($userReleases, 'isrc');
-            $userISRCs = array_filter($userISRCs); // Remove empty values
+            if ($userPrimaryLabel) {
+                // Step 1: Get all label IDs for user's primary label
+                $matchingLabels = $labelModel
+                    ->select('id')
+                    ->where('primary_label_name', $userPrimaryLabel)
+                    ->findAll();
+                
+                if (!empty($matchingLabels)) {
+                    $labelIds = array_column($matchingLabels, 'id');
+                    
+                    // Step 2: Get ISRCs from releases with those label IDs
+                    $userReleases = $releaseModel
+                        ->select('isrc')
+                        ->whereIn('label_id', $labelIds)
+                        ->where('isrc IS NOT NULL')
+                        ->where('isrc !=', '')
+                        ->findAll();
+                    
+                    $userISRCs = array_column($userReleases, 'isrc');
+                    $userISRCs = array_filter($userISRCs); // Remove empty values
+                }
+            }
         }
         
         // Build the query
@@ -156,7 +176,7 @@ class YoutubeConflictController extends BaseController
         // Apply ISRC filtering for non-admin users
         if (!in_array($userRole, [1, 2])) {
             if (empty($userISRCs)) {
-                // User has no releases, return empty data
+                // User has no releases with matching primary label, return empty data
                 return [];
             }
             $query->whereIn('isrc', $userISRCs);
@@ -247,6 +267,7 @@ class YoutubeConflictController extends BaseController
 
         return $data;
     }
+
 
 
 

@@ -28,11 +28,15 @@ class FacebookConflictController extends BaseController
      */
     public function index()
     {
+        $session = session();
+        $user = $session->get('user');
+
         $data = $this->getConflictsData();
 
         return view('superadmin/index', [
             'file_name' => 'facebook',
             'data' => $data,
+            'user' => $user
         ]);
     }
 
@@ -67,9 +71,41 @@ class FacebookConflictController extends BaseController
      */
     private function getConflictsData()
     {
-        $conflicts = $this->facebookConflictModel
-            ->orderBy('id', 'DESC')->whereIn('status', ['In Review', 'Action Required', 'Rejected'])
-            ->findAll();
+        $session = session();
+        $user = $session->get('user');
+        $userId = $user['id'] ?? null;
+        $userRole = $user['role_id'] ?? 3;
+
+        // Get user's ISRCs if not admin
+        $userISRCs = [];
+        if (!in_array($userRole, [1, 2])) {
+            $releaseModel = new \App\Models\Backend\ReleaseModel();
+            $userReleases = $releaseModel
+                ->select('isrc')
+                ->where('created_by', $userId)
+                ->where('isrc IS NOT NULL')
+                ->where('isrc !=', '')
+                ->findAll();
+
+            $userISRCs = array_column($userReleases, 'isrc');
+            $userISRCs = array_filter($userISRCs); // Remove empty values
+        }
+
+        // Build the query
+        $query = $this->facebookConflictModel
+            ->orderBy('id', 'DESC')
+            ->whereIn('status', ['In Review', 'Action Required', 'Rejected']);
+
+        // Apply ISRC filtering for non-admin users
+        if (!in_array($userRole, [1, 2])) {
+            if (empty($userISRCs)) {
+                // User has no releases, return empty data
+                return [];
+            }
+            $query->whereIn('reference_copyright_isrc', $userISRCs);
+        }
+
+        $conflicts = $query->findAll();
 
         $data = [];
 

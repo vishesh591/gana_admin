@@ -4,11 +4,14 @@
             <div class="py-3 d-flex align-items-sm-center flex-sm-row flex-column justify-content-between">
                 <h4 class="fw-semibold m-0 page-title fs-2">Facebook Owner Conflict</h4>
 
-                <div>
-                    <button class="btn btn-outline-secondary me-2" id="importFacebookCsv">
-                        <i data-feather="plus" class="me-1"></i>Import Conflict
-                    </button>
-                </div>
+                <?php if (in_array($user['role_id'] ?? 3, [1, 2])): ?>
+                    <div>
+                        <button class="btn btn-outline-secondary me-2" id="importFacebookCsv">
+                            <i data-feather="plus" class="me-1"></i>Import Conflict
+                        </button>
+                    </div>
+                <?php endif; ?>
+
             </div>
 
             <div class="card shadow-sm mt-4">
@@ -21,7 +24,7 @@
                                     <th>Category</th>
                                     <th>Asset Title</th>
                                     <th>Artist / Asset ID</th>
-                                    <th>UPC</th>
+                                    <th>ISRC</th>
                                     <th>Other Party</th>
                                     <th>Daily Views</th>
                                     <th>Expiry</th>

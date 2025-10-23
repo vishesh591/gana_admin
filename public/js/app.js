@@ -4286,7 +4286,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 row.assetId || "N/A"
               }</small>`,
           },
-          { data: "upc", title: "UPC" },
+          { data: "upc", title: "ISRC" },
           { data: "otherParty", title: "Other Party" },
           {
             data: "dailyViews",
