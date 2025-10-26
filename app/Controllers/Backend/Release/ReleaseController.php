@@ -27,7 +27,7 @@ class ReleaseController extends BaseController
         }
 
         // Get all labels where primary_label_name matches user's primary_label_name
-        $labels = $labelModel->where('primary_label_name', $userPrimaryLabel)->findAll();
+        $labels = $labelModel->where('primary_label_name', $userPrimaryLabel)->where('status',2)->findAll();
 
         return $labels;
     }
