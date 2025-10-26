@@ -4,9 +4,9 @@
             <div class="py-3 d-flex align-items-sm-center flex-sm-row flex-column justify-content-between">
                 <h1 class="fs-18 fw-semibold m-0 page-title fs-2">Claim / Reel Merge</h1>
                 <div class="col-auto d-flex gap-2">
-                    <button type="button" class="btn btn-outline-secondary rounded-pill px-4" id="exportCsvBtn">
+                    <!-- <button type="button" class="btn btn-outline-secondary rounded-pill px-4" id="exportCsvBtn">
                         <i class="bi bi-download me-1"></i> Export to CSV
-                    </button>
+                    </button> -->
                     <button type="button" class="btn btn-primary rounded-pill px-4" data-bs-toggle="modal" data-bs-target="#newClaimRequestModal">
                         <i class="bi bi-plus-lg me-1"></i> Create New Request
                     </button>

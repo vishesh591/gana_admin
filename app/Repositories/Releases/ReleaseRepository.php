@@ -97,6 +97,20 @@ class ReleaseRepository
         return $query->first();
     }
 
+    public function getDraftCount($userId = null)
+    {
+        $draftModel = new \App\Models\Backend\ReleaseDraftModel();
+        
+        $query = $draftModel->selectCount('id', 'draft_count');
+
+        if ($userId) {
+            $query->where('user_id', $userId);
+        }
+
+        $result = $query->first();
+        return $result['draft_count'] ?? 0;
+    }
+
     public function findAllByUser($userId)
     {
         return $this->model
@@ -105,4 +119,16 @@ class ReleaseRepository
             ->findAll();
     }
 
+    public function findAllByLabelIds(array $labelIds)
+    {
+        if (empty($labelIds)) {
+            return [];
+        }
+
+        return $this->model
+            ->whereIn('label_id', $labelIds)
+            ->orderBy('created_at', 'DESC')
+            ->get()
+            ->getResultArray();
+    }
 }

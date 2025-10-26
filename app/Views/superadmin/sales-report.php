@@ -1,7 +1,7 @@
-<div class="content-page">
-    <div class="content">
+<!-- <div class="content-page">
+    <div class="content"> -->
         <!-- 1. Page Header -->
-        <div class="page-header">
+        <!-- <div class="page-header">
             <div class="row align-items-center">
                 <div class="col">
                     <h1 class="page-title">Sales Reports</h1>
@@ -16,7 +16,7 @@
         </div>
 
         <div class="content-container">
-            <!-- 2. Filter Section -->
+            2. Filter Section
             <div class="card filter-section">
                 <div class="card-body">
                     <h5 class="card-title mb-3">Filters</h5>
@@ -82,7 +82,7 @@
                 </div>
             </div>
 
-            <!-- 3. Summary Metric Cards -->
+            3. Summary Metric Cards
             <div class="row metric-cards">
                 <div class="col-md-4">
                     <div class="card h-100">
@@ -141,9 +141,9 @@
                         </div>
                     </div>
                 </div>
-            </div>
+            </div> -->
 
-            <!-- 4. Data Table Section -->
+            <!-- 4. Data Table Section
             <div class="card mt-4">
                 <div class="card-body p-0">
                     <div class="table-responsive">
@@ -161,7 +161,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <!-- Sample Data Rows -->
+                                Sample Data Rows
                                 <tr>
                                     <td>Jan 2023</td>
                                     <td>
@@ -238,10 +238,10 @@
                                     <td class="text-end text-success">$33.25</td>
                                 </tr>
                             </tbody>
-                        </table>
+                        </table> -->
 
                         <!-- Empty State (hidden by default) -->
-                        <div class="empty-state d-none">
+                        <!-- <div class="empty-state d-none">
                             <div class="empty-state-content">
                                 <i data-feather="bar-chart-2" class="empty-state-icon"></i>
                                 <h5>No sales data available</h5>
@@ -251,10 +251,10 @@
                         </div>
                     </div>
                 </div>
-            </div>
+            </div> -->
 
             <!-- 5. Pagination Section -->
-            <div class="row pagination-container">
+            <!-- <div class="row pagination-container">
                 <div class="col-sm-12 col-md-6">
                     <div class="dataTables_info">Showing 1 to 5 of 24 entries</div>
                 </div>
@@ -278,4 +278,53 @@
             </div>
         </div>
     </div>
+</div> -->
+
+
+<div class="content-page">
+    <div class="content">
+        <div class="page-header">
+            <div class="row align-items-center">
+                <div class="col">
+                    <h1 class="page-title">Sales Reports</h1>
+                </div>
+            </div>
+            <div class="header-divider"></div>
+        </div>
+
+        <div class="content-container">
+            <div class="row justify-content-center mt-5">
+                <div class="col-lg-6 col-md-8 text-center">
+                    <div class="card shadow-sm">
+                        <div class="card-body py-5">
+                            <div class="mb-4">
+                                <i data-feather="tool" style="width: 64px; height: 64px; color: #6c757d;"></i>
+                            </div>
+                            <h3 class="mb-3">Under Maintenance</h3>
+                            <p class="text-muted mb-4">
+                                We're currently working on improving the Sales Reports feature. 
+                                This section will be available soon with enhanced reporting capabilities.
+                            </p>
+                            <div class="alert alert-info" role="alert">
+                                <i data-feather="info" class="me-2" style="width: 18px; height: 18px;"></i>
+                                <strong>Coming Soon:</strong> Advanced analytics, custom date ranges, and detailed revenue breakdowns.
+                            </div>
+                            <a href="<?= base_url('dashboard') ?>" class="btn btn-primary mt-3">
+                                <i data-feather="arrow-left" class="me-2"></i>Back to Dashboard
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
+
+<script>
+    // Initialize Feather icons after page load
+    document.addEventListener('DOMContentLoaded', function() {
+        if (typeof feather !== 'undefined') {
+            feather.replace();
+        }
+    });
+</script>

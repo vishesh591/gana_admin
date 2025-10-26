@@ -23,10 +23,10 @@
                             <div class="card h-100 border-0 shadow-sm">
                                 <div class="card-body text-center p-4">
                                     <div class="avatar-lg bg-light-success rounded-circle d-inline-flex align-items-center justify-content-center mb-3">
-                                        <i data-feather="dollar-sign" class="text-success" style="width: 24px; height: 24px;"></i>
+                                        <i data-feather="edit" class="text-success" style="width: 24px; height: 24px;"></i>
                                     </div>
-                                    <h3 class="mb-1">$<?= $totalRevenue ?? '0.00' ?></h3>
-                                    <p class="text-muted mb-0">Total Revenue</p>
+                                    <h3 class="mb-1"><?= $draftCount ?? '0.00' ?></h3>
+                                    <p class="text-muted mb-0">Total Drafts</p>
                                 </div>
                             </div>
                         </div>

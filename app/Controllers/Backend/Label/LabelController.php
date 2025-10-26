@@ -71,9 +71,31 @@ class LabelController extends BaseController
             return redirect()->back()->withInput()->with('errors', $errors);
         }
 
+        $labelName = $this->request->getPost('label_name');
+        $primaryLabelName = $this->request->getPost('primary_label_name');
+
+        // Check if label with same name and primary_label_name already exists
+        $labelModel = new \App\Models\Backend\LabelModel();
+        $existingLabel = $labelModel
+            ->where('label_name', $labelName)
+            ->where('primary_label_name', $primaryLabelName)
+            ->first();
+
+        if ($existingLabel) {
+            $error = "Label '{$labelName}' already exists under primary label '{$primaryLabelName}'. Please use a different label name or primary label.";
+
+            if ($this->request->isAJAX()) {
+                return $this->response->setJSON([
+                    'success' => false,
+                    'errors' => ['duplicate' => $error]
+                ]);
+            }
+
+            return redirect()->back()->withInput()->with('error', $error);
+        }
+
         $session = session();
         $user    = $session->get('user');
-        $primaryLabelName = $this->request->getPost('primary_label_name');
 
         $userModel = new \App\Models\UserModel();
         $userRow   = $userModel->where('primary_label_name', $primaryLabelName)->first();
@@ -83,7 +105,7 @@ class LabelController extends BaseController
         $status = $isAdmin ? 2 : 1; // Admin: Approved, Non-admin: In Review
 
         $data = [
-            'label_name'         => $this->request->getPost('label_name'),
+            'label_name'         => $labelName,
             'primary_label_name' => $primaryLabelName,
             'user_id'            => $userRow ? $userRow['id'] : null,
             'status'             => $status,
@@ -111,6 +133,7 @@ class LabelController extends BaseController
 
         return redirect()->back()->with('success', $message);
     }
+
 
     public function getLabelsJson()
     {

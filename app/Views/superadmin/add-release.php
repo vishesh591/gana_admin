@@ -157,30 +157,45 @@
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <label for="artist" class="form-label required-field">Artist</label>
-                                <select class="form-select searchable-select" id="artist" name="artist" required data-placeholder="Search and select a label...">
+                                <select class="form-select searchable-select"
+                                    id="artist"
+                                    name="artist"
+                                    required
+                                    data-placeholder="Search and select an artist...">
                                     <option value="">Select Artist</option>
                                     <?php foreach ($artists as $artist): ?>
-                                        <option value="<?= esc($artist['id']) ?>" <?= (isset($release) && $release['artist_id'] == $artist['id']) ? 'selected' : '' ?>>
+                                        <option value="<?= esc($artist['id']) ?>"
+                                            <?= (isset($release) && $release['artist_id'] == $artist['id']) ? 'selected' : '' ?>>
                                             <?= esc($artist['name']) ?>
+                                            <?php if (!empty($artist['label_name'])): ?>
+                                                (<?= esc($artist['label_name']) ?>)
+                                            <?php endif; ?>
                                         </option>
                                     <?php endforeach; ?>
                                 </select>
                                 <div class="invalid-feedback" id="artistError"></div>
                             </div>
+
                             <div class="col-md-6 mb-3">
                                 <label for="featuringArtist" class="form-label">Featuring Artist</label>
-                                <select class="form-select searchable-select" id="featuringArtist" name="featuringArtist" data-placeholder="Search and select a label...">
+                                <select class="form-select searchable-select"
+                                    id="featuringArtist"
+                                    name="featuringArtist"
+                                    data-placeholder="Search and select an artist...">
                                     <option value="">Featuring Artist</option>
                                     <?php foreach ($artists as $artist): ?>
-                                        <option value="<?= esc($artist['id']) ?>" <?= (isset($release) && $release['artist_id'] == $artist['id']) ? 'selected' : '' ?>>
+                                        <option value="<?= esc($artist['id']) ?>"
+                                            <?= (isset($release) && $release['featuring_artist_id'] == $artist['id']) ? 'selected' : '' ?>>
                                             <?= esc($artist['name']) ?>
+                                            <?php if (!empty($artist['label_name'])): ?>
+                                                (<?= esc($artist['label_name']) ?>)
+                                            <?php endif; ?>
                                         </option>
                                     <?php endforeach; ?>
                                 </select>
                                 <div class="invalid-feedback" id="featuringArtistError"></div>
                             </div>
                         </div>
-
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <label class="form-label required-field">Release Type</label>
@@ -363,13 +378,13 @@
                         </div>
 
                         <div class="row">
-    <div class="col-md-6 mb-3">
-    <label for="productionYear" class="form-label required-field">Production Year</label>
-    <input type="text" class="form-control" id="productionYear" name="productionYear"
-           value="<?= isset($release) ? esc($release['production_year']) : '' ?>" required
-           placeholder="Enter production year">
-    <div class="invalid-feedback">Please select the production year.</div>
-</div>
+                            <div class="col-md-6 mb-3">
+                                <label for="productionYear" class="form-label required-field">Production Year</label>
+                                <input type="text" class="form-control" id="productionYear" name="productionYear"
+                                    value="<?= isset($release) ? esc($release['production_year']) : '' ?>" required
+                                    placeholder="Enter production year">
+                                <div class="invalid-feedback">Please select the production year.</div>
+                            </div>
 
                             <div class="col-md-6 mb-3">
                                 <label for="trackLanguage" class="form-label required-field">Track Title Language</label>

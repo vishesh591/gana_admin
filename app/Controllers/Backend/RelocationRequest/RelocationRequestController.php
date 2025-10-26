@@ -52,15 +52,15 @@ class RelocationRequestController extends BaseController
         $user = $session->get('user');
         $userId = $user['id'];
         $userRole = $user['role_id'] ?? 3;
-        
+
         if (in_array($userRole, [1, 2])) {
             $rows = $this->relocationModel
-                ->select('id, song_name, artist_name, isrc, status')
+                ->select('id, song_name, artist_name, isrc, instagram_link, instagram_audio, facebook_link, status')
                 ->orderBy('created_at', 'DESC')
                 ->findAll();
         } else {
             $rows = $this->relocationModel
-                ->select('id, song_name, artist_name, isrc, status')
+                ->select('id, song_name, artist_name, isrc, instagram_link, instagram_audio, facebook_link, status')
                 ->where('created_by', $userId)
                 ->orderBy('created_at', 'DESC')
                 ->findAll();
@@ -68,17 +68,20 @@ class RelocationRequestController extends BaseController
 
         $data = array_map(function ($r) {
             return [
-                'id'     => (string) $r['id'],
-                'title'  => $r['song_name'] ?? null,
-                'artist' => $r['artist_name'] ?? null,
-                'isrc'   => $r['isrc'] ?? 'N/A',
-                'upc'    => $r['upc'] ?? 'N/A',
-                'status' => $r['status'] ?? 'Pending',
+                'id'              => (string) $r['id'],
+                'title'           => $r['song_name'] ?? null,
+                'artist'          => $r['artist_name'] ?? null,
+                'isrc'            => $r['isrc'] ?? 'N/A',
+                'instagram_link'  => $r['instagram_link'] ?? '',
+                'instagram_audio' => $r['instagram_audio'] ?? '',
+                'facebook_link'   => $r['facebook_link'] ?? '',
+                'status'          => $r['status'] ?? 'Pending',
             ];
         }, $rows);
 
         return $this->response->setJSON(['data' => $data]);
     }
+
 
     // API for datatable
     public function list()

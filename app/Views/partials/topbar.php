@@ -25,14 +25,14 @@
                 </li>
 
                 <li class="dropdown notification-list topbar-dropdown">
-                    <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="false" aria-expanded="false">
+                    <!-- <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="false" aria-expanded="false">
                         <i data-feather="bell" class="noti-icon"></i>
                         <span class="badge bg-danger rounded-circle noti-icon-badge">9</span>
                     </a>
-                    <div class="dropdown-menu dropdown-menu-end dropdown-lg">
+                    <div class="dropdown-menu dropdown-menu-end dropdown-lg"> -->
 
                         <!-- item-->
-                        <div class="dropdown-item noti-title">
+                        <!-- <div class="dropdown-item noti-title">
                             <h5 class="m-0">
                                 <span class="float-end">
                                     <a href="" class="text-dark">
@@ -40,11 +40,11 @@
                                     </a>
                                 </span>Notification
                             </h5>
-                        </div>
-
+                        </div> -->
+<!-- 
                         <div class="noti-scroll" data-simplebar>
 
-                            <!-- item-->
+                            item
                             <a href="javascript:void(0);" class="dropdown-item notify-item text-muted link-primary active">
                                 <div class="notify-icon">
                                     <img src="/images/users/user-12.jpg" class="img-fluid rounded-circle" alt="" />
@@ -58,7 +58,7 @@
                                 </p>
                             </a>
 
-                            <!-- item-->
+                            item
                             <a href="javascript:void(0);" class="dropdown-item notify-item text-muted link-primary">
                                 <div class="notify-icon">
                                     <img src="/images/users/user-2.jpg" class="img-fluid rounded-circle" alt="" />
@@ -83,7 +83,7 @@
                                 </div>
                             </a>
 
-                            <!-- item-->
+                            item
                             <a href="javascript:void(0);" class="dropdown-item notify-item text-muted link-primary">
                                 <div class="notify-icon">
                                     <img src="/images/users/user-3.jpg" class="img-fluid rounded-circle" alt="" />
@@ -97,7 +97,7 @@
                                 </div>
                             </a>
 
-                            <!-- item-->
+                            item
                             <a href="javascript:void(0);" class="dropdown-item notify-item text-muted link-primary">
                                 <div class="notify-icon">
                                     <img src="/images/users/user-8.jpg" class="img-fluid rounded-circle" alt="" />
@@ -111,7 +111,7 @@
                                 </p>
                             </a>
 
-                            <!-- item-->
+                            item
                             <a href="javascript:void(0);" class="dropdown-item notify-item text-muted link-primary">
                                 <div class="notify-icon">
                                     <img src="/images/users/user-5.jpg" class="img-fluid rounded-circle" alt="" />
@@ -125,7 +125,7 @@
                                 </p>
                             </a>
 
-                            <!-- item-->
+                            item
                             <a href="javascript:void(0);" class="dropdown-item notify-item text-muted link-primary">
                                 <div class="notify-icon">
                                     <img src="/images/users/user-6.jpg" class="img-fluid rounded-circle" alt="" />
@@ -140,14 +140,14 @@
                             </a>
                         </div>
 
-                        <!-- All-->
+                        All
                         <a href="javascript:void(0);" class="dropdown-item text-center text-primary notify-item notify-all">
                             View all
                             <i class="fe-arrow-right"></i>
                         </a>
 
                     </div>
-                </li>
+                </li> -->
 
                 <li class="dropdown notification-list topbar-dropdown">
                     <a class="nav-link dropdown-toggle nav-user me-0" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="false" aria-expanded="false">

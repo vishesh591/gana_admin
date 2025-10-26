@@ -37,14 +37,37 @@ class ArtistController extends BaseController
             return redirect()->back()->withInput()->with('errors', $errors);
         }
 
+        $artistName = $this->request->getPost('artist_name');
+        $labelName = $this->request->getPost('label_name');
+
+        // Check if artist with same name and label already exists
+        $artistModel = new \App\Models\Backend\ArtistModel();
+        $existingArtist = $artistModel
+            ->where('name', $artistName)
+            ->where('label_name', $labelName)
+            ->first();
+
+        if ($existingArtist) {
+            $error = "Artist '{$artistName}' already exists under label '{$labelName}'. Please use a different artist name or label.";
+
+            if ($this->request->isAJAX()) {
+                return $this->response->setJSON([
+                    'success' => false,
+                    'errors' => ['duplicate' => $error]
+                ]);
+            }
+
+            return redirect()->back()->withInput()->with('error', $error);
+        }
+
         // Get the Spotify ID from the form submission
         $spotifyId = $this->request->getPost('spotify_id');
 
         $data = [
-            'name'        => $this->request->getPost('artist_name'),
-            'spotify_id'  => $spotifyId, // Use the actual Spotify ID, not empty string
+            'name'        => $artistName,
+            'spotify_id'  => $spotifyId,
             'apple_id'    => $this->request->getPost('apple_id'),
-            'label_name'  => $this->request->getPost('label_name'),
+            'label_name'  => $labelName,
             'label_id'    => $this->request->getPost('label_id') ? (int)$this->request->getPost('label_id') : null,
         ];
 
@@ -54,6 +77,7 @@ class ArtistController extends BaseController
             $img->move(FCPATH . 'uploads/artist', $newName);
             $data['profile_image'] = 'uploads/artist/' . $newName;
         }
+        
         $data['created_by'] = session()->get('user')['id'];
         $this->artistRepo->create($data);
 
@@ -66,6 +90,7 @@ class ArtistController extends BaseController
 
         return redirect()->back()->with('success', 'Artist created successfully');
     }
+
 
     /**
      * AJAX endpoint to validate Spotify artist (optional for real-time validation)
@@ -170,7 +195,7 @@ class ArtistController extends BaseController
 
             return [
                 'id'            => $artist['id'],
-                'name'          => $artist['name'],
+                'name'          => $artist['name'] .'('.$artist['label_name'].')',
                 'profile_image' => !empty($artist['profile_image'])
                     ? base_url($artist['profile_image'])
                     : '/images/default.png',

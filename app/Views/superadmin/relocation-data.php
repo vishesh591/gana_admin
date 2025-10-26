@@ -4,9 +4,9 @@
             <div class="py-3 d-flex align-items-sm-center flex-sm-row flex-column justify-content-between">
                 <h4 class="fs-18 fw-semibold m-0">Relocation Data</h4>
                 <div class="col-auto d-flex gap-2">
-                    <button type="button" class="btn btn-outline-secondary rounded-pill px-4" id="exportCsvBtn">
+                    <!-- <button type="button" class="btn btn-outline-secondary rounded-pill px-4" id="exportCsvBtn">
                         <i class="bi bi-download me-1"></i> Export to CSV
-                    </button>
+                    </button> -->
                 </div>
             </div>
 

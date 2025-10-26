@@ -320,6 +320,9 @@ $routes->group('', ['filter' => 'auth'], function ($routes) {
     $routes->get('youtube', 'Backend\YoutubeConflict\YoutubeConflictController::index');
     $routes->get('youtube-conflicts/json', 'Backend\YoutubeConflict\YoutubeConflictController::listConflictsJson');
     $routes->post('youtube-conflicts/update/(:num)', 'Backend\YoutubeConflict\YoutubeConflictController::update/$1');
+
+    $routes->get('sales-report', 'SuperAdmin::sales_report');
+
 });
 
 // Admin routes ONLY (superadmin + admin have same privileges)

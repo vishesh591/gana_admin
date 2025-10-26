@@ -356,18 +356,19 @@
                                     <span class="badge bg-danger fs-6 px-3 py-2">
                                         <i data-feather="x-circle" class="me-2"></i>Already Taken Down
                                     </span>
-                                <?php elseif ($release['status'] == 6): ?>
-                                    <!-- Takedown requested -->
+                                <?php elseif ($release['status'] == 6 && !$canTakedown): ?>
+                                    <!-- Show badge for non-admin users when status is 6 -->
                                     <span class="badge bg-warning fs-6 px-3 py-2">
                                         <i data-feather="clock" class="me-2"></i>Takedown Requested
                                     </span>
                                 <?php else: ?>
-                                    <!-- Show takedown button based on role -->
-                                    <?php if ($canTakedown): ?>
+                                    <!-- Show takedown button for admin (status 3 or 6) -->
+                                    <?php if ($canTakedown && in_array($release['status'], [3, 6])): ?>
                                         <button type="button" class="btn btn-outline-danger" onclick="confirmTakedown(<?= $release['id'] ?>)">
                                             <i data-feather="x-circle" class="me-2"></i>Takedown Release
                                         </button>
-                                    <?php else: ?>
+                                    <?php elseif ($release['status'] == 3): ?>
+                                        <!-- Show request takedown for non-admin users when status is 3 -->
                                         <button type="button" class="btn btn-outline-warning" onclick="confirmTakedownRequest(<?= $release['id'] ?>)">
                                             <i data-feather="alert-triangle" class="me-2"></i>Request Takedown
                                         </button>
@@ -382,6 +383,7 @@
                     </div>
                 </div>
             </div>
+
         </div>
         <!-- content -->
     </div>

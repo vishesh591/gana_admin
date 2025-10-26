@@ -283,11 +283,11 @@ class ReleaseDraftsController extends BaseController
         // Role-based filtering
         if (in_array($userRole, [1, 2])) {
             // Admin/Superadmin: all labels and all artists
-            $labels = $labelModel->findAll();
+            $labels = $labelModel->where('status',2)->findAll();
             $artists = $artistModel->findAll();
         } else {
             // Non-admin: only their labels and artists from their primary label
-            $labels = $labelModel->where('user_id', $userId)->findAll();
+            $labels = $labelModel->where('user_id', $userId)->where('status',2)->findAll();
             $userPrimaryLabel = $user['primary_label_name'] ?? null;
 
             if ($userPrimaryLabel) {
@@ -444,32 +444,36 @@ class ReleaseDraftsController extends BaseController
         if (in_array($userRole, [1, 2])) {
             // Admin users see all data
             $releaseCounts = $this->releaseRepo->countAllData();
-            $revenueData = $this->releaseRepo->getTotalRevenue();
+            // $revenueData = $this->releaseRepo->getTotalRevenue(); // Commented out
+            $draftCount = $this->releaseRepo->getDraftCount(); // Get all drafts count
             $drafts = $this->draftModel
                 ->orderBy('updated_at', 'DESC')
                 ->limit(10)
                 ->findAll();
         } else {
             // Non-admin users see only their own data
-            $releaseCounts = $this->releaseRepo->countAllData($userId); // Pass userId to filter
-            $revenueData = $this->releaseRepo->getTotalRevenue($userId); // Pass userId to filter
+            $releaseCounts = $this->releaseRepo->countAllData($userId);
+            // $revenueData = $this->releaseRepo->getTotalRevenue($userId); // Commented out
+            $draftCount = $this->releaseRepo->getDraftCount($userId); // Get user's drafts count
             $drafts = $this->draftModel->where('user_id', $userId)
                 ->orderBy('updated_at', 'DESC')
                 ->limit(10)
                 ->findAll();
         }
 
-        $totalRevenue = $revenueData['total_revenue'] ?? 0;
+        // $totalRevenue = $revenueData['total_revenue'] ?? 0; // Commented out
 
         $page_array = [
             'file_name' => 'dashboard',
             'releaseCounts' => $releaseCounts,
-            'totalRevenue' => number_format($totalRevenue, 2),
+            // 'totalRevenue' => number_format($totalRevenue, 2), // Commented out
+            'draftCount' => $draftCount, // Added draft count
             'drafts' => $drafts
         ];
 
         return view('superadmin/index', $page_array);
     }
+
 
     private function calculateCompletionPercentage($formData)
     {

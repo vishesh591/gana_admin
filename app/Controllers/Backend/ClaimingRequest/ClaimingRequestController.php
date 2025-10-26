@@ -60,17 +60,15 @@ class ClaimingRequestController extends BaseController
         $userId = $user['id'];
         $userRole = $user['role_id'] ?? 3;
 
-        // Check if user is admin/superadmin (role_id 1 or 2)
+        // Admins and superadmins view all claims, others view their own
         if (in_array($userRole, [1, 2])) {
-            // Admin/Superadmin users see all records
             $rows = $this->claimingRequestModel
-                ->select('id, song_name, artist_name, upc, isrc, status')
+                ->select('id, song_name, artist_name, upc, isrc, status, video_links, removal_reason')
                 ->orderBy('created_at', 'DESC')
                 ->findAll();
         } else {
-            // Non-admin users see only their own records (created_by)
             $rows = $this->claimingRequestModel
-                ->select('id, song_name, artist_name, upc, isrc, status')
+                ->select('id, song_name, artist_name, upc, isrc, status, video_links, removal_reason')
                 ->where('created_by', $userId)
                 ->orderBy('created_at', 'DESC')
                 ->findAll();
@@ -78,18 +76,19 @@ class ClaimingRequestController extends BaseController
 
         $data = array_map(function ($r) {
             return [
-                'id'     => (string) $r['id'],
-                'title'  => $r['song_name'] ?? null,
-                'artist' => $r['artist_name'] ?? null,
-                'isrc'   => $r['isrc'] ?? 'N/A',
-                'upc'    => $r['upc'] ?? 'N/A',
-                'status' => $r['status'] ?? 'Pending',
+                'id'            => (string) $r['id'],
+                'title'         => $r['song_name'] ?? null,
+                'artist'        => $r['artist_name'] ?? null,
+                'isrc'          => $r['isrc'] ?? 'N/A',
+                'upc'           => $r['upc'] ?? 'N/A',
+                'status'        => $r['status'] ?? 'Pending',
+                'videoLinks'    => $this->parseVideoLinks($r['video_links'] ?? ''),
+                'removalReason' => $r['removal_reason'] ?? 'N/A',
             ];
         }, $rows);
 
         return $this->response->setJSON(['data' => $data]);
     }
-
 
     public function store()
     {

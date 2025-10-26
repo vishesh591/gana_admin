@@ -4,9 +4,9 @@
             <div class="py-3 d-flex align-items-sm-center flex-sm-row flex-column justify-content-between">
                 <h4 class="fs-18 fw-semibold m-0 page-title fs-2">Claiming Request</h4>
                 <div class="col-auto d-flex gap-2">
-                    <button type="button" class="btn btn-outline-secondary rounded-pill px-4" id="exportCsvBtn">
+                    <!-- <button type="button" class="btn btn-outline-secondary rounded-pill px-4" id="exportCsvBtn">
                         <i class="bi bi-download me-1"></i> Export to CSV
-                    </button>
+                    </button> -->
                     <button type="button" class="btn btn-primary rounded-pill px-4" data-bs-toggle="modal" data-bs-target="#claimingRequestModal">
                         <i class="bi bi-plus-lg me-1"></i> New Claiming Request
                     </button>
@@ -27,6 +27,7 @@
                                             <th>ISRC</th>
                                             <th>UPC</th>
                                             <th>Status</th>
+                                            <th>Actions</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -113,6 +114,63 @@
         </div>
     </div>
 </div>
+
+<!-- Claiming Request Details Modal -->
+<div class="modal fade" id="claimingDetailsModal" tabindex="-1" aria-labelledby="claimingDetailsModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content rounded-4">
+      <div class="modal-header">
+        <h5 class="modal-title" id="claimingDetailsModalLabel">Claiming Request Details</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+
+      <div class="modal-body p-4">
+        <div class="mb-3">
+          <label class="form-label">Song Name</label>
+          <input type="text" class="form-control" id="viewSongTitle" readonly>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">Artist</label>
+          <input type="text" class="form-control" id="viewArtistName" readonly>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">ISRC</label>
+          <input type="text" class="form-control" id="viewISRC" readonly>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">UPC</label>
+          <input type="text" class="form-control" id="viewUPC" readonly>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label fw-bold">Music / Video Links</label>
+          <div id="videoLinksContainer" class="border rounded p-3" style="background-color: #f8f9fa;">
+            <p class="text-muted">No video links available</p>
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label fw-bold">Reason for Claim Removal</label>
+          <textarea class="form-control" id="viewRemovalReason" rows="2" readonly></textarea>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">Status</label>
+          <input type="text" class="form-control" id="viewStatus" readonly>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary rounded-pill" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
 <script>
     document.addEventListener("DOMContentLoaded", function() {
         const songSelect = document.getElementById("songName");

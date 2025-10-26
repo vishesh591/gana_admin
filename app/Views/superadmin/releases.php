@@ -72,6 +72,7 @@
                             <li class="nav-item"><a class="nav-link" href="#" data-filter="review">In Review</a></li>
                             <li class="nav-item"><a class="nav-link" href="#" data-filter="rejected">Rejected</a></li>
                             <li class="nav-item"><a class="nav-link" href="#" data-filter="takedown">Takedown</a></li>
+                            <li class="nav-item"><a class="nav-link" href="#" data-filter="takedown_requested">Takedown Requested</a></li>
                         </ul>
                     </div>
                 </div>

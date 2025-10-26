@@ -2127,7 +2127,7 @@ document.addEventListener("DOMContentLoaded", function () {
             // For Delivered (3) and Takedown (2), show view page
             // For others, show edit page
             const url =
-              row.status_numeric == 3 || row.status_numeric == 2
+              row.status_numeric == 3 || row.status_numeric == 2 || row.status_numeric == 6
                 ? `/releases/view/${row.id}`
                 : `/releases/edit/${row.id}`;
 
@@ -3125,26 +3125,24 @@ $(document).ready(function () {
 
 // claiming-req.js
 $(document).ready(function () {
-  let table = $("#claimingRequestTableBody").DataTable({
+  const table = $("#claimingRequestTableBody").DataTable({
     destroy: true,
     ajax: "/api/claiming-req",
     columns: [
       {
         data: "status",
         render: function (data) {
-          let icons = {
+          const icons = {
             Approved: "check-circle",
             Pending: "clock",
             Rejected: "x-circle",
           };
-          let colors = {
+          const colors = {
             Approved: "text-success",
             Pending: "text-warning",
             Rejected: "text-danger",
           };
-          return `<i data-feather="${icons[data] || "help-circle"}" class="${
-            colors[data] || "text-muted"
-          }"></i>`;
+          return `<i data-feather="${icons[data] || "help-circle"}" class="${colors[data] || "text-muted"}"></i>`;
         },
         orderable: false,
         className: "text-center",
@@ -3155,9 +3153,7 @@ $(document).ready(function () {
           return `
             <div>
               <div class="release-title">${data.title || "Untitled"}</div>
-              <div class="release-artist text-muted small">${
-                data.artist || "Unknown"
-              }</div>
+              <div class="release-artist text-muted small">${data.artist || "Unknown"}</div>
             </div>`;
         },
       },
@@ -3166,155 +3162,148 @@ $(document).ready(function () {
       {
         data: "status",
         render: function (data) {
-          let badgeClasses = {
+          const badgeClasses = {
             Approved: "success",
             Pending: "warning",
             Rejected: "danger",
           };
-          return `<span class="badge bg-${
-            badgeClasses[data] || "secondary"
-          }">${data}</span>`;
+          return `<span class="badge bg-${badgeClasses[data] || "secondary"}">${data}</span>`;
         },
+        className: "text-center",
+      },
+      {
+        data: null,
+        render: function (data) {
+          return `
+            <div class="text-center">
+              <button type="button"
+                class="btn btn-sm btn-outline-primary view-details-btn"
+                data-bs-toggle="modal"
+                data-bs-target="#claimingDetailsModal"
+                data-title="${data.title}"
+                data-artist="${data.artist}"
+                data-isrc="${data.isrc}"
+                data-upc="${data.upc}"
+                data-status="${data.status}"
+                data-reason="${data.removalReason}"
+                data-videos='${JSON.stringify(data.videoLinks || [])}'>
+                <i data-feather="music"></i> View
+              </button>
+            </div>`;
+        },
+        orderable: false,
         className: "text-center",
       },
     ],
     drawCallback: function () {
       feather.replace();
-      let api = this.api();
-      if (api.rows({ page: "current" }).data().length === 0) {
-        $("#claimingRequestTableBody tbody").html(`
-          <tr>
-            <td colspan="5" class="empty-state text-center">
-              <i data-feather="inbox"></i>
-              <div>
-                <h5 class="mb-2">No Claiming Requests found</h5>
-                <p class="mb-0">Click 'New Claiming Request' to get started.</p>
-              </div>
-            </td>
-          </tr>
-        `);
+
+      $(".view-details-btn").on("click", function () {
+        const linksContainer = $("#videoLinksContainer");
+        const videos = $(this).data("videos");
+        const reason = $(this).data("reason");
+
+        $("#viewSongTitle").val($(this).data("title"));
+        $("#viewArtistName").val($(this).data("artist"));
+        $("#viewISRC").val($(this).data("isrc"));
+        $("#viewUPC").val($(this).data("upc"));
+        $("#viewStatus").val($(this).data("status"));
+        $("#viewRemovalReason").val(reason || "N/A");
+
+        // Populate video/music links
+        linksContainer.empty();
+        if (videos.length > 0) {
+          videos.forEach((link) => {
+            linksContainer.append(`
+              <div class="mb-2">
+                <a href="${link}" target="_blank" class="text-decoration-none">
+                  <i data-feather="link" class="text-primary me-1"></i> ${link}
+                </a>
+              </div>`);
+          });
+        } else {
+          linksContainer.html(`<p class="text-muted">No video links available</p>`);
+        }
+
         feather.replace();
-      }
+      });
     },
   });
 
+  // Reload functionality
   window.reloadClaimingRequests = function () {
     table.ajax.reload(null, false);
   };
 });
 
+
+
 // relocation-request js
 
 document.addEventListener("DOMContentLoaded", function () {
   const relocReqPageContainer = document.querySelector(".admin-reloc-req-page");
+  if (!relocReqPageContainer) return;
 
-  if (relocReqPageContainer) {
-    const exportCsvBtn = document.getElementById("exportCsvBtn");
-
-    // Initialize DataTable with server JSON
-    const table = $("#relocationDatatable").DataTable({
-      ajax: "/relocation-requests/data",
-      processing: true,
-      serverSide: false, // you can enable true if you want server pagination
-      paging: true,
-      searching: true,
-      info: true,
-      autoWidth: false,
-      columns: [
-        {
-          data: "status",
-          className: "text-center",
-          render: function (data) {
-            return getStatusIcon(data);
-          },
+  const table = $("#relocationDatatable").DataTable({
+    ajax: "/relocation-requests/data",
+    destroy: true,
+    paging: true,
+    searching: true,
+    info: true,
+    autoWidth: false,
+    columns: [
+      {
+        data: "status",
+        className: "text-center",
+        render: function (data) {
+          const icons = { Approved: "check-circle", Pending: "clock", Rejected: "x-circle" };
+          const colors = { Approved: "text-success", Pending: "text-warning", Rejected: "text-danger" };
+          return `<i data-feather="${icons[data] || "help-circle"}" class="${colors[data] || "text-muted"}"></i>`;
         },
-        {
-          data: "title",
-          render: function (data, type, row) {
-            return `
-              <div class="release-title">${row.title}</div>
-              <div class="release-artist text-muted small">${row.artist}</div>
-            `;
-          },
-        },
-        { data: "isrc", defaultContent: "N/A" },
-        { data: "upc", defaultContent: "N/A" },
-        {
-          data: "status",
-          className: "text-center",
-          render: function (data) {
-            return getStatusBadge(data);
-          },
-        },
-      ],
-      language: {
-        search: "_INPUT_",
-        searchPlaceholder: "Search relocation requests...",
-        zeroRecords: "No matching relocation requests found",
-        emptyTable: "No relocation requests available",
       },
-      drawCallback: function () {
-        feather.replace();
+      {
+        data: null,
+        render: function (data) {
+          return `
+            <div>
+              <div class="release-title fw-semibold">${data.title || "Untitled"}</div>
+              <div class="release-artist text-muted small">${data.artist || "Unknown"}</div>
+            </div>`;
+        },
       },
-    });
-
-    // --- Helpers ---
-    function getStatusIcon(status) {
-      const icons = {
-        Approved: "check-circle",
-        Pending: "clock",
-        Rejected: "x-circle",
-      };
-      const colors = {
-        Approved: "text-success",
-        Pending: "text-warning",
-        Rejected: "text-danger",
-      };
-      return `<i data-feather="${icons[status] || "help-circle"}" class="${
-        colors[status] || "text-muted"
-      }"></i>`;
-    }
-
-    function getStatusBadge(status) {
-      const badgeClasses = {
-        Approved: "success",
-        Pending: "warning",
-        Rejected: "danger",
-      };
-      return `<span class="badge bg-${
-        badgeClasses[status] || "secondary"
-      }">${status}</span>`;
-    }
-
-    // --- CSV Export ---
-    exportCsvBtn.addEventListener("click", function () {
-      const headers = ["ID", "Song Name", "Artist", "ISRC", "UPC", "Status"];
-      const data = table.rows({ search: "applied" }).data().toArray();
-
-      const rows = data.map((r) => [
-        r.id,
-        r.title,
-        r.artist,
-        r.isrc,
-        r.upc,
-        r.status,
-      ]);
-
-      const csvContent =
-        "data:text/csv;charset=utf-8," +
-        headers.join(",") +
-        "\n" +
-        rows.map((e) => e.join(",")).join("\n");
-
-      const link = document.createElement("a");
-      link.setAttribute("href", encodeURI(csvContent));
-      link.setAttribute("download", "relocation-requests.csv");
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-    });
-  }
+      { data: "isrc", defaultContent: "N/A" },
+      {
+        data: null,
+        className: "text-center",
+        render: function (data) {
+          const icons = [];
+          if (data.instagram_link)
+            icons.push(`<a href="${data.instagram_link}" target="_blank" title="Instagram Profile">
+              <i class="bi bi-instagram me-2"></i></a>`);
+          if (data.instagram_audio)
+            icons.push(`<a href="${data.instagram_audio}" target="_blank" title="Instagram Audio">
+              <i class="bi bi-music-note-beamed me-2"></i></a>`);
+          if (data.facebook_link)
+            icons.push(`<a href="${data.facebook_link}" target="_blank" title="Facebook">
+              <i class="bi bi-facebook me-2"></i></a>`);
+          return icons.length ? icons.join("") : `<span class="text-muted">-</span>`;
+        },
+      },
+      {
+        data: "status",
+        className: "text-center",
+        render: function (data) {
+          const badges = { Approved: "success", Pending: "warning", Rejected: "danger" };
+          return `<span class="badge bg-${badges[data] || "secondary"}">${data}</span>`;
+        },
+      },
+    ],
+    drawCallback: function () {
+      feather.replace();
+    },
+  });
 });
+
 
 // merge-request js
 
