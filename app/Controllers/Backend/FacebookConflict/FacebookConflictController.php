@@ -256,9 +256,6 @@ class FacebookConflictController extends BaseController
     /**
      * Update conflict resolution
      */
-    /**
-     * Update conflict resolution
-     */
     public function updateResolution()
     {
         $conflictId = $this->request->getPost('conflict_id');

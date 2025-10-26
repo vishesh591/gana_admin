@@ -252,26 +252,40 @@ function initializeOwnershipPage(config) {
     return `<span class="badge rounded-pill border ${badgeClass}">${status}</span>`;
   };
 
-  const populateTable = (tableBodySelector, data, platformConfig) => {
-    const tableBody = pageContainer.querySelector(tableBodySelector);
-    if (!tableBody) return;
+ const populateTable = (tableBodySelector, data, platformConfig) => {
+  const tableBody = pageContainer.querySelector(tableBodySelector);
+  if (!tableBody) {
+    console.error("Table body element not found:", tableBodySelector);
+    return;
+  }
 
+  try {
+    // Clear existing data
+    tableBody.innerHTML = "";
+
+    // Handle empty data gracefully by showing a message row
+    if (!data || data.length === 0) {
+      tableBody.innerHTML = `
+        <tr>
+          <td colspan="10" class="text-center text-muted">
+            <i class="bi bi-info-circle"></i> No ${platformConfig.platformName} conflicts found
+          </td>
+        </tr>
+      `;
+      return;
+    }
+
+    // Append rows for each item
     data.forEach((item) => {
       const row = document.createElement("tr");
       row.style.cursor = "pointer";
       row.setAttribute("data-bs-toggle", "offcanvas");
       row.setAttribute("data-bs-target", "#ownershipDetailsOffcanvas");
 
-      // ✅ FIXED: Set ALL required data attributes
-      row.setAttribute("data-id", item.id);
-      row.setAttribute(
-        "data-song-name",
-        item.songName || item.assetTitle || ""
-      );
-      row.setAttribute(
-        "data-artist-name",
-        item.artistName || item.artist || ""
-      );
+      // Set data attributes required for offcanvas and further usage
+      row.setAttribute("data-id", item.id || "");
+      row.setAttribute("data-song-name", item.songName || item.assetTitle || "");
+      row.setAttribute("data-artist-name", item.artistName || item.artist || "");
       row.setAttribute("data-isrc", item.isrc || "");
       row.setAttribute("data-upc", item.upc || "");
       row.setAttribute("data-category", item.category || "");
@@ -283,58 +297,50 @@ function initializeOwnershipPage(config) {
       row.setAttribute("data-platform-name", platformConfig.platformName);
       row.setAttribute("data-status", item.status || "");
 
-      // ✅ FIXED: Include ALL resolution data fields
+      // You can add any additional resolutionData fields similarly if required
       const completeResolutionData = {
-        rightsOwnedDisplay:
-          item.resolutionData?.rightsOwnedDisplay ||
-          item.rightsOwnedDisplay ||
-          "",
-        countryDisplayText:
-          item.resolutionData?.countryDisplayText ||
-          item.countryDisplayText ||
-          "",
-        supportingDocumentPath:
-          item.resolutionData?.supportingDocumentPath ||
-          item.supportingDocumentPath ||
-          "",
-        resolutionDate:
-          item.resolutionData?.resolutionDate ||
-          item.resolutionDate ||
-          item.submissionDate ||
-          "",
-        rejectionMessage:
-          item.resolutionData?.rejectionMessage || item.rejectionMessage || "",
-        submissionDate:
-          item.resolutionData?.submissionDate || item.submissionDate || "",
-        // Add any other fields that might exist
+        rightsOwnedDisplay: item.resolutionData?.rightsOwnedDisplay || item.rightsOwnedDisplay || "",
+        countryDisplayText: item.resolutionData?.countryDisplayText || item.countryDisplayText || "",
+        supportingDocumentPath: item.resolutionData?.supportingDocumentPath || item.supportingDocumentPath || "",
+        resolutionDate: item.resolutionData?.resolutionDate || item.resolutionDate || item.submissionDate || "",
+        rejectionMessage: item.resolutionData?.rejectionMessage || item.rejectionMessage || "",
+        submissionDate: item.resolutionData?.submissionDate || item.submissionDate || "",
         ...item.resolutionData,
       };
 
-      row.setAttribute(
-        "data-resolution-data",
-        encodeURIComponent(JSON.stringify(completeResolutionData))
-      );
+      row.setAttribute("data-resolution-data", encodeURIComponent(JSON.stringify(completeResolutionData)));
 
+      // Fill row inner HTML cells exactly as per your existing format
       row.innerHTML = `
-        <td class="text-center"><i class="bi ${
-          platformConfig.platformIconClass
-        } fs-5"></i></td>
-        <td>${item.category}</td>
-        <td>${item.assetTitle}</td>
+        <td class="text-center"><i class="bi ${platformConfig.platformIconClass} fs-5"></i></td>
+        <td>${item.category || "-"}</td>
+        <td>${item.assetTitle || "-"}</td>
         <td>
-          <div class="fw-bold">${item.artist}</div>
-          <small class="text-muted">Asset ID: ${item.assetId}</small>
+          <div class="fw-bold">${item.artist || "-"}</div>
+          <small class="text-muted">Asset ID: ${item.assetId || "-"}</small>
         </td>
-        <td>${item.upc}</td>
-        <td>${item.otherParty}</td>
-        <td>${item.dailyViews}</td>
-        <td>${item.expiry}</td>
-        <td class="status-cell">${getStatusBadge(item.status)}</td>
+        <td>${item.upc || "-"}</td>
+        <td>${item.otherParty || "-"}</td>
+        <td>${item.dailyViews || "-"}</td>
+        <td>${item.expiry || "-"}</td>
+        <td class="status-cell">${getStatusBadge(item.status || "Unknown")}</td>
         <td class="text-center"><i class="bi bi-chevron-right text-muted"></i></td>
       `;
       tableBody.appendChild(row);
     });
-  };
+  } catch (error) {
+    console.error("Error populating table:", error);
+    tableBody.innerHTML = `
+      <tr>
+        <td colspan="10" class="text-center text-danger">
+          <i class="bi bi-exclamation-triangle"></i>
+          Error loading data. Please try again later.
+        </td>
+      </tr>
+    `;
+  }
+};
+
 
   populateTable(".facebook-data-body", config.facebookData, {
     platformName: "Facebook",
@@ -646,10 +652,7 @@ function initializeYouTubeOwnershipPage(config) {
   // Use YouTube-specific page selector
   const pageContainer = document.querySelector(config.pageSelector);
   if (!pageContainer) {
-    console.warn(
-      "YouTube ownership page container not found:",
-      config.pageSelector
-    );
+    console.warn("YouTube ownership page container not found:", config.pageSelector);
     return;
   }
 
@@ -699,14 +702,8 @@ function initializeYouTubeOwnershipPage(config) {
 
       // Set ALL required data attributes
       row.setAttribute("data-id", item.id || "");
-      row.setAttribute(
-        "data-song-name",
-        item.songName || item.assetTitle || ""
-      );
-      row.setAttribute(
-        "data-artist-name",
-        item.artistName || item.artist || ""
-      );
+      row.setAttribute("data-song-name", item.songName || item.assetTitle || "");
+      row.setAttribute("data-artist-name", item.artistName || item.artist || "");
       row.setAttribute("data-isrc", item.isrc || "");
       row.setAttribute("data-upc", item.upc || "");
       row.setAttribute("data-category", item.category || "");
@@ -722,50 +719,24 @@ function initializeYouTubeOwnershipPage(config) {
       row.setAttribute("data-video-title", item.videoTitle || "");
       row.setAttribute("data-channel-name", item.channelName || "");
       row.setAttribute("data-issue-type", item.issueType || "");
-      row.setAttribute(
-        "data-duration-seconds",
-        item.details?.duration_seconds || "0"
-      );
-      row.setAttribute(
-        "data-duration-percentage-reference",
-        item.details?.duration_percentage_reference || "0"
-      );
-      row.setAttribute(
-        "data-duration-percentage-video",
-        item.details?.duration_percentage_video || "0"
-      );
+      row.setAttribute("data-duration-seconds", item.details?.duration_seconds || "0");
+      row.setAttribute("data-duration-percentage-reference", item.details?.duration_percentage_reference || "0");
+      row.setAttribute("data-duration-percentage-video", item.details?.duration_percentage_video || "0");
 
       // Include ALL resolution data fields
       const completeResolutionData = {
-        rightsOwnedDisplay:
-          item.resolutionData?.rightsOwnedDisplay ||
-          item.rightsOwnedDisplay ||
-          "",
-        supportingDocumentPath:
-          item.resolutionData?.supportingDocumentPath ||
-          item.supportingDocumentPath ||
-          "",
-        resolutionDate:
-          item.resolutionData?.resolutionDate ||
-          item.resolutionDate ||
-          item.submissionDate ||
-          "",
-        rejectionMessage:
-          item.resolutionData?.rejectionMessage || item.rejectionMessage || "",
-        submissionDate:
-          item.resolutionData?.submissionDate || item.submissionDate || "",
+        rightsOwnedDisplay: item.resolutionData?.rightsOwnedDisplay || item.rightsOwnedDisplay || "",
+        supportingDocumentPath: item.resolutionData?.supportingDocumentPath || item.supportingDocumentPath || "",
+        resolutionDate: item.resolutionData?.resolutionDate || item.resolutionDate || item.submissionDate || "",
+        rejectionMessage: item.resolutionData?.rejectionMessage || item.rejectionMessage || "",
+        submissionDate: item.resolutionData?.submissionDate || item.submissionDate || "",
         ...item.resolutionData,
       };
 
-      row.setAttribute(
-        "data-resolution-data",
-        encodeURIComponent(JSON.stringify(completeResolutionData))
-      );
+      row.setAttribute("data-resolution-data", encodeURIComponent(JSON.stringify(completeResolutionData)));
 
       row.innerHTML = `
-        <td class="text-center"><i class="bi ${
-          platformConfig.platformIconClass
-        } fs-5"></i></td>
+        <td class="text-center"><i class="bi ${platformConfig.platformIconClass} fs-5"></i></td>
         <td>${item.category || "-"}</td>
         <td>${item.assetTitle || "-"}</td>
         <td>
@@ -783,55 +754,60 @@ function initializeYouTubeOwnershipPage(config) {
     });
   };
 
-  // Populate YouTube data
-  populateTable(".youtube-data-body", config.youtubeData || [], {
-    platformName: "YouTube",
-    platformIconClass: "bi-youtube text-danger",
-  });
+  try {
+    // Populate YouTube data
+    populateTable(".youtube-data-body", config.youtubeData || [], {
+      platformName: "YouTube",
+      platformIconClass: "bi-youtube text-danger",
+    });
+  } catch (e) {
+    console.error("Error populating YouTube table:", e);
+  }
 
   // Initialize DataTable for YouTube only
   const youtubeTable = pageContainer.querySelector(".youtube-datatable");
   if (youtubeTable && $.fn.DataTable) {
-    $(youtubeTable).DataTable({
-      destroy: true,
-      paging: true,
-      searching: true,
-      info: true,
-      lengthChange: false,
-      autoWidth: false,
-      language: {
-        search: "_INPUT_",
-        searchPlaceholder: "Search YouTube conflicts...",
-      },
-    });
+    try {
+      if ($.fn.DataTable.isDataTable(youtubeTable)) {
+        $(youtubeTable).DataTable().clear().destroy();
+      }
+      $(youtubeTable).DataTable({
+        destroy: true,
+        paging: true,
+        searching: true,
+        info: true,
+        lengthChange: false,
+        autoWidth: false,
+        language: {
+          search: "_INPUT_",
+          searchPlaceholder: "Search YouTube conflicts...",
+        },
+      });
+    } catch (e) {
+      console.error("DataTable initialization error:", e);
+    }
   }
 
   // Rest of your offcanvas and update logic remains the same...
-  const youtubeOwnershipOffcanvasEl = document.getElementById(
-    "youtubeOwnershipDetailsOffcanvas"
-  );
+  const youtubeOwnershipOffcanvasEl = document.getElementById("youtubeOwnershipDetailsOffcanvas");
   if (!youtubeOwnershipOffcanvasEl) return;
 
-  youtubeOwnershipOffcanvasEl.addEventListener(
-    "show.bs.offcanvas",
-    function (event) {
-      const triggerRow = event.relatedTarget;
-      const data = triggerRow.dataset;
+  youtubeOwnershipOffcanvasEl.addEventListener("show.bs.offcanvas", function (event) {
+    const triggerRow = event.relatedTarget;
+    const data = triggerRow.dataset;
 
-      let resolutionData = {};
-      try {
-        resolutionData = JSON.parse(
-          decodeURIComponent(data.resolutionData || "{}")
-        );
-      } catch (e) {
-        console.error("Error parsing resolution data:", e);
-        resolutionData = {};
-      }
+    let resolutionData = {};
+    try {
+      resolutionData = JSON.parse(decodeURIComponent(data.resolutionData || "{}"));
+    } catch (e) {
+      console.error("Error parsing resolution data:", e);
+      resolutionData = {};
+    }
 
-      currentConflictId = data.id;
-      console.log("Opening YouTube offcanvas for ID:", currentConflictId);
-      console.log("All data:", data);
-      console.log("Resolution data:", resolutionData);
+    currentConflictId = data.id;
+    console.log("Opening YouTube offcanvas for ID:", currentConflictId);
+    console.log("All data:", data);
+    console.log("Resolution data:", resolutionData);
 
       // Clear all fields first
       const clearElement = (selector, defaultValue = "-") => {
@@ -3533,118 +3509,123 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     // --- RENDER WITH DATATABLES ---
-    function initializeDataTable(data) {
-      const tableBody = document.getElementById("youtubeTableBody");
-      const table = document.getElementById("releasesTable");
-      
-      // Destroy existing DataTable if it exists
-      if (dataTable) {
-        dataTable.destroy();
-        dataTable = null;
-      }
+   function initializeDataTable(data) {
+  const tableBody = document.getElementById("youtubeTableBody");
+  const table = document.getElementById("releasesTable");
 
-      // Clear existing data
-      tableBody.innerHTML = "";
+  // Destroy existing DataTable if it exists
+  if (dataTable) {
+    dataTable.destroy();
+    dataTable = null;
+  }
 
-      // If no data, show empty message and initialize empty DataTable
-      if (!data || data.length === 0) {
-        tableBody.innerHTML = `<tr><td colspan="10" class="text-center p-5"><h5>No matching conflicts found.</h5></td></tr>`;
-        
-        // Initialize DataTable even with empty data
-        dataTable = $(table).DataTable({
-          searching: true,
-          paging: false,
-          info: false,
-          ordering: false,
-          language: {
-            emptyTable: "No conflicts available",
-            zeroRecords: "No matching conflicts found"
-          }
-        });
-        return;
-      }
+  // Clear existing data
+  tableBody.innerHTML = "";
 
-      // Prepare data array for DataTables
-      const tableData = data.map((req) => {
-        return [
-          '<i class="bi bi-youtube text-danger fs-5"></i>', // Platform icon
-          req.category || '', // Category
-          req.assetTitle || '', // Asset Title
-          `<div class="fw-bold">${req.artist || ''}</div><small class="text-muted">Asset ID: ${req.assetId || ''}</small>`, // Artist
-          req.upc || '', // UPC
-          req.otherParty || '', // Other Party
-          req.dailyViews || '', // Daily Views
-          req.expiry || '', // Expiry
-          getStatusBadge(req.status), // Status
-          '<i class="bi bi-chevron-right text-muted"></i>' // Action icon
-        ];
-      });
+  // If no data, show empty message and initialize empty DataTable
+  if (!data || data.length === 0) {
+    tableBody.innerHTML = `<tr><td colspan="10" class="text-center p-5"><h5>No matching conflicts found.</h5></td></tr>`;
 
-      // Initialize DataTable with data
+    try {
       dataTable = $(table).DataTable({
-        data: tableData, // Use data array instead of DOM
-        searching: true, // Enable search functionality
-        paging: true, // Enable pagination
-        pageLength: 25, // Show 25 entries per page
-        lengthChange: true, // Allow user to change page length
-        info: true, // Show information
-        ordering: true, // Enable column sorting
-        responsive: true, // Make table responsive
-        destroy: true, // Allow reinitializing
+        searching: true,
+        paging: false,
+        info: false,
+        ordering: false,
         language: {
-          search: "Search conflicts:", // Custom search label
-          searchPlaceholder: "Type to search...",
-          lengthMenu: "Show _MENU_ conflicts per page",
-          info: "Showing _START_ to _END_ of _TOTAL_ conflicts",
-          infoEmpty: "No conflicts found",
-          infoFiltered: "(filtered from _MAX_ total conflicts)",
           emptyTable: "No conflicts available",
-          zeroRecords: "No matching conflicts found"
-        },
-        columnDefs: [
-          { orderable: false, targets: [0, 9] }, // Disable sorting on first and last columns
-          { searchable: false, targets: [0, 9] }, // Disable search on icon and action columns
-          { className: "text-center", targets: [0] }, // Center align first column
-        ],
-        order: [[1, 'asc']], // Default sort by category
-        dom: '<"row"<"col-sm-12 col-md-6"l><"col-sm-12 col-md-6"f>>t<"row"<"col-sm-12 col-md-5"i><"col-sm-12 col-md-7"p>>', // Layout
-        drawCallback: function(settings) {
-          // Update pagination text after each draw
-          const api = this.api();
-          const info = api.page.info();
-          const paginationTextEl = document.getElementById("pagination-text");
-          if (paginationTextEl) {
-            paginationTextEl.textContent = `${info.recordsDisplay} of ${info.recordsTotal} results`;
-          }
-
-          // Re-attach click events to rows after each draw
-          attachRowClickEvents();
-        },
-        createdRow: function(row, data, dataIndex) {
-          // Add data attributes to each row for the offcanvas
-          const req = conflictRequests[dataIndex];
-          if (req) {
-            $(row).attr({
-              'data-bs-toggle': 'offcanvas',
-              'data-bs-target': '#conflictResolutionOffcanvas',
-              'data-id': req.id,
-              'data-song-name': req.songName || '',
-              'data-artist-name': req.artistName || '',
-              'data-isrc': req.isrc || '',
-              'data-cover-url': req.albumCoverUrl || '',
-              'data-category': req.category || '',
-              'data-other-party': req.otherParty || '',
-              'data-status': req.status || '',
-              'data-rejection-message': req.rejectionMessage || '',
-              'data-rights-owned': req.rightsOwned || '',
-              'data-supporting-file': req.supportingFile || '',
-              'data-resolution-data': encodeURIComponent(JSON.stringify(req.resolutionData || {}))
-            });
-            $(row).css('cursor', 'pointer');
-          }
+          zeroRecords: "No matching conflicts found",
         }
       });
+    } catch (error) {
+      console.error("DataTable initialization failed in empty-data branch:", error);
     }
+
+    return;
+  }
+
+  // Prepare data array for DataTables
+  const tableData = data.map((req) => {
+    return [
+      '<i class="bi bi-youtube text-danger fs-5"></i>', // Platform icon
+      req.category || '',
+      req.assetTitle || '',
+      `<div class="fw-bold">${req.artist || ''}</div><small class="text-muted">Asset ID: ${req.assetId || ''}</small>`,
+      req.upc || '',
+      req.otherParty || '',
+      req.dailyViews || '',
+      req.expiry || '',
+      getStatusBadge(req.status),
+      '<i class="bi bi-chevron-right text-muted"></i>'
+    ];
+  });
+
+  try {
+    dataTable = $(table).DataTable({
+      data: tableData,
+      searching: true,
+      paging: true,
+      pageLength: 25,
+      lengthChange: true,
+      info: true,
+      ordering: true,
+      responsive: true,
+      destroy: true,
+      language: {
+        search: "Search conflicts:",
+        searchPlaceholder: "Type to search...",
+        lengthMenu: "Show _MENU_ conflicts per page",
+        info: "Showing _START_ to _END_ of _TOTAL_ conflicts",
+        infoEmpty: "No conflicts found",
+        infoFiltered: "(filtered from _MAX_ total conflicts)",
+        emptyTable: "No conflicts available",
+        zeroRecords: "No matching conflicts found"
+      },
+      columnDefs: [
+        { orderable: false, targets: [0, 9] },
+        { searchable: false, targets: [0, 9] },
+        { className: "text-center", targets: [0] }
+      ],
+      order: [[1, 'asc']],
+      dom: '<"row"<"col-sm-12 col-md-6"l><"col-sm-12 col-md-6"f>>t<"row"<"col-sm-12 col-md-5"i><"col-sm-12 col-md-7"p>>',
+      drawCallback: function(settings) {
+        const api = this.api();
+        const info = api.page.info();
+        const paginationTextEl = document.getElementById("pagination-text");
+        if (paginationTextEl) {
+          paginationTextEl.textContent = `${info.recordsDisplay} of ${info.recordsTotal} results`;
+        }
+
+        attachRowClickEvents();
+      },
+      createdRow: function(row, data, dataIndex) {
+        const req = conflictRequests[dataIndex];
+        if (req) {
+          $(row).attr({
+            'data-bs-toggle': 'offcanvas',
+            'data-bs-target': '#conflictResolutionOffcanvas',
+            'data-id': req.id,
+            'data-song-name': req.songName || '',
+            'data-artist-name': req.artistName || '',
+            'data-isrc': req.isrc || '',
+            'data-cover-url': req.albumCoverUrl || '',
+            'data-category': req.category || '',
+            'data-other-party': req.otherParty || '',
+            'data-status': req.status || '',
+            'data-rejection-message': req.rejectionMessage || '',
+            'data-rights-owned': req.rightsOwned || '',
+            'data-supporting-file': req.supportingFile || '',
+            'data-resolution-data': encodeURIComponent(JSON.stringify(req.resolutionData || {}))
+          });
+          $(row).css('cursor', 'pointer');
+        }
+      }
+    });
+  } catch (error) {
+    console.error("DataTable initialization failed:", error);
+  }
+}
+
 
     // Function to attach click events to table rows
     function attachRowClickEvents() {
