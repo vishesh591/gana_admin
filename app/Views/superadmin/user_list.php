@@ -55,6 +55,7 @@
             </div>
         </div>
     </div>
+    <?= $this->include('partials/footer') ?>
 </div>
 
 <div class="modal fade" id="claimingRequestModal" tabindex="-1" aria-labelledby="claimingRequestModalLabel" aria-hidden="true">

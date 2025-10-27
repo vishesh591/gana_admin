@@ -13,41 +13,42 @@
                 </div>
             </div>
 
-<div class="row">
-  <div class="col-12">
-    <div class="card shadow-sm mt-4 p-4">
-      <div class="card-body p-0">
-        <div class="table-responsive">
-          <table class="table table-hover mb-0" id="claimMergeTable">
-            <thead class="table-light">
-              <tr>
-                <th width="50">Status</th>
-                <th>Song Name</th>
-                <th>ISRC</th>
-                <th class="text-center">Instagram Audio Link</th>
-                <th class="text-center">Reel Merge Link</th>
-                <th>Matching Time</th>
-                <th>Status Text</th>
-              </tr>
-            </thead>
-            <tbody>
-              <!-- DataTables will inject rows here via AJAX -->
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
+            <div class="row">
+                <div class="col-12">
+                    <div class="card shadow-sm mt-4 p-4">
+                        <div class="card-body p-0">
+                            <div class="table-responsive">
+                                <table class="table table-hover mb-0" id="claimMergeTable">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th width="50">Status</th>
+                                            <th>Song Name</th>
+                                            <th>ISRC</th>
+                                            <th class="text-center">Instagram Audio Link</th>
+                                            <th class="text-center">Reel Merge Link</th>
+                                            <th>Matching Time</th>
+                                            <th>Status Text</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <!-- DataTables will inject rows here via AJAX -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
         </div>
     </div>
+    <?= $this->include('partials/footer') ?>
 </div>
 
 <div class="modal fade" id="newClaimRequestModal" tabindex="-1" aria-labelledby="newClaimRequestModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg modal-dialog-centered">
         <div class="modal-content rounded-4">
-            <form id="newClaimForm" action="<?= site_url('claim-reel-merge/store')?>" method="post">
+            <form id="newClaimForm" action="<?= site_url('claim-reel-merge/store') ?>" method="post">
                 <div class="modal-header">
                     <h5 class="modal-title" id="newClaimRequestModalLabel">New Claim/Reel Merge Form</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -59,12 +60,11 @@
                         <select class="form-select rounded-pill p-3" id="songName" name="release_id" required>
                             <option value="" selected disabled>Select Song</option>
                             <?php foreach ($releases as $release): ?>
-                                <option 
+                                <option
                                     value="<?= esc($release['id']) ?>"
                                     data-artist="<?= esc($release['artist_name']) ?>"
                                     data-isrc="<?= esc($release['isrc']) ?>"
-                                    data-upc="<?= esc($release['upc_ean']) ?>"
-                                >
+                                    data-upc="<?= esc($release['upc_ean']) ?>">
                                     <?= esc($release['title']) ?>
                                 </option>
                             <?php endforeach; ?>
@@ -114,20 +114,19 @@
 </div>
 
 <script>
-    document.addEventListener("DOMContentLoaded", function () {
-    const songSelect = document.getElementById("songName");
-    const artistInput = document.getElementById("artistName");
-    const isrcInput = document.getElementById("isrc");
-    const upcInput = document.getElementById("upc");
+    document.addEventListener("DOMContentLoaded", function() {
+        const songSelect = document.getElementById("songName");
+        const artistInput = document.getElementById("artistName");
+        const isrcInput = document.getElementById("isrc");
+        const upcInput = document.getElementById("upc");
 
-    if (songSelect) {
-        songSelect.addEventListener("change", function () {
-            const selected = songSelect.options[songSelect.selectedIndex];
-            artistInput.value = selected.dataset.artist || "";
-            isrcInput.value = selected.dataset.isrc || "";
-            upcInput.value = selected.dataset.upc || "";
-        });
-    }
-});
-
+        if (songSelect) {
+            songSelect.addEventListener("change", function() {
+                const selected = songSelect.options[songSelect.selectedIndex];
+                artistInput.value = selected.dataset.artist || "";
+                isrcInput.value = selected.dataset.isrc || "";
+                upcInput.value = selected.dataset.upc || "";
+            });
+        }
+    });
 </script>

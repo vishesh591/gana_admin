@@ -307,7 +307,7 @@
                                     <input class="form-check-input" type="radio" name="instrumental" id="instrumentalNo" value="no" <?= (!isset($release) || $release['instrumental'] == 'no' || $release['instrumental'] != 'yes') ? 'checked' : '' ?>>
                                     <label class="form-check-label" for="instrumentalNo">No</label>
                                 </div>
-                                <div class="invalid-feedback d-block" style="display: none;">Please select an option.</div>
+                                <div class="invalid-feedback" style="display: none;">Please select an option.</div>
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label for="isrc" class="form-label mb-0">ISRC</label>
@@ -380,7 +380,7 @@
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <label for="productionYear" class="form-label required-field">Production Year</label>
-                                <input type="text" class="form-control" id="productionYear" name="productionYear"
+                                <input type="number" class="form-control" id="productionYear" name="productionYear"
                                     value="<?= isset($release) ? esc($release['production_year']) : '' ?>" required
                                     placeholder="Enter production year">
                                 <div class="invalid-feedback">Please select the production year.</div>
@@ -704,6 +704,7 @@
             </form>
         </div>
     </div>
+    <?= $this->include('partials/footer') ?>
 </div>
 
 <!-- Rejection Modal -->

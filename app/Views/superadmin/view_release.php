@@ -387,34 +387,36 @@
         </div>
         <!-- content -->
     </div>
+    <?= $this->include('partials/footer') ?>
+</div>
 
-    <script>
-        function confirmTakedown(releaseId) {
-            if (confirm('Are you sure you want to takedown this release? This will change the status to "Takedown" and remove it from distribution.')) {
-                submitTakedownForm(releaseId);
-            }
+<script>
+    function confirmTakedown(releaseId) {
+        if (confirm('Are you sure you want to takedown this release? This will change the status to "Takedown" and remove it from distribution.')) {
+            submitTakedownForm(releaseId);
         }
+    }
 
-        function confirmTakedownRequest(releaseId) {
-            if (confirm('Are you sure you want to request takedown for this release? This will submit a takedown request for admin approval.')) {
-                submitTakedownForm(releaseId);
-            }
+    function confirmTakedownRequest(releaseId) {
+        if (confirm('Are you sure you want to request takedown for this release? This will submit a takedown request for admin approval.')) {
+            submitTakedownForm(releaseId);
         }
+    }
 
-        function submitTakedownForm(releaseId) {
-            // Create a form and submit it for takedown request
-            const form = document.createElement('form');
-            form.method = 'POST';
-            form.action = '<?= base_url('releases/takedown/') ?>' + releaseId;
+    function submitTakedownForm(releaseId) {
+        // Create a form and submit it for takedown request
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = '<?= base_url('releases/takedown/') ?>' + releaseId;
 
-            // Add CSRF token
-            const csrfInput = document.createElement('input');
-            csrfInput.type = 'hidden';
-            csrfInput.name = '<?= csrf_token() ?>';
-            csrfInput.value = '<?= csrf_hash() ?>';
-            form.appendChild(csrfInput);
+        // Add CSRF token
+        const csrfInput = document.createElement('input');
+        csrfInput.type = 'hidden';
+        csrfInput.name = '<?= csrf_token() ?>';
+        csrfInput.value = '<?= csrf_hash() ?>';
+        form.appendChild(csrfInput);
 
-            document.body.appendChild(form);
-            form.submit();
-        }
-    </script>
+        document.body.appendChild(form);
+        form.submit();
+    }
+</script>

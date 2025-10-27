@@ -230,8 +230,9 @@
             </div>
         </div>
     </div>
+    <?= $this->include('partials/footer') ?>
 </div>
-</div>
+
 
 <script>
     // Simple, clean JavaScript - no jQuery conflicts

@@ -22,7 +22,7 @@
                             <div class="avatar-lg bg-light-primary rounded-circle d-inline-flex align-items-center justify-content-center mb-3">
                                 <i data-feather="music" class="text-primary"></i>
                             </div>
-                            <h3 class="mb-1" id="totalReleasesCount"><?= esc($releaseCounts['total'])?></h3>
+                            <h3 class="mb-1" id="totalReleasesCount"><?= esc($releaseCounts['total']) ?></h3>
                             <p class="text-muted mb-0">Total Releases</p>
                         </div>
                     </div>
@@ -33,7 +33,7 @@
                             <div class="avatar-lg bg-light-success rounded-circle d-inline-flex align-items-center justify-content-center mb-3">
                                 <i data-feather="check-circle" class="text-success"></i>
                             </div>
-                            <h3 class="mb-1" id="publishedReleasesCount"><?= esc($releaseCounts['delivered'])?></h3>
+                            <h3 class="mb-1" id="publishedReleasesCount"><?= esc($releaseCounts['delivered']) ?></h3>
                             <p class="text-muted mb-0">Published</p>
                         </div>
                     </div>
@@ -44,7 +44,7 @@
                             <div class="avatar-lg bg-light-warning rounded-circle d-inline-flex align-items-center justify-content-center mb-3">
                                 <i data-feather="search" class="text-warning"></i>
                             </div>
-                            <h3 class="mb-1" id="reviewReleasesCount"><?= esc($releaseCounts['in_review'])?></h3>
+                            <h3 class="mb-1" id="reviewReleasesCount"><?= esc($releaseCounts['in_review']) ?></h3>
                             <p class="text-muted mb-0">In Review</p>
                         </div>
                     </div>
@@ -55,7 +55,7 @@
                             <div class="avatar-lg bg-light-danger rounded-circle d-inline-flex align-items-center justify-content-center mb-3">
                                 <i data-feather="x-circle" class="text-danger"></i>
                             </div>
-                            <h3 class="mb-1" id="rejectedReleasesCount"><?= esc($releaseCounts['rejected'])?></h3>
+                            <h3 class="mb-1" id="rejectedReleasesCount"><?= esc($releaseCounts['rejected']) ?></h3>
                             <p class="text-muted mb-0">Rejected</p>
                         </div>
                     </div>
@@ -107,6 +107,7 @@
             </div>
         </div>
     </div>
+    <?= $this->include('partials/footer') ?>
 </div>
 
 <div class="modal fade" id="labelSelectModal" tabindex="-1" aria-labelledby="labelSelectModalLabel" aria-hidden="true">
@@ -160,28 +161,29 @@
 
 <!-- Rejection Messages Modal -->
 <div class="modal fade" id="rejectionMessagesModal" tabindex="-1" aria-labelledby="rejectionMessagesModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-lg modal-dialog-centered">
-    <div class="modal-content">
-      <div class="modal-header bg-danger text-white">
-        <h5 class="modal-title" id="rejectionMessagesModalLabel">
-          <i class="bi bi-x-circle me-2"></i> Rejection Details
-        </h5>
-        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-        <table class="table table-bordered align-middle">
-          <thead class="table-light">
-            <tr>
-              <th>UPC</th>
-              <th>ISRC</th>
-              <th>Rejection Message</th>
-            </tr>
-          </thead>
-          <tbody id="rejectionMessagesBody">
-            <!-- JS will inject rows here -->
-          </tbody>
-        </table>
-      </div>
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title" id="rejectionMessagesModalLabel">
+                    <i class="bi bi-x-circle me-2"></i> Rejection Details
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <table class="table table-bordered align-middle">
+                    <thead class="table-light">
+                        <tr>
+                            <th>UPC</th>
+                            <th>ISRC</th>
+                            <th>Rejection Message</th>
+                        </tr>
+                    </thead>
+                    <tbody id="rejectionMessagesBody">
+                        <!-- JS will inject rows here -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
-  </div>
+
 </div>

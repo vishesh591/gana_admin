@@ -31,6 +31,7 @@
             </div>
         </div>
     </div>
+    <?= $this->include('partials/footer') ?>
 </div>
 <div class="offcanvas offcanvas-end" tabindex="-1" id="youtubeOwnershipDetailsOffcanvas" style="width: 650px;">
     <div class="offcanvas-header border-bottom">

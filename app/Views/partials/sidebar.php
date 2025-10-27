@@ -24,7 +24,7 @@ $userRole = get_user_role();
                         <img src="/images/logo-sm.png" alt="" height="22">
                     </span>
                     <span class="logo-lg">
-                        <img src="/images/logo-dark.png" alt="" height="24">
+                        <img src="/images/gaana-logo.png" alt="" width="150">
                     </span>
                 </a>
             </div>

@@ -41,6 +41,7 @@
             </div>
         </div>
     </div>
+    <?= $this->include('partials/footer') ?>
 </div>
 
 <!-- Conflict Resolution Offcanvas -->

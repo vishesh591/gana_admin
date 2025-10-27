@@ -52,6 +52,7 @@
 
         </div>
     </div>
+    <?= $this->include('partials/footer') ?>
 </div>
 
 <div class="modal fade" id="createArtistModal" tabindex="-1">
@@ -74,7 +75,7 @@
                     </div>
                     
                     <div class="mb-3">
-                        <label class="form-label">Label Name</label>
+                        <label class="form-label">Primary Label Name</label>
                         <?php if (in_array($user['role_id'], [1, 2])): ?>
                             <select class="form-control" id="labelName" name="label_name" required>
                                 <option value="">Select Label</option>

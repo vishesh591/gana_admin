@@ -319,6 +319,7 @@
         </div>
     </div>
 </div>
+<?= $this->include('partials/footer') ?>
 
 <script>
     // Initialize Feather icons after page load

@@ -37,6 +37,7 @@
             </div>
         </div>
     </div>
+    <?= $this->include('partials/footer') ?>
 </div>
 
 <!-- Support Modal -->

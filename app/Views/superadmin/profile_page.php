@@ -24,12 +24,12 @@
 
                             <div class="align-items-center">
                                 <div class="d-flex align-items-center">
-<div id="initialsAvatarProfilePage" 
-     class="rounded-circle avatar-xxl img-thumbnail float-start d-flex align-items-center justify-content-center" 
-     data-user-name="<?= esc($user['name']) ?>"
-     style="background-color: #007bff; color: white; font-weight: 600; font-size: 2rem; min-width: 80px; height: 80px;">
-    <!-- Initials will be populated by JavaScript -->
-</div>
+                                    <div id="initialsAvatarProfilePage"
+                                        class="rounded-circle avatar-xxl img-thumbnail float-start d-flex align-items-center justify-content-center"
+                                        data-user-name="<?= esc($user['name']) ?>"
+                                        style="background-color: #007bff; color: white; font-weight: 600; font-size: 2rem; min-width: 80px; height: 80px;">
+                                        <!-- Initials will be populated by JavaScript -->
+                                    </div>
                                     <div class="overflow-hidden ms-4">
                                         <h4 class="m-0 text-dark fs-20"><?= esc($user['name']) ?></h4>
                                         <p class="my-1 text-muted fs-16"><?= esc($user['user_name']) ?></p>
@@ -319,5 +319,5 @@
     </div>
     <!-- content -->
 
-
+    <?= $this->include('partials/footer') ?>
 </div>

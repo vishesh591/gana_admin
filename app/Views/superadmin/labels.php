@@ -51,6 +51,7 @@
             </div>
         </div>
     </div>
+    <?= $this->include('partials/footer') ?>
 </div>
 
 <div class="modal fade" id="createlabelModal" tabindex="-1">
