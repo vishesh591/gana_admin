@@ -240,7 +240,7 @@ $routes->get('/login', 'Auth::index');
 $routes->post('/loginCheck', 'Auth::loginCheck');
 $routes->get('auth-logout', 'Auth::logout');
 $routes->post('profile/changePassword', 'Auth::changePasswordAjax');
-
+$routes->get('/forgot-password', 'Auth::forgotPassword');
 // Common authenticated routes (ALL roles can access)
 $routes->group('', ['filter' => 'auth'], function ($routes) {
     $routes->get('/logout', 'Auth::logout');

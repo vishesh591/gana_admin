@@ -94,4 +94,9 @@ class Auth extends BaseController
             return $this->response->setJSON(['status' => 'success', 'message' => 'Password updated successfully!']);
         }
     }
+
+    public function forgotPassword()
+    {
+        return view('auth/forgot-password');
+    }
 }

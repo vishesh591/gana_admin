@@ -24,7 +24,8 @@ class ClaimReelMergeController extends BaseController
         $user = $session->get('user');
         $userId = $user['id'];
         $userRole = $user['role_id'] ?? 3;
-        
+        $userPrimaryLabel = $user['primary_label_name'] ?? '';
+
         if (in_array($userRole, [1, 2])) {
             $releases = $this->releaseModel
                 ->select('g_release.id, g_release.title, g_release.upc_ean, g_release.isrc, g_artists.name as artist_name')
@@ -35,8 +36,12 @@ class ClaimReelMergeController extends BaseController
             $releases = $this->releaseModel
                 ->select('g_release.id, g_release.title, g_release.upc_ean, g_release.isrc, g_artists.name as artist_name')
                 ->join('g_artists', 'g_artists.id = g_release.artist_id', 'left')
+                ->join('g_labels', 'g_labels.id = g_release.label_id', 'left')
+                ->where('g_release.status', 3) // Only delivered releases
+                ->groupStart()
                 ->where('g_release.created_by', $userId)
-                ->where('g_release.status', 3)
+                ->orWhere('g_labels.primary_label_name', $userPrimaryLabel)
+                ->groupEnd()
                 ->findAll();
         }
 
@@ -91,15 +96,15 @@ class ClaimReelMergeController extends BaseController
             $user = $session->get('user');
             $userId = $user['id'];
             $userRole = $user['role_id'] ?? 3;
-            
+
             $model = new ClaimReelMergeModel();
-            
+
             if (in_array($userRole, [1, 2])) {
                 $rows = $model->findAll();
             } else {
                 $rows = $model->where('created_by', $userId)->findAll();
             }
-            
+
             $data = array_map(function ($r) {
                 return [
                     'id'             => (int) $r['id'],

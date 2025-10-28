@@ -33,7 +33,7 @@
                 </p>
             </div>
 
-            <a href="login.php" class="btn btn-primary rounded-pill px-4">
+            <a href="/login" class="btn btn-primary rounded-pill px-4">
                 <i class="bi bi-arrow-left me-2"></i> Back to Login
             </a>
         </div>

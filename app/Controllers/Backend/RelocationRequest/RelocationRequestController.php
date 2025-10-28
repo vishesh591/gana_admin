@@ -23,8 +23,9 @@ class RelocationRequestController extends BaseController
         $user = $session->get('user');
         $userId = $user['id'];
         $userRole = $user['role_id'] ?? 3;
-        
-       if (in_array($userRole, [1, 2])) {
+        $userPrimaryLabel = $user['primary_label_name'] ?? '';
+
+        if (in_array($userRole, [1, 2])) {
             $releases = $this->releaseModel
                 ->select('g_release.id, g_release.title, g_release.upc_ean, g_release.isrc, g_artists.name as artist_name')
                 ->join('g_artists', 'g_artists.id = g_release.artist_id', 'left')
@@ -34,8 +35,12 @@ class RelocationRequestController extends BaseController
             $releases = $this->releaseModel
                 ->select('g_release.id, g_release.title, g_release.upc_ean, g_release.isrc, g_artists.name as artist_name')
                 ->join('g_artists', 'g_artists.id = g_release.artist_id', 'left')
-                ->where('g_release.created_by', $userId)
+                ->join('g_labels', 'g_labels.id = g_release.label_id', 'left')
                 ->where('g_release.status', 3) // Only delivered releases
+                ->groupStart()
+                ->where('g_release.created_by', $userId)
+                ->orWhere('g_labels.primary_label_name', $userPrimaryLabel)
+                ->groupEnd()
                 ->findAll();
         }
 
@@ -197,7 +202,7 @@ class RelocationRequestController extends BaseController
             $data = [
                 'id'             => (int) $request['id'],
                 'songName'       => $request['song_name'] ?? 'Unknown Song',
-                'artist'         => $request['artist_name'] ?? 'Unknown Artist', 
+                'artist'         => $request['artist_name'] ?? 'Unknown Artist',
                 'isrc'           => $request['isrc'] ?? 'N/A',
                 'instagramAudio' => $request['instagram_audio'] ?? '',
                 'instagramLink'  => $request['instagram_link'] ?? '',

@@ -29,7 +29,7 @@ class ClaimingRequestController extends BaseController
         $user = $session->get('user');
         $userId = $user['id'];
         $userRole = $user['role_id'] ?? 3;
-
+        $userPrimaryLabel = $user['primary_label_name'] ?? '';
         if (in_array($userRole, [1, 2])) {
             $releases = $this->releaseModel
                 ->select('g_release.id, g_release.title, g_release.upc_ean, g_release.isrc, g_artists.name as artist_name')
@@ -40,8 +40,12 @@ class ClaimingRequestController extends BaseController
             $releases = $this->releaseModel
                 ->select('g_release.id, g_release.title, g_release.upc_ean, g_release.isrc, g_artists.name as artist_name')
                 ->join('g_artists', 'g_artists.id = g_release.artist_id', 'left')
-                ->where('g_release.created_by', $userId)
+                ->join('g_labels', 'g_labels.id = g_release.label_id', 'left')
                 ->where('g_release.status', 3) // Only delivered releases
+                ->groupStart()
+                ->where('g_release.created_by', $userId)
+                ->orWhere('g_labels.primary_label_name', $userPrimaryLabel)
+                ->groupEnd()
                 ->findAll();
         }
 
