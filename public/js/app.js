@@ -2553,7 +2553,7 @@ $(document).ready(function () {
   // Form submission
   $(document).off("submit", "#createArtistForm");
   $(document).on("submit", "#createArtistForm", function (e) {
-    e.preventDefault();
+    // e.preventDefault();
 
     let formData = new FormData(this);
 

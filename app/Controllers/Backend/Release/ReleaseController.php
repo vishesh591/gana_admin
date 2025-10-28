@@ -276,8 +276,8 @@ class ReleaseController extends BaseController
     public function store()
     {
         $validationRules = [
-            'upcEan' => 'required|is_unique[g_release.upc_ean]',
-            'isrc' => 'required|is_unique[g_release.isrc]',
+            'upcEan' => 'if_exist|is_unique[g_release.upc_ean]',
+            'isrc' => 'if_exist|is_unique[g_release.isrc]',
         ];
 
         if (!$this->validate($validationRules)) {
