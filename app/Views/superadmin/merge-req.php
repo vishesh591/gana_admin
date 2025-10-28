@@ -21,7 +21,7 @@
                                 <table class="table table-hover mb-0" id="claimMergeTable">
                                     <thead class="table-light">
                                         <tr>
-                                            <th width="50">Status</th>
+                                            <th width="50"></th>
                                             <th>Song Name</th>
                                             <th>ISRC</th>
                                             <th class="text-center">Instagram Audio Link</th>

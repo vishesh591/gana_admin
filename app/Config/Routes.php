@@ -332,6 +332,7 @@ $routes->group('', ['filter' => 'role:superadmin,subadmin'], function ($routes) 
     $routes->get('add-release', 'Backend\Release\ReleaseController::addRelease');
     $routes->post('releases/takedown/(:num)', 'Backend\Release\ReleaseController::takedown_release/$1');
     $routes->get('releases/export-csv', 'Backend\Release\ReleaseController::exportCsv');
+    $routes->get('releases/validate-unique', 'Backend\Release\ReleaseController::validateUnique');
     
     // Data management - admin only
     $routes->get('claiming-data', 'Backend\ClaimingRequest\ClaimingRequestController::claimData');

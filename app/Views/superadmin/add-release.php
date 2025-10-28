@@ -312,6 +312,7 @@
                             <div class="col-md-6 mb-3">
                                 <label for="isrc" class="form-label mb-0">ISRC</label>
                                 <input type="text" class="form-control" id="isrc" name="isrc" value="<?= isset($release) ? esc($release['isrc']) : '' ?>" placeholder="Optional">
+                                <div class="invalid-feedback" id="isrcError"></div>
                             </div>
                         </div>
                     </div>

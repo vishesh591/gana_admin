@@ -60,24 +60,34 @@ class ReleaseRepository
         return $this->model->update($id, $data);
     }
 
-    public function countAllData($userId = null)
-    {
-        $query = $this->model->select("
+    public function countAllData($userId = null, $primaryLabelName = null)
+{
+    $query = $this->model->select("
         COUNT(*) as total,
-        SUM(CASE WHEN status = 3 THEN 1 ELSE 0 END) as delivered,
-        SUM(CASE WHEN status = 1 THEN 1 ELSE 0 END) as in_review,
-        SUM(CASE WHEN status = 4 THEN 1 ELSE 0 END) as rejected,
-        SUM(CASE WHEN status = 2 THEN 1 ELSE 0 END) as takedown,
-        SUM(CASE WHEN status = 5 THEN 1 ELSE 0 END) as approved
+        SUM(CASE WHEN g_release.status = 3 THEN 1 ELSE 0 END) as delivered,
+        SUM(CASE WHEN g_release.status = 1 THEN 1 ELSE 0 END) as in_review,
+        SUM(CASE WHEN g_release.status = 4 THEN 1 ELSE 0 END) as rejected,
+        SUM(CASE WHEN g_release.status = 2 THEN 1 ELSE 0 END) as takedown,
+        SUM(CASE WHEN g_release.status = 5 THEN 1 ELSE 0 END) as approved
     ");
+    
+    // Join with label table
+    $query->join('g_labels', 'g_labels.id = g_release.label_id');
 
-        // If userId is provided, filter by created_by
-        if ($userId) {
-            $query->where('created_by', $userId);
-        }
-
-        return $query->first();
+    // If label name is provided, filter by created_by OR label match
+    if ($userId && $primaryLabelName) {
+        $query->groupStart()
+            ->where('g_release.created_by', $userId)
+            ->orWhere('g_labels.primary_label_name', $primaryLabelName)
+            ->groupEnd();
+    } elseif ($userId) {
+        $query->where('g_release.created_by', $userId);
+    } elseif ($primaryLabelName) {
+        $query->where('g_labels.primary_label_name', $primaryLabelName);
     }
+    return $query->first();
+}
+
 
     /**
      * Get total revenue from sale_price
@@ -111,13 +121,19 @@ class ReleaseRepository
         return $result['draft_count'] ?? 0;
     }
 
-    public function findAllByUser($userId)
+    public function findAllVisibleToUser($userId, $primaryLabelName)
     {
         return $this->model
-            ->where('created_by', $userId)
-            ->orderBy('created_at', 'DESC')
+            ->select('g_release.*, g_labels.primary_label_name')
+            ->join('g_labels', 'g_labels.id = g_release.label_id')
+            ->groupStart()
+                ->where('g_labels.primary_label_name', $primaryLabelName)
+                ->orWhere('g_release.created_by', $userId)
+            ->groupEnd()
+            ->orderBy('g_release.created_at', 'DESC')
             ->findAll();
     }
+
 
     public function findAllByLabelIds(array $labelIds)
     {

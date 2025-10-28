@@ -18,13 +18,13 @@ class RegisterController extends BaseController
     }
 
     public function register()
-    {
+      {
         $validationRules = [
             'name'                 => 'required|min_length[3]',
             'email'                => 'required|valid_email|is_unique[g_users.email]',
             'password'             => 'required|min_length[6]',
-            'profile_picture'      => 'if_exist|uploaded[profile_picture]|max_size[profile_picture,2048]|is_image[profile_picture]|mime_in[profile_picture,image/jpg,image/jpeg,image/png]',
-            'agreement_file'       => 'if_exist|uploaded[agreement_file]|max_size[agreement_file,5120]|mime_in[agreement_file,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,image/jpg,image/jpeg,image/png]',
+            'profile_picture'      => 'if_exist|max_size[profile_picture,2048]|is_image[profile_picture]|mime_in[profile_picture,image/jpg,image/jpeg,image/png]',
+            'agreement_file'       => 'if_exist|max_size[agreement_file,5120]|mime_in[agreement_file,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,image/jpg,image/jpeg,image/png]',
             'company_name'         => 'required|min_length[3]',
             'primary_label_name'   => 'required|min_length[3]',
             'phone'                => 'required|regex_match[/^\+?[0-9]{10,15}$/]',
@@ -38,11 +38,8 @@ class RegisterController extends BaseController
             'agreement_end_date'   => 'required|valid_date',
         ];
 
-        if (! $this->validate($validationRules)) {
-            return $this->response->setJSON([
-                'status' => 'error',
-                'errors' => $this->validator->getErrors()
-            ]);
+        if (!$this->validate($validationRules)) {
+            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
         }
 
         $validated = $this->validator->getValidated();
@@ -53,11 +50,8 @@ class RegisterController extends BaseController
             ->get()
             ->getRow();
 
-        if (! $role) {
-            return $this->response->setJSON([
-                'status' => 'error',
-                'message' => 'Invalid role selected.'
-            ]);
+        if (!$role) {
+            return redirect()->back()->withInput()->with('error', 'Invalid role selected.');
         }
 
         $validated['role_id'] = $role->id;
@@ -65,7 +59,7 @@ class RegisterController extends BaseController
 
         // --- Profile Picture Upload ---
         $profileFile = $this->request->getFile('profile_picture');
-        if ($profileFile && $profileFile->isValid() && ! $profileFile->hasMoved()) {
+        if ($profileFile && $profileFile->isValid() && !$profileFile->hasMoved()) {
             $newName = $profileFile->getRandomName();
             $profileFile->move(FCPATH . 'uploads/profile_pictures', $newName);
             $validated['profile_picture'] = 'uploads/profile_pictures/' . $newName;
@@ -75,7 +69,7 @@ class RegisterController extends BaseController
 
         // --- Agreement File Upload ---
         $agreementFile = $this->request->getFile('agreement_file');
-        if ($agreementFile && $agreementFile->isValid() && ! $agreementFile->hasMoved()) {
+        if ($agreementFile && $agreementFile->isValid() && !$agreementFile->hasMoved()) {
             $newName = $agreementFile->getRandomName();
             $agreementFile->move(FCPATH . 'uploads/agreements', $newName);
             $validated['agreement_document'] = 'uploads/agreements/' . $newName;
@@ -83,36 +77,38 @@ class RegisterController extends BaseController
             $validated['agreement_document'] = null;
         }
 
+        // --- Hash Password ---
         $validated['password'] = password_hash($validated['password'], PASSWORD_DEFAULT);
         $validated['created_by'] = session()->get('user')['id'] ?? null;
+
+        // --- Insert User ---
         $this->userModel->insert($validated);
 
-        return redirect()->back()->with('success', 'User registered successfully');
+        return redirect()->to('/accounts')->with('success', 'User registered successfully.');
     }
-
 
     public function accounts()
     {
         $session = session();
         $user = $session->get('user');
-        
+
         // Check if user role is NOT superadmin (1) or subadmin (2)
         if (!in_array($user['role_id'] ?? 3, [1, 2])) {
             // Show profile page instead of user list for artist, label, distributor
             $userId = session()->get('user')['email'];
             $userWithRole = $this->userModel->getUserWithRoleByEmail($userId);
-            
+
             $page_array = [
                 'file_name' => 'profile_page',  // or 'profile_page' - use whatever filename you need
                 'user' => $userWithRole
             ];
             return view('superadmin/index', $page_array);
         }
-        
+
         // Continue with original logic for superadmin and subadmin
         $users = $this->userModel->findAll();
         $currentDate = date('Y-m-d');
-        
+
         foreach ($users as &$user) {
             if (
                 !empty($user['agreement_start_date']) &&
@@ -125,7 +121,7 @@ class RegisterController extends BaseController
                 $user['status'] = 'Inactive';
             }
         }
-        
+
         $page_array = [
             'file_name' => 'user_list',
             'users' => $users

@@ -22,7 +22,7 @@
                             <div class="avatar-lg bg-light-primary rounded-circle d-inline-flex align-items-center justify-content-center mb-3">
                                 <i data-feather="music" class="text-primary"></i>
                             </div>
-                            <h3 class="mb-1" id="totalReleasesCount"><?= esc($releaseCounts['total']) ?></h3>
+                            <h3 class="mb-1" id="totalReleasesCount"><?= esc($releaseCounts['total']) ?? 0 ?></h3>
                             <p class="text-muted mb-0">Total Releases</p>
                         </div>
                     </div>
@@ -33,7 +33,7 @@
                             <div class="avatar-lg bg-light-success rounded-circle d-inline-flex align-items-center justify-content-center mb-3">
                                 <i data-feather="check-circle" class="text-success"></i>
                             </div>
-                            <h3 class="mb-1" id="publishedReleasesCount"><?= esc($releaseCounts['delivered']) ?></h3>
+                            <h3 class="mb-1" id="publishedReleasesCount"><?= esc($releaseCounts['delivered']) ?? 0 ?></h3>
                             <p class="text-muted mb-0">Published</p>
                         </div>
                     </div>
@@ -44,7 +44,7 @@
                             <div class="avatar-lg bg-light-warning rounded-circle d-inline-flex align-items-center justify-content-center mb-3">
                                 <i data-feather="search" class="text-warning"></i>
                             </div>
-                            <h3 class="mb-1" id="reviewReleasesCount"><?= esc($releaseCounts['in_review']) ?></h3>
+                            <h3 class="mb-1" id="reviewReleasesCount"><?= esc($releaseCounts['in_review']) ?? 0 ?></h3>
                             <p class="text-muted mb-0">In Review</p>
                         </div>
                     </div>
@@ -55,7 +55,7 @@
                             <div class="avatar-lg bg-light-danger rounded-circle d-inline-flex align-items-center justify-content-center mb-3">
                                 <i data-feather="x-circle" class="text-danger"></i>
                             </div>
-                            <h3 class="mb-1" id="rejectedReleasesCount"><?= esc($releaseCounts['rejected']) ?></h3>
+                            <h3 class="mb-1" id="rejectedReleasesCount"><?= esc($releaseCounts['rejected']) ?? 0 ?></h3>
                             <p class="text-muted mb-0">Rejected</p>
                         </div>
                     </div>

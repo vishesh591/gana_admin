@@ -75,20 +75,36 @@ class FacebookConflictController extends BaseController
         $user = $session->get('user');
         $userId = $user['id'] ?? null;
         $userRole = $user['role_id'] ?? 3;
+        $userPrimaryLabel = $user['primary_label_name'] ?? null;
 
         // Get user's ISRCs if not admin
         $userISRCs = [];
         if (!in_array($userRole, [1, 2])) {
             $releaseModel = new \App\Models\Backend\ReleaseModel();
-            $userReleases = $releaseModel
-                ->select('isrc')
-                ->where('created_by', $userId)
-                ->where('isrc IS NOT NULL')
-                ->where('isrc !=', '')
-                ->findAll();
+            $labelModel = new \App\Models\Backend\LabelModel();
 
-            $userISRCs = array_column($userReleases, 'isrc');
-            $userISRCs = array_filter($userISRCs); // Remove empty values
+            if ($userPrimaryLabel) {
+                // Step 1: Get all label IDs for user's primary label
+                $matchingLabels = $labelModel
+                    ->select('id')
+                    ->where('primary_label_name', $userPrimaryLabel)
+                    ->findAll();
+
+                if (!empty($matchingLabels)) {
+                    $labelIds = array_column($matchingLabels, 'id');
+
+                    // Step 2: Get ISRCs from releases with those label IDs
+                    $userReleases = $releaseModel
+                        ->select('isrc')
+                        ->whereIn('label_id', $labelIds)
+                        ->where('isrc IS NOT NULL')
+                        ->where('isrc !=', '')
+                        ->findAll();
+
+                    $userISRCs = array_column($userReleases, 'isrc');
+                    $userISRCs = array_filter($userISRCs); // Remove empty values
+                }
+            }
         }
 
         // Build the query
@@ -99,7 +115,7 @@ class FacebookConflictController extends BaseController
         // Apply ISRC filtering for non-admin users
         if (!in_array($userRole, [1, 2])) {
             if (empty($userISRCs)) {
-                // User has no releases, return empty data
+                // User has no releases with matching primary label, return empty data
                 return [];
             }
             $query->whereIn('reference_copyright_isrc', $userISRCs);
@@ -180,14 +196,11 @@ class FacebookConflictController extends BaseController
                 'expiry' => $this->formatExpiryDate($conflict['conflict_expiration_date']),
                 'status' => $conflict['status'] ?? 'Action Required',
                 'rejectionMessage' => $conflict['message'] ?? '',
-
-                // Additional data for the form
                 'songName' => $conflict['reference_copyright_title'],
                 'artistName' => $conflict['reference_copyright_artist'],
                 'conflictState' => $conflict['conflict_state'],
                 'conflictCategory' => $conflict['conflict_category'],
                 'matchCount' => $conflict['reference_copyright_match_count'],
-
                 'questions' => [
                     'reference_id' => $conflict['reference_copyright_id'],
                     'asset_id' => $conflict['reference_asset_id'],
@@ -196,8 +209,6 @@ class FacebookConflictController extends BaseController
                     'other_party_overlap' => $conflict['other_party_reference_overlap_percentage'],
                 ],
                 'countries' => $countriesGrouped,
-
-                // Resolution data for "In Review" status
                 'resolutionData' => [
                     'rightsOwned' => $conflict['resolution_rights_owned'] ?? '',
                     'rightsOwnedDisplay' => $rightsOwnedDisplay,
@@ -210,6 +221,7 @@ class FacebookConflictController extends BaseController
 
         return $data;
     }
+
 
     public function getAllCountries()
     {

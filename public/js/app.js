@@ -252,67 +252,95 @@ function initializeOwnershipPage(config) {
     return `<span class="badge rounded-pill border ${badgeClass}">${status}</span>`;
   };
 
- const populateTable = (tableBodySelector, data, platformConfig) => {
-  const tableBody = pageContainer.querySelector(tableBodySelector);
-  if (!tableBody) {
-    console.error("Table body element not found:", tableBodySelector);
-    return;
-  }
+  const populateTable = (tableBodySelector, data, platformConfig) => {
+    const tableBody = pageContainer.querySelector(tableBodySelector);
+    if (!tableBody) {
+      console.error("Table body element not found:", tableBodySelector);
+      return;
+    }
 
-  try {
-    // Clear existing data
-    tableBody.innerHTML = "";
+    try {
+      // Clear existing data
+      tableBody.innerHTML = "";
 
-    // Handle empty data gracefully by showing a message row
-    if (!data || data.length === 0) {
-      tableBody.innerHTML = `
+      // Handle empty data gracefully by showing a message row
+      if (!data || data.length === 0) {
+        tableBody.innerHTML = `
         <tr>
           <td colspan="10" class="text-center text-muted">
             <i class="bi bi-info-circle"></i> No ${platformConfig.platformName} conflicts found
           </td>
         </tr>
       `;
-      return;
-    }
+        return;
+      }
 
-    // Append rows for each item
-    data.forEach((item) => {
-      const row = document.createElement("tr");
-      row.style.cursor = "pointer";
-      row.setAttribute("data-bs-toggle", "offcanvas");
-      row.setAttribute("data-bs-target", "#ownershipDetailsOffcanvas");
+      // Append rows for each item
+      data.forEach((item) => {
+        const row = document.createElement("tr");
+        row.style.cursor = "pointer";
+        row.setAttribute("data-bs-toggle", "offcanvas");
+        row.setAttribute("data-bs-target", "#ownershipDetailsOffcanvas");
 
-      // Set data attributes required for offcanvas and further usage
-      row.setAttribute("data-id", item.id || "");
-      row.setAttribute("data-song-name", item.songName || item.assetTitle || "");
-      row.setAttribute("data-artist-name", item.artistName || item.artist || "");
-      row.setAttribute("data-isrc", item.isrc || "");
-      row.setAttribute("data-upc", item.upc || "");
-      row.setAttribute("data-category", item.category || "");
-      row.setAttribute("data-other-party", item.otherParty || "");
-      row.setAttribute("data-asset-title", item.assetTitle || "");
-      row.setAttribute("data-asset-id", item.assetId || "");
-      row.setAttribute("data-daily-views", item.dailyViews || "");
-      row.setAttribute("data-expiry", item.expiry || "");
-      row.setAttribute("data-platform-name", platformConfig.platformName);
-      row.setAttribute("data-status", item.status || "");
+        // Set data attributes required for offcanvas and further usage
+        row.setAttribute("data-id", item.id || "");
+        row.setAttribute(
+          "data-song-name",
+          item.songName || item.assetTitle || ""
+        );
+        row.setAttribute(
+          "data-artist-name",
+          item.artistName || item.artist || ""
+        );
+        row.setAttribute("data-isrc", item.isrc || "");
+        row.setAttribute("data-upc", item.upc || "");
+        row.setAttribute("data-category", item.category || "");
+        row.setAttribute("data-other-party", item.otherParty || "");
+        row.setAttribute("data-asset-title", item.assetTitle || "");
+        row.setAttribute("data-asset-id", item.assetId || "");
+        row.setAttribute("data-daily-views", item.dailyViews || "");
+        row.setAttribute("data-expiry", item.expiry || "");
+        row.setAttribute("data-platform-name", platformConfig.platformName);
+        row.setAttribute("data-status", item.status || "");
 
-      // You can add any additional resolutionData fields similarly if required
-      const completeResolutionData = {
-        rightsOwnedDisplay: item.resolutionData?.rightsOwnedDisplay || item.rightsOwnedDisplay || "",
-        countryDisplayText: item.resolutionData?.countryDisplayText || item.countryDisplayText || "",
-        supportingDocumentPath: item.resolutionData?.supportingDocumentPath || item.supportingDocumentPath || "",
-        resolutionDate: item.resolutionData?.resolutionDate || item.resolutionDate || item.submissionDate || "",
-        rejectionMessage: item.resolutionData?.rejectionMessage || item.rejectionMessage || "",
-        submissionDate: item.resolutionData?.submissionDate || item.submissionDate || "",
-        ...item.resolutionData,
-      };
+        // You can add any additional resolutionData fields similarly if required
+        const completeResolutionData = {
+          rightsOwnedDisplay:
+            item.resolutionData?.rightsOwnedDisplay ||
+            item.rightsOwnedDisplay ||
+            "",
+          countryDisplayText:
+            item.resolutionData?.countryDisplayText ||
+            item.countryDisplayText ||
+            "",
+          supportingDocumentPath:
+            item.resolutionData?.supportingDocumentPath ||
+            item.supportingDocumentPath ||
+            "",
+          resolutionDate:
+            item.resolutionData?.resolutionDate ||
+            item.resolutionDate ||
+            item.submissionDate ||
+            "",
+          rejectionMessage:
+            item.resolutionData?.rejectionMessage ||
+            item.rejectionMessage ||
+            "",
+          submissionDate:
+            item.resolutionData?.submissionDate || item.submissionDate || "",
+          ...item.resolutionData,
+        };
 
-      row.setAttribute("data-resolution-data", encodeURIComponent(JSON.stringify(completeResolutionData)));
+        row.setAttribute(
+          "data-resolution-data",
+          encodeURIComponent(JSON.stringify(completeResolutionData))
+        );
 
-      // Fill row inner HTML cells exactly as per your existing format
-      row.innerHTML = `
-        <td class="text-center"><i class="bi ${platformConfig.platformIconClass} fs-5"></i></td>
+        // Fill row inner HTML cells exactly as per your existing format
+        row.innerHTML = `
+        <td class="text-center"><i class="bi ${
+          platformConfig.platformIconClass
+        } fs-5"></i></td>
         <td>${item.category || "-"}</td>
         <td>${item.assetTitle || "-"}</td>
         <td>
@@ -326,11 +354,11 @@ function initializeOwnershipPage(config) {
         <td class="status-cell">${getStatusBadge(item.status || "Unknown")}</td>
         <td class="text-center"><i class="bi bi-chevron-right text-muted"></i></td>
       `;
-      tableBody.appendChild(row);
-    });
-  } catch (error) {
-    console.error("Error populating table:", error);
-    tableBody.innerHTML = `
+        tableBody.appendChild(row);
+      });
+    } catch (error) {
+      console.error("Error populating table:", error);
+      tableBody.innerHTML = `
       <tr>
         <td colspan="10" class="text-center text-danger">
           <i class="bi bi-exclamation-triangle"></i>
@@ -338,9 +366,8 @@ function initializeOwnershipPage(config) {
         </td>
       </tr>
     `;
-  }
-};
-
+    }
+  };
 
   populateTable(".facebook-data-body", config.facebookData, {
     platformName: "Facebook",
@@ -652,7 +679,10 @@ function initializeYouTubeOwnershipPage(config) {
   // Use YouTube-specific page selector
   const pageContainer = document.querySelector(config.pageSelector);
   if (!pageContainer) {
-    console.warn("YouTube ownership page container not found:", config.pageSelector);
+    console.warn(
+      "YouTube ownership page container not found:",
+      config.pageSelector
+    );
     return;
   }
 
@@ -702,8 +732,14 @@ function initializeYouTubeOwnershipPage(config) {
 
       // Set ALL required data attributes
       row.setAttribute("data-id", item.id || "");
-      row.setAttribute("data-song-name", item.songName || item.assetTitle || "");
-      row.setAttribute("data-artist-name", item.artistName || item.artist || "");
+      row.setAttribute(
+        "data-song-name",
+        item.songName || item.assetTitle || ""
+      );
+      row.setAttribute(
+        "data-artist-name",
+        item.artistName || item.artist || ""
+      );
       row.setAttribute("data-isrc", item.isrc || "");
       row.setAttribute("data-upc", item.upc || "");
       row.setAttribute("data-category", item.category || "");
@@ -719,24 +755,50 @@ function initializeYouTubeOwnershipPage(config) {
       row.setAttribute("data-video-title", item.videoTitle || "");
       row.setAttribute("data-channel-name", item.channelName || "");
       row.setAttribute("data-issue-type", item.issueType || "");
-      row.setAttribute("data-duration-seconds", item.details?.duration_seconds || "0");
-      row.setAttribute("data-duration-percentage-reference", item.details?.duration_percentage_reference || "0");
-      row.setAttribute("data-duration-percentage-video", item.details?.duration_percentage_video || "0");
+      row.setAttribute(
+        "data-duration-seconds",
+        item.details?.duration_seconds || "0"
+      );
+      row.setAttribute(
+        "data-duration-percentage-reference",
+        item.details?.duration_percentage_reference || "0"
+      );
+      row.setAttribute(
+        "data-duration-percentage-video",
+        item.details?.duration_percentage_video || "0"
+      );
 
       // Include ALL resolution data fields
       const completeResolutionData = {
-        rightsOwnedDisplay: item.resolutionData?.rightsOwnedDisplay || item.rightsOwnedDisplay || "",
-        supportingDocumentPath: item.resolutionData?.supportingDocumentPath || item.supportingDocumentPath || "",
-        resolutionDate: item.resolutionData?.resolutionDate || item.resolutionDate || item.submissionDate || "",
-        rejectionMessage: item.resolutionData?.rejectionMessage || item.rejectionMessage || "",
-        submissionDate: item.resolutionData?.submissionDate || item.submissionDate || "",
+        rightsOwnedDisplay:
+          item.resolutionData?.rightsOwnedDisplay ||
+          item.rightsOwnedDisplay ||
+          "",
+        supportingDocumentPath:
+          item.resolutionData?.supportingDocumentPath ||
+          item.supportingDocumentPath ||
+          "",
+        resolutionDate:
+          item.resolutionData?.resolutionDate ||
+          item.resolutionDate ||
+          item.submissionDate ||
+          "",
+        rejectionMessage:
+          item.resolutionData?.rejectionMessage || item.rejectionMessage || "",
+        submissionDate:
+          item.resolutionData?.submissionDate || item.submissionDate || "",
         ...item.resolutionData,
       };
 
-      row.setAttribute("data-resolution-data", encodeURIComponent(JSON.stringify(completeResolutionData)));
+      row.setAttribute(
+        "data-resolution-data",
+        encodeURIComponent(JSON.stringify(completeResolutionData))
+      );
 
       row.innerHTML = `
-        <td class="text-center"><i class="bi ${platformConfig.platformIconClass} fs-5"></i></td>
+        <td class="text-center"><i class="bi ${
+          platformConfig.platformIconClass
+        } fs-5"></i></td>
         <td>${item.category || "-"}</td>
         <td>${item.assetTitle || "-"}</td>
         <td>
@@ -789,25 +851,31 @@ function initializeYouTubeOwnershipPage(config) {
   }
 
   // Rest of your offcanvas and update logic remains the same...
-  const youtubeOwnershipOffcanvasEl = document.getElementById("youtubeOwnershipDetailsOffcanvas");
+  const youtubeOwnershipOffcanvasEl = document.getElementById(
+    "youtubeOwnershipDetailsOffcanvas"
+  );
   if (!youtubeOwnershipOffcanvasEl) return;
 
-  youtubeOwnershipOffcanvasEl.addEventListener("show.bs.offcanvas", function (event) {
-    const triggerRow = event.relatedTarget;
-    const data = triggerRow.dataset;
+  youtubeOwnershipOffcanvasEl.addEventListener(
+    "show.bs.offcanvas",
+    function (event) {
+      const triggerRow = event.relatedTarget;
+      const data = triggerRow.dataset;
 
-    let resolutionData = {};
-    try {
-      resolutionData = JSON.parse(decodeURIComponent(data.resolutionData || "{}"));
-    } catch (e) {
-      console.error("Error parsing resolution data:", e);
-      resolutionData = {};
-    }
+      let resolutionData = {};
+      try {
+        resolutionData = JSON.parse(
+          decodeURIComponent(data.resolutionData || "{}")
+        );
+      } catch (e) {
+        console.error("Error parsing resolution data:", e);
+        resolutionData = {};
+      }
 
-    currentConflictId = data.id;
-    console.log("Opening YouTube offcanvas for ID:", currentConflictId);
-    console.log("All data:", data);
-    console.log("Resolution data:", resolutionData);
+      currentConflictId = data.id;
+      console.log("Opening YouTube offcanvas for ID:", currentConflictId);
+      console.log("All data:", data);
+      console.log("Resolution data:", resolutionData);
 
       // Clear all fields first
       const clearElement = (selector, defaultValue = "-") => {
@@ -1344,9 +1412,14 @@ document.addEventListener("DOMContentLoaded", function () {
           render: (data, type, row) => {
             if (type === "display") {
               // Show number of videos as badge next to View button
-              const videoCount = Array.isArray(row.videoLinks) ? row.videoLinks.length : 0;
-              const videoBadge = videoCount > 0 ? `<span class="badge bg-secondary ms-1">${videoCount}</span>` : '';
-              
+              const videoCount = Array.isArray(row.videoLinks)
+                ? row.videoLinks.length
+                : 0;
+              const videoBadge =
+                videoCount > 0
+                  ? `<span class="badge bg-secondary ms-1">${videoCount}</span>`
+                  : "";
+
               return `
                 <button class="btn btn-sm btn-primary view-btn" data-id="${row.id}">
                   <i class="bi bi-eye me-1"></i>View${videoBadge}
@@ -1407,9 +1480,12 @@ document.addEventListener("DOMContentLoaded", function () {
             `;
           }
         });
-        videoLinksContainer.innerHTML = videoLinksHtml || '<p class="text-muted">No video links available</p>';
+        videoLinksContainer.innerHTML =
+          videoLinksHtml ||
+          '<p class="text-muted">No video links available</p>';
       } else {
-        videoLinksContainer.innerHTML = '<p class="text-muted">No video links available</p>';
+        videoLinksContainer.innerHTML =
+          '<p class="text-muted">No video links available</p>';
       }
     }
 
@@ -1482,7 +1558,6 @@ document.addEventListener("DOMContentLoaded", function () {
   console.log("Starting to fetch claiming data...");
   fetchClaimingData();
 });
-
 
 // merge-data-page js
 // Add this entire new block to your app.js file
@@ -1832,17 +1907,14 @@ document.addEventListener("DOMContentLoaded", function () {
         rejectBtn.disabled = true;
       }
 
-      const response = await fetch(
-        `/api/relocation-data/${id}/status`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "X-Requested-With": "XMLHttpRequest",
-          },
-          body: JSON.stringify({ status: status }),
-        }
-      );
+      const response = await fetch(`/api/relocation-data/${id}/status`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "X-Requested-With": "XMLHttpRequest",
+        },
+        body: JSON.stringify({ status: status }),
+      });
 
       const result = await response.json();
       if (!result.success) {
@@ -2103,7 +2175,9 @@ document.addEventListener("DOMContentLoaded", function () {
             // For Delivered (3) and Takedown (2), show view page
             // For others, show edit page
             const url =
-              row.status_numeric == 3 || row.status_numeric == 2 || row.status_numeric == 6
+              row.status_numeric == 3 ||
+              row.status_numeric == 2 ||
+              row.status_numeric == 6
                 ? `/releases/view/${row.id}`
                 : `/releases/edit/${row.id}`;
 
@@ -2272,7 +2346,6 @@ $(document).ready(function () {
     $(".artist-checkbox").prop("checked", checked).trigger("change");
   });
 });
-
 
 $(document).ready(function () {
   // Show alert helper
@@ -2501,6 +2574,9 @@ $(document).ready(function () {
           $("#selected_artist").hide(); // Clear selected Spotify artist
           $("#selected_apple_artist").hide(); // Clear selected Apple Music artist
           $("#createArtistModal").modal("hide");
+          if (typeof window.reloadArtists === "function") {
+            window.reloadArtists(); // Add this line
+          }
         } else if (res.errors) {
           let errorMessages = Object.values(res.errors).join("<br>");
           showArtistAlert("danger", errorMessages);
@@ -2576,9 +2652,9 @@ $(document).ready(function () {
         className: "text-center",
         orderable: false,
         render: function (data) {
-          return data || '';
+          return data || "";
         },
-      }
+      },
     ],
     paging: true,
     searching: true,
@@ -2587,10 +2663,10 @@ $(document).ready(function () {
     autoWidth: false,
     drawCallback: function () {
       // Re-initialize feather icons after table redraw
-      if (typeof feather !== 'undefined') {
+      if (typeof feather !== "undefined") {
         feather.replace();
       }
-    }
+    },
   });
 
   // Handle "Select All"
@@ -2637,12 +2713,12 @@ $(document).ready(function () {
           showLabelAlert("success", res.message);
           $('form[action*="create-label"]')[0].reset();
           $("#imagePreview").hide();
-          
+
           // Reload table after successful creation
-          if (typeof window.reloadLabels === 'function') {
+          if (typeof window.reloadLabels === "function") {
             window.reloadLabels();
           }
-          
+
           // Auto-close modal after 2 seconds
           setTimeout(() => {
             $("#createlabelModal").modal("hide");
@@ -2660,8 +2736,10 @@ $(document).ready(function () {
         showLabelAlert("danger", msg);
       },
       complete: function () {
-        $('button[type="submit"]').prop("disabled", false).text("Submit Request");
-      }
+        $('button[type="submit"]')
+          .prop("disabled", false)
+          .text("Submit Request");
+      },
     });
   });
 
@@ -2678,53 +2756,60 @@ $(document).ready(function () {
 // Global function to update label status (called from action buttons)
 function updateLabelStatus(labelId, status) {
   const statusText = {
-    1: 'In Review',
-    2: 'Approved',
-    3: 'Rejected'
+    1: "In Review",
+    2: "Approved",
+    3: "Rejected",
   };
 
   const statusIcons = {
-    1: '🔄',
-    2: '✅',
-    3: '❌'
+    1: "🔄",
+    2: "✅",
+    3: "❌",
   };
 
-  if (confirm(`${statusIcons[status]} Are you sure you want to change the status to "${statusText[status]}"?`)) {
+  if (
+    confirm(
+      `${statusIcons[status]} Are you sure you want to change the status to "${statusText[status]}"?`
+    )
+  ) {
     $.ajax({
-      url: '/labels/update-status',
-      type: 'POST',
+      url: "/labels/update-status",
+      type: "POST",
       data: {
         label_id: labelId,
-        status: status
+        status: status,
       },
-      beforeSend: function() {
+      beforeSend: function () {
         // Disable all action buttons temporarily
-        $(`button[onclick*="${labelId}"]`).prop('disabled', true);
+        $(`button[onclick*="${labelId}"]`).prop("disabled", true);
       },
       success: function (response) {
         if (response.success) {
           // Show success message
-          showGlobalAlert('success', response.message);
-          
+          showGlobalAlert("success", response.message);
+
           // Reload the table
-          if (typeof window.reloadLabels === 'function') {
+          if (typeof window.reloadLabels === "function") {
             window.reloadLabels();
           }
         } else {
-          showGlobalAlert('danger', response.message || 'Failed to update status');
+          showGlobalAlert(
+            "danger",
+            response.message || "Failed to update status"
+          );
         }
       },
       error: function (xhr) {
-        let errorMsg = 'An error occurred while updating the status';
+        let errorMsg = "An error occurred while updating the status";
         if (xhr.responseJSON && xhr.responseJSON.message) {
           errorMsg = xhr.responseJSON.message;
         }
-        showGlobalAlert('danger', errorMsg);
+        showGlobalAlert("danger", errorMsg);
       },
-      complete: function() {
+      complete: function () {
         // Re-enable action buttons
-        $(`button[onclick*="${labelId}"]`).prop('disabled', false);
-      }
+        $(`button[onclick*="${labelId}"]`).prop("disabled", false);
+      },
     });
   }
 }
@@ -2737,66 +2822,79 @@ function showGlobalAlert(type, message) {
       ${message}
       <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>`;
-  
-  $('body').append(alertHtml);
-  
+
+  $("body").append(alertHtml);
+
   // Auto-dismiss after 5 seconds
   setTimeout(() => {
-    $('.alert').alert('close');
+    $(".alert").alert("close");
   }, 5000);
 }
-
 
 // accounts-page js
 
 document.addEventListener("DOMContentLoaded", function () {
-    // Initials avatar generator function
-    function generateInitialsAvatar(fullName, size = 40) {
-        if (!fullName) return '';
-        
-        // Extract initials from full name
-        function getInitials(name) {
-            const names = name.trim().split(' ');
-            if (names.length === 1) {
-                return names[0].charAt(0).toUpperCase();
-            } else if (names.length >= 2) {
-                return (names[0].charAt(0) + names[names.length - 1].charAt(0)).toUpperCase();
-            }
-            return 'U';
-        }
-        
-        // Generate background color based on name
-        function getColorFromName(name) {
-            const colors = [
-                '#007bff', '#6f42c1', '#e83e8c', '#dc3545', '#fd7e14',
-                '#ffc107', '#28a745', '#20c997', '#17a2b8', '#6c757d',
-                '#343a40', '#8b5cf6', '#06b6d4', '#10b981', '#f59e0b'
-            ];
-            
-            let hash = 0;
-            for (let i = 0; i < name.length; i++) {
-                hash = name.charCodeAt(i) + ((hash << 5) - hash);
-            }
-            
-            return colors[Math.abs(hash) % colors.length];
-        }
-        
-        // Get contrasting text color
-        function getContrastColor(backgroundColor) {
-            const hex = backgroundColor.replace('#', '');
-            const r = parseInt(hex.substr(0, 2), 16);
-            const g = parseInt(hex.substr(2, 2), 16);
-            const b = parseInt(hex.substr(4, 2), 16);
-            
-            const brightness = ((r * 299) + (g * 587) + (b * 114)) / 1000;
-            return brightness > 155 ? '#000000' : '#ffffff';
-        }
-        
-        const initials = getInitials(fullName);
-        const backgroundColor = getColorFromName(fullName);
-        const textColor = getContrastColor(backgroundColor);
-        
-        return `
+  // Initials avatar generator function
+  function generateInitialsAvatar(fullName, size = 40) {
+    if (!fullName) return "";
+
+    // Extract initials from full name
+    function getInitials(name) {
+      const names = name.trim().split(" ");
+      if (names.length === 1) {
+        return names[0].charAt(0).toUpperCase();
+      } else if (names.length >= 2) {
+        return (
+          names[0].charAt(0) + names[names.length - 1].charAt(0)
+        ).toUpperCase();
+      }
+      return "U";
+    }
+
+    // Generate background color based on name
+    function getColorFromName(name) {
+      const colors = [
+        "#007bff",
+        "#6f42c1",
+        "#e83e8c",
+        "#dc3545",
+        "#fd7e14",
+        "#ffc107",
+        "#28a745",
+        "#20c997",
+        "#17a2b8",
+        "#6c757d",
+        "#343a40",
+        "#8b5cf6",
+        "#06b6d4",
+        "#10b981",
+        "#f59e0b",
+      ];
+
+      let hash = 0;
+      for (let i = 0; i < name.length; i++) {
+        hash = name.charCodeAt(i) + ((hash << 5) - hash);
+      }
+
+      return colors[Math.abs(hash) % colors.length];
+    }
+
+    // Get contrasting text color
+    function getContrastColor(backgroundColor) {
+      const hex = backgroundColor.replace("#", "");
+      const r = parseInt(hex.substr(0, 2), 16);
+      const g = parseInt(hex.substr(2, 2), 16);
+      const b = parseInt(hex.substr(4, 2), 16);
+
+      const brightness = (r * 299 + g * 587 + b * 114) / 1000;
+      return brightness > 155 ? "#000000" : "#ffffff";
+    }
+
+    const initials = getInitials(fullName);
+    const backgroundColor = getColorFromName(fullName);
+    const textColor = getContrastColor(backgroundColor);
+
+    return `
             <div class="avatar-initials d-flex align-items-center justify-content-center rounded-circle" 
                  style="background-color: ${backgroundColor}; 
                         color: ${textColor}; 
@@ -2808,205 +2906,228 @@ document.addEventListener("DOMContentLoaded", function () {
                 ${initials}
             </div>
         `;
-    }
+  }
 
-    $("#userTable").DataTable({
-        destroy: true,
-        processing: true,
-        serverSide: false,
-        ajax: "/api/accounts",
-        columns: [
-            // NEW: Avatar column with initials
-            {
-                data: null, // Use null since we're combining multiple fields
-                render: function (data, type, row) {
-                    if (type === 'display') {
-                        // Combine name fields or use available name field
-                        const fullName = row.name || row.company_name || row.primary_label_name || 'Unknown';
-                        return generateInitialsAvatar(fullName, 40);
-                    }
-                    return ''; // For sorting/filtering, return empty
-                },
-                className: "text-center",
-                orderable: false,
-                searchable: false,
-                width: "60px",
-                title: "Avatar"
-            },
-            {
-                data: "status",
-                render: function (data) {
-                    if (data === "Active") {
-                        return '<i data-feather="check-circle" class="text-success"></i>';
-                    } else {
-                        return '<i data-feather="x-circle" class="text-danger"></i>';
-                    }
-                },
-                className: "text-center",
-                title: "Status Icon"
-            },
-            { 
-                data: "company_name",
-                title: "Company Name"
-            },
-            { 
-                data: "primary_label_name",
-                title: "Primary Label"
-            },
-            { 
-                data: "agreement_start_date",
-                title: "Start Date"
-            },
-            { 
-                data: "agreement_end_date",
-                title: "End Date"
-            },
-            {
-                data: "status",
-                render: function (data) {
-                    let badge = data === "Active"
-                        ? '<span class="badge bg-success">Active</span>'
-                        : '<span class="badge bg-danger">Inactive</span>';
-                    return badge;
-                },
-                title: "Status"
-            },
-            // Action column
-            {
-                data: null,
-                render: function (data, type, row) {
-                    return `<button class="btn btn-sm btn-primary view-user-btn" 
+  $("#userTable").DataTable({
+    destroy: true,
+    processing: true,
+    serverSide: false,
+    ajax: "/api/accounts",
+    columns: [
+      // NEW: Avatar column with initials
+      {
+        data: null, // Use null since we're combining multiple fields
+        render: function (data, type, row) {
+          if (type === "display") {
+            // Combine name fields or use available name field
+            const fullName =
+              row.name ||
+              row.company_name ||
+              row.primary_label_name ||
+              "Unknown";
+            return generateInitialsAvatar(fullName, 40);
+          }
+          return ""; // For sorting/filtering, return empty
+        },
+        className: "text-center",
+        orderable: false,
+        searchable: false,
+        width: "60px",
+        title: "Avatar",
+      },
+      {
+        data: "status",
+        render: function (data) {
+          if (data === "Active") {
+            return '<i data-feather="check-circle" class="text-success"></i>';
+          } else {
+            return '<i data-feather="x-circle" class="text-danger"></i>';
+          }
+        },
+        className: "text-center",
+        title: "Status Icon",
+      },
+      {
+        data: "company_name",
+        title: "Company Name",
+      },
+      {
+        data: "primary_label_name",
+        title: "Primary Label",
+      },
+      {
+        data: "agreement_start_date",
+        title: "Start Date",
+      },
+      {
+        data: "agreement_end_date",
+        title: "End Date",
+      },
+      {
+        data: "status",
+        render: function (data) {
+          let badge =
+            data === "Active"
+              ? '<span class="badge bg-success">Active</span>'
+              : '<span class="badge bg-danger">Inactive</span>';
+          return badge;
+        },
+        title: "Status",
+      },
+      // Action column
+      {
+        data: null,
+        render: function (data, type, row) {
+          return `<button class="btn btn-sm btn-primary view-user-btn" 
                                     data-user-id="${row.id}" 
                                     data-bs-toggle="modal" 
                                     data-bs-target="#userDetailsModal">
                                 <i data-feather="eye"></i> View
                             </button>`;
-                },
-                orderable: false,
-                searchable: false,
-                className: "text-center",
-                title: "Actions"
-            }
-        ],
-        drawCallback: function () {
-            feather.replace(); // re-render feather icons
         },
-        paging: true,
-        searching: true,
-        ordering: true,
-        language: {
-            search: "_INPUT_",
-            searchPlaceholder: "Search accounts...",
-        },
-        responsive: true,
-        // Optional: Auto width for better column distribution
-        autoWidth: false,
-        // Column widths
-        columnDefs: [
-            { width: "60px", targets: 0 }, // Avatar column
-            { width: "80px", targets: 1 }, // Status icon column
-            { width: "100px", targets: 6 }, // Status badge column
-            { width: "120px", targets: 7 }, // Actions column
-        ]
-    });
+        orderable: false,
+        searchable: false,
+        className: "text-center",
+        title: "Actions",
+      },
+    ],
+    drawCallback: function () {
+      feather.replace(); // re-render feather icons
+    },
+    paging: true,
+    searching: true,
+    ordering: true,
+    language: {
+      search: "_INPUT_",
+      searchPlaceholder: "Search accounts...",
+    },
+    responsive: true,
+    // Optional: Auto width for better column distribution
+    autoWidth: false,
+    // Column widths
+    columnDefs: [
+      { width: "60px", targets: 0 }, // Avatar column
+      { width: "80px", targets: 1 }, // Status icon column
+      { width: "100px", targets: 6 }, // Status badge column
+      { width: "120px", targets: 7 }, // Actions column
+    ],
+  });
 
-    // Also initialize the profile page avatar if it exists
-    const profileAvatar = document.getElementById('initialsAvatarProfilePage');
-    if (profileAvatar) {
-        // You can get the name from PHP or a data attribute
-        const userName = profileAvatar.dataset.userName || 'Vishesh Mittal'; // Default or from PHP
-        generateProfilePageAvatar(userName);
-    }
+  // Also initialize the profile page avatar if it exists
+  const profileAvatar = document.getElementById("initialsAvatarProfilePage");
+  if (profileAvatar) {
+    // You can get the name from PHP or a data attribute
+    const userName = profileAvatar.dataset.userName || "Vishesh Mittal"; // Default or from PHP
+    generateProfilePageAvatar(userName);
+  }
 });
 
 // Function for profile page avatar (larger size)
-function generateProfilePageAvatar(fullName, targetId = 'initialsAvatarProfilePage') {
-    function getInitials(name) {
-        if (!name) return 'U';
-        const names = name.trim().split(' ');
-        if (names.length === 1) {
-            return names[0].charAt(0).toUpperCase();
-        } else if (names.length >= 2) {
-            return (names[0].charAt(0) + names[names.length - 1].charAt(0)).toUpperCase();
-        }
-        return 'U';
+function generateProfilePageAvatar(
+  fullName,
+  targetId = "initialsAvatarProfilePage"
+) {
+  function getInitials(name) {
+    if (!name) return "U";
+    const names = name.trim().split(" ");
+    if (names.length === 1) {
+      return names[0].charAt(0).toUpperCase();
+    } else if (names.length >= 2) {
+      return (
+        names[0].charAt(0) + names[names.length - 1].charAt(0)
+      ).toUpperCase();
     }
-    
-    function getColorFromName(name) {
-        const colors = [
-            '#007bff', '#6f42c1', '#e83e8c', '#dc3545', '#fd7e14',
-            '#ffc107', '#28a745', '#20c997', '#17a2b8', '#6c757d'
-        ];
-        
-        let hash = 0;
-        for (let i = 0; i < name.length; i++) {
-            hash = name.charCodeAt(i) + ((hash << 5) - hash);
-        }
-        
-        return colors[Math.abs(hash) % colors.length];
+    return "U";
+  }
+
+  function getColorFromName(name) {
+    const colors = [
+      "#007bff",
+      "#6f42c1",
+      "#e83e8c",
+      "#dc3545",
+      "#fd7e14",
+      "#ffc107",
+      "#28a745",
+      "#20c997",
+      "#17a2b8",
+      "#6c757d",
+    ];
+
+    let hash = 0;
+    for (let i = 0; i < name.length; i++) {
+      hash = name.charCodeAt(i) + ((hash << 5) - hash);
     }
-    
-    function getContrastColor(backgroundColor) {
-        const hex = backgroundColor.replace('#', '');
-        const r = parseInt(hex.substr(0, 2), 16);
-        const g = parseInt(hex.substr(2, 2), 16);
-        const b = parseInt(hex.substr(4, 2), 16);
-        
-        const brightness = ((r * 299) + (g * 587) + (b * 114)) / 1000;
-        return brightness > 155 ? '#000000' : '#ffffff';
-    }
-    
-    const initials = getInitials(fullName);
-    const backgroundColor = getColorFromName(fullName);
-    const textColor = getContrastColor(backgroundColor);
-    
-    const avatarElement = document.getElementById(targetId);
-    if (avatarElement) {
-        avatarElement.textContent = initials;
-        avatarElement.style.backgroundColor = backgroundColor;
-        avatarElement.style.color = textColor;
-    }
+
+    return colors[Math.abs(hash) % colors.length];
+  }
+
+  function getContrastColor(backgroundColor) {
+    const hex = backgroundColor.replace("#", "");
+    const r = parseInt(hex.substr(0, 2), 16);
+    const g = parseInt(hex.substr(2, 2), 16);
+    const b = parseInt(hex.substr(4, 2), 16);
+
+    const brightness = (r * 299 + g * 587 + b * 114) / 1000;
+    return brightness > 155 ? "#000000" : "#ffffff";
+  }
+
+  const initials = getInitials(fullName);
+  const backgroundColor = getColorFromName(fullName);
+  const textColor = getContrastColor(backgroundColor);
+
+  const avatarElement = document.getElementById(targetId);
+  if (avatarElement) {
+    avatarElement.textContent = initials;
+    avatarElement.style.backgroundColor = backgroundColor;
+    avatarElement.style.color = textColor;
+  }
 }
 
-
 // NEW: Handle view user button click
-$(document).on('click', '.view-user-btn', function() {
-    const userId = $(this).data('user-id');
-    loadUserDetails(userId);
+$(document).on("click", ".view-user-btn", function () {
+  const userId = $(this).data("user-id");
+  loadUserDetails(userId);
 });
 
 // NEW: Load user details in modal
 function loadUserDetails(userId) {
-    $.ajax({
-        url: `/users/details/${userId}`,
-        method: 'GET',
-        dataType: 'json',
-        beforeSend: function() {
-            $('#userDetailsContent').html('<div class="text-center"><div class="spinner-border" role="status"></div></div>');
-        },
-        success: function(response) {
-            if (response.status === 'success') {
-                displayUserDetails(response.user);
-                // Store user ID for edit button
-                $('#editUserBtn').data('user-id', userId);
-            } else {
-                $('#userDetailsContent').html('<div class="alert alert-danger">Failed to load user details.</div>');
-            }
-        },
-        error: function() {
-            $('#userDetailsContent').html('<div class="alert alert-danger">Error loading user details.</div>');
-        }
-    });
+  $.ajax({
+    url: `/users/details/${userId}`,
+    method: "GET",
+    dataType: "json",
+    beforeSend: function () {
+      $("#userDetailsContent").html(
+        '<div class="text-center"><div class="spinner-border" role="status"></div></div>'
+      );
+    },
+    success: function (response) {
+      if (response.status === "success") {
+        displayUserDetails(response.user);
+        // Store user ID for edit button
+        $("#editUserBtn").data("user-id", userId);
+      } else {
+        $("#userDetailsContent").html(
+          '<div class="alert alert-danger">Failed to load user details.</div>'
+        );
+      }
+    },
+    error: function () {
+      $("#userDetailsContent").html(
+        '<div class="alert alert-danger">Error loading user details.</div>'
+      );
+    },
+  });
 }
 
 // NEW: Display user details in modal
 function displayUserDetails(user) {
-    const isActive = user.status === 'Active';
-    const statusBadge = isActive ? 
-        '<span class="badge bg-success">Active</span>' : 
-        '<span class="badge bg-danger">Inactive</span>';
+  const isActive = user.status === "Active";
+  const statusBadge = isActive
+    ? '<span class="badge bg-success">Active</span>'
+    : '<span class="badge bg-danger">Inactive</span>';
 
-    const content = `
+  const content = `
         <div class="row">
             <div class="col-md-6">
                 <h6 class="text-uppercase fs-13">Full Name</h6>
@@ -3047,20 +3168,19 @@ function displayUserDetails(user) {
         </div>
     `;
 
-    $('#userDetailsContent').html(content);
+  $("#userDetailsContent").html(content);
 }
 
 // NEW: Handle edit user button click
-$(document).on('click', '#editUserBtn', function() {
-    const userId = $(this).data('user-id');
-    // Redirect to profile page with user ID
-    window.location.href = `/users/edit/${userId}`;
+$(document).on("click", "#editUserBtn", function () {
+  const userId = $(this).data("user-id");
+  // Redirect to profile page with user ID
+  window.location.href = `/users/edit/${userId}`;
 });
-
 
 $(document).ready(function () {
   $("#claimingRequestForm").on("submit", function (e) {
-    e.preventDefault();
+    // e.preventDefault();
 
     let formData = new FormData(this);
 
@@ -3118,7 +3238,9 @@ $(document).ready(function () {
             Pending: "text-warning",
             Rejected: "text-danger",
           };
-          return `<i data-feather="${icons[data] || "help-circle"}" class="${colors[data] || "text-muted"}"></i>`;
+          return `<i data-feather="${icons[data] || "help-circle"}" class="${
+            colors[data] || "text-muted"
+          }"></i>`;
         },
         orderable: false,
         className: "text-center",
@@ -3129,7 +3251,9 @@ $(document).ready(function () {
           return `
             <div>
               <div class="release-title">${data.title || "Untitled"}</div>
-              <div class="release-artist text-muted small">${data.artist || "Unknown"}</div>
+              <div class="release-artist text-muted small">${
+                data.artist || "Unknown"
+              }</div>
             </div>`;
         },
       },
@@ -3143,7 +3267,9 @@ $(document).ready(function () {
             Pending: "warning",
             Rejected: "danger",
           };
-          return `<span class="badge bg-${badgeClasses[data] || "secondary"}">${data}</span>`;
+          return `<span class="badge bg-${
+            badgeClasses[data] || "secondary"
+          }">${data}</span>`;
         },
         className: "text-center",
       },
@@ -3198,7 +3324,9 @@ $(document).ready(function () {
               </div>`);
           });
         } else {
-          linksContainer.html(`<p class="text-muted">No video links available</p>`);
+          linksContainer.html(
+            `<p class="text-muted">No video links available</p>`
+          );
         }
 
         feather.replace();
@@ -3211,8 +3339,6 @@ $(document).ready(function () {
     table.ajax.reload(null, false);
   };
 });
-
-
 
 // relocation-request js
 
@@ -3232,9 +3358,19 @@ document.addEventListener("DOMContentLoaded", function () {
         data: "status",
         className: "text-center",
         render: function (data) {
-          const icons = { Approved: "check-circle", Pending: "clock", Rejected: "x-circle" };
-          const colors = { Approved: "text-success", Pending: "text-warning", Rejected: "text-danger" };
-          return `<i data-feather="${icons[data] || "help-circle"}" class="${colors[data] || "text-muted"}"></i>`;
+          const icons = {
+            Approved: "check-circle",
+            Pending: "clock",
+            Rejected: "x-circle",
+          };
+          const colors = {
+            Approved: "text-success",
+            Pending: "text-warning",
+            Rejected: "text-danger",
+          };
+          return `<i data-feather="${icons[data] || "help-circle"}" class="${
+            colors[data] || "text-muted"
+          }"></i>`;
         },
       },
       {
@@ -3242,8 +3378,12 @@ document.addEventListener("DOMContentLoaded", function () {
         render: function (data) {
           return `
             <div>
-              <div class="release-title fw-semibold">${data.title || "Untitled"}</div>
-              <div class="release-artist text-muted small">${data.artist || "Unknown"}</div>
+              <div class="release-title fw-semibold">${
+                data.title || "Untitled"
+              }</div>
+              <div class="release-artist text-muted small">${
+                data.artist || "Unknown"
+              }</div>
             </div>`;
         },
       },
@@ -3262,15 +3402,23 @@ document.addEventListener("DOMContentLoaded", function () {
           if (data.facebook_link)
             icons.push(`<a href="${data.facebook_link}" target="_blank" title="Facebook">
               <i class="bi bi-facebook me-2"></i></a>`);
-          return icons.length ? icons.join("") : `<span class="text-muted">-</span>`;
+          return icons.length
+            ? icons.join("")
+            : `<span class="text-muted">-</span>`;
         },
       },
       {
         data: "status",
         className: "text-center",
         render: function (data) {
-          const badges = { Approved: "success", Pending: "warning", Rejected: "danger" };
-          return `<span class="badge bg-${badges[data] || "secondary"}">${data}</span>`;
+          const badges = {
+            Approved: "success",
+            Pending: "warning",
+            Rejected: "danger",
+          };
+          return `<span class="badge bg-${
+            badges[data] || "secondary"
+          }">${data}</span>`;
         },
       },
     ],
@@ -3279,7 +3427,6 @@ document.addEventListener("DOMContentLoaded", function () {
     },
   });
 });
-
 
 // merge-request js
 
@@ -3340,7 +3487,7 @@ document.addEventListener("DOMContentLoaded", function () {
         {
           data: "song_name",
           render: (data, type, row) =>
-            `<div class="release-title"><a href="#">${data}</a></div>`,
+            `<div class="release-title">${data}</div>`,
         },
         { data: "isrc", defaultContent: "N/A" },
         {
@@ -3509,150 +3656,163 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     // --- RENDER WITH DATATABLES ---
-   function initializeDataTable(data) {
-  const tableBody = document.getElementById("youtubeTableBody");
-  const table = document.getElementById("releasesTable");
+    function initializeDataTable(data) {
+      const tableBody = document.getElementById("youtubeTableBody");
+      const table = document.getElementById("releasesTable");
 
-  // Destroy existing DataTable if it exists
-  if (dataTable) {
-    dataTable.destroy();
-    dataTable = null;
-  }
-
-  // Clear existing data
-  tableBody.innerHTML = "";
-
-  // If no data, show empty message and initialize empty DataTable
-  if (!data || data.length === 0) {
-    tableBody.innerHTML = `<tr><td colspan="10" class="text-center p-5"><h5>No matching conflicts found.</h5></td></tr>`;
-
-    try {
-      dataTable = $(table).DataTable({
-        searching: true,
-        paging: false,
-        info: false,
-        ordering: false,
-        language: {
-          emptyTable: "No conflicts available",
-          zeroRecords: "No matching conflicts found",
-        }
-      });
-    } catch (error) {
-      console.error("DataTable initialization failed in empty-data branch:", error);
-    }
-
-    return;
-  }
-
-  // Prepare data array for DataTables
-  const tableData = data.map((req) => {
-    return [
-      '<i class="bi bi-youtube text-danger fs-5"></i>', // Platform icon
-      req.category || '',
-      req.assetTitle || '',
-      `<div class="fw-bold">${req.artist || ''}</div><small class="text-muted">Asset ID: ${req.assetId || ''}</small>`,
-      req.upc || '',
-      req.otherParty || '',
-      req.dailyViews || '',
-      req.expiry || '',
-      getStatusBadge(req.status),
-      '<i class="bi bi-chevron-right text-muted"></i>'
-    ];
-  });
-
-  try {
-    dataTable = $(table).DataTable({
-      data: tableData,
-      searching: true,
-      paging: true,
-      pageLength: 25,
-      lengthChange: true,
-      info: true,
-      ordering: true,
-      responsive: true,
-      destroy: true,
-      language: {
-        search: "Search conflicts:",
-        searchPlaceholder: "Type to search...",
-        lengthMenu: "Show _MENU_ conflicts per page",
-        info: "Showing _START_ to _END_ of _TOTAL_ conflicts",
-        infoEmpty: "No conflicts found",
-        infoFiltered: "(filtered from _MAX_ total conflicts)",
-        emptyTable: "No conflicts available",
-        zeroRecords: "No matching conflicts found"
-      },
-      columnDefs: [
-        { orderable: false, targets: [0, 9] },
-        { searchable: false, targets: [0, 9] },
-        { className: "text-center", targets: [0] }
-      ],
-      order: [[1, 'asc']],
-      dom: '<"row"<"col-sm-12 col-md-6"l><"col-sm-12 col-md-6"f>>t<"row"<"col-sm-12 col-md-5"i><"col-sm-12 col-md-7"p>>',
-      drawCallback: function(settings) {
-        const api = this.api();
-        const info = api.page.info();
-        const paginationTextEl = document.getElementById("pagination-text");
-        if (paginationTextEl) {
-          paginationTextEl.textContent = `${info.recordsDisplay} of ${info.recordsTotal} results`;
-        }
-
-        attachRowClickEvents();
-      },
-      createdRow: function(row, data, dataIndex) {
-        const req = conflictRequests[dataIndex];
-        if (req) {
-          $(row).attr({
-            'data-bs-toggle': 'offcanvas',
-            'data-bs-target': '#conflictResolutionOffcanvas',
-            'data-id': req.id,
-            'data-song-name': req.songName || '',
-            'data-artist-name': req.artistName || '',
-            'data-isrc': req.isrc || '',
-            'data-cover-url': req.albumCoverUrl || '',
-            'data-category': req.category || '',
-            'data-other-party': req.otherParty || '',
-            'data-status': req.status || '',
-            'data-rejection-message': req.rejectionMessage || '',
-            'data-rights-owned': req.rightsOwned || '',
-            'data-supporting-file': req.supportingFile || '',
-            'data-resolution-data': encodeURIComponent(JSON.stringify(req.resolutionData || {}))
-          });
-          $(row).css('cursor', 'pointer');
-        }
+      // Destroy existing DataTable if it exists
+      if (dataTable) {
+        dataTable.destroy();
+        dataTable = null;
       }
-    });
-  } catch (error) {
-    console.error("DataTable initialization failed:", error);
-  }
-}
 
+      // Clear existing data
+      tableBody.innerHTML = "";
+
+      // If no data, show empty message and initialize empty DataTable
+      if (!data || data.length === 0) {
+        tableBody.innerHTML = `<tr><td colspan="10" class="text-center p-5"><h5>No matching conflicts found.</h5></td></tr>`;
+
+        try {
+          dataTable = $(table).DataTable({
+            searching: true,
+            paging: false,
+            info: false,
+            ordering: false,
+            language: {
+              emptyTable: "No conflicts available",
+              zeroRecords: "No matching conflicts found",
+            },
+          });
+        } catch (error) {
+          console.error(
+            "DataTable initialization failed in empty-data branch:",
+            error
+          );
+        }
+
+        return;
+      }
+
+      // Prepare data array for DataTables
+      const tableData = data.map((req) => {
+        return [
+          '<i class="bi bi-youtube text-danger fs-5"></i>', // Platform icon
+          req.category || "",
+          req.assetTitle || "",
+          `<div class="fw-bold">${
+            req.artist || ""
+          }</div><small class="text-muted">Asset ID: ${
+            req.assetId || ""
+          }</small>`,
+          req.upc || "",
+          req.otherParty || "",
+          req.dailyViews || "",
+          req.expiry || "",
+          getStatusBadge(req.status),
+          '<i class="bi bi-chevron-right text-muted"></i>',
+        ];
+      });
+
+      try {
+        dataTable = $(table).DataTable({
+          data: tableData,
+          searching: true,
+          paging: true,
+          pageLength: 25,
+          lengthChange: true,
+          info: true,
+          ordering: true,
+          responsive: true,
+          destroy: true,
+          language: {
+            search: "Search conflicts:",
+            searchPlaceholder: "Type to search...",
+            lengthMenu: "Show _MENU_ conflicts per page",
+            info: "Showing _START_ to _END_ of _TOTAL_ conflicts",
+            infoEmpty: "No conflicts found",
+            infoFiltered: "(filtered from _MAX_ total conflicts)",
+            emptyTable: "No conflicts available",
+            zeroRecords: "No matching conflicts found",
+          },
+          columnDefs: [
+            { orderable: false, targets: [0, 9] },
+            { searchable: false, targets: [0, 9] },
+            { className: "text-center", targets: [0] },
+          ],
+          order: [[1, "asc"]],
+          dom: '<"row"<"col-sm-12 col-md-6"l><"col-sm-12 col-md-6"f>>t<"row"<"col-sm-12 col-md-5"i><"col-sm-12 col-md-7"p>>',
+          drawCallback: function (settings) {
+            const api = this.api();
+            const info = api.page.info();
+            const paginationTextEl = document.getElementById("pagination-text");
+            if (paginationTextEl) {
+              paginationTextEl.textContent = `${info.recordsDisplay} of ${info.recordsTotal} results`;
+            }
+
+            attachRowClickEvents();
+          },
+          createdRow: function (row, data, dataIndex) {
+            const req = conflictRequests[dataIndex];
+            if (req) {
+              $(row).attr({
+                "data-bs-toggle": "offcanvas",
+                "data-bs-target": "#conflictResolutionOffcanvas",
+                "data-id": req.id,
+                "data-song-name": req.songName || "",
+                "data-artist-name": req.artistName || "",
+                "data-isrc": req.isrc || "",
+                "data-cover-url": req.albumCoverUrl || "",
+                "data-category": req.category || "",
+                "data-other-party": req.otherParty || "",
+                "data-status": req.status || "",
+                "data-rejection-message": req.rejectionMessage || "",
+                "data-rights-owned": req.rightsOwned || "",
+                "data-supporting-file": req.supportingFile || "",
+                "data-resolution-data": encodeURIComponent(
+                  JSON.stringify(req.resolutionData || {})
+                ),
+              });
+              $(row).css("cursor", "pointer");
+            }
+          },
+        });
+      } catch (error) {
+        console.error("DataTable initialization failed:", error);
+      }
+    }
 
     // Function to attach click events to table rows
     function attachRowClickEvents() {
-      $('#releasesTable tbody tr').off('click').on('click', function() {
-        // This handles the row click for opening offcanvas
-        // The Bootstrap data attributes will handle the rest
-      });
+      $("#releasesTable tbody tr")
+        .off("click")
+        .on("click", function () {
+          // This handles the row click for opening offcanvas
+          // The Bootstrap data attributes will handle the rest
+        });
     }
 
     // --- OFFCANVAS ---
-    const conflictOffcanvasEl = document.getElementById("conflictResolutionOffcanvas");
+    const conflictOffcanvasEl = document.getElementById(
+      "conflictResolutionOffcanvas"
+    );
     const conflictOffcanvas = new bootstrap.Offcanvas(conflictOffcanvasEl);
     const conflictForm = document.getElementById("youtubeConflictForm");
     const formStep1 = document.getElementById("formStep1");
     const formStep2 = document.getElementById("formStep2");
     const formStepInReview = document.getElementById("formStepInReview");
-    
+
     // The main form steps - YouTube only has 2 steps + preview (using InReview step)
     const formSteps = [formStep1, formStep2, formStepInReview]; // Step 2 is the InReview step used as preview
-    
+
     const nextBtn = conflictOffcanvasEl.querySelector("#nextBtn");
     const backBtn = conflictOffcanvasEl.querySelector("#backBtn");
     const submitBtn = conflictOffcanvasEl.querySelector("#submitBtn");
-    const closeBtnInReview = conflictOffcanvasEl.querySelector("#closeBtnInReview");
+    const closeBtnInReview =
+      conflictOffcanvasEl.querySelector("#closeBtnInReview");
     const fileInput = conflictOffcanvasEl.querySelector("#formFile");
     const fileDisplay = conflictOffcanvasEl.querySelector("#selectedFileName");
-    
+
     let currentStep = 0;
     let activeConflictId = null;
     let currentStatus = "";
@@ -3660,32 +3820,40 @@ document.addEventListener("DOMContentLoaded", function () {
     let formSubmitted = false;
 
     // --- OFFCANVAS CLOSE EVENT LISTENERS FOR PAGE RELOAD ---
-    conflictOffcanvasEl.addEventListener('hidden.bs.offcanvas', function (event) {
-      if (!formSubmitted) {
-        console.log('Offcanvas closed - reloading page');
-        window.location.reload();
+    conflictOffcanvasEl.addEventListener(
+      "hidden.bs.offcanvas",
+      function (event) {
+        if (!formSubmitted) {
+          console.log("Offcanvas closed - reloading page");
+          window.location.reload();
+        }
+        formSubmitted = false;
       }
-      formSubmitted = false;
-    });
+    );
 
     // Add click event to cross button (×) in header
-    const closeBtn = conflictOffcanvasEl.querySelector('.btn-close');
+    const closeBtn = conflictOffcanvasEl.querySelector(".btn-close");
     if (closeBtn) {
-      closeBtn.addEventListener('click', function() {
-        console.log('Cross button clicked - offcanvas will close and page will reload');
+      closeBtn.addEventListener("click", function () {
+        console.log(
+          "Cross button clicked - offcanvas will close and page will reload"
+        );
       });
     }
 
     // Add click event to "Close" button in footer
     if (closeBtnInReview) {
-      closeBtnInReview.addEventListener('click', function() {
-        console.log('Close button clicked - offcanvas will close and page will reload');
+      closeBtnInReview.addEventListener("click", function () {
+        console.log(
+          "Close button clicked - offcanvas will close and page will reload"
+        );
       });
     }
 
     // Create status message dynamically if it doesn't exist
     function createStatusMessage() {
-      const existingMsg = conflictOffcanvasEl.querySelector("#statusMessageBox");
+      const existingMsg =
+        conflictOffcanvasEl.querySelector("#statusMessageBox");
       if (!existingMsg) {
         const statusMessageHTML = `
           <div id="statusMessageBox" class="alert d-none mb-3">
@@ -3698,8 +3866,9 @@ document.addEventListener("DOMContentLoaded", function () {
             </div>
           </div>
         `;
-        const offcanvasBody = conflictOffcanvasEl.querySelector('.offcanvas-body');
-        offcanvasBody.insertAdjacentHTML('afterbegin', statusMessageHTML);
+        const offcanvasBody =
+          conflictOffcanvasEl.querySelector(".offcanvas-body");
+        offcanvasBody.insertAdjacentHTML("afterbegin", statusMessageHTML);
       }
     }
 
@@ -3709,26 +3878,31 @@ document.addEventListener("DOMContentLoaded", function () {
       formSteps.forEach((step, index) => {
         if (step) step.classList.toggle("d-none", index !== stepIndex);
       });
-      
+
       // Button visibility logic
-      if (backBtn) backBtn.classList.toggle("d-none", stepIndex === 0 || isReadOnlyMode);
-      if (nextBtn) nextBtn.classList.toggle("d-none", stepIndex === 2 || isReadOnlyMode); // Step 2 is the final preview step
-      if (submitBtn) submitBtn.classList.toggle("d-none", stepIndex !== 2 || isReadOnlyMode); // Show submit only on step 2 (preview)
-      if (closeBtnInReview) closeBtnInReview.classList.toggle("d-none", !isReadOnlyMode);
-      
+      if (backBtn)
+        backBtn.classList.toggle("d-none", stepIndex === 0 || isReadOnlyMode);
+      if (nextBtn)
+        nextBtn.classList.toggle("d-none", stepIndex === 2 || isReadOnlyMode); // Step 2 is the final preview step
+      if (submitBtn)
+        submitBtn.classList.toggle("d-none", stepIndex !== 2 || isReadOnlyMode); // Show submit only on step 2 (preview)
+      if (closeBtnInReview)
+        closeBtnInReview.classList.toggle("d-none", !isReadOnlyMode);
+
       currentStep = stepIndex;
     }
 
     function showStatusMessage(status, message = "") {
       createStatusMessage();
-      
+
       const statusMessageBox = document.getElementById("statusMessageBox");
       const statusIcon = document.getElementById("statusIcon");
       const statusTitle = document.getElementById("statusTitle");
       const statusMessageText = document.getElementById("statusMessage");
 
       if (status === "Rejected" && message) {
-        statusMessageBox.className = "alert alert-danger d-flex align-items-center mb-3";
+        statusMessageBox.className =
+          "alert alert-danger d-flex align-items-center mb-3";
         statusIcon.className = "bi bi-x-circle-fill me-3 fs-5 text-danger";
         statusTitle.textContent = "Resolution Rejected";
         statusMessageText.textContent = message;
@@ -3748,13 +3922,21 @@ document.addEventListener("DOMContentLoaded", function () {
       // Populate read-only data using existing elements
       const rightsOwnedEl = document.getElementById("resolutionRightsOwned");
       if (rightsOwnedEl) {
-        rightsOwnedEl.textContent = resolutionData.rightsOwnedDisplay || getRightsOwnedLabel(resolutionData.rightsOwned) || "N/A";
+        rightsOwnedEl.textContent =
+          resolutionData.rightsOwnedDisplay ||
+          getRightsOwnedLabel(resolutionData.rightsOwned) ||
+          "N/A";
       }
-      
+
       const supportingDocEl = document.getElementById("supportingDocumentInfo");
       if (supportingDocEl) {
-        if (resolutionData.supportingDocumentPath || resolutionData.supportingFile) {
-          const filePath = resolutionData.supportingDocumentPath || resolutionData.supportingFile;
+        if (
+          resolutionData.supportingDocumentPath ||
+          resolutionData.supportingFile
+        ) {
+          const filePath =
+            resolutionData.supportingDocumentPath ||
+            resolutionData.supportingFile;
           const fileName = filePath.split("/").pop();
           supportingDocEl.innerHTML = `
             <a href="${filePath}" target="_blank" class="text-decoration-none">
@@ -3767,8 +3949,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
       const dateEl = document.getElementById("resolutionDate");
       if (dateEl) {
-        dateEl.textContent = resolutionData.resolutionDate ? 
-          new Date(resolutionData.resolutionDate).toLocaleString() : "N/A";
+        dateEl.textContent = resolutionData.resolutionDate
+          ? new Date(resolutionData.resolutionDate).toLocaleString()
+          : "N/A";
       }
 
       isReadOnlyMode = true;
@@ -3781,10 +3964,13 @@ document.addEventListener("DOMContentLoaded", function () {
 
     function populatePreviewStep() {
       // Use the existing formStepInReview as preview step but populate it with current form data
-      const rightsOwned = conflictForm.querySelector('input[name="rightsOwned"]:checked')?.value;
+      const rightsOwned = conflictForm.querySelector(
+        'input[name="rightsOwned"]:checked'
+      )?.value;
       const rightsOwnedEl = document.getElementById("resolutionRightsOwned");
       if (rightsOwnedEl) {
-        rightsOwnedEl.textContent = getRightsOwnedLabel(rightsOwned) || "Not selected";
+        rightsOwnedEl.textContent =
+          getRightsOwnedLabel(rightsOwned) || "Not selected";
       }
 
       const supportingDocEl = document.getElementById("supportingDocumentInfo");
@@ -3798,7 +3984,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
       const dateEl = document.getElementById("resolutionDate");
       if (dateEl) {
-        dateEl.textContent = "Will be submitted: " + new Date().toLocaleString();
+        dateEl.textContent =
+          "Will be submitted: " + new Date().toLocaleString();
       }
     }
 
@@ -3810,7 +3997,9 @@ document.addEventListener("DOMContentLoaded", function () {
         // Step 0: Rights owned check
         if (currentStep === 0) {
           const existingRights = conflictOffcanvasEl.dataset.rightsOwned;
-          const radioSelected = conflictForm.querySelector('input[name="rightsOwned"]:checked');
+          const radioSelected = conflictForm.querySelector(
+            'input[name="rightsOwned"]:checked'
+          );
 
           // For rejected status, always require selection (even if there was previous data)
           if (currentStatus === "Rejected") {
@@ -3825,7 +4014,8 @@ document.addEventListener("DOMContentLoaded", function () {
               rightsTextEl.textContent = getRightsOwnedLabel(existingRights);
               rightsTextEl.classList.remove("d-none");
             }
-            const rightsOptionsEl = document.getElementById("rightsOwnedOptions");
+            const rightsOptionsEl =
+              document.getElementById("rightsOwnedOptions");
             if (rightsOptionsEl) rightsOptionsEl.classList.add("d-none");
           } else {
             // If no existing rights, enforce validation
@@ -3855,7 +4045,8 @@ document.addEventListener("DOMContentLoaded", function () {
         }
 
         // Move to next step if validations passed
-        if (currentStep < 2) { // Step 2 is the preview step (using formStepInReview)
+        if (currentStep < 2) {
+          // Step 2 is the preview step (using formStepInReview)
           if (currentStep === 1) {
             populatePreviewStep(); // Populate preview before showing it
           }
@@ -3882,7 +4073,11 @@ document.addEventListener("DOMContentLoaded", function () {
       // Parse resolution data with better error handling
       let resolutionData = {};
       try {
-        if (data.resolutionData && data.resolutionData !== "{}" && data.resolutionData !== "") {
+        if (
+          data.resolutionData &&
+          data.resolutionData !== "{}" &&
+          data.resolutionData !== ""
+        ) {
           const decodedData = decodeURIComponent(data.resolutionData);
           resolutionData = JSON.parse(decodedData);
           console.log("Parsed resolution data:", resolutionData);
@@ -3895,13 +4090,23 @@ document.addEventListener("DOMContentLoaded", function () {
 
       // Populate album covers and song info for all steps
       ["", "2", "InReview"].forEach((suffix) => {
-        const albumCover = conflictOffcanvasEl.querySelector(`#modalAlbumCover${suffix}`);
-        const songName = conflictOffcanvasEl.querySelector(`#modalSongName${suffix}`);
-        const artistName = conflictOffcanvasEl.querySelector(`#modalArtistName${suffix}`);
-        const isrcEl = suffix === "InReview" ? conflictOffcanvasEl.querySelector(`#modalIsrcInReview`) : null;
+        const albumCover = conflictOffcanvasEl.querySelector(
+          `#modalAlbumCover${suffix}`
+        );
+        const songName = conflictOffcanvasEl.querySelector(
+          `#modalSongName${suffix}`
+        );
+        const artistName = conflictOffcanvasEl.querySelector(
+          `#modalArtistName${suffix}`
+        );
+        const isrcEl =
+          suffix === "InReview"
+            ? conflictOffcanvasEl.querySelector(`#modalIsrcInReview`)
+            : null;
 
         if (albumCover) {
-          albumCover.src = data.coverUrl || "https://placehold.co/80x80/ff0000/ffffff?text=YT";
+          albumCover.src =
+            data.coverUrl || "https://placehold.co/80x80/ff0000/ffffff?text=YT";
         }
         if (songName) songName.textContent = data.songName || "Unknown";
         if (artistName) artistName.textContent = data.artistName || "Unknown";
@@ -3913,8 +4118,11 @@ document.addEventListener("DOMContentLoaded", function () {
       if (modalIsrc) modalIsrc.textContent = `ISRC: ${data.isrc || "N/A"}`;
 
       // Set title and subtitle
-      conflictOffcanvasEl.querySelector("#offcanvasTitle").textContent = data.category || "YouTube Conflict";
-      conflictOffcanvasEl.querySelector("#offcanvasSubtitle").textContent = `VS. ${data.otherParty || "Unknown"}`;
+      conflictOffcanvasEl.querySelector("#offcanvasTitle").textContent =
+        data.category || "YouTube Conflict";
+      conflictOffcanvasEl.querySelector(
+        "#offcanvasSubtitle"
+      ).textContent = `VS. ${data.otherParty || "Unknown"}`;
 
       // Handle different status flows
       if (currentStatus === "In Review" || currentStatus === "Approved") {
@@ -3929,26 +4137,33 @@ document.addEventListener("DOMContentLoaded", function () {
 
         isReadOnlyMode = false;
         conflictForm.reset();
-        conflictOffcanvasEl.querySelectorAll(".radio-card").forEach((c) => c.classList.remove("selected"));
+        conflictOffcanvasEl
+          .querySelectorAll(".radio-card")
+          .forEach((c) => c.classList.remove("selected"));
         if (fileDisplay) fileDisplay.classList.add("d-none");
         showStep(0);
 
         // Rights owned logic - FIXED FOR REJECTED STATUS
-        const rightsOptions = conflictOffcanvasEl.querySelector("#rightsOwnedOptions");
-        const rightsText = conflictOffcanvasEl.querySelector("#rightsOwnedText");
-        
+        const rightsOptions = conflictOffcanvasEl.querySelector(
+          "#rightsOwnedOptions"
+        );
+        const rightsText =
+          conflictOffcanvasEl.querySelector("#rightsOwnedText");
+
         // For REJECTED status, always show the editable form regardless of existing data
         if (currentStatus === "Rejected") {
           if (rightsOptions) rightsOptions.classList.remove("d-none");
           if (rightsText) rightsText.classList.add("d-none");
           delete conflictOffcanvasEl.dataset.rightsOwned;
-          
+
           // Pre-select the previously submitted rights option if available
           if (data.rightsOwned) {
-            const radioInput = conflictForm.querySelector(`input[name="rightsOwned"][value="${data.rightsOwned}"]`);
+            const radioInput = conflictForm.querySelector(
+              `input[name="rightsOwned"][value="${data.rightsOwned}"]`
+            );
             if (radioInput) {
               radioInput.checked = true;
-              radioInput.closest('.radio-card').classList.add('selected');
+              radioInput.closest(".radio-card").classList.add("selected");
             }
           }
         } else if (data.rightsOwned) {
@@ -3967,12 +4182,15 @@ document.addEventListener("DOMContentLoaded", function () {
         }
 
         // File logic - FIXED FOR REJECTED STATUS
-        const fileUploadContainer = conflictOffcanvasEl.querySelector("#fileUploadContainer");
+        const fileUploadContainer = conflictOffcanvasEl.querySelector(
+          "#fileUploadContainer"
+        );
         const fileLinkBox = conflictOffcanvasEl.querySelector("#fileLinkBox");
-        
+
         // For REJECTED status, always show file upload container (allow re-upload)
         if (currentStatus === "Rejected") {
-          if (fileUploadContainer) fileUploadContainer.classList.remove("d-none");
+          if (fileUploadContainer)
+            fileUploadContainer.classList.remove("d-none");
           if (fileLinkBox) {
             if (data.supportingFile) {
               fileLinkBox.innerHTML = `
@@ -3999,7 +4217,8 @@ document.addEventListener("DOMContentLoaded", function () {
           conflictOffcanvasEl.dataset.supportingFile = data.supportingFile;
         } else {
           // For Action Required without existing file, show upload
-          if (fileUploadContainer) fileUploadContainer.classList.remove("d-none");
+          if (fileUploadContainer)
+            fileUploadContainer.classList.remove("d-none");
           if (fileLinkBox) fileLinkBox.classList.add("d-none");
           delete conflictOffcanvasEl.dataset.supportingFile;
         }
@@ -4022,7 +4241,8 @@ document.addEventListener("DOMContentLoaded", function () {
         }
 
         const originalText = submitBtn.innerHTML;
-        submitBtn.innerHTML = '<i class="spinner-border spinner-border-sm me-1"></i>Submitting...';
+        submitBtn.innerHTML =
+          '<i class="spinner-border spinner-border-sm me-1"></i>Submitting...';
         submitBtn.disabled = true;
         formSubmitted = true;
 
@@ -4056,7 +4276,9 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     // --- FILE UPLOAD HANDLERS ---
-    const fileUploadContainer = conflictOffcanvasEl.querySelector("#fileUploadContainer");
+    const fileUploadContainer = conflictOffcanvasEl.querySelector(
+      "#fileUploadContainer"
+    );
     if (fileUploadContainer) {
       fileUploadContainer.addEventListener("click", () => {
         if (!isReadOnlyMode && fileInput) fileInput.click();
@@ -4090,7 +4312,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
       if (e.target.closest(".radio-card")) {
         const card = e.target.closest(".radio-card");
-        conflictOffcanvasEl.querySelectorAll(".radio-card").forEach((c) => c.classList.remove("selected"));
+        conflictOffcanvasEl
+          .querySelectorAll(".radio-card")
+          .forEach((c) => c.classList.remove("selected"));
         card.classList.add("selected");
         const radioInput = card.querySelector('input[type="radio"]');
         if (radioInput) radioInput.checked = true;
@@ -4118,8 +4342,6 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 });
 
-
-
 // Import functionality remains the same
 document.addEventListener("DOMContentLoaded", function () {
   const importBtn = document.getElementById("importYoutubeCsv");
@@ -4139,7 +4361,8 @@ document.addEventListener("DOMContentLoaded", function () {
         formData.append("file", file);
 
         const originalText = importBtn.innerHTML;
-        importBtn.innerHTML = '<i class="spinner-border spinner-border-sm me-1"></i>Importing...';
+        importBtn.innerHTML =
+          '<i class="spinner-border spinner-border-sm me-1"></i>Importing...';
         importBtn.disabled = true;
 
         fetch("/youtube-conflicts/import", {
@@ -4149,7 +4372,9 @@ document.addEventListener("DOMContentLoaded", function () {
           .then((res) => res.json())
           .then((data) => {
             if (data.status === "success") {
-              alert(`Import successful!\nProcessed: ${data.processed_rows}\nInserted: ${data.inserted_rows}`);
+              alert(
+                `Import successful!\nProcessed: ${data.processed_rows}\nInserted: ${data.inserted_rows}`
+              );
               location.reload();
             } else {
               alert("Import failed: " + data.message);
@@ -4171,8 +4396,6 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   }
 });
-
-
 
 // facebook-page js
 // Add this entire new block to your app.js file
@@ -4376,23 +4599,25 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     // --- OFFCANVAS LOGIC ---
-    const conflictOffcanvasEl = document.getElementById("facebookConflictOffcanvas");
+    const conflictOffcanvasEl = document.getElementById(
+      "facebookConflictOffcanvas"
+    );
     if (conflictOffcanvasEl) {
       const conflictForm = document.getElementById("facebookConflictForm");
       const formStep1 = document.getElementById("formStep1");
-      const formStep2 = document.getElementById("formStep2"); 
+      const formStep2 = document.getElementById("formStep2");
       const formStep3 = document.getElementById("formStep3");
       const formStepInReview = document.getElementById("formStepInReview");
-      
+
       // The main form steps (excluding the In Review step)
       const formSteps = [formStep1, formStep2, formStep3, formStepInReview]; // Step 4 is the InReview step used as preview
-      
+
       const nextBtn = document.getElementById("nextBtn");
       const backBtn = document.getElementById("backBtn");
       const prevBtn = document.getElementById("prevBtn"); // Use prevBtn instead of backBtn
       const submitBtn = document.getElementById("submitBtn");
       const closeBtnInReview = document.getElementById("closeBtnInReview");
-      
+
       let currentStep = 0;
       let currentConflictId = null;
       let conflictCountries = {};
@@ -4402,44 +4627,54 @@ document.addEventListener("DOMContentLoaded", function () {
 
       // --- OFFCANVAS CLOSE EVENT LISTENERS FOR PAGE RELOAD ---
       // Listen for offcanvas hidden event to reload page[40][42]
-      conflictOffcanvasEl.addEventListener('hidden.bs.offcanvas', function (event) {
-        // Only reload if form was not submitted (to avoid double reload)
-        if (!formSubmitted) {
-          console.log('Offcanvas closed - reloading page');
-          window.location.reload();
+      conflictOffcanvasEl.addEventListener(
+        "hidden.bs.offcanvas",
+        function (event) {
+          // Only reload if form was not submitted (to avoid double reload)
+          if (!formSubmitted) {
+            console.log("Offcanvas closed - reloading page");
+            window.location.reload();
+          }
+          // Reset the flag for next time
+          formSubmitted = false;
         }
-        // Reset the flag for next time
-        formSubmitted = false;
-      });
+      );
 
       // Add click event to cross button (×) in header
-      const closeBtn = conflictOffcanvasEl.querySelector('.btn-close');
+      const closeBtn = conflictOffcanvasEl.querySelector(".btn-close");
       if (closeBtn) {
-        closeBtn.addEventListener('click', function() {
-          console.log('Cross button clicked - offcanvas will close and page will reload');
+        closeBtn.addEventListener("click", function () {
+          console.log(
+            "Cross button clicked - offcanvas will close and page will reload"
+          );
         });
       }
 
       // Add click event to "Close" button in footer
       if (closeBtnInReview) {
-        closeBtnInReview.addEventListener('click', function() {
-          console.log('Close button clicked - offcanvas will close and page will reload');
+        closeBtnInReview.addEventListener("click", function () {
+          console.log(
+            "Close button clicked - offcanvas will close and page will reload"
+          );
         });
       }
 
       // Rights owned display mapping
       const rightsOwnedLabels = {
-        original_exclusive: "Original and exclusive rights on all or part of the territories",
-        non_exclusive: "Non-exclusive rights only (license granted by a third party)",
+        original_exclusive:
+          "Original and exclusive rights on all or part of the territories",
+        non_exclusive:
+          "Non-exclusive rights only (license granted by a third party)",
         cid_exclusive: "Exclusive license for Content-ID stores only",
         soundalike: "Soundalike recording (e.g., cover or remix)",
         public_domain: "Public Domain recording",
-        no_rights: "No rights for the selected content"
+        no_rights: "No rights for the selected content",
       };
 
       // Create status message dynamically if it doesn't exist
       function createStatusMessage() {
-        const existingMsg = conflictOffcanvasEl.querySelector("#statusMessageBox");
+        const existingMsg =
+          conflictOffcanvasEl.querySelector("#statusMessageBox");
         if (!existingMsg) {
           const statusMessageHTML = `
             <div id="statusMessageBox" class="alert d-none mb-3">
@@ -4452,8 +4687,9 @@ document.addEventListener("DOMContentLoaded", function () {
               </div>
             </div>
           `;
-          const offcanvasBody = conflictOffcanvasEl.querySelector('.offcanvas-body');
-          offcanvasBody.insertAdjacentHTML('afterbegin', statusMessageHTML);
+          const offcanvasBody =
+            conflictOffcanvasEl.querySelector(".offcanvas-body");
+          offcanvasBody.insertAdjacentHTML("afterbegin", statusMessageHTML);
         }
       }
 
@@ -4462,27 +4698,35 @@ document.addEventListener("DOMContentLoaded", function () {
         formSteps.forEach((step, index) => {
           if (step) step.classList.toggle("d-none", index !== stepIndex);
         });
-        
+
         // Button visibility logic - use prevBtn instead of backBtn
-        if (prevBtn) prevBtn.classList.toggle("d-none", stepIndex === 0 || isReadOnlyMode);
+        if (prevBtn)
+          prevBtn.classList.toggle("d-none", stepIndex === 0 || isReadOnlyMode);
         if (backBtn) backBtn.classList.add("d-none"); // Always hide backBtn to avoid confusion
-        if (nextBtn) nextBtn.classList.toggle("d-none", stepIndex === 3 || isReadOnlyMode); // Step 3 is the final preview step
-        if (submitBtn) submitBtn.classList.toggle("d-none", stepIndex !== 3 || isReadOnlyMode); // Show submit only on step 3 (preview)
-        if (closeBtnInReview) closeBtnInReview.classList.toggle("d-none", !isReadOnlyMode);
-        
+        if (nextBtn)
+          nextBtn.classList.toggle("d-none", stepIndex === 3 || isReadOnlyMode); // Step 3 is the final preview step
+        if (submitBtn)
+          submitBtn.classList.toggle(
+            "d-none",
+            stepIndex !== 3 || isReadOnlyMode
+          ); // Show submit only on step 3 (preview)
+        if (closeBtnInReview)
+          closeBtnInReview.classList.toggle("d-none", !isReadOnlyMode);
+
         currentStep = stepIndex;
       }
 
       function showStatusMessage(status, message = "") {
         createStatusMessage();
-        
+
         const statusMessageBox = document.getElementById("statusMessageBox");
         const statusIcon = document.getElementById("statusIcon");
         const statusTitle = document.getElementById("statusTitle");
         const statusMessageText = document.getElementById("statusMessage");
 
         if (status === "Rejected" && message) {
-          statusMessageBox.className = "alert alert-danger d-flex align-items-center mb-3";
+          statusMessageBox.className =
+            "alert alert-danger d-flex align-items-center mb-3";
           statusIcon.className = "bi bi-x-circle-fill me-3 fs-5 text-danger";
           statusTitle.textContent = "Resolution Rejected";
           statusMessageText.textContent = message;
@@ -4495,7 +4739,7 @@ document.addEventListener("DOMContentLoaded", function () {
       function showReadOnlyDisplay(resolutionData) {
         // Hide all form steps except the In Review step
         formStep1.classList.add("d-none");
-        formStep2.classList.add("d-none"); 
+        formStep2.classList.add("d-none");
         formStep3.classList.add("d-none");
         formStepInReview.classList.remove("d-none");
 
@@ -4506,18 +4750,27 @@ document.addEventListener("DOMContentLoaded", function () {
         // Populate read-only data using existing elements
         const rightsOwnedEl = document.getElementById("resolutionRightsOwned");
         if (rightsOwnedEl) {
-          rightsOwnedEl.textContent = rightsOwnedLabels[resolutionData.rightsOwned] || resolutionData.rightsOwned || "N/A";
+          rightsOwnedEl.textContent =
+            rightsOwnedLabels[resolutionData.rightsOwned] ||
+            resolutionData.rightsOwned ||
+            "N/A";
         }
-        
+
         const countriesEl = document.getElementById("resolutionCountries");
         if (countriesEl) {
-          countriesEl.textContent = resolutionData.territories ? resolutionData.territories.join(", ") : "N/A";
+          countriesEl.textContent = resolutionData.territories
+            ? resolutionData.territories.join(", ")
+            : "N/A";
         }
-        
-        const supportingDocEl = document.getElementById("supportingDocumentInfo");
+
+        const supportingDocEl = document.getElementById(
+          "supportingDocumentInfo"
+        );
         if (supportingDocEl) {
           if (resolutionData.supportingDocumentPath) {
-            const fileName = resolutionData.supportingDocumentPath.split("/").pop();
+            const fileName = resolutionData.supportingDocumentPath
+              .split("/")
+              .pop();
             supportingDocEl.innerHTML = `
               <a href="${resolutionData.supportingDocumentPath}" target="_blank" class="text-decoration-none">
                 <i class="bi bi-file-earmark-text me-2"></i>${fileName}
@@ -4529,8 +4782,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
         const dateEl = document.getElementById("resolutionDate");
         if (dateEl) {
-          dateEl.textContent = resolutionData.resolutionDate ? 
-            new Date(resolutionData.resolutionDate).toLocaleString() : "N/A";
+          dateEl.textContent = resolutionData.resolutionDate
+            ? new Date(resolutionData.resolutionDate).toLocaleString()
+            : "N/A";
         }
 
         isReadOnlyMode = true;
@@ -4543,23 +4797,31 @@ document.addEventListener("DOMContentLoaded", function () {
 
       function populatePreviewStep() {
         // Use the existing formStepInReview as preview step but populate it with current form data
-        const rightsOwned = conflictForm.querySelector('input[name="rightsOwned"]:checked')?.value;
+        const rightsOwned = conflictForm.querySelector(
+          'input[name="rightsOwned"]:checked'
+        )?.value;
         const rightsOwnedEl = document.getElementById("resolutionRightsOwned");
         if (rightsOwnedEl) {
-          rightsOwnedEl.textContent = rightsOwnedLabels[rightsOwned] || "Not selected";
+          rightsOwnedEl.textContent =
+            rightsOwnedLabels[rightsOwned] || "Not selected";
         }
 
         const selectedTerritories = Array.from(
           conflictForm.querySelectorAll(".country-checkbox:checked")
         ).map((cb) => cb.nextElementSibling.textContent);
-        
+
         const countriesEl = document.getElementById("resolutionCountries");
         if (countriesEl) {
-          countriesEl.textContent = selectedTerritories.length > 0 ? selectedTerritories.join(", ") : "None selected";
+          countriesEl.textContent =
+            selectedTerritories.length > 0
+              ? selectedTerritories.join(", ")
+              : "None selected";
         }
 
         const fileInput = document.getElementById("formFile");
-        const supportingDocEl = document.getElementById("supportingDocumentInfo");
+        const supportingDocEl = document.getElementById(
+          "supportingDocumentInfo"
+        );
         if (supportingDocEl) {
           if (fileInput && fileInput.files.length > 0) {
             supportingDocEl.innerHTML = `<i class="bi bi-file-earmark-text me-2"></i>${fileInput.files[0].name}`;
@@ -4570,7 +4832,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
         const dateEl = document.getElementById("resolutionDate");
         if (dateEl) {
-          dateEl.textContent = "Will be submitted: " + new Date().toLocaleString();
+          dateEl.textContent =
+            "Will be submitted: " + new Date().toLocaleString();
         }
       }
 
@@ -4580,7 +4843,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
           // Validation for each step
           if (currentStep === 0) {
-            const radioSelected = conflictForm.querySelector('input[name="rightsOwned"]:checked');
+            const radioSelected = conflictForm.querySelector(
+              'input[name="rightsOwned"]:checked'
+            );
             if (!radioSelected) {
               return alert("Please select a rights option.");
             }
@@ -4599,7 +4864,8 @@ document.addEventListener("DOMContentLoaded", function () {
             }
           }
 
-          if (currentStep < 3) { // Step 3 is the preview step (using formStepInReview)
+          if (currentStep < 3) {
+            // Step 3 is the preview step (using formStepInReview)
             if (currentStep === 2) {
               populatePreviewStep(); // Populate preview before showing it
             }
@@ -4615,74 +4881,89 @@ document.addEventListener("DOMContentLoaded", function () {
         });
       }
 
-      conflictOffcanvasEl.addEventListener("show.bs.offcanvas", function (event) {
-        const trigger = event.relatedTarget;
-        const data = trigger.dataset;
+      conflictOffcanvasEl.addEventListener(
+        "show.bs.offcanvas",
+        function (event) {
+          const trigger = event.relatedTarget;
+          const data = trigger.dataset;
 
-        // Reset state
-        currentConflictId = data.conflictId;
-        currentStatus = data.status;
-        isReadOnlyMode = false;
-        formSubmitted = false; // Reset form submission flag
+          // Reset state
+          currentConflictId = data.conflictId;
+          currentStatus = data.status;
+          isReadOnlyMode = false;
+          formSubmitted = false; // Reset form submission flag
 
-        // Parse data
-        try {
-          conflictCountries = JSON.parse(data.countries || "{}");
-        } catch (e) {
-          console.warn("Failed to parse countries data:", e);
-          conflictCountries = {};
-        }
-
-        let resolutionData = {};
-        try {
-          resolutionData = JSON.parse(data.resolutionData || "{}");
-        } catch (e) {
-          console.warn("Failed to parse resolution data:", e);
-        }
-
-        // Populate album info for all steps
-        ["", "2", "3", "InReview"].forEach((suffix) => {
-          const albumCover = document.getElementById(`modalAlbumCover${suffix}`);
-          const songName = document.getElementById(`modalSongName${suffix}`);
-          const artistName = document.getElementById(`modalArtistName${suffix}`);
-
-          if (albumCover) albumCover.src = data.coverUrl || "https://placehold.co/80x80/3b5998/ffffff?text=FB";
-          if (songName) songName.textContent = data.songName || "Unknown";
-          if (artistName) artistName.textContent = data.artistName || "Unknown";
-        });
-
-        // Set title and subtitle
-        const titleEl = document.getElementById("offcanvasTitle");
-        const subtitleEl = document.getElementById("offcanvasSubtitle");
-        if (titleEl) titleEl.textContent = data.category || "Ownership Conflict";
-        if (subtitleEl) subtitleEl.textContent = `VS. ${data.otherParty || "Unknown"}`;
-        
-        const isrcEl = document.getElementById("modalIsrc");
-        if (isrcEl) isrcEl.textContent = `ISRC: ${data.isrc || "N/A"}`;
-
-        // Handle different status flows
-        if (currentStatus === "In Review" || currentStatus === "Approved") {
-          showReadOnlyDisplay(resolutionData);
-        } else {
-          // Action Required or Rejected - show fillable form
-          if (currentStatus === "Rejected") {
-            showStatusMessage("Rejected", data.rejectionMessage);
-          } else {
-            showStatusMessage(""); // Hide status message for Action Required
+          // Parse data
+          try {
+            conflictCountries = JSON.parse(data.countries || "{}");
+          } catch (e) {
+            console.warn("Failed to parse countries data:", e);
+            conflictCountries = {};
           }
 
-          // Reset form and show step 1
-          renderTerritoryAccordion();
-          conflictForm.reset();
-          conflictForm.querySelectorAll(".radio-card").forEach((c) => c.classList.remove("selected"));
-          
-          const fileDisplay = document.getElementById("selectedFileName");
-          if (fileDisplay) fileDisplay.classList.add("d-none");
+          let resolutionData = {};
+          try {
+            resolutionData = JSON.parse(data.resolutionData || "{}");
+          } catch (e) {
+            console.warn("Failed to parse resolution data:", e);
+          }
 
-          isReadOnlyMode = false;
-          showStep(0);
+          // Populate album info for all steps
+          ["", "2", "3", "InReview"].forEach((suffix) => {
+            const albumCover = document.getElementById(
+              `modalAlbumCover${suffix}`
+            );
+            const songName = document.getElementById(`modalSongName${suffix}`);
+            const artistName = document.getElementById(
+              `modalArtistName${suffix}`
+            );
+
+            if (albumCover)
+              albumCover.src =
+                data.coverUrl ||
+                "https://placehold.co/80x80/3b5998/ffffff?text=FB";
+            if (songName) songName.textContent = data.songName || "Unknown";
+            if (artistName)
+              artistName.textContent = data.artistName || "Unknown";
+          });
+
+          // Set title and subtitle
+          const titleEl = document.getElementById("offcanvasTitle");
+          const subtitleEl = document.getElementById("offcanvasSubtitle");
+          if (titleEl)
+            titleEl.textContent = data.category || "Ownership Conflict";
+          if (subtitleEl)
+            subtitleEl.textContent = `VS. ${data.otherParty || "Unknown"}`;
+
+          const isrcEl = document.getElementById("modalIsrc");
+          if (isrcEl) isrcEl.textContent = `ISRC: ${data.isrc || "N/A"}`;
+
+          // Handle different status flows
+          if (currentStatus === "In Review" || currentStatus === "Approved") {
+            showReadOnlyDisplay(resolutionData);
+          } else {
+            // Action Required or Rejected - show fillable form
+            if (currentStatus === "Rejected") {
+              showStatusMessage("Rejected", data.rejectionMessage);
+            } else {
+              showStatusMessage(""); // Hide status message for Action Required
+            }
+
+            // Reset form and show step 1
+            renderTerritoryAccordion();
+            conflictForm.reset();
+            conflictForm
+              .querySelectorAll(".radio-card")
+              .forEach((c) => c.classList.remove("selected"));
+
+            const fileDisplay = document.getElementById("selectedFileName");
+            if (fileDisplay) fileDisplay.classList.add("d-none");
+
+            isReadOnlyMode = false;
+            showStep(0);
+          }
         }
-      });
+      );
 
       if (conflictForm) {
         conflictForm.addEventListener("submit", function (e) {
@@ -4690,7 +4971,9 @@ document.addEventListener("DOMContentLoaded", function () {
           if (isReadOnlyMode) return;
 
           const formData = new FormData();
-          const rightsOwned = conflictForm.querySelector('input[name="rightsOwned"]:checked')?.value || "";
+          const rightsOwned =
+            conflictForm.querySelector('input[name="rightsOwned"]:checked')
+              ?.value || "";
           const selectedTerritories = Array.from(
             conflictForm.querySelectorAll(".country-checkbox:checked")
           ).map((cb) => cb.value);
@@ -4705,7 +4988,8 @@ document.addEventListener("DOMContentLoaded", function () {
           }
 
           const originalText = submitBtn.innerHTML;
-          submitBtn.innerHTML = '<i class="spinner-border spinner-border-sm me-1"></i>Submitting...';
+          submitBtn.innerHTML =
+            '<i class="spinner-border spinner-border-sm me-1"></i>Submitting...';
           submitBtn.disabled = true;
 
           // Set flag to indicate form is being submitted
@@ -4745,10 +5029,12 @@ document.addEventListener("DOMContentLoaded", function () {
       function renderTerritoryAccordion() {
         if (isReadOnlyMode) return;
 
-        const accordionContainer = document.getElementById("territoryAccordion");
+        const accordionContainer =
+          document.getElementById("territoryAccordion");
         if (!accordionContainer) return;
 
-        accordionContainer.innerHTML = '<div class="text-center p-3"><i class="spinner-border spinner-border-sm me-2"></i>Loading territories...</div>';
+        accordionContainer.innerHTML =
+          '<div class="text-center p-3"><i class="spinner-border spinner-border-sm me-2"></i>Loading territories...</div>';
 
         fetch("/facebook/get-all-countries")
           .then((response) => response.json())
@@ -4756,17 +5042,20 @@ document.addEventListener("DOMContentLoaded", function () {
             if (data.status === "success") {
               renderCountriesAccordion(data.countries);
             } else {
-              accordionContainer.innerHTML = '<div class="text-center p-3 text-danger">Error loading territories</div>';
+              accordionContainer.innerHTML =
+                '<div class="text-center p-3 text-danger">Error loading territories</div>';
             }
           })
           .catch((error) => {
             console.error("Error fetching countries:", error);
-            accordionContainer.innerHTML = '<div class="text-center p-3 text-danger">Error loading territories</div>';
+            accordionContainer.innerHTML =
+              '<div class="text-center p-3 text-danger">Error loading territories</div>';
           });
       }
 
       function renderCountriesAccordion(allCountries) {
-        const accordionContainer = document.getElementById("territoryAccordion");
+        const accordionContainer =
+          document.getElementById("territoryAccordion");
         if (!accordionContainer) return;
 
         const checkedCountryIds = new Set();
@@ -4783,35 +5072,60 @@ document.addEventListener("DOMContentLoaded", function () {
             if (!countries || countries.length === 0) return "";
 
             const regionId = continent.replace(/[^a-zA-Z0-9]/g, "");
-            const checkedCountsInRegion = countries.filter((c) => checkedCountryIds.has(c.id)).length;
-            const allCountriesInRegionChecked = checkedCountsInRegion === countries.length && countries.length > 0;
+            const checkedCountsInRegion = countries.filter((c) =>
+              checkedCountryIds.has(c.id)
+            ).length;
+            const allCountriesInRegionChecked =
+              checkedCountsInRegion === countries.length &&
+              countries.length > 0;
 
             return `
               <div class="accordion-item">
                 <h2 class="accordion-header">
                   <button class="accordion-button collapsed d-flex align-items-center" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-fb-${regionId}">
                     <div class="form-check me-auto pe-2">
-                      <input class="form-check-input region-checkbox" type="checkbox" id="region-fb-${regionId}" data-region="${continent}" ${allCountriesInRegionChecked ? "checked" : ""}>
+                      <input class="form-check-input region-checkbox" type="checkbox" id="region-fb-${regionId}" data-region="${continent}" ${
+              allCountriesInRegionChecked ? "checked" : ""
+            }>
                       <label class="form-check-label fw-bold" for="region-fb-${regionId}">${continent}</label>
                     </div>
-                    <span class="text-muted small me-2">${countries.length} countries ${checkedCountsInRegion > 0 ? `(${checkedCountsInRegion} selected)` : ""}</span>
+                    <span class="text-muted small me-2">${
+                      countries.length
+                    } countries ${
+              checkedCountsInRegion > 0
+                ? `(${checkedCountsInRegion} selected)`
+                : ""
+            }</span>
                   </button>
                 </h2>
                 <div id="collapse-fb-${regionId}" class="accordion-collapse collapse" data-bs-parent="#territoryAccordion">
                   <div class="accordion-body">
                     <div class="territory-list-inner">
-                      ${countries.map((c) => `
+                      ${countries
+                        .map(
+                          (c) => `
                         <div class="form-check">
-                          <input class="form-check-input country-checkbox" type="checkbox" value="${c.id}" id="country-fb-${c.id}" data-region="${continent}" ${checkedCountryIds.has(c.id) ? "checked" : ""}>
-                          <label class="form-check-label" for="country-fb-${c.id}">${c.name}</label>
+                          <input class="form-check-input country-checkbox" type="checkbox" value="${
+                            c.id
+                          }" id="country-fb-${
+                            c.id
+                          }" data-region="${continent}" ${
+                            checkedCountryIds.has(c.id) ? "checked" : ""
+                          }>
+                          <label class="form-check-label" for="country-fb-${
+                            c.id
+                          }">${c.name}</label>
                         </div>
-                      `).join("")}
+                      `
+                        )
+                        .join("")}
                     </div>
                   </div>
                 </div>
               </div>
             `;
-          }).join("");
+          })
+          .join("");
 
         addTerritoryEventListeners();
         updateTerritoryCounter();
@@ -4820,8 +5134,11 @@ document.addEventListener("DOMContentLoaded", function () {
       function updateTerritoryCounter() {
         if (isReadOnlyMode) return;
 
-        const selected = conflictOffcanvasEl.querySelectorAll(".country-checkbox:checked").length;
-        const total = conflictOffcanvasEl.querySelectorAll(".country-checkbox").length;
+        const selected = conflictOffcanvasEl.querySelectorAll(
+          ".country-checkbox:checked"
+        ).length;
+        const total =
+          conflictOffcanvasEl.querySelectorAll(".country-checkbox").length;
         const counterEl = document.getElementById("territoryCounter");
         if (counterEl) {
           counterEl.textContent = `${selected} contested countries out of ${total} delivered`;
@@ -4831,23 +5148,35 @@ document.addEventListener("DOMContentLoaded", function () {
       function addTerritoryEventListeners() {
         if (isReadOnlyMode) return;
 
-        conflictOffcanvasEl.querySelectorAll(".region-checkbox, .country-checkbox").forEach((cb) => {
-          cb.addEventListener("change", function (e) {
-            const region = e.target.dataset.region;
-            if (e.target.classList.contains("region-checkbox")) {
-              conflictOffcanvasEl.querySelectorAll(`.country-checkbox[data-region="${region}"]`).forEach(
-                (countryCb) => (countryCb.checked = e.target.checked)
-              );
-            } else {
-              const allInRegion = [...conflictOffcanvasEl.querySelectorAll(`.country-checkbox[data-region="${region}"]`)].every((c) => c.checked);
-              const regionCheckbox = conflictOffcanvasEl.querySelector(`.region-checkbox[data-region="${region}"]`);
-              if (regionCheckbox) {
-                regionCheckbox.checked = allInRegion;
+        conflictOffcanvasEl
+          .querySelectorAll(".region-checkbox, .country-checkbox")
+          .forEach((cb) => {
+            cb.addEventListener("change", function (e) {
+              const region = e.target.dataset.region;
+              if (e.target.classList.contains("region-checkbox")) {
+                conflictOffcanvasEl
+                  .querySelectorAll(
+                    `.country-checkbox[data-region="${region}"]`
+                  )
+                  .forEach(
+                    (countryCb) => (countryCb.checked = e.target.checked)
+                  );
+              } else {
+                const allInRegion = [
+                  ...conflictOffcanvasEl.querySelectorAll(
+                    `.country-checkbox[data-region="${region}"]`
+                  ),
+                ].every((c) => c.checked);
+                const regionCheckbox = conflictOffcanvasEl.querySelector(
+                  `.region-checkbox[data-region="${region}"]`
+                );
+                if (regionCheckbox) {
+                  regionCheckbox.checked = allInRegion;
+                }
               }
-            }
-            updateTerritoryCounter();
+              updateTerritoryCounter();
+            });
           });
-        });
       }
 
       // Form interaction event listeners
@@ -4856,7 +5185,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
         if (e.target.closest(".radio-card")) {
           const card = e.target.closest(".radio-card");
-          conflictOffcanvasEl.querySelectorAll(".radio-card").forEach((c) => c.classList.remove("selected"));
+          conflictOffcanvasEl
+            .querySelectorAll(".radio-card")
+            .forEach((c) => c.classList.remove("selected"));
           card.classList.add("selected");
           const radioInput = card.querySelector('input[type="radio"]');
           if (radioInput) radioInput.checked = true;
@@ -4866,7 +5197,9 @@ document.addEventListener("DOMContentLoaded", function () {
       // File upload handling
       const fileInput = document.getElementById("formFile");
       const fileDisplay = document.getElementById("selectedFileName");
-      const fileUploadContainer = document.getElementById("fileUploadContainer");
+      const fileUploadContainer = document.getElementById(
+        "fileUploadContainer"
+      );
 
       if (fileUploadContainer && fileInput) {
         fileUploadContainer.addEventListener("click", () => {
@@ -4897,9 +5230,6 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   }
 });
-
-
-
 
 //facebook conflict import
 // document.getElementById("importFacebookCsv").addEventListener("click", function () {
@@ -5262,7 +5592,6 @@ const FormValidator = {
     return isValid || (!validationRules.required && !value);
   },
 
-  // Add helper methods for errors
   showError: (field, message) => {
     field.classList.add("is-invalid");
     const errorDiv = field.nextElementSibling;
@@ -5299,6 +5628,7 @@ const step2ValidationRules = {
   trackTitle: { required: true, minLength: 1, maxLength: 100 },
   secondaryTrackType: { required: true, type: "select" },
   instrumental: { required: true, type: "radio" },
+  isrc: { isrc: true },
   author: { required: true, minLength: 1, maxLength: 100 },
   composer: { required: true, minLength: 1, maxLength: 100 },
   cLineYear: { required: true, type: "select" },
@@ -5327,13 +5657,15 @@ const step5ValidationRules = {
 };
 
 document.addEventListener("DOMContentLoaded", function () {
-  const addReleasePageContainer = document.querySelector(".admin-add-releases-form");
+  const addReleasePageContainer = document.querySelector(
+    ".admin-add-releases-form"
+  );
   if (!addReleasePageContainer) return;
 
   const totalSteps = 5;
   const stepTitles = {
     1: "Metadata",
-    2: "Uploads", 
+    2: "Uploads",
     3: "Stores",
     4: "Date & Price",
     5: "Terms",
@@ -5342,56 +5674,149 @@ document.addEventListener("DOMContentLoaded", function () {
   let currentStep = 1;
   let submittingButton = null;
   let rejectionMessage = null;
-  let isDraftSaving = false; // NEW: Draft saving flag
+  let isDraftSaving = false;
+  let isSubmitting = false; // NEW: Prevent duplicate submissions
 
-  if (typeof feather !== 'undefined') {
+  if (typeof feather !== "undefined") {
     feather.replace();
   }
 
-  // FIXED: Initialize form data for edit mode
-  const isEditMode = document.querySelector('input[name="releaseTitle"]')?.value !== '';
+  const isEditMode =
+    document.querySelector('input[name="releaseTitle"]')?.value !== "";
 
-  // Initialize rejection modal
-  const rejectionModal = document.getElementById('rejectionModal') ? 
-    new bootstrap.Modal(document.getElementById('rejectionModal')) : null;
+  const rejectionModal = document.getElementById("rejectionModal")
+    ? new bootstrap.Modal(document.getElementById("rejectionModal"))
+    : null;
 
-  // NEW: Initialize rejection messages modal
-  const rejectionMessagesModal = document.getElementById('rejectionMessagesModal') ? 
-    new bootstrap.Modal(document.getElementById('rejectionMessagesModal')) : null;
+  const rejectionMessagesModal = document.getElementById(
+    "rejectionMessagesModal"
+  )
+    ? new bootstrap.Modal(document.getElementById("rejectionMessagesModal"))
+    : null;
 
-  // NEW: SAVE DRAFT FUNCTIONALITY
-  const saveDraftBtn = document.getElementById('saveDraftBtn');
-  const draftSuccessToast = document.getElementById('draftSuccessToast');
-  const toastInstance = draftSuccessToast ? new bootstrap.Toast(draftSuccessToast) : null;
+  const saveDraftBtn = document.getElementById("saveDraftBtn");
+  const draftSuccessToast = document.getElementById("draftSuccessToast");
+  const toastInstance = draftSuccessToast
+    ? new bootstrap.Toast(draftSuccessToast)
+    : null;
 
   if (saveDraftBtn) {
-    saveDraftBtn.addEventListener('click', function() {
+    saveDraftBtn.addEventListener("click", function () {
       if (isDraftSaving) return;
       saveDraft();
     });
   }
 
-  // NEW: REJECTION MESSAGES FUNCTIONALITY  
-  const showRejectionMessagesBtn = document.getElementById('showRejectionMessagesBtn');
+  const showRejectionMessagesBtn = document.getElementById(
+    "showRejectionMessagesBtn"
+  );
   if (showRejectionMessagesBtn && rejectionMessagesModal) {
-    showRejectionMessagesBtn.addEventListener('click', function() {
+    showRejectionMessagesBtn.addEventListener("click", function () {
       loadRejectionMessages();
       rejectionMessagesModal.show();
     });
   }
 
+  // NEW: Pre-validate UPC/EAN and ISRC for uniqueness
+  async function validateUniqueField(fieldName, fieldValue, releaseId = null) {
+    if (!fieldValue || fieldValue.trim() === "") return true;
+
+    try {
+      const params = new URLSearchParams({
+        field: fieldName,
+        value: fieldValue.trim(),
+      });
+
+      if (releaseId) {
+        params.append("release_id", releaseId);
+      }
+
+      const response = await fetch(
+        `/releases/validate-unique?${params.toString()}`,
+        {
+          method: "GET",
+          headers: {
+            "X-Requested-With": "XMLHttpRequest",
+          },
+        }
+      );
+
+      const result = await response.json();
+      return result.success && result.is_unique;
+    } catch (error) {
+      console.error("Unique validation error:", error);
+      return true; // Allow submission if validation fails
+    }
+  }
+
+  // NEW: Add real-time unique validation for UPC/EAN
+  const upcEanField = document.getElementById("upcEan");
+  if (upcEanField) {
+    let upcEanTimeout = null;
+    upcEanField.addEventListener("blur", async function () {
+      clearTimeout(upcEanTimeout);
+      const value = this.value.trim();
+
+      if (value && FormValidator.rules.upcEan(value)) {
+        const releaseId = document.querySelector(
+          'input[name="release_id"]'
+        )?.value;
+        const isUnique = await validateUniqueField("upcEan", value, releaseId);
+
+        if (!isUnique) {
+          const errorDiv = document.getElementById("upcEanError");
+          this.classList.add("is-invalid");
+          this.classList.remove("is-valid");
+          if (errorDiv) {
+            errorDiv.textContent =
+              "This UPC/EAN is already in use. Please use a different one.";
+            errorDiv.style.display = "block";
+          }
+        }
+      }
+    });
+  }
+
+  // NEW: Add real-time unique validation for ISRC
+  const isrcField = document.getElementById("isrc");
+  if (isrcField) {
+    let isrcTimeout = null;
+    isrcField.addEventListener("blur", async function () {
+      clearTimeout(isrcTimeout);
+      const value = this.value.trim();
+
+      if (value && FormValidator.rules.isrc(value)) {
+        const releaseId = document.querySelector(
+          'input[name="release_id"]'
+        )?.value;
+        const isUnique = await validateUniqueField("isrc", value, releaseId);
+
+        if (!isUnique) {
+          const errorDiv = document.getElementById("isrcError");
+          this.classList.add("is-invalid");
+          this.classList.remove("is-valid");
+          if (errorDiv) {
+            errorDiv.textContent =
+              "This ISRC is already in use. Please use a different one.";
+            errorDiv.style.display = "block";
+          }
+        }
+      }
+    });
+  }
+
   function updateStepIndicator(step) {
-    const steps = document.querySelectorAll('.step');
-    const progressLine = document.getElementById('progressLine');
-    
+    const steps = document.querySelectorAll(".step");
+    const progressLine = document.getElementById("progressLine");
+
     steps.forEach((stepEl, index) => {
       const stepNum = index + 1;
-      stepEl.classList.remove('active', 'completed');
-      
+      stepEl.classList.remove("active", "completed");
+
       if (stepNum < step) {
-        stepEl.classList.add('completed');
+        stepEl.classList.add("completed");
       } else if (stepNum === step) {
-        stepEl.classList.add('active');
+        stepEl.classList.add("active");
       }
     });
 
@@ -5402,67 +5827,88 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   function showStep(step) {
-    document.querySelectorAll('.step-content').forEach(content => {
-      content.classList.remove('active');
+    document.querySelectorAll(".step-content").forEach((content) => {
+      content.classList.remove("active");
     });
 
     setTimeout(() => {
       const targetStep = document.getElementById(`step-${step}`);
       if (targetStep) {
-        targetStep.classList.add('active');
+        targetStep.classList.add("active");
       }
     }, 150);
 
     updateStepIndicator(step);
-    
-    const currentStepTitleEl = document.querySelector('.current-step-title');
+
+    const currentStepTitleEl = document.querySelector(".current-step-title");
     if (currentStepTitleEl) {
       currentStepTitleEl.textContent = stepTitles[step];
     }
-    
+
     currentStep = step;
   }
 
   function createStepValidator(stepRules, stepNumber) {
-    Object.keys(stepRules).forEach(fieldId => {
+    Object.keys(stepRules).forEach((fieldId) => {
       const field = document.getElementById(fieldId);
       if (!field) return;
 
       const rule = stepRules[fieldId];
 
-      if (rule.type === 'radio') {
-        document.querySelectorAll(`input[name="${field.name}"]`).forEach(radio => {
-          radio.addEventListener('change', () => validateStepField(fieldId, stepRules[fieldId]));
-        });
-      } else if (rule.type === 'checkbox') {
-        if (field.name && document.querySelectorAll(`input[name="${field.name}"]`).length > 1) {
-          document.querySelectorAll(`input[name="${field.name}"]`).forEach(checkbox => {
-            checkbox.addEventListener('change', () => validateStepField(fieldId, stepRules[fieldId]));
+      if (rule.type === "radio") {
+        document
+          .querySelectorAll(`input[name="${field.name}"]`)
+          .forEach((radio) => {
+            radio.addEventListener("change", () =>
+              validateStepField(fieldId, stepRules[fieldId])
+            );
           });
+      } else if (rule.type === "checkbox") {
+        if (
+          field.name &&
+          document.querySelectorAll(`input[name="${field.name}"]`).length > 1
+        ) {
+          document
+            .querySelectorAll(`input[name="${field.name}"]`)
+            .forEach((checkbox) => {
+              checkbox.addEventListener("change", () =>
+                validateStepField(fieldId, stepRules[fieldId])
+              );
+            });
         } else {
-          field.addEventListener('change', () => validateStepField(fieldId, stepRules[fieldId]));
+          field.addEventListener("change", () =>
+            validateStepField(fieldId, stepRules[fieldId])
+          );
         }
-      } else if (rule.type === 'file') {
-        field.addEventListener('change', () => validateStepField(fieldId, stepRules[fieldId]));
+      } else if (rule.type === "file") {
+        field.addEventListener("change", () =>
+          validateStepField(fieldId, stepRules[fieldId])
+        );
       } else {
-        field.addEventListener('input', () => validateStepField(fieldId, stepRules[fieldId]));
-        field.addEventListener('change', () => validateStepField(fieldId, stepRules[fieldId]));
-        field.addEventListener('blur', () => validateStepField(fieldId, stepRules[fieldId]));
+        field.addEventListener("input", () =>
+          validateStepField(fieldId, stepRules[fieldId])
+        );
+        field.addEventListener("change", () =>
+          validateStepField(fieldId, stepRules[fieldId])
+        );
+        field.addEventListener("blur", () =>
+          validateStepField(fieldId, stepRules[fieldId])
+        );
       }
     });
 
     if (stepNumber === 4) {
-      ['releaseDate', 'preSaleDate', 'originalReleaseDate'].forEach(id => {
+      ["releaseDate", "preSaleDate", "originalReleaseDate"].forEach((id) => {
         const field = document.getElementById(id);
         if (field) {
-          field.addEventListener('change', validateStep4Dates);
+          field.addEventListener("change", validateStep4Dates);
         }
       });
     }
 
     return function validateStep() {
       let allValid = true;
-      Object.keys(stepRules).forEach(fieldId => {
+      Object.keys(stepRules).forEach((fieldId) => {
         const isValid = validateStepField(fieldId, stepRules[fieldId]);
         if (!isValid) allValid = false;
       });
@@ -5476,124 +5922,132 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   function validateStepField(fieldId, rules) {
-    if (fieldId === 'artworkFile') return validateArtworkFile();
-    if (fieldId === 'audioFile') return validateAudioFile();  
-    if (fieldId === 'freeStores') return validateStoreSelection();
-    
+    if (fieldId === "artworkFile") return validateArtworkFile();
+    if (fieldId === "audioFile") return validateAudioFile();
+    if (fieldId === "freeStores") return validateStoreSelection();
+
     return FormValidator.validateField(fieldId, rules);
   }
 
-  // FIXED: Artwork validation for edit mode
   function validateArtworkFile() {
-    const artworkFile = document.getElementById('artworkFile');
-    const artworkFileError = document.getElementById('artworkFileError');
-    const artworkUpload = document.getElementById('artworkUpload');
-    const artworkPreview = document.getElementById('artworkPreview');
+    const artworkFile = document.getElementById("artworkFile");
+    const artworkFileError = document.getElementById("artworkFileError");
+    const artworkUpload = document.getElementById("artworkUpload");
+    const artworkPreview = document.getElementById("artworkPreview");
 
     if (!artworkFile || !artworkFileError || !artworkUpload) return true;
 
-    artworkUpload.classList.remove('is-invalid', 'is-valid');
-    artworkFileError.textContent = '';
-    artworkFileError.style.display = 'none';
+    artworkUpload.classList.remove("is-invalid", "is-valid");
+    artworkFileError.textContent = "";
+    artworkFileError.style.display = "none";
 
-    // In edit mode: valid if preview exists and no new file selected
-    if (isEditMode && artworkPreview && !artworkPreview.classList.contains('d-none') && 
-        (!artworkFile.files || artworkFile.files.length === 0)) {
-      artworkUpload.classList.add('is-valid');
+    if (
+      isEditMode &&
+      artworkPreview &&
+      !artworkPreview.classList.contains("d-none") &&
+      (!artworkFile.files || artworkFile.files.length === 0)
+    ) {
+      artworkUpload.classList.add("is-valid");
       return true;
     }
 
     if (!artworkFile.files || artworkFile.files.length === 0) {
       if (!isEditMode) {
-        artworkUpload.classList.add('is-invalid');
-        artworkFileError.textContent = 'Please select an artwork file.';
-        artworkFileError.style.display = 'block';
+        artworkUpload.classList.add("is-invalid");
+        artworkFileError.textContent = "Please select an artwork file.";
+        artworkFileError.style.display = "block";
         return false;
       }
       return true;
     }
 
     const file = artworkFile.files[0];
-    const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png'];
+    const allowedTypes = ["image/jpeg", "image/jpg", "image/png"];
     const maxSize = 10 * 1024 * 1024;
 
     if (!allowedTypes.includes(file.type)) {
-      artworkUpload.classList.add('is-invalid');
-      artworkFileError.textContent = 'Please select a valid image file (JPG, JPEG, or PNG).';
-      artworkFileError.style.display = 'block';
+      artworkUpload.classList.add("is-invalid");
+      artworkFileError.textContent =
+        "Please select a valid image file (JPG, JPEG, or PNG).";
+      artworkFileError.style.display = "block";
       return false;
     }
 
     if (file.size > maxSize) {
-      artworkUpload.classList.add('is-invalid');
-      artworkFileError.textContent = 'File size should not exceed 10MB.';
-      artworkFileError.style.display = 'block';
+      artworkUpload.classList.add("is-invalid");
+      artworkFileError.textContent = "File size should not exceed 10MB.";
+      artworkFileError.style.display = "block";
       return false;
     }
 
-    return new Promise(resolve => {
+    return new Promise((resolve) => {
       const img = new Image();
-      img.onload = function() {
+      img.onload = function () {
         if (this.width !== 3000 || this.height !== 3000) {
-          artworkUpload.classList.add('is-invalid');
-          artworkFileError.textContent = 'Artwork must be exactly 3000 x 3000 pixels.';
-          artworkFileError.style.display = 'block';
+          artworkUpload.classList.add("is-invalid");
+          artworkFileError.textContent =
+            "Artwork must be exactly 3000 x 3000 pixels.";
+          artworkFileError.style.display = "block";
           resolve(false);
         } else {
-          artworkUpload.classList.add('is-valid');
+          artworkUpload.classList.add("is-valid");
           resolve(true);
         }
       };
-      img.onerror = function() {
-        artworkUpload.classList.add('is-invalid');
-        artworkFileError.textContent = 'Invalid image file.';
-        artworkFileError.style.display = 'block';
+      img.onerror = function () {
+        artworkUpload.classList.add("is-invalid");
+        artworkFileError.textContent = "Invalid image file.";
+        artworkFileError.style.display = "block";
         resolve(false);
       };
       img.src = URL.createObjectURL(file);
     });
   }
 
-  // FIXED: Audio validation for edit mode
   function validateAudioFile() {
-    const audioFile = document.getElementById('audioFile');
-    const audioFileError = document.getElementById('audioFileError');
-    const audioUpload = document.getElementById('audioUpload');
-    const audioPreviewContainer = document.getElementById('audioPreviewContainer');
+    const audioFile = document.getElementById("audioFile");
+    const audioFileError = document.getElementById("audioFileError");
+    const audioUpload = document.getElementById("audioUpload");
+    const audioPreviewContainer = document.getElementById(
+      "audioPreviewContainer"
+    );
 
     if (!audioFile || !audioUpload) return true;
 
-    audioUpload.classList.remove('is-invalid', 'is-valid');
+    audioUpload.classList.remove("is-invalid", "is-valid");
     if (audioFileError) {
-      audioFileError.textContent = '';
-      audioFileError.style.display = 'none';
+      audioFileError.textContent = "";
+      audioFileError.style.display = "none";
     }
 
-    // FIXED: In edit mode, if preview exists and no new file selected, it's valid
-    if (isEditMode && audioPreviewContainer && !audioPreviewContainer.classList.contains('d-none') && 
-        (!audioFile.files || audioFile.files.length === 0)) {
-      audioUpload.classList.add('is-valid');
+    if (
+      isEditMode &&
+      audioPreviewContainer &&
+      !audioPreviewContainer.classList.contains("d-none") &&
+      (!audioFile.files || audioFile.files.length === 0)
+    ) {
+      audioUpload.classList.add("is-valid");
       return true;
     }
 
     if (!audioFile.files || audioFile.files.length === 0) {
-      if (!isEditMode) { // Only show error for new forms
-        audioUpload.classList.add('is-invalid');
+      if (!isEditMode) {
+        audioUpload.classList.add("is-invalid");
         if (audioFileError) {
-          audioFileError.textContent = 'Please select an audio file.';
-          audioFileError.style.display = 'block';
+          audioFileError.textContent = "Please select an audio file.";
+          audioFileError.style.display = "block";
         }
         return false;
       }
-      return true; // Valid for edit mode without new file
+      return true;
     }
 
-    if (typeof validateAudioFileInternal === 'function') {
+    if (typeof validateAudioFileInternal === "function") {
       const isValid = validateAudioFileInternal(audioFile.files[0]);
       if (isValid) {
-        audioUpload.classList.add('is-valid');
+        audioUpload.classList.add("is-valid");
       } else {
-        audioUpload.classList.add('is-invalid');
+        audioUpload.classList.add("is-invalid");
       }
       return isValid;
     }
@@ -5602,25 +6056,33 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   function validateStep4Dates() {
-    const releaseDate = document.getElementById('releaseDate');
-    const preSaleDate = document.getElementById('preSaleDate');
-    const originalReleaseDate = document.getElementById('originalReleaseDate');
+    const releaseDate = document.getElementById("releaseDate");
+    const preSaleDate = document.getElementById("preSaleDate");
+    const originalReleaseDate = document.getElementById("originalReleaseDate");
 
     let isValid = true;
     const rdValue = releaseDate?.value ? new Date(releaseDate.value) : null;
     const psdValue = preSaleDate?.value ? new Date(preSaleDate.value) : null;
-    const ordValue = originalReleaseDate?.value ? new Date(originalReleaseDate.value) : null;
+    const ordValue = originalReleaseDate?.value
+      ? new Date(originalReleaseDate.value)
+      : null;
 
-    FormValidator.hideError(preSaleDate);
-    FormValidator.hideError(originalReleaseDate);
+    if (preSaleDate) FormValidator.hideError(preSaleDate);
+    if (originalReleaseDate) FormValidator.hideError(originalReleaseDate);
 
     if (rdValue && ordValue && ordValue > rdValue) {
-      FormValidator.showError('originalReleaseDate', 'Original release date cannot be after the release date.');
+      FormValidator.showError(
+        originalReleaseDate,
+        "Original release date cannot be after the release date."
+      );
       isValid = false;
     }
 
     if (psdValue && rdValue && psdValue >= rdValue) {
-      FormValidator.showError(preSaleDate, 'Pre-sale date must be before the release date.');
+      FormValidator.showError(
+        preSaleDate,
+        "Pre-sale date must be before the release date."
+      );
       isValid = false;
     }
 
@@ -5628,14 +6090,16 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   function validateStoreSelection() {
-    const checkedCount = document.querySelectorAll('input[name="stores[]"]:checked').length;
-    const errorDiv = document.getElementById('storesError');
+    const checkedCount = document.querySelectorAll(
+      'input[name="stores[]"]:checked'
+    ).length;
+    const errorDiv = document.getElementById("storesError");
 
     if (checkedCount === 0) {
-      if (errorDiv) errorDiv.style.display = 'block';
+      if (errorDiv) errorDiv.style.display = "block";
       return false;
     } else {
-      if (errorDiv) errorDiv.style.display = 'none';
+      if (errorDiv) errorDiv.style.display = "none";
       return true;
     }
   }
@@ -5648,92 +6112,82 @@ document.addEventListener("DOMContentLoaded", function () {
     5: createStepValidator(step5ValidationRules, 5),
   };
 
-  // NEW: Save Draft Function
-// NEW: Save Draft Function
-async function saveDraft() {
-  try {
-    isDraftSaving = true;
-    
-    const originalText = saveDraftBtn.innerHTML;
-    saveDraftBtn.innerHTML = '<i data-feather="save" class="me-1"></i> Saving...';
-    saveDraftBtn.disabled = true;
+  async function saveDraft() {
+    try {
+      isDraftSaving = true;
 
-    const form = document.getElementById('releaseForm');
-    const formData = new FormData(form);
-    
-    // Add draft-specific fields
-    const draftName = formData.get('releaseTitle') || `Draft - ${new Date().toLocaleString()}`;
-    formData.set('draft_name', draftName);
-    formData.set('current_step', currentStep.toString());
-    
-    // UPDATED: Use correct endpoint
-    const response = await fetch('/releases/drafts/save', {
-      method: 'POST',
-      body: formData,
-      headers: {
-        'X-Requested-With': 'XMLHttpRequest'
-      }
-    });
+      const originalText = saveDraftBtn.innerHTML;
+      saveDraftBtn.innerHTML =
+        '<i data-feather="save" class="me-1"></i> Saving...';
+      saveDraftBtn.disabled = true;
 
-    const result = await response.json();
-    
-    if (result.success) {
-      // Update draft ID in form
-      const draftIdField = document.getElementById('draftId');
-      if (draftIdField) {
-        draftIdField.value = result.draft_id;
-      }
-      
-      // Show success toast
-      if (toastInstance) {
-        toastInstance.show();
-      }
-      
-      // Update save button with completion percentage
-      if (result.completion_percentage) {
-        saveDraftBtn.innerHTML = `<i data-feather="save" class="me-1"></i> Saved (${result.completion_percentage}%)`;
-      } else {
-        saveDraftBtn.innerHTML = '<i data-feather="save" class="me-1"></i> Saved';
-      }
-      
-      setTimeout(() => {
-        saveDraftBtn.innerHTML = originalText;
-        if (typeof feather !== 'undefined') {
-          feather.replace();
+      const form = document.getElementById("releaseForm");
+      const formData = new FormData(form);
+
+      const draftName =
+        formData.get("releaseTitle") ||
+        `Draft - ${new Date().toLocaleString()}`;
+      formData.set("draft_name", draftName);
+      formData.set("current_step", currentStep.toString());
+
+      const response = await fetch("/releases/drafts/save", {
+        method: "POST",
+        body: formData,
+        headers: {
+          "X-Requested-With": "XMLHttpRequest",
+        },
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        const draftIdField = document.getElementById("draftId");
+        if (draftIdField) {
+          draftIdField.value = result.draft_id;
         }
-      }, 3000);
-      
-    } else {
-      throw new Error(result.error || 'Failed to save draft');
-    }
 
-  } catch (error) {
-    console.error('Draft save error:', error);
-    alert('Failed to save draft: ' + error.message);
-    
-  } finally {
-    isDraftSaving = false;
-    saveDraftBtn.disabled = false;
-    
-    if (typeof feather !== 'undefined') {
-      feather.replace();
+        if (toastInstance) {
+          toastInstance.show();
+        }
+
+        if (result.completion_percentage) {
+          saveDraftBtn.innerHTML = `<i data-feather="save" class="me-1"></i> Saved (${result.completion_percentage}%)`;
+        } else {
+          saveDraftBtn.innerHTML =
+            '<i data-feather="save" class="me-1"></i> Saved';
+        }
+
+        setTimeout(() => {
+          saveDraftBtn.innerHTML = originalText;
+          if (typeof feather !== "undefined") {
+            feather.replace();
+          }
+        }, 3000);
+      } else {
+        throw new Error(result.error || "Failed to save draft");
+      }
+    } catch (error) {
+      console.error("Draft save error:", error);
+      alert("Failed to save draft: " + error.message);
+    } finally {
+      isDraftSaving = false;
+      saveDraftBtn.disabled = false;
+
+      if (typeof feather !== "undefined") {
+        feather.replace();
+      }
     }
   }
-}
 
-
-    // NEW: Load Rejection Messages
   async function loadRejectionMessages() {
     try {
       let releaseId = null;
 
-      // First try hidden input
       const releaseIdInput = document.querySelector('input[name="release_id"]');
       if (releaseIdInput) {
         releaseId = releaseIdInput.value;
       }
 
-      // If not found, try extracting from form action
       if (!releaseId) {
         const formEl = document.querySelector('form[action*="/update/"]');
         if (formEl && formEl.action) {
@@ -5743,28 +6197,37 @@ async function saveDraft() {
       }
 
       if (!releaseId) {
-        throw new Error('Release ID not found');
+        throw new Error("Release ID not found");
       }
 
-      const response = await fetch(`/releases/${releaseId}/rejection-messages`, {
-        headers: { 'X-Requested-With': 'XMLHttpRequest' }
-      });
+      const response = await fetch(
+        `/releases/${releaseId}/rejection-messages`,
+        {
+          headers: { "X-Requested-With": "XMLHttpRequest" },
+        }
+      );
 
       const result = await response.json();
-      const contentDiv = document.getElementById('rejectionMessagesContent');
+      const contentDiv = document.getElementById("rejectionMessagesContent");
 
       if (result.success && result.messages && result.messages.length > 0) {
-        let html = '';
+        let html = "";
         result.messages.forEach((msg, index) => {
           html += `
             <div class="card mb-3">
               <div class="card-header bg-light d-flex justify-content-between align-items-center">
                 <h6 class="mb-0">Rejection #${index + 1}</h6>
-                <small class="text-muted">${new Date(msg.created_at).toLocaleString()}</small>
+                <small class="text-muted">${new Date(
+                  msg.created_at
+                ).toLocaleString()}</small>
               </div>
               <div class="card-body">
                 <p class="mb-0">${msg.message}</p>
-                ${msg.admin_name ? `<small class="text-muted">By: ${msg.admin_name}</small>` : ''}
+                ${
+                  msg.admin_name
+                    ? `<small class="text-muted">By: ${msg.admin_name}</small>`
+                    : ""
+                }
               </div>
             </div>
           `;
@@ -5777,44 +6240,42 @@ async function saveDraft() {
             <p class="text-muted">No rejection messages found for this release.</p>
           </div>
         `;
-        if (typeof feather !== 'undefined') {
+        if (typeof feather !== "undefined") {
           feather.replace();
         }
       }
     } catch (error) {
-      console.error('Error loading rejection messages:', error);
-      const contentDiv = document.getElementById('rejectionMessagesContent');
+      console.error("Error loading rejection messages:", error);
+      const contentDiv = document.getElementById("rejectionMessagesContent");
       contentDiv.innerHTML = `
         <div class="text-center p-4 text-danger">
           <i data-feather="alert-circle" class="mb-2"></i>
           <p>Failed to load rejection messages: ${error.message}</p>
         </div>
       `;
-      if (typeof feather !== 'undefined') {
+      if (typeof feather !== "undefined") {
         feather.replace();
       }
     }
   }
 
-
-  // Navigation event listeners
-  document.querySelectorAll('.next-step').forEach(btn => {
-    btn.addEventListener('click', function() {
+  document.querySelectorAll(".next-step").forEach((btn) => {
+    btn.addEventListener("click", function () {
       const nextStep = parseInt(this.dataset.next, 10);
-      
+
       if (stepValidators[currentStep] && !stepValidators[currentStep]()) {
         console.log(`Step ${currentStep} validation failed`);
         return;
       }
-      
+
       if (nextStep <= totalSteps) {
         showStep(nextStep);
       }
     });
   });
 
-  document.querySelectorAll('.prev-step').forEach(btn => {
-    btn.addEventListener('click', function() {
+  document.querySelectorAll(".prev-step").forEach((btn) => {
+    btn.addEventListener("click", function () {
       const prevStep = parseInt(this.dataset.prev, 10);
       if (prevStep >= 1) {
         showStep(prevStep);
@@ -5822,8 +6283,8 @@ async function saveDraft() {
     });
   });
 
-  document.querySelectorAll('.step').forEach(step => {
-    step.addEventListener('click', function() {
+  document.querySelectorAll(".step").forEach((step) => {
+    step.addEventListener("click", function () {
       const stepNum = parseInt(this.dataset.step, 10);
       if (stepNum >= 1 && stepNum <= totalSteps) {
         showStep(stepNum);
@@ -5831,15 +6292,15 @@ async function saveDraft() {
     });
   });
 
-  // REJECTION MODAL HANDLERS
-  const rejectBtn = document.getElementById('rejectBtn');
-  const confirmRejectBtn = document.getElementById('confirmRejectBtn');
-  const rejectionMessageInput = document.getElementById('rejectionMessage');
-  const rejectionMessageError = document.getElementById('rejectionMessageError');
+  const rejectBtn = document.getElementById("rejectBtn");
+  const confirmRejectBtn = document.getElementById("confirmRejectBtn");
+  const rejectionMessageInput = document.getElementById("rejectionMessage");
+  const rejectionMessageError = document.getElementById(
+    "rejectionMessageError"
+  );
 
-  // Open rejection modal
   if (rejectBtn) {
-    rejectBtn.addEventListener('click', function(e) {
+    rejectBtn.addEventListener("click", function (e) {
       e.preventDefault();
       e.stopPropagation();
       if (rejectionModal) {
@@ -5848,98 +6309,95 @@ async function saveDraft() {
     });
   }
 
-  // Handle rejection confirmation
   if (confirmRejectBtn) {
-    confirmRejectBtn.addEventListener('click', function() {
+    confirmRejectBtn.addEventListener("click", function () {
       const message = rejectionMessageInput.value.trim();
-      
-      // Validate message
+
       if (!message) {
-        rejectionMessageInput.classList.add('is-invalid');
-        rejectionMessageError.style.display = 'block';
+        rejectionMessageInput.classList.add("is-invalid");
+        rejectionMessageError.style.display = "block";
         return;
       }
-      
-      // Clear validation
-      rejectionMessageInput.classList.remove('is-invalid');
-      rejectionMessageError.style.display = 'none';
-      
-      // Store rejection message
+
+      rejectionMessageInput.classList.remove("is-invalid");
+      rejectionMessageError.style.display = "none";
+
       rejectionMessage = message;
-      
-      // Set submitting button data for rejection
-      submittingButton = { name: 'status', value: '4' };
-      
-      // Close modal
+      submittingButton = { name: "status", value: "4" };
+
       if (rejectionModal) {
         rejectionModal.hide();
       }
-      
-      // Trigger form submission
-      const form = document.getElementById('releaseForm');
+
+      const form = document.getElementById("releaseForm");
       if (form) {
-        const submitEvent = new Event('submit');
+        const submitEvent = new Event("submit");
         form.dispatchEvent(submitEvent);
       }
     });
   }
 
-  // Clear validation when user types
   if (rejectionMessageInput) {
-    rejectionMessageInput.addEventListener('input', function() {
+    rejectionMessageInput.addEventListener("input", function () {
       if (this.value.trim()) {
-        this.classList.remove('is-invalid');
-        rejectionMessageError.style.display = 'none';
+        this.classList.remove("is-invalid");
+        rejectionMessageError.style.display = "none";
       }
     });
   }
 
-  // CRITICAL FIX: Capture submit button clicks BEFORE form submission
-  document.addEventListener('click', function(e) {
-    if (e.target.type === 'submit' && e.target.form && e.target.form.id === 'releaseForm') {
+  document.addEventListener("click", function (e) {
+    if (
+      e.target.type === "submit" &&
+      e.target.form &&
+      e.target.form.id === "releaseForm"
+    ) {
       submittingButton = { name: e.target.name, value: e.target.value };
-      console.log('CAPTURED SUBMIT BUTTON:', submittingButton);
+      console.log("CAPTURED SUBMIT BUTTON:", submittingButton);
     }
   });
 
-  // File upload handlers
-  const audioUpload = document.getElementById('audioUpload');
-  const audioFile = document.getElementById('audioFile');
+  const audioUpload = document.getElementById("audioUpload");
+  const audioFile = document.getElementById("audioFile");
 
   if (audioUpload && audioFile) {
     const newAudioUpload = audioUpload.cloneNode(true);
     audioUpload.parentNode.replaceChild(newAudioUpload, audioUpload);
-    
+
     let isAudioProcessing = false;
 
-    newAudioUpload.addEventListener('click', function(e) {
+    newAudioUpload.addEventListener("click", function (e) {
       if (isAudioProcessing) return false;
-      
+
       isAudioProcessing = true;
       e.preventDefault();
       e.stopPropagation();
       audioFile.click();
-      
-      setTimeout(() => { isAudioProcessing = false; }, 1000);
+
+      setTimeout(() => {
+        isAudioProcessing = false;
+      }, 1000);
       return false;
     });
 
-    audioFile.addEventListener('change', function(e) {
+    audioFile.addEventListener("change", function (e) {
       if (e.target.files && e.target.files.length > 0) {
         const file = e.target.files[0];
-        
+
         if (validateAudioFileInternal(file)) {
           const reader = new FileReader();
-          
-          reader.onload = function(event) {
-            const audioPreview = document.getElementById('audioPreview');
-            const audioPreviewContainer = document.getElementById('audioPreviewContainer');
-            const audioFileName = document.getElementById('audioFileName');
-            const audioFileSize = document.getElementById('audioFileSize');
+
+          reader.onload = function (event) {
+            const audioPreview = document.getElementById("audioPreview");
+            const audioPreviewContainer = document.getElementById(
+              "audioPreviewContainer"
+            );
+            const audioFileName = document.getElementById("audioFileName");
+            const audioFileSize = document.getElementById("audioFileSize");
 
             if (audioPreview && audioPreviewContainer) {
               audioPreview.src = event.target.result;
-              audioPreviewContainer.classList.remove('d-none');
+              audioPreviewContainer.classList.remove("d-none");
             }
 
             if (audioFileName) {
@@ -5951,16 +6409,18 @@ async function saveDraft() {
               audioFileSize.textContent = `Size: ${sizeInMB} MB`;
             }
 
-            if (typeof feather !== 'undefined') {
+            if (typeof feather !== "undefined") {
               feather.replace();
             }
           };
-          
+
           reader.readAsDataURL(file);
         } else {
-          const audioPreviewContainer = document.getElementById('audioPreviewContainer');
+          const audioPreviewContainer = document.getElementById(
+            "audioPreviewContainer"
+          );
           if (audioPreviewContainer) {
-            audioPreviewContainer.classList.add('d-none');
+            audioPreviewContainer.classList.add("d-none");
           }
         }
       }
@@ -5970,70 +6430,75 @@ async function saveDraft() {
   function validateAudioFileInternal(file) {
     if (!file) return false;
 
-    const allowedAudioTypes = ['audio/wav', 'audio/wave', 'audio/x-wav'];
+    const allowedAudioTypes = ["audio/wav", "audio/wave", "audio/x-wav"];
     const maxAudioSize = 50 * 1024 * 1024;
-    const fileExtension = file.name.split('.').pop().toLowerCase();
+    const fileExtension = file.name.split(".").pop().toLowerCase();
 
     const isValidType = allowedAudioTypes.includes(file.type);
-    const isValidExtension = fileExtension === 'wav';
+    const isValidExtension = fileExtension === "wav";
 
     if (!isValidType && !isValidExtension) {
-      alert('Only WAV files are accepted! Please upload a WAV audio file.');
+      alert("Only WAV files are accepted! Please upload a WAV audio file.");
       return false;
     }
 
     if (!isValidExtension) {
-      alert('Only .wav files are accepted! Please make sure your file has a .wav extension.');
+      alert(
+        "Only .wav files are accepted! Please make sure your file has a .wav extension."
+      );
       return false;
     }
 
     if (file.size > maxAudioSize) {
-      alert('File size too large! Your WAV file should not exceed 50MB.');
+      alert("File size too large! Your WAV file should not exceed 50MB.");
       return false;
     }
 
     const minAudioSize = 1024;
     if (file.size < minAudioSize) {
-      alert('File appears to be empty or corrupted! Please select a valid WAV audio file.');
+      alert(
+        "File appears to be empty or corrupted! Please select a valid WAV audio file."
+      );
       return false;
     }
 
     return true;
   }
 
-  // Artwork upload handler
-  const artworkUpload = document.getElementById('artworkUpload');
-  const artworkFile = document.getElementById('artworkFile');
+  const artworkUpload = document.getElementById("artworkUpload");
+  const artworkFile = document.getElementById("artworkFile");
 
   if (artworkUpload && artworkFile) {
     const newArtworkUpload = artworkUpload.cloneNode(true);
     artworkUpload.parentNode.replaceChild(newArtworkUpload, artworkUpload);
-    
+
     let isProcessing = false;
 
-    newArtworkUpload.addEventListener('click', function(e) {
+    newArtworkUpload.addEventListener("click", function (e) {
       if (isProcessing) return false;
-      
+
       isProcessing = true;
       e.preventDefault();
       e.stopPropagation();
       artworkFile.click();
-      
-      setTimeout(() => { isProcessing = false; }, 1000);
+
+      setTimeout(() => {
+        isProcessing = false;
+      }, 1000);
       return false;
     });
 
-    artworkFile.addEventListener('change', function(e) {
+    artworkFile.addEventListener("change", function (e) {
       if (e.target.files && e.target.files.length > 0) {
         const file = e.target.files[0];
-        
+
         if (validateArtworkFileInternal(file)) {
           const reader = new FileReader();
-          reader.onload = function(event) {
-            const preview = document.getElementById('artworkPreview');
+          reader.onload = function (event) {
+            const preview = document.getElementById("artworkPreview");
             if (preview) {
               preview.src = event.target.result;
-              preview.classList.remove('d-none');
+              preview.classList.remove("d-none");
             }
           };
           reader.readAsDataURL(file);
@@ -6045,25 +6510,24 @@ async function saveDraft() {
   function validateArtworkFileInternal(file) {
     if (!file) return false;
 
-    const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png'];
+    const allowedTypes = ["image/jpeg", "image/jpg", "image/png"];
     const maxSize = 10 * 1024 * 1024;
 
     if (!allowedTypes.includes(file.type)) {
-      alert('Please select a valid image file (JPG, JPEG, or PNG).');
+      alert("Please select a valid image file (JPG, JPEG, or PNG).");
       return false;
     }
 
     if (file.size > maxSize) {
-      alert('File size should not exceed 10MB.');
+      alert("File size should not exceed 10MB.");
       return false;
     }
 
     return true;
   }
 
-  // Toggle all stores
-  document.querySelectorAll('.toggle-all').forEach(button => {
-    button.addEventListener('click', function() {
+  document.querySelectorAll(".toggle-all").forEach((button) => {
+    button.addEventListener("click", function () {
       const targetId = this.dataset.target;
       const container = document.getElementById(targetId);
       if (!container) return;
@@ -6071,286 +6535,474 @@ async function saveDraft() {
       const checkboxes = container.querySelectorAll('input[type="checkbox"]');
       if (checkboxes.length === 0) return;
 
-      const allChecked = Array.from(checkboxes).every(cb => cb.checked);
-      checkboxes.forEach(cb => {
+      const allChecked = Array.from(checkboxes).every((cb) => cb.checked);
+      checkboxes.forEach((cb) => {
         cb.checked = !allChecked;
       });
 
-      if (targetId === 'freeStores') {
+      if (targetId === "freeStores") {
         validateStoreSelection();
       }
     });
   });
 
-  // FIXED: Form submission with proper button capture and rejection message handling
-  document.getElementById('releaseForm').addEventListener('submit', function(e) {
+  // NEW: Enhanced form submission with pre-validation and better error handling
+  document
+    .getElementById("releaseForm")
+    .addEventListener("submit", async function (e) {
       e.preventDefault();
-      
-      console.log('Form submission started');
-      console.log('Submitting button:', submittingButton);
-      console.log('Rejection message:', rejectionMessage);
 
-      // Validate all steps first (skip for rejection)
-      if (!submittingButton || submittingButton.value !== '4') {
+      // Prevent duplicate submissions
+      if (isSubmitting) {
+        console.log("Form already submitting, ignoring duplicate submission");
+        return;
+      }
+
+      console.log("Form submission started");
+      console.log("Submitting button:", submittingButton);
+      console.log("Rejection message:", rejectionMessage);
+
+      // NEW: Pre-validate UPC/EAN and ISRC uniqueness before submission (skip for rejection)
+      if (!submittingButton || submittingButton.value !== "4") {
+        const upcEanField = document.getElementById("upcEan");
+        const isrcField = document.getElementById("isrc");
+        const releaseId = document.querySelector(
+          'input[name="release_id"]'
+        )?.value;
+
+        // Validate UPC/EAN uniqueness
+        if (upcEanField && upcEanField.value.trim()) {
+          const upcEanValue = upcEanField.value.trim();
+          if (FormValidator.rules.upcEan(upcEanValue)) {
+            const isUpcEanUnique = await validateUniqueField(
+              "upcEan",
+              upcEanValue,
+              releaseId
+            );
+            if (!isUpcEanUnique) {
+              const errorDiv = document.getElementById("upcEanError");
+              upcEanField.classList.add("is-invalid");
+              if (errorDiv) {
+                errorDiv.textContent =
+                  "This UPC/EAN is already in use. Please use a different one.";
+                errorDiv.style.display = "block";
+              }
+              showStep(1);
+              alert(
+                "Validation Failed: The UPC/EAN you entered is already in use. Please use a different one."
+              );
+              isSubmitting = false; // Reset submission flag here!
+              return;
+            }
+          }
+        }
+
+        if (isrcField && isrcField.value.trim()) {
+          const isrcValue = isrcField.value.trim();
+          if (FormValidator.rules.isrc(isrcValue)) {
+            const isIsrcUnique = await validateUniqueField(
+              "isrc",
+              isrcValue,
+              releaseId
+            );
+            if (!isIsrcUnique) {
+              const errorDiv = document.getElementById("isrcError");
+              isrcField.classList.add("is-invalid");
+              if (errorDiv) {
+                errorDiv.textContent =
+                  "This ISRC is already in use. Please use a different one.";
+                errorDiv.style.display = "block";
+              }
+              showStep(2);
+              alert(
+                "Validation Failed: The ISRC you entered is already in use. Please use a different one."
+              );
+              isSubmitting = false; // Reset submission flag here!
+              return;
+            }
+          }
+        }
+
+        // Validate all steps
         let allStepsValid = true;
+        let firstInvalidStep = null;
+
         for (let step = 1; step <= totalSteps; step++) {
           if (stepValidators[step] && !stepValidators[step]()) {
             allStepsValid = false;
-            showStep(step);
-            break;
+            if (firstInvalidStep === null) {
+              firstInvalidStep = step;
+            }
           }
         }
 
         if (!allStepsValid) {
-          alert('Please complete all required fields before submitting.');
+          if (firstInvalidStep !== null) {
+            showStep(firstInvalidStep);
+          }
+          alert("Please complete all required fields before submitting.");
           submittingButton = null;
+          isSubmitting = false; // Reset submission flag here!
           return;
         }
       }
 
+      isSubmitting = true; // Set submission flag
+
       const form = e.target;
       const formData = new FormData(form);
 
-      // CRITICAL FIX: Use the captured button data
       if (submittingButton && submittingButton.name && submittingButton.value) {
-        // Remove any existing status fields first
-        formData.delete('status');
-        // Add the clicked button's status
+        formData.delete("status");
         formData.set(submittingButton.name, submittingButton.value);
-        console.log(`ADDED BUTTON STATUS: ${submittingButton.name} = ${submittingButton.value}`);
-        
-        // Add rejection message if this is a rejection
-        if (submittingButton.value === '4' && rejectionMessage) {
-          formData.set('message', rejectionMessage);
-          console.log('ADDED REJECTION MESSAGE:', rejectionMessage);
+        console.log(
+          `ADDED BUTTON STATUS: ${submittingButton.name} = ${submittingButton.value}`
+        );
+
+        if (submittingButton.value === "4" && rejectionMessage) {
+          formData.set("message", rejectionMessage);
+          console.log("ADDED REJECTION MESSAGE:", rejectionMessage);
         }
       } else {
-        // Fallback: try activeElement
         const activeBtn = document.activeElement;
-        if (activeBtn && activeBtn.type === 'submit' && activeBtn.name && activeBtn.value) {
-          formData.delete('status');
+        if (
+          activeBtn &&
+          activeBtn.type === "submit" &&
+          activeBtn.name &&
+          activeBtn.value
+        ) {
+          formData.delete("status");
           formData.set(activeBtn.name, activeBtn.value);
-          console.log(`FALLBACK - ADDED ACTIVE BUTTON: ${activeBtn.name} = ${activeBtn.value}`);
+          console.log(
+            `FALLBACK - ADDED ACTIVE BUTTON: ${activeBtn.name} = ${activeBtn.value}`
+          );
         } else {
-          // FIXED: Only set default status for new releases (not edit mode)
-          // Check if this is edit mode by looking for release data
-          const isEditMode = formData.get('release_id') || document.querySelector('input[name="release_id"]');
+          const isEditMode =
+            formData.get("release_id") ||
+            document.querySelector('input[name="release_id"]');
           if (!isEditMode) {
-            console.log('NEW RELEASE - USING DEFAULT STATUS 1');
-            formData.set('status', '1');
+            console.log("NEW RELEASE - USING DEFAULT STATUS 1");
+            formData.set("status", "1");
           } else {
-            console.log('EDIT MODE - NO DEFAULT STATUS SET (letting backend handle it)');
-            // Don't set any default status in edit mode
-            // Let the backend keep the existing status
+            console.log("EDIT MODE - NO DEFAULT STATUS SET");
           }
         }
       }
 
-      // Debug: Log all FormData contents
-      console.log('FINAL FORMDATA CONTENTS:');
+      console.log("FINAL FORMDATA CONTENTS:");
       for (let [key, value] of formData.entries()) {
-        if (key === 'status' || key.includes('status') || key === 'message') {
-          console.log(`${key}: ${value}`);
-        } else {
+        if (key === "status" || key.includes("status") || key === "message") {
           console.log(`${key}: ${value}`);
         }
       }
 
-      // Show loading state
-      const submitBtns = form.querySelectorAll('button[type="submit"], button[id="rejectBtn"]');
+      const submitBtns = form.querySelectorAll(
+        'button[type="submit"], button[id="rejectBtn"]'
+      );
       const originalButtonContent = new Map();
-      
-      submitBtns.forEach(btn => {
+
+      submitBtns.forEach((btn) => {
         originalButtonContent.set(btn, btn.innerHTML);
         btn.disabled = true;
-        btn.innerHTML = '<i class="spinner-border spinner-border-sm me-1"></i> Processing...';
+        btn.innerHTML =
+          '<i class="spinner-border spinner-border-sm me-1"></i> Processing...';
       });
 
-      fetch(form.action, {
-        method: 'POST',
-        body: formData,
-        headers: {
-          'X-Requested-With': 'XMLHttpRequest',
-        },
-      })
-      .then(response => {
-        console.log('Response status:', response.status);
+      try {
+        const response = await fetch(form.action, {
+          method: "POST",
+          body: formData,
+          headers: {
+            "X-Requested-With": "XMLHttpRequest",
+          },
+        });
+
+        console.log("Response status:", response.status);
+
         if (!response.ok) {
           throw new Error(`HTTP ${response.status}: ${response.statusText}`);
         }
-        return response.text();
-      })
-      .then(text => {
-        console.log('Raw response:', text);
+
+        const text = await response.text();
+        console.log("Raw response:", text);
+
+        let data;
         if (!text || !text.trim()) {
-          return { success: true, message: 'Release processed successfully!' };
+          data = { success: true, message: "Release processed successfully!" };
+        } else {
+          try {
+            data = JSON.parse(text);
+            console.log("Parsed JSON:", data);
+          } catch (parseError) {
+            console.log("JSON parse failed:", parseError.message);
+            throw new Error("Invalid JSON response from server");
+          }
         }
-        
-        try {
-          const parsed = JSON.parse(text);
-          console.log('Parsed JSON:', parsed);
-          return parsed;
-        } catch (parseError) {
-          console.log('JSON parse failed:', parseError.message);
-          throw new Error('Invalid JSON response from server');
-        }
-      })
-      .then(data => {
-        console.log('Processing response data:', data);
-        
+
+        console.log("Processing response data:", data);
+
         if (!data) {
-          throw new Error('No response data received from server');
+          throw new Error("No response data received from server");
+        }
+
+        // NEW: Handle validation errors from backend
+        if (data.success === false && data.errors) {
+          console.log("Backend validation errors:", data.errors);
+
+          let errorMessage = "Validation Failed:\n\n";
+          let firstErrorField = null;
+
+          // Handle UPC/EAN error
+          if (data.errors.upcEan) {
+            errorMessage += `• UPC/EAN: ${data.errors.upcEan}\n`;
+            const upcEanField = document.getElementById("upcEan");
+            const upcEanError = document.getElementById("upcEanError");
+            if (upcEanField) {
+              upcEanField.classList.add("is-invalid");
+              if (upcEanError) {
+                upcEanError.textContent = data.errors.upcEan;
+                upcEanError.style.display = "block";
+              }
+              if (!firstErrorField) {
+                firstErrorField = { field: upcEanField, step: 1 };
+              }
+            }
+          }
+
+          // Handle ISRC error
+          if (data.errors.isrc) {
+            errorMessage += `• ISRC: ${data.errors.isrc}\n`;
+            const isrcField = document.getElementById("isrc");
+            const isrcError = document.getElementById("isrcError");
+            if (isrcField) {
+              isrcField.classList.add("is-invalid");
+              if (isrcError) {
+                isrcError.textContent = data.errors.isrc;
+                isrcError.style.display = "block";
+              }
+              if (!firstErrorField) {
+                firstErrorField = { field: isrcField, step: 2 };
+              }
+            }
+          }
+
+          // Handle other errors
+          Object.keys(data.errors).forEach((fieldName) => {
+            if (fieldName !== "upcEan" && fieldName !== "isrc") {
+              errorMessage += `• ${fieldName}: ${data.errors[fieldName]}\n`;
+            }
+          });
+
+          // Show the first error step
+          if (firstErrorField) {
+            showStep(firstErrorField.step);
+            setTimeout(() => {
+              firstErrorField.field.focus();
+              firstErrorField.field.scrollIntoView({
+                behavior: "smooth",
+                block: "center",
+              });
+            }, 300);
+          }
+
+          alert(errorMessage);
+          return; // Don't throw error, just return
         }
 
         if (data.success === true) {
-          const message = data.message || 'Release processed successfully!';
+          const message = data.message || "Release processed successfully!";
           alert(message);
-          window.location.href = data.redirect || '/releases';
+          window.location.href = data.redirect || "/releases";
         } else if (data.success === false) {
-          throw new Error(data.error || data.message || 'Processing failed');
-        } else if (data.message && !data.hasOwnProperty('success')) {
+          throw new Error(data.error || data.message || "Processing failed");
+        } else if (data.message && !data.hasOwnProperty("success")) {
           alert(data.message);
-          window.location.href = data.redirect || '/releases';
+          window.location.href = data.redirect || "/releases";
         } else {
-          console.warn('Unexpected response format:', data);
-          throw new Error('Unexpected response format from server');
+          console.warn("Unexpected response format:", data);
+          throw new Error("Unexpected response format from server");
         }
-      })
-      .catch(error => {
-        console.error('Submission error:', error);
-        alert('Error: ' + error.message);
-      })
-      .finally(() => {
-        // Restore buttons
-        submitBtns.forEach(btn => {
+      } catch (error) {
+        console.error("Submission error:", error);
+
+        // NEW: Better error handling with form data preservation
+        let errorMsg = "Error: " + error.message;
+
+        if (
+          error.message.includes("HTTP 500") ||
+          error.message.includes("Invalid JSON")
+        ) {
+          errorMsg +=
+            "\n\nThe server encountered an error while processing your request. Your form data has been preserved.";
+        } else if (error.message.includes("Network")) {
+          errorMsg +=
+            "\n\nPlease check your internet connection and try again. Your form data has been preserved.";
+        } else {
+          errorMsg +=
+            "\n\nPlease review your entries and try again. Your form data has been preserved.";
+        }
+
+        alert(errorMsg);
+
+        // Restore buttons to allow retry WITHOUT reloading (preserves form data)
+        submitBtns.forEach((btn) => {
           btn.disabled = false;
           const originalContent = originalButtonContent.get(btn);
           if (originalContent) {
             btn.innerHTML = originalContent;
           } else {
-            // Fallback restoration
-            if (btn.innerHTML.includes('Approve') && btn.name === 'status' && btn.value === '5') {
-              btn.innerHTML = '<i data-feather="check" class="me-1"></i> Approve';
-            } else if (btn.innerHTML.includes('Reject') && btn.id === 'rejectBtn') {
+            if (
+              btn.innerHTML.includes("Approve") ||
+              (btn.name === "status" && btn.value === "5")
+            ) {
+              btn.innerHTML =
+                '<i data-feather="check" class="me-1"></i> Approve';
+            } else if (
+              btn.innerHTML.includes("Reject") ||
+              btn.id === "rejectBtn"
+            ) {
               btn.innerHTML = '<i data-feather="x" class="me-1"></i> Reject';
             } else {
-              btn.innerHTML = '<i data-feather="check" class="me-1"></i> Submit Release';
+              btn.innerHTML =
+                '<i data-feather="check" class="me-1"></i> Submit Release';
             }
           }
         });
 
-        // Re-initialize feather icons
-        if (typeof feather !== 'undefined') {
+        if (typeof feather !== "undefined") {
           feather.replace();
         }
-      })
-      .finally(() => {
-        // Reset the captured button and rejection message
+      } finally {
+        isSubmitting = false;
         submittingButton = null;
         rejectionMessage = null;
-      });
-  });
 
+        // After 4 seconds, reset submit buttons if they are still disabled (to prevent stuck UI)
+        setTimeout(() => {
+          const submitBtns = form.querySelectorAll(
+            'button[type="submit"], button[id="rejectBtn"]'
+          );
+          submitBtns.forEach((btn) => {
+            if (btn.disabled) {
+              btn.disabled = false;
+              // Restore innerHTML to original content if you saved it; else fall back to default
+              if (originalButtonContent.has(btn)) {
+                btn.innerHTML = originalButtonContent.get(btn);
+              } else {
+                btn.innerHTML =
+                  '<i data-feather="check" class="me-1"></i> Submit Release';
+              }
+            }
+          });
+          if (typeof feather !== "undefined") {
+            feather.replace();
+          }
+        }, 4000);
+      }
+    });
 
   // Release page reject modal code
-  document.addEventListener("DOMContentLoaded", function () {
-    const rejectionMessageInput = document.getElementById('rejectionMessage');
-    const charCount = document.getElementById('charCount');
-    const confirmRejectBtn = document.getElementById('confirmRejectBtn');
-    const rejectionMessageError = document.getElementById('rejectionMessageError');
-    const rejectionModal = document.getElementById('rejectionModal');
-    const rejectBtn = document.getElementById('rejectBtn');
+  const rejectionMessageInput2 = document.getElementById("rejectionMessage");
+  const charCount = document.getElementById("charCount");
+  const confirmRejectBtn2 = document.getElementById("confirmRejectBtn");
+  const rejectionMessageError2 = document.getElementById(
+    "rejectionMessageError"
+  );
+  const rejectionModal2 = document.getElementById("rejectionModal");
+  const rejectBtn2 = document.getElementById("rejectBtn");
 
-    // Character counter
-    if (rejectionMessageInput && charCount) {
-      rejectionMessageInput.addEventListener('input', function() {
-        const currentLength = this.value.length;
-        charCount.textContent = currentLength;
+  if (rejectionMessageInput2 && charCount) {
+    rejectionMessageInput2.addEventListener("input", function () {
+      const currentLength = this.value.length;
+      charCount.textContent = currentLength;
 
-        if (confirmRejectBtn) {
-          if (currentLength >= 10) {
-            confirmRejectBtn.disabled = false;
-            this.classList.remove('is-invalid');
-            rejectionMessageError.style.display = 'none';
-          } else {
-            confirmRejectBtn.disabled = true;
+      if (confirmRejectBtn2) {
+        if (currentLength >= 10) {
+          confirmRejectBtn2.disabled = false;
+          this.classList.remove("is-invalid");
+          if (rejectionMessageError2) {
+            rejectionMessageError2.style.display = "none";
           }
+        } else {
+          confirmRejectBtn2.disabled = true;
         }
-      });
-    }
+      }
+    });
+  }
 
-    // Enhanced validation for rejection confirmation
-    if (confirmRejectBtn) {
-      confirmRejectBtn.addEventListener('click', function() {
-        const message = rejectionMessageInput.value.trim();
-        
-        if (!message || message.length < 10) {
-          rejectionMessageInput.classList.add('is-invalid');
-          rejectionMessageError.textContent = 'Please provide a rejection reason (minimum 10 characters).';
-          rejectionMessageError.style.display = 'block';
-          rejectionMessageInput.focus();
-          return;
-        }
+  if (confirmRejectBtn2) {
+    confirmRejectBtn2.addEventListener("click", function () {
+      const message = rejectionMessageInput2.value.trim();
 
-        rejectionMessageInput.classList.remove('is-invalid');
-        rejectionMessageError.style.display = 'none';
+      if (!message || message.length < 10) {
+        rejectionMessageInput2.classList.add("is-invalid");
+        if (rejectionMessageError2) {
+          rejectionMessageError2.textContent =
+            "Please provide a rejection reason (minimum 10 characters).";
+          rejectionMessageError2.style.display = "block";
+        }
+        rejectionMessageInput2.focus();
+        return;
+      }
 
-        window.rejectionMessage = message;
-        window.submittingButton = { name: 'status', value: '4' };
+      rejectionMessageInput2.classList.remove("is-invalid");
+      if (rejectionMessageError2) {
+        rejectionMessageError2.style.display = "none";
+      }
 
-        // Close modal
-        const modal = bootstrap.Modal.getInstance(rejectionModal);
-        if (modal) {
-          modal.hide();
-        }
+      rejectionMessage = message;
+      submittingButton = { name: "status", value: "4" };
 
-        // Trigger form submission
-        const form = document.getElementById('releaseForm');
-        if (form) {
-          const submitEvent = new Event('submit');
-          form.dispatchEvent(submitEvent);
-        }
+      const modal = bootstrap.Modal.getInstance(rejectionModal2);
+      if (modal) {
+        modal.hide();
+      }
 
-        confirmRejectBtn.disabled = true;
-      });
-    }
+      const form = document.getElementById("releaseForm");
+      if (form) {
+        const submitEvent = new Event("submit");
+        form.dispatchEvent(submitEvent);
+      }
 
-    // Reset modal when closed
-    if (rejectionModal) {
-      rejectionModal.addEventListener('hidden.bs.modal', function() {
-        if (rejectionMessageInput) {
-          rejectionMessageInput.value = '';
-          rejectionMessageInput.classList.remove('is-invalid');
-        }
-        if (rejectionMessageError) {
-          rejectionMessageError.style.display = 'none';
-        }
-        if (charCount) {
-          charCount.textContent = '0';
-        }
-        if (confirmRejectBtn) {
-          confirmRejectBtn.disabled = true;
-        }
-      });
+      if (confirmRejectBtn2) {
+        confirmRejectBtn2.disabled = true;
+      }
+    });
+  }
 
-      rejectionModal.addEventListener('shown.bs.modal', function() {
-        if (typeof feather !== 'undefined') {
-          feather.replace();
-        }
-        if (rejectionMessageInput) {
-          rejectionMessageInput.focus();
-        }
-      });
-    }
+  if (rejectionModal2) {
+    rejectionModal2.addEventListener("hidden.bs.modal", function () {
+      if (rejectionMessageInput2) {
+        rejectionMessageInput2.value = "";
+        rejectionMessageInput2.classList.remove("is-invalid");
+      }
+      if (rejectionMessageError2) {
+        rejectionMessageError2.style.display = "none";
+      }
+      if (charCount) {
+        charCount.textContent = "0";
+      }
+      if (confirmRejectBtn2) {
+        confirmRejectBtn2.disabled = true;
+      }
+    });
 
-    // OPEN modal when Reject button is clicked
-    if (rejectBtn) {
-      rejectBtn.addEventListener('click', function() {
-        const modal = new bootstrap.Modal(rejectionModal);
-        modal.show();
-      });
-    }
-  });
+    rejectionModal2.addEventListener("shown.bs.modal", function () {
+      if (typeof feather !== "undefined") {
+        feather.replace();
+      }
+      if (rejectionMessageInput2) {
+        rejectionMessageInput2.focus();
+      }
+    });
+  }
+
+  if (rejectBtn2) {
+    rejectBtn2.addEventListener("click", function () {
+      const modal = new bootstrap.Modal(rejectionModal2);
+      modal.show();
+    });
+  }
 });
 
 //User Account Creation Js
@@ -6463,7 +7115,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // CONFIRM PASSWORD FIELD
   const confirmPasswordInput = document.getElementById("confirm_password");
-  const toggleConfirmPassword = document.getElementById("toggleConfirmPassword");
+  const toggleConfirmPassword = document.getElementById(
+    "toggleConfirmPassword"
+  );
   const toggleConfirmIcon = document.getElementById("toggleConfirmIcon");
 
   if (confirmPasswordInput && toggleConfirmPassword && toggleConfirmIcon) {
@@ -6644,6 +7298,3 @@ document
         alert("Unable to load rejection messages.");
       });
   });
-
-
-  
