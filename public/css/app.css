@@ -20660,3 +20660,54 @@ body {
 .offcanvas-footer {
     margin-top: auto;
 }
+
+/* Forgot Password Page Styles  */
+/* Scoped styles for Forgot Password page only */
+.forgot-password-page {
+    background: #f8f9fa;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.forgot-password-page .forgot-card {
+    background: #fff;
+    border-radius: 15px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    padding: 40px 30px;
+    text-align: center;
+    width: 100%;
+    max-width: 420px;
+}
+
+.forgot-password-page .forgot-card .icon {
+    font-size: 60px;
+    color: #0d6efd;
+    margin-bottom: 15px;
+}
+
+.forgot-password-page .forgot-card h4 {
+    font-weight: 600;
+    margin-bottom: 10px;
+}
+
+.forgot-password-page .forgot-card p {
+    color: #6c757d;
+    font-size: 15px;
+    margin-bottom: 25px;
+}
+
+.forgot-password-page .contact-info {
+    background: #f1f5ff;
+    border-radius: 10px;
+    padding: 15px;
+    text-align: left;
+    font-size: 14px;
+    color: #495057;
+}
+
+.forgot-password-page .contact-info i {
+    color: #0d6efd;
+    margin-right: 8px;
+}
