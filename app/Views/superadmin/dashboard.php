@@ -18,6 +18,18 @@
             <div class="row mb-4">
                 <div class="col-12">
                     <div class="row g-3">
+                        <!-- Card 2 - Releases Uploaded -->
+                        <div class="col-md-6 col-xl-3">
+                            <div class="card h-100 border-0 shadow-sm">
+                                <div class="card-body text-center p-4">
+                                    <div class="avatar-lg bg-light-primary rounded-circle d-inline-flex align-items-center justify-content-center mb-3">
+                                        <i data-feather="upload" class="text-primary" style="width: 24px; height: 24px;"></i>
+                                    </div>
+                                    <h3 class="mb-1"><?= $releaseCounts['total'] ?? 0 ?></h3>
+                                    <p class="text-muted mb-0">Total Releases</p>
+                                </div>
+                            </div>
+                        </div>
                         <!-- Card 1 - Total Revenue -->
                         <div class="col-md-6 col-xl-3">
                             <div class="card h-100 border-0 shadow-sm">
@@ -27,19 +39,6 @@
                                     </div>
                                     <h3 class="mb-1"><?= $draftCount ?? '0.00' ?></h3>
                                     <p class="text-muted mb-0">Total Drafts</p>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Card 2 - Releases Uploaded -->
-                        <div class="col-md-6 col-xl-3">
-                            <div class="card h-100 border-0 shadow-sm">
-                                <div class="card-body text-center p-4">
-                                    <div class="avatar-lg bg-light-primary rounded-circle d-inline-flex align-items-center justify-content-center mb-3">
-                                        <i data-feather="upload" class="text-primary" style="width: 24px; height: 24px;"></i>
-                                    </div>
-                                    <h3 class="mb-1"><?= $releaseCounts['total'] ?? 0 ?></h3>
-                                    <p class="text-muted mb-0">Releases Uploaded</p>
                                 </div>
                             </div>
                         </div>

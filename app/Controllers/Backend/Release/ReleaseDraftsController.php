@@ -435,7 +435,7 @@ class ReleaseDraftsController extends BaseController
         $user = $session->get('user');
         $userId = $user['id'] ?? null;
         $userRole = $user['role_id'] ?? 3;
-
+        $userPrimaryLabel = $user['primary_label_name'] ?? null;
         if (!$userId) {
             return redirect()->to('/login');
         }
@@ -452,7 +452,7 @@ class ReleaseDraftsController extends BaseController
                 ->findAll();
         } else {
             // Non-admin users see only their own data
-            $releaseCounts = $this->releaseRepo->countAllData($userId);
+            $releaseCounts = $this->releaseRepo->countAllData($userId,$userPrimaryLabel);
             // $revenueData = $this->releaseRepo->getTotalRevenue($userId); // Commented out
             $draftCount = $this->releaseRepo->getDraftCount($userId); // Get user's drafts count
             $drafts = $this->draftModel->where('user_id', $userId)
