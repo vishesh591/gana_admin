@@ -34,7 +34,7 @@
                                 <i data-feather="check-circle" class="text-success"></i>
                             </div>
                             <h3 class="mb-1" id="publishedReleasesCount"><?= esc($releaseCounts['delivered']) ?? 0 ?></h3>
-                            <p class="text-muted mb-0">Published</p>
+                            <p class="text-muted mb-0">Delivered</p>
                         </div>
                     </div>
                 </div>

@@ -2252,7 +2252,7 @@ document.addEventListener("DOMContentLoaded", function () {
     releaseForm.addEventListener("submit", function (e) {
       e.preventDefault(); // stop default submission for validation check
 
-      // ✅ Step 1: Run all steps validation
+      //Step 1: Run all steps validation
       let allStepsValid = true;
       let firstInvalidStep = null;
 
@@ -2265,14 +2265,14 @@ document.addEventListener("DOMContentLoaded", function () {
         }
       }
 
-      // ✅ Step 2: If not valid, show alert and stop submission
+      //Step 2: If not valid, show alert and stop submission
       if (!allStepsValid) {
         if (firstInvalidStep !== null) showStep(firstInvalidStep);
         alert("Please complete all required fields before submitting.");
         return; // 🚨 stop here — do not go into processing mode
       }
 
-      // ✅ Step 3: If validation passes, show loading state
+      //Step 3: If validation passes, show loading state
       const submitBtn = this.querySelector('button[type="submit"]');
       if (submitBtn) {
         submitBtn.disabled = true;
@@ -2280,7 +2280,7 @@ document.addEventListener("DOMContentLoaded", function () {
           '<i class="spinner-border spinner-border-sm me-1"></i> Processing...';
       }
 
-      // ✅ Step 4: Now submit the form (via fetch or normal submit)
+      //Step 4: Now submit the form (via fetch or normal submit)
       this.submit(); // remove if using AJAX manually
     });
   }
