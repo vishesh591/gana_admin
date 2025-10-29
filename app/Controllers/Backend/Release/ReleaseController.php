@@ -276,9 +276,24 @@ class ReleaseController extends BaseController
     public function store()
     {
         $validationRules = [
-            'upcEan' => 'if_exist|is_unique[g_release.upc_ean]',
-            'isrc' => 'if_exist|is_unique[g_release.isrc]',
+            'upcEan' => [
+                'rules' => $this->request->getPost('upcEan') === ''
+                    ? 'permit_empty'
+                    : 'is_unique[g_release.upc_ean]',
+                'errors' => [
+                    'is_unique' => 'The UPC/EAN code must be unique.',
+                ]
+            ],
+            'isrc' => [
+                'rules' => $this->request->getPost('isrc') === ''
+                    ? 'permit_empty'
+                    : 'is_unique[g_release.isrc]',
+                'errors' => [
+                    'is_unique' => 'The ISRC code must be unique.',
+                ]
+            ],
         ];
+
 
         if (!$this->validate($validationRules)) {
             if ($this->request->isAJAX()) {
@@ -383,9 +398,22 @@ class ReleaseController extends BaseController
     public function update($id)
     {
         $validationRules = [
-            'upcEan' => "required|is_unique[g_release.upc_ean,id,{$id}]",
-            'isrc' => "required|is_unique[g_release.isrc,id,{$id}]",
-            // Add other validation rules as needed
+            'upcEan' => [
+                'rules' => $this->request->getPost('upcEan') === ''
+                    ? 'permit_empty'
+                    : "is_unique[g_release.upc_ean,id,{$id}]",
+                'errors' => [
+                    'is_unique' => 'The UPC/EAN code must be unique.',
+                ]
+            ],
+            'isrc' => [
+                'rules' => $this->request->getPost('isrc') === ''
+                    ? 'permit_empty'
+                    : "is_unique[g_release.isrc,id,{$id}]",
+                'errors' => [
+                    'is_unique' => 'The ISRC code must be unique.',
+                ]
+            ],
         ];
 
         if (!$this->validate($validationRules)) {
