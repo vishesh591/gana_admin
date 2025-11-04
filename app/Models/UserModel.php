@@ -29,7 +29,8 @@ class UserModel extends Model
         'agreement_document',
         'role_id',
         'created_at',
-        'updated_at'
+        'updated_at',
+        'bank_name'
     ];
 
     protected $useTimestamps = true;

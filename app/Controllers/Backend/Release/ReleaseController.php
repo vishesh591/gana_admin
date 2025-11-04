@@ -232,14 +232,23 @@ class ReleaseController extends BaseController
         $value = $this->request->getGet('value');
         $releaseId = $this->request->getGet('release_id');
 
-        if (!$field || !$value) {
+        if (!$field) {
             return $this->response->setJSON([
                 'success' => false,
                 'error' => 'Missing required parameters'
             ]);
         }
 
-        // Map frontend field names to database column names
+        if (empty($value) || $value === '' || $value === null) {
+            return $this->response->setJSON([
+                'success' => true,
+                'is_unique' => true,
+                'field' => $field,
+                'value' => $value,
+                'skipped' => true
+            ]);
+        }
+
         $fieldMap = [
             'upcEan' => 'upc_ean',
             'isrc' => 'isrc'
@@ -251,7 +260,6 @@ class ReleaseController extends BaseController
             $releaseModel = new ReleaseModel();
             $builder = $releaseModel->where($dbField, $value);
 
-            // Exclude current release in edit mode
             if ($releaseId) {
                 $builder->where('id !=', $releaseId);
             }
@@ -277,7 +285,7 @@ class ReleaseController extends BaseController
     {
         $validationRules = [
             'upcEan' => [
-                'rules' => $this->request->getPost('upcEan') === ''
+                'rules' => $this->request->getPost('upcEan') == ''
                     ? 'permit_empty'
                     : 'is_unique[g_release.upc_ean]',
                 'errors' => [
@@ -285,7 +293,7 @@ class ReleaseController extends BaseController
                 ]
             ],
             'isrc' => [
-                'rules' => $this->request->getPost('isrc') === ''
+                'rules' => $this->request->getPost('isrc') == ''
                     ? 'permit_empty'
                     : 'is_unique[g_release.isrc]',
                 'errors' => [
@@ -293,7 +301,6 @@ class ReleaseController extends BaseController
                 ]
             ],
         ];
-
 
         if (!$this->validate($validationRules)) {
             if ($this->request->isAJAX()) {
@@ -325,12 +332,18 @@ class ReleaseController extends BaseController
 
             $stores = $this->request->getPost('stores') ?? [];
             $rights = $this->request->getPost('rights') ?? [];
-
+            
+            $artists = $this->request->getPost('artist') ?? [];
+            $artistIds = is_array($artists) ? implode(',', $artists) : $artists;
+            
+            $featuringArtistNames = $this->request->getPost('featuringArtist');
+            $featuringArtistNames = !empty($featuringArtistNames) ? trim($featuringArtistNames) : null;
+            
             $releaseData = [
                 'title'                     => $this->request->getPost('releaseTitle'),
                 'label_id'                  => $this->request->getPost('label_id'),
-                'artist_id'                 => $this->request->getPost('artist'),
-                'featured_artist_id'        => $this->request->getPost('featuringArtist'),
+                'artist_id'                 => $artistIds,
+                'featuring_artist_id'       => $featuringArtistNames,
                 'release_type'              => $this->request->getPost('releaseType'),
                 'mood_type'                 => $this->request->getPost('mood'),
                 'genre_type'                => $this->request->getPost('genre'),
@@ -339,7 +352,7 @@ class ReleaseController extends BaseController
                 'artwork'                   => $artworkPath,
                 'track_title'               => $this->request->getPost('trackTitle'),
                 'secondary_track_type'      => $this->request->getPost('secondaryTrackType'),
-                'instrumental'              => $this->request->getPost('instrumental'),
+                'instrumental'              => $this->request->getPost('instrumental') ?? 'No',
                 'isrc'                      => $this->request->getPost('isrc'),
                 'author'                    => $this->request->getPost('author'),
                 'composer'                  => $this->request->getPost('composer'),
@@ -369,7 +382,7 @@ class ReleaseController extends BaseController
                 'status'                    => (int)$this->request->getPost('status') ?: 1,
                 'created_by'                => session()->get('user')['id'],
             ];
-
+            log_message('debug', 'Creating release with data: ' . json_encode($releaseData));
             $releaseId = $this->releaseRepo->create($releaseData);
 
             if ($this->request->isAJAX()) {
@@ -399,7 +412,7 @@ class ReleaseController extends BaseController
     {
         $validationRules = [
             'upcEan' => [
-                'rules' => $this->request->getPost('upcEan') === ''
+                'rules' => $this->request->getPost('upcEan') == ''
                     ? 'permit_empty'
                     : "is_unique[g_release.upc_ean,id,{$id}]",
                 'errors' => [
@@ -407,7 +420,7 @@ class ReleaseController extends BaseController
                 ]
             ],
             'isrc' => [
-                'rules' => $this->request->getPost('isrc') === ''
+                'rules' => $this->request->getPost('isrc') == ''
                     ? 'permit_empty'
                     : "is_unique[g_release.isrc,id,{$id}]",
                 'errors' => [
@@ -475,12 +488,21 @@ class ReleaseController extends BaseController
             $stores = $this->request->getPost('stores') ?? [];
             $rights = $this->request->getPost('rights') ?? [];
 
+            $artists = $this->request->getPost('artist') ?? [];
+            $artistIds = is_array($artists) ? implode(',', $artists) : $artists;
+            
+            $featuringArtistNames = $this->request->getPost('featuringArtist');
+            $featuringArtistNames = !empty($featuringArtistNames) ? trim($featuringArtistNames) : null;
+
+            log_message('debug', 'Artist IDs (comma-separated): ' . $artistIds);
+            log_message('debug', 'Featuring Artist Names: ' . ($featuringArtistNames ?? 'null'));
+
             $releaseData = [
                 'id'                        => $id,
                 'title'                     => $this->request->getPost('releaseTitle'),
                 'label_id'                  => $this->request->getPost('label_id'),
-                'artist_id'                 => $this->request->getPost('artist'),
-                'featuring_artist_id'       => $this->request->getPost('featuringArtist'),
+                'artist_id'                 => $artistIds,
+                'featuring_artist_id'       => $featuringArtistNames, // Now stores artist names as text
                 'release_type'              => $this->request->getPost('releaseType'),
                 'mood_type'                 => $this->request->getPost('mood'),
                 'genre_type'                => $this->request->getPost('genre'),
@@ -489,7 +511,7 @@ class ReleaseController extends BaseController
                 'artwork'                   => $artworkPath,
                 'track_title'               => $this->request->getPost('trackTitle'),
                 'secondary_track_type'      => $this->request->getPost('secondaryTrackType'),
-                'instrumental'              => $this->request->getPost('instrumental'),
+                'instrumental'              => $this->request->getPost('instrumental') ?? 'No',
                 'isrc'                      => $this->request->getPost('isrc'),
                 'author'                    => $this->request->getPost('author'),
                 'composer'                  => $this->request->getPost('composer'),
@@ -597,6 +619,8 @@ class ReleaseController extends BaseController
             return redirect()->back()->withInput()->with('error', 'Failed to update release: ' . $e->getMessage());
         }
     }
+
+
 
     public function addRelease()
     {

@@ -72,7 +72,8 @@
                                 </div>
                                 <div class="col-lg-6 col-md-6 mb-3">
                                     <label class="form-label text-muted">Featuring Artist</label>
-                                    <p class="mb-0"><?= esc($artist['name'] ?? '-') ?></p>
+                                    <p class="mb-0"><?= esc($release['featuring_artist_id'] ?? '-') ?></p>
+                                    <!-- here i need to change the name -->
                                 </div>
                                 <div class="col-lg-6 col-md-6 mb-3">
                                     <label class="form-label text-muted">Label Name</label>

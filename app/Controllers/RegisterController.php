@@ -36,6 +36,7 @@ class RegisterController extends BaseController
             'branch_name'          => 'required|min_length[3]|max_length[50]',
             'agreement_start_date' => 'required|valid_date',
             'agreement_end_date'   => 'required|valid_date',
+            'bank_name'          => 'required|min_length[3]|max_length[255]',
         ];
 
         if (!$this->validate($validationRules)) {
@@ -247,6 +248,7 @@ class RegisterController extends BaseController
                 'ifsc_code' => $this->request->getPost('ifsc_code'),
                 'branch_name' => $this->request->getPost('branch_name'),
                 'agreement_start_date' => $this->request->getPost('agreement_start_date'),
+                'bank_name' => $this->request->getPost('bank_name'),
             ];
 
             if ($status == 'inactive') {

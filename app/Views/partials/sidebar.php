@@ -1,6 +1,6 @@
-<?php 
+<?php
 helper('auth'); // Load our auth helper
-$userRole = get_user_role(); 
+$userRole = get_user_role();
 ?>
 
 <!-- Left Sidebar Start -->
@@ -43,45 +43,45 @@ $userRole = get_user_role();
 
                 <!-- DATA SECTION - Only for superadmin and subadmin -->
                 <?php if (user_has_role(['superadmin', 'subadmin'])): ?>
-                <li class="menu-title">Data Management</li>
+                    <li class="menu-title">Data Management</li>
 
-                <li>
-                    <a href="<?= base_url() ?>claiming-data" class="tp-link">
-                        <i data-feather="check-circle"></i>
-                        <span>Claiming Data</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="<?= base_url() ?>relocation-data" class="tp-link">
-                        <i data-feather="refresh-cw"></i>
-                        <span>Relocation Data</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="<?= base_url() ?>merge-data" class="tp-link">
-                        <i data-feather="tag"></i>
-                        <span> Claim/Reel Data </span>
-                    </a>
-                </li>
-                <li>
-                    <a href="<?= base_url() ?>facebook-ownership-data" class="tp-link">
-                        <i data-feather="facebook"></i>
-                        <span> Facebook Ownership Data </span>
-                    </a>
-                </li>
-                <li>
-                    <a href="<?= base_url() ?>youtube-ownership-data" class="tp-link">
-                        <i data-feather="youtube"></i>
-                        <span> Youtube Ownership Data </span>
-                    </a>
-                </li>
-                                <!-- SUPPORT - visible to all -->
-                <li>
-                    <a href="<?= base_url() ?>support" class="tp-link">
-                        <i data-feather="help-circle"></i>
-                        <span> Support List</span>
-                    </a>
-                </li>
+                    <li>
+                        <a href="<?= base_url() ?>claiming-data" class="tp-link">
+                            <i data-feather="check-circle"></i>
+                            <span>Claiming Data</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="<?= base_url() ?>relocation-data" class="tp-link">
+                            <i data-feather="refresh-cw"></i>
+                            <span>Relocation Data</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="<?= base_url() ?>merge-data" class="tp-link">
+                            <i data-feather="tag"></i>
+                            <span> Claim/Reel Data </span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="<?= base_url() ?>facebook-ownership-data" class="tp-link">
+                            <i class="bi bi-meta"></i>
+                            <span> Facebook Ownership Data </span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="<?= base_url() ?>youtube-ownership-data" class="tp-link">
+                            <i data-feather="youtube"></i>
+                            <span> Youtube Ownership Data </span>
+                        </a>
+                    </li>
+                    <!-- SUPPORT - visible to all -->
+                    <li>
+                        <a href="<?= base_url() ?>support" class="tp-link">
+                            <i data-feather="help-circle"></i>
+                            <span> Support List</span>
+                        </a>
+                    </li>
                 <?php endif; ?>
 
                 <li class="menu-title mt-2">Music Distribution</li>
@@ -150,7 +150,7 @@ $userRole = get_user_role();
 
                 <li>
                     <a href="<?= base_url() ?>facebook" class="tp-link">
-                        <i data-feather="facebook"></i>
+                            <i class="bi bi-meta"></i>
                         <span> Facebook </span>
                     </a>
                 </li>
@@ -172,7 +172,7 @@ $userRole = get_user_role();
                     </a>
                 </li>
 
-             
+
             </ul>
 
         </div>

@@ -327,3 +327,19 @@ INSERT INTO countries (name, short_name, iso2, iso3, continent, created_at, upda
 ('South Africa', 'South Africa', 'ZA', 'ZAF', 'Africa', NOW(), NOW()),
 ('Zambia', 'Zambia', 'ZM', 'ZMB', 'Africa', NOW(), NOW()),
 ('Zimbabwe', 'Zimbabwe', 'ZW', 'ZWE', 'Africa', NOW(), NOW());
+
+
+
+
+// to add a new column into user table 
+ALTER TABLE `g_users` 
+ADD COLUMN `bank_name` VARCHAR(255) NULL 
+AFTER `branch_name`;
+
+ALTER TABLE `g_labels` 
+ADD COLUMN `label_document` VARCHAR(255) NULL 
+AFTER `status`;
+
+ALTER TABLE g_release MODIFY featuring_artist_id VARCHAR(255);
+
+ALTER TABLE g_release MODIFY artist_id VARCHAR(255);

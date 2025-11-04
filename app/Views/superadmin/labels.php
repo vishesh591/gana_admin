@@ -37,6 +37,7 @@
                                 </th>
                                 <th>Label</th>
                                 <th class="text-center">Releases</th>
+                                <th class="text-center">Document</th>
                                 <th class="text-center">Status</th>
                                 <?php if (in_array($user['role_id'], [1, 2])): ?>
                                     <th class="text-center">Actions</th>
@@ -49,6 +50,7 @@
                     </table>
                 </div>
             </div>
+
         </div>
     </div>
     <?= $this->include('partials/footer') ?>
@@ -102,6 +104,12 @@
                         <input type="file" class="form-control" id="imageInput" name="logo" accept="image/*">
                         <img id="imagePreview" style="display: none; max-width: 100%; margin-top: 10px;" alt="Image Preview">
                     </div>
+                    <div class="mb-3">
+                        <label class="form-label">B 2 B Document</label>
+                        <p class="text-muted mb-1">Click to upload document</p>
+                        <input type="file" class="form-control" id="label_document" name="label_document" accept="application/pdf,image/*">
+                        <!-- <img id="imagePreview" style="display: none; max-width: 100%; margin-top: 10px;" alt="Image Preview"> -->
+                    </div>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
@@ -118,6 +126,28 @@
         </div>
     </div>
 </div>
+
+<!-- Document Viewer Modal -->
+<div class="modal fade" id="documentViewerModal" tabindex="-1">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">B2B Document</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body text-center" id="documentViewerContent">
+        <!-- Document content will be loaded here -->
+      </div>
+      <div class="modal-footer">
+        <a href="#" id="downloadDocumentBtn" class="btn btn-primary" download>
+          <i data-feather="download" class="me-1"></i> Download
+        </a>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <script>
-  window.userRole = <?= json_encode($user['role_id']) ?>;
+    window.userRole = <?= json_encode($user['role_id']) ?>;
 </script>

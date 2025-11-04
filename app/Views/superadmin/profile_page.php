@@ -214,18 +214,28 @@
                                                     <p class="fs-14"><?= esc($user['holder_name']) ?></p>
                                                 </div>
                                             </div>
+
                                             <div class="col-md-6 col-sm-6 col-lg-6">
                                                 <div class="profile-email mb-3">
                                                     <h6 class="text-uppercase fs-13">Account Number</h6>
                                                     <p class="fs-14"><?= esc($user['account_number']) ?></p>
                                                 </div>
                                             </div>
+
+                                            <div class="col-md-6 col-sm-6 col-lg-6">
+                                                <div class="profile-email mb-3">
+                                                    <h6 class="text-uppercase fs-13">Bank Name</h6>
+                                                    <p class="fs-14"><?= esc($user['bank_name']) ?? null ?></p>
+                                                </div>
+                                            </div>
+
                                             <div class="col-md-6 col-sm-6 col-lg-6">
                                                 <div class="profile-email mb-3">
                                                     <h6 class="text-uppercase fs-13">IFSC Code</h6>
                                                     <p class="fs-14"><?= esc($user['ifsc_code']) ?></p>
                                                 </div>
                                             </div>
+
                                             <div class="col-md-6 col-sm-6 col-lg-6">
                                                 <div class="profile-email mb-3">
                                                     <h6 class="text-uppercase fs-13">Branch Name</h6>
@@ -235,6 +245,7 @@
                                         </div>
                                     </div>
                                 </div>
+
 
                                 <!-- Agreement Period Tab -->
                                 <div class="tab-pane pt-4" id="agreement_period" role="tabpanel">

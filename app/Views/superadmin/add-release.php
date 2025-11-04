@@ -157,15 +157,23 @@
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <label for="artist" class="form-label required-field">Artist</label>
-                                <select class="form-select searchable-select"
+                                <select
+                                    class="form-select searchable-select"
                                     id="artist"
-                                    name="artist"
+                                    name="artist[]"
+                                    multiple
                                     required
-                                    data-placeholder="Search and select an artist...">
-                                    <option value="">Select Artist</option>
+                                    data-placeholder="Search and select artist(s)...">
                                     <?php foreach ($artists as $artist): ?>
                                         <option value="<?= esc($artist['id']) ?>"
-                                            <?= (isset($release) && $release['artist_id'] == $artist['id']) ? 'selected' : '' ?>>
+                                            <?php
+                                            if (isset($release) && !empty($release['artist_id'])) {
+                                                $selectedArtists = is_array($release['artist_id'])
+                                                    ? $release['artist_id']
+                                                    : explode(',', $release['artist_id']);
+                                                echo in_array($artist['id'], $selectedArtists) ? 'selected' : '';
+                                            }
+                                            ?>>
                                             <?= esc($artist['name']) ?>
                                             <?php if (!empty($artist['label_name'])): ?>
                                                 (<?= esc($artist['label_name']) ?>)
@@ -173,26 +181,20 @@
                                         </option>
                                     <?php endforeach; ?>
                                 </select>
+                                <div class="form-text">Hold <strong>Ctrl</strong> (or <strong>Cmd</strong> on Mac) to select multiple artists.</div>
                                 <div class="invalid-feedback" id="artistError"></div>
                             </div>
 
                             <div class="col-md-6 mb-3">
-                                <label for="featuringArtist" class="form-label">Featuring Artist</label>
-                                <select class="form-select searchable-select"
+                                <label for="featuringArtist" class="form-label">Featuring Artist(s)</label>
+                                <input
+                                    type="text"
+                                    class="form-control"
                                     id="featuringArtist"
                                     name="featuringArtist"
-                                    data-placeholder="Search and select an artist...">
-                                    <option value="">Featuring Artist</option>
-                                    <?php foreach ($artists as $artist): ?>
-                                        <option value="<?= esc($artist['id']) ?>"
-                                            <?= (isset($release) && $release['featuring_artist_id'] == $artist['id']) ? 'selected' : '' ?>>
-                                            <?= esc($artist['name']) ?>
-                                            <?php if (!empty($artist['label_name'])): ?>
-                                                (<?= esc($artist['label_name']) ?>)
-                                            <?php endif; ?>
-                                        </option>
-                                    <?php endforeach; ?>
-                                </select>
+                                    placeholder="Enter artist names, separated by commas (e.g. Arijit Singh, Neha Kakkar)"
+                                    value="<?= isset($release['featuring_artist_id']) ? esc($release['featuring_artist_id']) : '' ?>">
+                                <div class="form-text">Separate multiple artist names with commas.</div>
                                 <div class="invalid-feedback" id="featuringArtistError"></div>
                             </div>
                         </div>
@@ -288,6 +290,7 @@
                                     <option value="original" <?= (isset($release) && $release['secondary_track_type'] == 'original') ? 'selected' : '' ?>>Original</option>
                                     <option value="karaoke" <?= (isset($release) && $release['secondary_track_type'] == 'karaoke') ? 'selected' : '' ?>>Karaoke</option>
                                     <option value="movie" <?= (isset($release) && $release['secondary_track_type'] == 'movie') ? 'selected' : '' ?>>Movie Sound Track</option>
+                                    <option value="djRemix" <?= (isset($release) && $release['secondary_track_type'] == 'djRemix') ? 'selected' : '' ?>>DJ Remix</option>
                                     <option value="medley" <?= (isset($release) && $release['secondary_track_type'] == 'medley') ? 'selected' : '' ?>>Medley</option>
                                     <option value="cover" <?= (isset($release) && $release['secondary_track_type'] == 'cover') ? 'selected' : '' ?>>Cover</option>
                                     <option value="coverband" <?= (isset($release) && $release['secondary_track_type'] == 'coverband') ? 'selected' : '' ?>>Cover by cover band</option>
@@ -424,7 +427,7 @@
                             <div class="file-upload-container" id="audioUpload">
                                 <i data-feather="upload" class="feather-icon-lg mb-2"></i>
                                 <p class="mb-1">Drag & drop your WAV audio file here or click to browse</p>
-                                <small class="text-muted">Only WAV format accepted - Max 50MB</small>
+                                <small class="text-muted">Only WAV format accepted - Max 200MB</small>
 
                                 <!-- Audio Preview Section -->
                                 <div id="audioPreviewContainer" class="mt-3 <?= (!isset($release) || empty($release['audio_file'])) ? 'd-none' : '' ?>">
@@ -470,9 +473,9 @@
                 <!-- Step 3: Stores -->
                 <div class="step-content" id="step-3">
                     <div class="form-section">
-                        <h5>Music Stores</h5>
+                        <h5>Music Streaming Platforms</h5>
                         <div class="mb-4">
-                            <h6 class="mb-3">Free Stores <span class="text-danger">*</span></h6>
+                            <h6 class="mb-3">Music Stores <span class="text-danger">*</span></h6>
                             <div class="d-flex justify-content-between align-items-center mb-2">
                                 <span class="fw-medium">Select stores for distribution</span>
                                 <button type="button" class="btn btn-sm btn-outline-primary toggle-all" data-target="freeStores">Toggle All</button>
@@ -489,38 +492,65 @@
                                     '24-7-entertainment' => '24-7 Entertainment',
                                     '7digital' => '7digital',
                                     'amazon-music' => 'Amazon Music',
+                                    'ami-entertainment' => 'AMI Entertainment',
                                     'anghami' => 'Anghami',
-                                    'apple-itunes-apple-music' => 'Apple iTunes / Apple Music',
+                                    'aspiro-tidal-wimp' => 'Aspiro (Tidal / WiMP)',
+                                    'audible-magic' => 'Audible Magic',
                                     'audiomack' => 'Audiomack',
+                                    'whatsapp' => 'Whatsapp',
+                                    'awa' => 'AWA',
+                                    'bmat' => 'BMAT',
                                     'boomplay' => 'Boomplay',
                                     'deezer' => 'Deezer',
-                                    'facebook' => 'Facebook',
+                                    'disco-virgin-music-group' => 'DISCO (Virgin Music Group)',
+                                    'flo' => 'FLO',
+                                    'meta-audio' => 'Meta Audio',
+                                    'fit-radio' => 'Fit Radio',
+                                    'fizy' => 'Fizy',
                                     'gaana' => 'Gaana',
-                                    'iheartradio' => 'iHeartRadio',
-                                    'jiosaavn' => 'JioSaavn',
+                                    'genie-music' => 'Genie Music',
+                                    'gracenote' => 'Gracenote',
+                                    'claro-musica' => 'Claro Música',
+                                    'apple-itunes-apple-music' => 'Apple (iTunes / Apple Music)',
                                     'joox' => 'Joox',
+                                    'melon' => 'Melon',
+                                    'kantar-france' => 'Kantar (France)',
                                     'kkbox' => 'KKBox',
-                                    'napster' => 'Napster',
-                                    'pandora' => 'Pandora',
-                                    'qobuz' => 'Qobuz',
+                                    'kuack-media-group' => 'Kuack Media Group',
+                                    'tencent-kugou-kowu-qq-music' => 'Tencent (KuGou / Kowu / QQ Music)',
+                                    'jiosaavn' => 'JioSaavn',
+                                    'soundcloud-content-id' => 'SoundCloud (Content ID)',
                                     'soundcloud-go' => 'SoundCloud Go',
+                                    'soundexchange' => 'SoundExchange',
                                     'spotify' => 'Spotify',
-                                    'tencent-kugou-kowu-qq-music' => 'Tencent / KuGou / Kowu / QQ Music',
+                                    'iheartradio' => 'iHeartRadio',
                                     'tiktok' => 'TikTok',
-                                    'youtube-music' => 'YouTube Music'
+                                    'audible-magic-twitch-dj' => 'Audible Magic for Twitch DJ',
+                                    'youtube-music' => 'YouTube Music',
+                                    'zing-mp3' => 'Zing MP3'
                                 ];
                                 ?>
+
                                 <?php foreach ($storesList as $storeValue => $storeLabel): ?>
                                     <div class="store-checkbox-item">
                                         <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" id="store-<?= $storeValue ?>" name="stores[]" value="<?= $storeValue ?>" <?= in_array($storeValue, $selectedStores) ? 'checked' : '' ?>>
+                                            <input class="form-check-input"
+                                                type="checkbox"
+                                                id="store-<?= $storeValue ?>"
+                                                name="stores[]"
+                                                value="<?= $storeValue ?>"
+                                                <?= in_array($storeValue, $selectedStores) ? 'checked' : '' ?>>
                                             <label class="form-check-label" for="store-<?= $storeValue ?>"><?= $storeLabel ?></label>
                                         </div>
                                     </div>
                                 <?php endforeach; ?>
                             </div>
-                            <div id="storesError" class="invalid-feedback">Please select at least one store for distribution.</div>
+
+                            <div id="storesError" class="invalid-feedback">
+                                Please select at least one store for distribution.
+                            </div>
                         </div>
+
 
                         <div class="mb-4">
                             <h6 class="mb-3">Rights Management Stores</h6>

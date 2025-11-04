@@ -55,7 +55,8 @@ class LabelController extends BaseController
     {
         $validationRules = [
             'label_name'   => 'required|min_length[2]|max_length[255]',
-            'logo'         => 'uploaded[logo]|is_image[logo]|mime_in[logo,image/jpg,image/jpeg,image/png]'
+            'logo'         => 'uploaded[logo]|is_image[logo]|mime_in[logo,image/jpg,image/jpeg,image/png]',
+            'label_document' => 'uploaded[label_document]|mime_in[label_document,application/pdf,image/jpg,image/jpeg,image/png]'
         ];
 
         if (!$this->validate($validationRules)) {
@@ -112,12 +113,20 @@ class LabelController extends BaseController
             'created_by'         => $user['id']
         ];
 
-        // Handle image upload
+        // Handle logo upload
         $img = $this->request->getFile('logo');
         if ($img && $img->isValid() && !$img->hasMoved()) {
             $newName = $img->getRandomName();
             $img->move(FCPATH . 'uploads/label', $newName);
             $data['logo'] = 'uploads/label/' . $newName;
+        }
+
+        // Handle B2B document upload
+        $document = $this->request->getFile('label_document');
+        if ($document && $document->isValid() && !$document->hasMoved()) {
+            $docNewName = $document->getRandomName();
+            $document->move(FCPATH . 'uploads/label/documents', $docNewName);
+            $data['label_document'] = 'uploads/label/documents/' . $docNewName;
         }
 
         $this->labelRepo->create($data);
@@ -166,14 +175,15 @@ class LabelController extends BaseController
             $releaseCount = $releaseModel->where('label_id', $label['id'])->countAllResults();
 
             $row = [
-                'id'            => $label['id'],
-                'name'          => $label['label_name'] . ' (' . $label['primary_label_name'] . ')',
-                'logo'          => !empty($label['logo']) ? base_url($label['logo']) : base_url('images/default.png'),
-                'release_count' => $releaseCount, // Use actual count from ReleaseModel
-                'status'        => $label['status'] ?? 1,
-                'status_text'   => $statusText,
-                'status_class'  => $statusClass,
-                'actions'       => '' // Always include, even if empty
+                'id'               => $label['id'],
+                'name'             => $label['label_name'] . ' (' . $label['primary_label_name'] . ')',
+                'logo'             => !empty($label['logo']) ? base_url($label['logo']) : base_url('images/default.png'),
+                'label_document'   => !empty($label['label_document']) ? base_url($label['label_document']) : null,
+                'release_count'    => $releaseCount,
+                'status'           => $label['status'] ?? 1,
+                'status_text'      => $statusText,
+                'status_class'     => $statusClass,
+                'actions'          => ''
             ];
 
             if ($isAdmin) {
@@ -187,8 +197,6 @@ class LabelController extends BaseController
             'data' => $data
         ]);
     }
-
-
 
     public function updateStatus()
     {

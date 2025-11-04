@@ -17,7 +17,7 @@
                             <li class="nav-item"><a class="nav-link active" href="#" data-filter="all">All</a></li>
                             <li class="nav-item"><a class="nav-link" href="#" data-filter="pending">Pending</a></li>
                             <li class="nav-item"><a class="nav-link" href="#" data-filter="rejected">Rejected</a></li>
-                            <li class="nav-item"><a class="nav-link" href="#" data-filter="approved">Approved</a></li>
+                            <li class="nav-item"><a class="nav-link" href="#" data-filter="approved">Claim Released</a></li>
 
                         </ul>
                     </div>
@@ -128,7 +128,7 @@
             <label class="form-label">Status</label>
             <select class="form-select" id="statusDropdown">
               <option value="Pending">Pending</option>
-              <option value="Approved">Approved</option>
+              <option value="Approved">Claim Released</option>
               <option value="Rejected">Rejected</option>
             </select>
           </div>

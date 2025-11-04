@@ -187,10 +187,14 @@
                             <input type="number" class="form-control rounded-pill p-3" id="accountNumber" name="account_number" placeholder="Enter bank account number" required>
                         </div>
                         <div class="col-md-6 mb-3">
+                            <label for="bankName" class="form-label">Bank Name</label>
+                            <input type="text" class="form-control rounded-pill p-3" id="bankName" name="bank_name" placeholder="Enter bank name" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
                             <label for="ifscCode" class="form-label">IFSC Code</label>
                             <input type="text" class="form-control rounded-pill p-3" id="ifscCode" name="ifsc_code" placeholder="Enter IFSC code" required>
                         </div>
-                        <div class="col-12 mb-3">
+                        <div class="col-md-6 mb-3">
                             <label for="branchName" class="form-label">Branch Name</label>
                             <input type="text" class="form-control rounded-pill p-3" id="branchName" name="branch_name" placeholder="Enter bank branch name" required>
                         </div>

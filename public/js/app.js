@@ -1236,7 +1236,9 @@ document.addEventListener("DOMContentLoaded", function () {
         pending: "status-pending",
         rejected: "status-rejected",
       }[s] || "bg-secondary";
-    return `<span class="badge status-badge ${cls}">${s.toUpperCase()}</span>`;
+    // Change display text for approved status
+    const displayText = s == "approved" ? "CLAIM RELEASED" : s.toUpperCase();
+    return `<span class="badge status-badge ${cls}">${displayText}</span>`;
   };
 
   // Filter data based on status
@@ -1393,8 +1395,9 @@ document.addEventListener("DOMContentLoaded", function () {
                 data
               )}</div>`;
             }
-            // For search, return plain status text
-            return data || "";
+            // For search, return plain status text (or "Claim Released" for approved)
+            const s = (data || "").toLowerCase();
+            return s == "approved" ? "Claim Released" : data || "";
           },
         },
         // Action column (ONLY View button - no video buttons)[67]
@@ -1456,7 +1459,14 @@ document.addEventListener("DOMContentLoaded", function () {
     document.getElementById("isrcCode").value = r.isrc || "N/A";
     document.getElementById("upcCode").value = r.upc || "N/A";
     document.getElementById("removalReason").value = r.removalReason || "N/A";
-    document.getElementById("statusDropdown").value = r.status || "Pending";
+    
+    // Display "Claim Released" instead of "Approved" in dropdown
+    const status = r.status || "Pending";
+    const displayStatus = status.toLowerCase() == "approved" ? "Claim Released" : status;
+    document.getElementById("statusDropdown").value = status; // Keep actual value for posting
+    
+    // If you want to show "Claim Released" in the dropdown display, you'll need to handle it differently
+    // For now, just set the actual status value
 
     // Display video links in the modal
     const videoLinksContainer = document.getElementById("videoLinksContainer");
@@ -1553,6 +1563,7 @@ document.addEventListener("DOMContentLoaded", function () {
   console.log("Starting to fetch claiming data...");
   fetchClaimingData();
 });
+
 
 // merge-data-page js
 // Add this entire new block to your app.js file
@@ -2656,6 +2667,25 @@ $(document).ready(function () {
         },
       },
       {
+        data: "label_document",
+        className: "text-center",
+        orderable: false,
+        render: function (data) {
+          if (data) {
+            // Check if it's a PDF or image
+            const isPDF = data.toLowerCase().endsWith(".pdf");
+            const icon = isPDF ? "file-text" : "image";
+
+            return `
+              <button class="btn btn-sm btn-primary" onclick="viewDocument('${data}')" title="View Document">
+                <i data-feather="${icon}" class="feather-sm"></i> View
+              </button>
+            `;
+          }
+          return '<span class="text-muted">No document</span>';
+        },
+      },
+      {
         data: "status_text",
         className: "text-center",
         render: function (data, type, row) {
@@ -2692,7 +2722,7 @@ $(document).ready(function () {
 
   // Expose reload for outside use
   window.reloadLabels = function () {
-    table.ajax.reload(null, false); // false keeps current pagination
+    table.ajax.reload(null, false);
   };
 });
 
@@ -2844,6 +2874,48 @@ function showGlobalAlert(type, message) {
   setTimeout(() => {
     $(".alert").alert("close");
   }, 5000);
+}
+
+// Global function to view document
+// Global function to view document
+function viewDocument(documentPath) {
+  // documentPath is already a full URL from controller
+  const fullPath = documentPath;
+  const isPDF = documentPath.toLowerCase().endsWith(".pdf");
+
+  let content = "";
+
+  if (isPDF) {
+    // For PDF files, use iframe or embed
+    content = `
+      <iframe src="${fullPath}" 
+              style="width: 100%; height: 600px; border: none;" 
+              title="Document Viewer">
+      </iframe>
+      <p class="text-muted mt-2">
+        If the document doesn't display, 
+        <a href="${fullPath}" target="_blank">click here to open in new tab</a>
+      </p>
+    `;
+  } else {
+    // For images
+    content = `
+      <img src="${fullPath}" 
+           class="img-fluid" 
+           alt="Document" 
+           style="max-width: 100%; height: auto;">
+    `;
+  }
+
+  $("#documentViewerContent").html(content);
+  $("#downloadDocumentBtn").attr("href", fullPath);
+
+  // Re-initialize feather icons
+  if (typeof feather !== "undefined") {
+    feather.replace();
+  }
+
+  $("#documentViewerModal").modal("show");
 }
 
 // accounts-page js
@@ -3032,7 +3104,7 @@ document.addEventListener("DOMContentLoaded", function () {
   const profileAvatar = document.getElementById("initialsAvatarProfilePage");
   if (profileAvatar) {
     // You can get the name from PHP or a data attribute
-    const userName = profileAvatar.dataset.userName || "Vishesh Mittal"; // Default or from PHP
+    const userName = profileAvatar.dataset.userName || "Gaana Distribution"; // Default or from PHP
     generateProfilePageAvatar(userName);
   }
 });
@@ -3280,8 +3352,10 @@ $(document).ready(function () {
             Pending: "warning",
             Rejected: "danger",
           };
+          // Change display text for Approved status
+          const displayText = data == "Approved" ? "Claim Released" : data;
           return `<span class="badge bg-${badgeClasses[data] || "secondary"
-            }">${data}</span>`;
+            }">${displayText}</span>`;
         },
         className: "text-center",
       },
@@ -3316,12 +3390,14 @@ $(document).ready(function () {
         const linksContainer = $("#videoLinksContainer");
         const videos = $(this).data("videos");
         const reason = $(this).data("reason");
+        const status = $(this).data("status");
 
         $("#viewSongTitle").val($(this).data("title"));
         $("#viewArtistName").val($(this).data("artist"));
         $("#viewISRC").val($(this).data("isrc"));
         $("#viewUPC").val($(this).data("upc"));
-        $("#viewStatus").val($(this).data("status"));
+        // Display "Claim Released" instead of "Approved" in modal
+        $("#viewStatus").val(status == "Approved" ? "Claim Released" : status);
         $("#viewRemovalReason").val(reason || "N/A");
 
         // Populate video/music links
@@ -3351,6 +3427,7 @@ $(document).ready(function () {
     table.ajax.reload(null, false);
   };
 });
+
 
 // relocation-request js
 
@@ -6425,7 +6502,7 @@ document.addEventListener("DOMContentLoaded", function () {
     if (!file) return false;
 
     const allowedAudioTypes = ["audio/wav", "audio/wave", "audio/x-wav"];
-    const maxAudioSize = 50 * 1024 * 1024;
+    const maxAudioSize = 200 * 1024 * 1024;
     const fileExtension = file.name.split(".").pop().toLowerCase();
 
     const isValidType = allowedAudioTypes.includes(file.type);
@@ -6444,7 +6521,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     if (file.size > maxAudioSize) {
-      alert("File size too large! Your WAV file should not exceed 50MB.");
+      alert("File size too large! Your WAV file should not exceed 200MB.");
       return false;
     }
 
@@ -7292,3 +7369,5 @@ document
         alert("Unable to load rejection messages.");
       });
   });
+
+

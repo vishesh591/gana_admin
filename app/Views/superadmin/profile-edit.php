@@ -148,9 +148,14 @@
                                                 <input type="text" class="form-control" name="account_number" value="<?= esc($user['account_number']) ?>">
                                             </div>
                                             <div class="col-md-6 mb-3">
+                                                <label class="form-label">Bank Name</label>
+                                                <input type="text" class="form-control" name="bank_name" value="<?= esc($user['bank_name']) ?>">
+                                            </div>
+                                            <div class="col-md-6 mb-3">
                                                 <label class="form-label">IFSC Code</label>
                                                 <input type="text" class="form-control" name="ifsc_code" value="<?= esc($user['ifsc_code']) ?>">
                                             </div>
+
                                             <div class="col-md-6 mb-3">
                                                 <label class="form-label">Branch Name</label>
                                                 <input type="text" class="form-control" name="branch_name" value="<?= esc($user['branch_name']) ?>">
