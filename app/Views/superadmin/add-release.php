@@ -156,34 +156,19 @@
 
                         <div class="row">
                             <div class="col-md-6 mb-3">
-                                <label for="artist" class="form-label required-field">Artist</label>
-                                <select
-                                    class="form-select searchable-select"
-                                    id="artist"
-                                    name="artist[]"
-                                    multiple
-                                    required
-                                    data-placeholder="Search and select artist(s)...">
-                                    <?php foreach ($artists as $artist): ?>
-                                        <option value="<?= esc($artist['id']) ?>"
-                                            <?php
-                                            if (isset($release) && !empty($release['artist_id'])) {
-                                                $selectedArtists = is_array($release['artist_id'])
-                                                    ? $release['artist_id']
-                                                    : explode(',', $release['artist_id']);
-                                                echo in_array($artist['id'], $selectedArtists) ? 'selected' : '';
-                                            }
-                                            ?>>
-                                            <?= esc($artist['name']) ?>
-                                            <?php if (!empty($artist['label_name'])): ?>
-                                                (<?= esc($artist['label_name']) ?>)
-                                            <?php endif; ?>
-                                        </option>
-                                    <?php endforeach; ?>
-                                </select>
-                                <div class="form-text">Hold <strong>Ctrl</strong> (or <strong>Cmd</strong> on Mac) to select multiple artists.</div>
-                                <div class="invalid-feedback" id="artistError"></div>
+                                <label class="form-label required-field">Artist(s)</label>
+
+                                <div id="artistTagger" class="artist-tagger form-control p-2 d-flex flex-wrap align-items-center gap-2 position-relative" data-artists-url="<?= base_url('api/artists') ?>">
+                                    <div class="artist-tags d-flex flex-wrap gap-2"></div>
+                                    <input type="text" class="artist-input border-0 flex-grow-1" placeholder="Type to search artists…" autocomplete="off">
+                                </div>
+
+                                <div class="artist-suggestions dropdown-menu w-50 position-absolute" style="max-height: 150px; overflow:auto; z-index:1050; margin-top: 2px;"></div>
+
+                                <div class="artist-hidden-inputs"></div>
+                                <div class="invalid-feedback" id="artistError">Please select at least one artist.</div>
                             </div>
+
 
                             <div class="col-md-6 mb-3">
                                 <label for="featuringArtist" class="form-label">Featuring Artist(s)</label>

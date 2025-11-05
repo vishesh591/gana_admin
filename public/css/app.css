@@ -20711,3 +20711,62 @@ body {
     color: #0d6efd;
     margin-right: 8px;
 }
+
+
+/* Artist tagger (scoped) */
+#artistTagger.artist-tagger {
+  cursor: text;
+  min-height: 46px;
+}
+
+#artistTagger .artist-input:focus {
+  outline: none;
+  box-shadow: none;
+}
+
+#artistTagger .artist-chip {
+  background: #eef2ff;
+  color: #111827;
+  border: 1px solid #c7d2fe;
+  border-radius: 999px;
+  padding: 2px 8px;
+  font-size: .85rem;
+  display: inline-flex;
+  align-items: center;
+  gap: .4rem;
+}
+
+#artistTagger .artist-chip .remove-chip {
+  border: 0;
+  background: transparent;
+  line-height: 1;
+  font-size: 16px;
+  cursor: pointer;
+  color: #6b7280;
+}
+
+#artistTagger.is-invalid {
+  border-color: var(--bs-danger);
+  padding-right: calc(1.5em + .75rem);
+  background-image: none;
+}
+
+.artist-suggestions.show {
+  display: block;
+}
+
+.artist-suggestion-item {
+  cursor: pointer;
+  padding: .5rem .75rem;
+}
+
+.artist-suggestion-item.active,
+.artist-suggestion-item:hover {
+  background: #f8f9fa;
+}
+
+.artist-suggestions {
+  background: white !important;
+  border: 1px solid #ccc !important;
+}
+

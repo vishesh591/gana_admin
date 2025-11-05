@@ -187,6 +187,11 @@ class ArtistController extends BaseController
         } else {
             $artists = $this->artistRepo->findAll();
         }
+        
+        // return $this->response->setJSON([
+        //     'success' => true,
+        //     'data' => $artists
+        // ]);
 
         $releaseModel = new \App\Models\Backend\ReleaseModel();
 

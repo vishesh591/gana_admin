@@ -37,3 +37,4 @@
 <script src="/js/pages/datatable.init.js"></script>
 
 <script src="/js/app.js"></script>
+<script src="/js/artist-tagger.js"></script>
