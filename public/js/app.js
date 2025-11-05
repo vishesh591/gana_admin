@@ -370,7 +370,7 @@ function initializeOwnershipPage(config) {
 
   populateTable(".facebook-data-body", config.facebookData, {
     platformName: "Facebook",
-    platformIconClass: "bi-facebook text-primary",
+    platformIconClass: "bi-meta text-primary",
   });
 
   $(".datatable").DataTable({
@@ -2020,7 +2020,7 @@ document.addEventListener("DOMContentLoaded", function () {
             row.facebookLink !== ""
           ) {
             links.push(
-              `<a href="${row.facebookLink}" target="_blank" class="link-icon me-1" title="Facebook"><i class="bi bi-facebook"></i></a>`
+              `<a href="${row.facebookLink}" target="_blank" class="link-icon me-1" title="Facebook"><i class="bi bi-meta"></i></a>`
             );
           }
           return links.length > 0
@@ -3487,7 +3487,7 @@ document.addEventListener("DOMContentLoaded", function () {
               <i class="bi bi-music-note-beamed me-2"></i></a>`);
           if (data.facebook_link)
             icons.push(`<a href="${data.facebook_link}" target="_blank" title="Facebook">
-              <i class="bi bi-facebook me-2"></i></a>`);
+              <i class="bi bi-meta me-2"></i></a>`);
           return icons.length
             ? icons.join("")
             : `<span class="text-muted">-</span>`;
@@ -4546,7 +4546,7 @@ document.addEventListener("DOMContentLoaded", function () {
             data: null,
             className: "text-center",
             orderable: false,
-            render: () => `<i class="bi bi-facebook text-primary fs-5"></i>`,
+            render: () => `<i class="bi bi-meta text-primary fs-5"></i>`,
           },
           { data: "category", title: "Category" },
           { data: "assetTitle", title: "Asset Title" },
