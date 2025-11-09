@@ -158,7 +158,9 @@
                             <div class="col-md-6 mb-3">
                                 <label class="form-label required-field">Artist(s)</label>
 
-                                <div id="artistTagger" class="artist-tagger form-control p-2 d-flex flex-wrap align-items-center gap-2 position-relative" data-artists-url="<?= base_url('api/artists') ?>">
+                                <div id="artistTagger" class="artist-tagger form-control p-2 d-flex flex-wrap align-items-center gap-2 position-relative"
+                                    data-artists-url="<?= base_url('api/artists') ?>"
+                                    data-existing-artists="<?= isset($release['artist_id']) ? esc($release['artist_id']) : '' ?>">
                                     <div class="artist-tags d-flex flex-wrap gap-2"></div>
                                     <input type="text" class="artist-input border-0 flex-grow-1" placeholder="Type to search artists…" autocomplete="off">
                                 </div>
@@ -168,7 +170,6 @@
                                 <div class="artist-hidden-inputs"></div>
                                 <div class="invalid-feedback" id="artistError">Please select at least one artist.</div>
                             </div>
-
 
                             <div class="col-md-6 mb-3">
                                 <label for="featuringArtist" class="form-label">Featuring Artist(s)</label>
@@ -183,6 +184,7 @@
                                 <div class="invalid-feedback" id="featuringArtistError"></div>
                             </div>
                         </div>
+
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <label class="form-label required-field">Release Type</label>

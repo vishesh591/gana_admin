@@ -26,14 +26,19 @@ const ArtistTagger = {
     const state = {
       allArtists: [],
       selected: new Map(),
-      artistsUrl: shell.dataset.artistsUrl || '/api/artists'
+      artistsUrl: shell.dataset.artistsUrl || '/api/artists',
+      existingArtists: shell.dataset.existingArtists || ''
     };
     
     // --- Helpers ---
     const helpers = {
       async fetchArtists() {
         try {
-          const response = await fetch(state.artistsUrl);
+          const response = await fetch(state.artistsUrl, {
+            headers: {
+              'X-Requested-With': 'XMLHttpRequest'
+            }
+          });
           
           if (!response.ok) {
             throw new Error(`HTTP ${response.status}`);
@@ -51,10 +56,36 @@ const ArtistTagger = {
             label: artist.label_name
           })).filter(a => a.id && a.name);
           
+          helpers.loadExistingArtists();
+          
         } catch (error) {
+          console.error('Fetch error:', error);
           elements.artistError.textContent = 'Could not load artists. Please try again.';
           elements.artistError.style.display = 'block';
         }
+      },
+      
+      loadExistingArtists() {
+        if (!state.existingArtists || state.existingArtists.trim() === '') return;
+        
+        const artistNames = state.existingArtists.split(',').map(name => name.trim()).filter(name => name);
+        
+        artistNames.forEach((artistName, index) => {
+          const matchedArtist = state.allArtists.find(a => a.name === artistName);
+          
+          if (matchedArtist) {
+            state.selected.set(matchedArtist.id, matchedArtist);
+          } else {
+            const tempId = `temp-${index}`;
+            state.selected.set(tempId, {
+              id: tempId,
+              name: artistName,
+              label: ''
+            });
+          }
+        });
+        
+        helpers.renderTags();
       },
       
       openDropdown(list) {
@@ -116,11 +147,11 @@ const ArtistTagger = {
           
           elements.tagsWrap.appendChild(chip);
           
-          // Create hidden input
+          // Create hidden input with artist name
           const hidden = document.createElement('input');
           hidden.type = 'hidden';
           hidden.name = 'artist[]';
-          hidden.value = name;  // Store the artist name instead of ID
+          hidden.value = name;
           elements.hiddenWrap.appendChild(hidden);
         });
       },

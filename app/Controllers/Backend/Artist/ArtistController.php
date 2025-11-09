@@ -187,11 +187,6 @@ class ArtistController extends BaseController
         } else {
             $artists = $this->artistRepo->findAll();
         }
-        
-        // return $this->response->setJSON([
-        //     'success' => true,
-        //     'data' => $artists
-        // ]);
 
         $releaseModel = new \App\Models\Backend\ReleaseModel();
 
@@ -200,17 +195,24 @@ class ArtistController extends BaseController
 
             return [
                 'id'            => $artist['id'],
-                'name'          => $artist['name'] .'('.$artist['label_name'].')',
+                'name'          => $artist['name'] . '(' . $artist['label_name'] . ')',
                 'profile_image' => !empty($artist['profile_image'])
                     ? base_url($artist['profile_image'])
                     : '/images/default.png',
                 'spotify_id'    => $artist['spotify_id'],
                 'apple_id'      => $artist['apple_id'],
-                'release_count' => $releaseCount, // Use actual count from ReleaseModel
+                'release_count' => $releaseCount,
                 'label_name'    => $artist['label_name'] ?? 'N/A',
             ];
         }, $artists);
 
-        return $this->response->setJSON(['data' => $data]);
+        if ($this->request->isAJAX()) {
+            return $this->response->setJSON([
+                'success' => true,
+                'data' => $data
+            ]);
+        }
+        
+        return $data;
     }
 }

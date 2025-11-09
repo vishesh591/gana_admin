@@ -67,11 +67,9 @@ class ReleaseController extends BaseController
                 6 => 'takedown_requested'
             ];
 
-            $artistModel = new ArtistModel();
-
-            $releasesData = array_map(function ($r) use ($statusMap, $artistModel) {
-                $artist = $artistModel->find($r['artist_id']);
-                $artistName = $artist ? $artist['name'] : $r['author'];
+            $releasesData = array_map(function ($r) use ($statusMap) {
+                $artistName = !empty($r['artist_id']) ? $r['artist_id'] : $r['author'];
+                
                 return [
                     'id' => $r['id'],
                     'title' => $r['title'],
@@ -217,8 +215,6 @@ class ReleaseController extends BaseController
         return view('superadmin/releases/create');
     }
 
-    // Add this method to your ReleaseController
-
     public function validateUnique()
     {
         if (!$this->request->isAJAX()) {
@@ -334,7 +330,7 @@ class ReleaseController extends BaseController
             $rights = $this->request->getPost('rights') ?? [];
             
             $artists = $this->request->getPost('artist') ?? [];
-            $artistIds = is_array($artists) ? implode(',', $artists) : $artists;
+            $artistNames = is_array($artists) ? implode(', ', $artists) : $artists;
             
             $featuringArtistNames = $this->request->getPost('featuringArtist');
             $featuringArtistNames = !empty($featuringArtistNames) ? trim($featuringArtistNames) : null;
@@ -342,7 +338,7 @@ class ReleaseController extends BaseController
             $releaseData = [
                 'title'                     => $this->request->getPost('releaseTitle'),
                 'label_id'                  => $this->request->getPost('label_id'),
-                'artist_id'                 => $artistIds,
+                'artist_id'                 => $artistNames,
                 'featuring_artist_id'       => $featuringArtistNames,
                 'release_type'              => $this->request->getPost('releaseType'),
                 'mood_type'                 => $this->request->getPost('mood'),
@@ -489,20 +485,20 @@ class ReleaseController extends BaseController
             $rights = $this->request->getPost('rights') ?? [];
 
             $artists = $this->request->getPost('artist') ?? [];
-            $artistIds = is_array($artists) ? implode(',', $artists) : $artists;
+            $artistNames = is_array($artists) ? implode(', ', $artists) : $artists;
             
             $featuringArtistNames = $this->request->getPost('featuringArtist');
             $featuringArtistNames = !empty($featuringArtistNames) ? trim($featuringArtistNames) : null;
 
-            log_message('debug', 'Artist IDs (comma-separated): ' . $artistIds);
+            log_message('debug', 'Artist Names (comma-separated): ' . $artistNames);
             log_message('debug', 'Featuring Artist Names: ' . ($featuringArtistNames ?? 'null'));
 
             $releaseData = [
                 'id'                        => $id,
                 'title'                     => $this->request->getPost('releaseTitle'),
                 'label_id'                  => $this->request->getPost('label_id'),
-                'artist_id'                 => $artistIds,
-                'featuring_artist_id'       => $featuringArtistNames, // Now stores artist names as text
+                'artist_id'                 => $artistNames,
+                'featuring_artist_id'       => $featuringArtistNames,
                 'release_type'              => $this->request->getPost('releaseType'),
                 'mood_type'                 => $this->request->getPost('mood'),
                 'genre_type'                => $this->request->getPost('genre'),
@@ -620,8 +616,6 @@ class ReleaseController extends BaseController
         }
     }
 
-
-
     public function addRelease()
     {
         $session = session();
@@ -686,8 +680,7 @@ class ReleaseController extends BaseController
                 }
             }
 
-            $artistModel = new ArtistModel();
-            $artist = $artistModel->find($release['artist_id']);
+            $artistNames = !empty($release['artist_id']) ? $release['artist_id'] : 'N/A';
 
             $labelModel = new LabelModel();
             $label = $labelModel->find($release['label_id']);
@@ -710,7 +703,7 @@ class ReleaseController extends BaseController
             $data = [
                 'file_name' => 'view_release',
                 'release' => $release,
-                'artist' => $artist,
+                'artist' => ['name' => $artistNames], // Pass as array for consistency with view
                 'label' => $label,
                 'storeNames' => $storeNames,
                 'rightsNames' => $rightsNames,
@@ -725,7 +718,6 @@ class ReleaseController extends BaseController
             return redirect()->to('/releases')->with('error', 'Failed to load release details.');
         }
     }
-
 
     public function exportCsv()
     {
@@ -795,8 +787,6 @@ class ReleaseController extends BaseController
             'Status'
         ]);
 
-        $artistModel = new \App\Models\Backend\ArtistModel();
-
         $statusMapping = [
             1 => 'Review',
             2 => 'Takedown',
@@ -826,11 +816,8 @@ class ReleaseController extends BaseController
                 $rights = is_array($decodedRights) ? implode(', ', $decodedRights) : $release['rights_management_options'];
             }
 
-            $artist = $artistModel->find($release['artist_id']);
-            $featuringArtist = $artistModel->find($release['featuring_artist_id']);
-
-            $artistName = $artist['name'] ?? '';
-            $featuringArtistName = $featuringArtist['name'] ?? '';
+            $artistName = $release['artist_id'] ?? '';
+            $featuringArtistName = $release['featuring_artist_id'] ?? '';
 
             $status = $statusMapping[$release['status']] ?? $release['status'];
 
