@@ -27,14 +27,12 @@ class RelocationRequestController extends BaseController
 
         if (in_array($userRole, [1, 2])) {
             $releases = $this->releaseModel
-                ->select('g_release.id, g_release.title, g_release.upc_ean, g_release.isrc, g_artists.name as artist_name')
-                ->join('g_artists', 'g_artists.id = g_release.artist_id', 'left')
+                ->select('g_release.id, g_release.title, g_release.upc_ean, g_release.isrc, g_release.artist_id as artist_name')
                 ->where('g_release.status', 3) // Only delivered releases
                 ->findAll();
         } else {
             $releases = $this->releaseModel
-                ->select('g_release.id, g_release.title, g_release.upc_ean, g_release.isrc, g_artists.name as artist_name')
-                ->join('g_artists', 'g_artists.id = g_release.artist_id', 'left')
+                ->select('g_release.id, g_release.title, g_release.upc_ean, g_release.isrc, g_release.artist_id as artist_name')
                 ->join('g_labels', 'g_labels.id = g_release.label_id', 'left')
                 ->where('g_release.status', 3) // Only delivered releases
                 ->groupStart()
@@ -49,7 +47,6 @@ class RelocationRequestController extends BaseController
             'releases'  => $releases,
         ]);
     }
-
 
     public function getRelocationRequestJson()
     {
@@ -87,8 +84,6 @@ class RelocationRequestController extends BaseController
         return $this->response->setJSON(['data' => $data]);
     }
 
-
-    // API for datatable
     public function list()
     {
         $data = $this->relocationModel->findAll();
@@ -100,8 +95,7 @@ class RelocationRequestController extends BaseController
         $releaseId = $this->request->getPost('release_id');
 
         $release = $this->releaseModel
-            ->select('g_release.title, g_release.isrc, g_artists.name as artist_name')
-            ->join('g_artists', 'g_artists.id = g_release.artist_id', 'left')
+            ->select('g_release.title, g_release.isrc, g_release.artist_id as artist_name')
             ->find($releaseId);
 
         if (!$release) {
@@ -120,7 +114,7 @@ class RelocationRequestController extends BaseController
             'instagram_audio' => $this->request->getPost('instagram_audio'),
             'facebook_link'   => $this->request->getPost('facebook_link'),
             'status'          => 'Pending',
-            'created_by'    => session()->get('user')['id'],
+            'created_by'      => session()->get('user')['id'],
         ];
 
         $this->relocationModel->save($data);
@@ -128,19 +122,17 @@ class RelocationRequestController extends BaseController
         return redirect()->back()->with('success', 'Relocation Request submitted successfully');
     }
 
-
     // public function updateStatus($id)
     // {
     //     $status = $this->request->getPost('status');
-
+    //
     //     $this->relocationModel->update($id, ['status' => $status]);
-
+    //
     //     return $this->response->setJSON(['message' => 'Status updated']);
     // }
 
     public function relocationData()
     {
-        // Page scaffold for the Relocation Data table + modal
         return view('superadmin/index', [
             'file_name' => 'relocation-data',
             'title'     => 'Relocation Data Management'
@@ -196,7 +188,6 @@ class RelocationRequestController extends BaseController
                 ]);
             }
 
-            // Debug: Log the raw data from database
             log_message('debug', 'Raw request data: ' . print_r($request, true));
 
             $data = [
@@ -209,11 +200,10 @@ class RelocationRequestController extends BaseController
                 'facebookLink'   => $request['facebook_link'] ?? '',
                 'reelMerge'      => $request['reel_merge_link'] ?? '',
                 'matchingTime'   => $request['matching_time'] ?? '',
-                'status'         => $request['status'] ?? 'pending', // Make sure this field exists in DB
+                'status'         => $request['status'] ?? 'pending',
                 'artwork'        => base_url('assets/images/default-artwork.jpg'),
             ];
 
-            // Debug: Log the formatted data being sent to frontend
             log_message('debug', 'Formatted data being sent: ' . print_r($data, true));
 
             return $this->response->setJSON([

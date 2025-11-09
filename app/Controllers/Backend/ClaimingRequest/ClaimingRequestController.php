@@ -4,7 +4,7 @@ namespace App\Controllers\Backend\ClaimingRequest;
 
 use App\Controllers\BaseController;
 use App\Repositories\ClaimingRequest\ClaimingRequestRepository;
-use App\Models\Backend\ClaimingRequestModel;   // <-- add
+use App\Models\Backend\ClaimingRequestModel;
 use App\Models\Backend\ReleaseModel;
 use CodeIgniter\HTTP\ResponseInterface;
 
@@ -12,15 +12,13 @@ class ClaimingRequestController extends BaseController
 {
     protected $claimingRequestRepo;
     protected $releaseModel;
-
-    // ADD: strongly-typed model so we don't call undefined property
     protected $claimingRequestModel;
 
     public function __construct()
     {
         $this->claimingRequestRepo  = new ClaimingRequestRepository();
         $this->releaseModel         = new ReleaseModel();
-        $this->claimingRequestModel = new ClaimingRequestModel(); // <-- init it
+        $this->claimingRequestModel = new ClaimingRequestModel();
     }
 
     public function index()
@@ -30,18 +28,17 @@ class ClaimingRequestController extends BaseController
         $userId = $user['id'];
         $userRole = $user['role_id'] ?? 3;
         $userPrimaryLabel = $user['primary_label_name'] ?? '';
+        
         if (in_array($userRole, [1, 2])) {
             $releases = $this->releaseModel
-                ->select('g_release.id, g_release.title, g_release.upc_ean, g_release.isrc, g_artists.name as artist_name')
-                ->join('g_artists', 'g_artists.id = g_release.artist_id', 'left')
+                ->select('g_release.id, g_release.title, g_release.upc_ean, g_release.isrc, g_release.artist_id as artist_name')
                 ->where('g_release.status', 3) // Only delivered releases
                 ->findAll();
         } else {
             $releases = $this->releaseModel
-                ->select('g_release.id, g_release.title, g_release.upc_ean, g_release.isrc, g_artists.name as artist_name')
-                ->join('g_artists', 'g_artists.id = g_release.artist_id', 'left')
+                ->select('g_release.id, g_release.title, g_release.upc_ean, g_release.isrc, g_release.artist_id as artist_name')
                 ->join('g_labels', 'g_labels.id = g_release.label_id', 'left')
-                ->where('g_release.status', 3) // Only delivered releases
+                ->where('g_release.status', 3)
                 ->groupStart()
                 ->where('g_release.created_by', $userId)
                 ->orWhere('g_labels.primary_label_name', $userPrimaryLabel)
@@ -55,8 +52,6 @@ class ClaimingRequestController extends BaseController
         ]);
     }
 
-
-    // DataTable for the “Claiming Request” page (simple list)
     public function getClaimingRequestJson()
     {
         $session = session();
@@ -64,7 +59,6 @@ class ClaimingRequestController extends BaseController
         $userId = $user['id'];
         $userRole = $user['role_id'] ?? 3;
 
-        // Admins and superadmins view all claims, others view their own
         if (in_array($userRole, [1, 2])) {
             $rows = $this->claimingRequestModel
                 ->select('id, song_name, artist_name, upc, isrc, status, video_links, removal_reason')
@@ -112,11 +106,10 @@ class ClaimingRequestController extends BaseController
             ]);
         }
 
-        // You were treating "songName" as release_id; keeping that, but fetch actual cols
         $releaseId = $this->request->getPost('songName');
-        $release   = $this->releaseModel
-            ->select('g_release.title, g_release.upc_ean, g_release.isrc, g_artists.name as artist_name')
-            ->join('g_artists', 'g_artists.id = g_release.artist_id', 'left')
+        
+        $release = $this->releaseModel
+            ->select('g_release.title, g_release.upc_ean, g_release.isrc, g_release.artist_id as artist_name')
             ->find($releaseId);
 
         if (!$release) {
@@ -145,14 +138,12 @@ class ClaimingRequestController extends BaseController
 
     public function claimData()
     {
-        // page scaffold for the DataTable + modal
         return view('superadmin/index', [
             'file_name' => 'claiming-data',
             'title'     => 'Claiming Data Management'
         ]);
     }
 
-    // Data for the “Claiming Data” page (no joins; use your claiming_requests schema)
     public function getClaimingDataJson()
     {
         try {
@@ -168,7 +159,7 @@ class ClaimingRequestController extends BaseController
                     'artist'         => $r['artist_name'] ?? 'Unknown Artist',
                     'upc'            => $r['upc'] ?? 'N/A',
                     'isrc'           => $r['isrc'] ?? 'N/A',
-                    'videoLinks'     => $this->parseVideoLinks($r['video_links'] ?? ''), // convert to array
+                    'videoLinks'     => $this->parseVideoLinks($r['video_links'] ?? ''),
                     'removalReason'  => $r['removal_reason'] ?? 'N/A',
                     'status'         => $this->getStatusText($r['status']),
                     'artwork'        => base_url('assets/images/default-artwork.jpg'),
@@ -190,14 +181,10 @@ class ClaimingRequestController extends BaseController
         }
     }
 
-    /**
-     * Convert a stored text (comma/line separated) into array of links
-     */
     private function parseVideoLinks(string $links): array
     {
         return array_filter(array_map('trim', preg_split('/[\r\n,]+/', $links)));
     }
-
 
     public function updateStatus($id)
     {
@@ -210,11 +197,9 @@ class ClaimingRequestController extends BaseController
                 ]);
             }
 
-            // Accept JSON or form
             $payload   = $this->request->getJSON(true) ?? $this->request->getPost();
             $newStatus = $payload['status'] ?? null;
 
-            // Your DB enum uses capitalized: Pending / Approved / Rejected
             $map = [
                 'pending'  => 'Pending',
                 'approved' => 'Approved',

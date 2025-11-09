@@ -27,15 +27,14 @@ class ClaimReelMergeController extends BaseController
         $userPrimaryLabel = $user['primary_label_name'] ?? '';
 
         if (in_array($userRole, [1, 2])) {
+
             $releases = $this->releaseModel
-                ->select('g_release.id, g_release.title, g_release.upc_ean, g_release.isrc, g_artists.name as artist_name')
-                ->join('g_artists', 'g_artists.id = g_release.artist_id', 'left')
+                ->select('g_release.id, g_release.title, g_release.upc_ean, g_release.isrc, g_release.artist_id as artist_name')
                 ->where('g_release.status', 3)
                 ->findAll();
         } else {
             $releases = $this->releaseModel
-                ->select('g_release.id, g_release.title, g_release.upc_ean, g_release.isrc, g_artists.name as artist_name')
-                ->join('g_artists', 'g_artists.id = g_release.artist_id', 'left')
+                ->select('g_release.id, g_release.title, g_release.upc_ean, g_release.isrc, g_release.artist_id as artist_name')
                 ->join('g_labels', 'g_labels.id = g_release.label_id', 'left')
                 ->where('g_release.status', 3) // Only delivered releases
                 ->groupStart()
@@ -51,14 +50,12 @@ class ClaimReelMergeController extends BaseController
         ]);
     }
 
-
     public function store()
     {
         $releaseId = $this->request->getPost('release_id');
 
         $release = $this->releaseModel
-            ->select('g_release.title, g_release.isrc, g_release.upc_ean, g_artists.name as artist_name')
-            ->join('g_artists', 'g_artists.id = g_release.artist_id', 'left')
+            ->select('g_release.title, g_release.isrc, g_release.upc_ean, g_release.artist_id as artist_name')
             ->find($releaseId);
 
         if (!$release) {
@@ -134,9 +131,6 @@ class ClaimReelMergeController extends BaseController
         }
     }
 
-
-
-    // Page for Claim Reel Merge Data
     public function mergeData()
     {
         return view('superadmin/index', [
@@ -145,7 +139,6 @@ class ClaimReelMergeController extends BaseController
         ]);
     }
 
-    // List all merge requests (DataTable JSON)
     public function getMergeDataJson()
     {
         try {
@@ -178,7 +171,6 @@ class ClaimReelMergeController extends BaseController
         }
     }
 
-    // Detail of one merge request
     public function getMergeDataDetail($id)
     {
         try {
@@ -206,7 +198,6 @@ class ClaimReelMergeController extends BaseController
         }
     }
 
-    // Update merge request status
     public function updateMergeStatus($id)
     {
         try {
