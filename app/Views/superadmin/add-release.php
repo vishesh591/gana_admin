@@ -156,7 +156,7 @@
 
                         <div class="row">
                             <div class="col-md-6 mb-3">
-                                <label class="form-label required-field">Artist(s)</label>
+                                <label class="form-label required-field">Primary Artist(s)</label>
 
                                 <div id="artistTagger" class="artist-tagger form-control p-2 d-flex flex-wrap align-items-center gap-2 position-relative"
                                     data-artists-url="<?= base_url('api/artists') ?>"

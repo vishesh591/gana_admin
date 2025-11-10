@@ -195,7 +195,7 @@ class ArtistController extends BaseController
 
             return [
                 'id'            => $artist['id'],
-                'name'          => $artist['name'] . '(' . $artist['label_name'] . ')',
+                'name'          => $artist['name'],
                 'profile_image' => !empty($artist['profile_image'])
                     ? base_url($artist['profile_image'])
                     : '/images/default.png',

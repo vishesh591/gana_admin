@@ -67,7 +67,7 @@
                                     <p class="fw-semibold mb-0"><?= esc($release['title'] ?? 'N/A') ?></p>
                                 </div>
                                 <div class="col-lg-6 col-md-6 mb-3">
-                                    <label class="form-label text-muted">Artist</label>
+                                    <label class="form-label text-muted">Primary Artist</label>
                                     <p class="fw-semibold mb-0"><?= esc($artist['name'] ?? 'N/A') ?></p>
                                 </div>
                                 <div class="col-lg-6 col-md-6 mb-3">
